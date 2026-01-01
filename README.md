@@ -139,7 +139,7 @@ graph LR
 <div align="center">
 
 **Course**: CSAI 498/499 - Senior Project
-**Supervisor**: *To Be Determined*
+**Supervisor**: *Dr. Mohamed Fakhry Eldin Ghalwash*
 
 </div>
 
