@@ -149,42 +149,29 @@ graph LR
 
 <div align="center">
 
-### 🍂 Fall 2025 Semester (CSAI 498)
+### 🍂 Fall 2025 Semester (CSAI 498) - ✅ Completed
 **September 21, 2025 - January 19, 2026**
 
 </div>
 
-```
-Week 1-4   ║ 📚 Research & Requirements
-           ║ → Literature review, dataset research, proposal finalization
-           ║
-Week 5-7   ║ 🏗️ Design & Planning
-           ║ → Architecture design, environment setup, GitHub workflow
-           ║
-Week 8-16  ║ ⚙️ Implementation Part 1
-           ║ → Audio transcription, speaker diarization, initial NLP pipeline
-           ║
-Week 17    ║ 🎯 Fall Deliverables
-           ║ → Prototype demo, progress report, semester presentation
-```
+**Major Accomplishments:**
+- ✅ Comprehensive market analysis and competitive landscape review
+- ✅ Three-layer system architecture designed (Audio Processing, NLP Analysis, Reporting/API)
+- ✅ Technology stack finalized (Whisper, RoBERTa, FastAPI, PostgreSQL)
+- ✅ 7 quality dimensions defined and validated
+- ✅ 18-week implementation roadmap for Spring 2026 developed
 
 <div align="center">
 
-### 🌸 Spring 2026 Semester (CSAI 499)
+### 🌸 Spring 2026 Semester (CSAI 499) - 🚀 Upcoming
 **February 8, 2026 - June 11, 2026**
 
 </div>
 
-```
-Week 1-8   ║ ⚙️ Implementation Part 2
-           ║ → NLP quality models, scoring system, web interface
-           ║
-Week 9-14  ║ 🧪 Testing & Evaluation
-           ║ → Integration testing, user testing, performance optimization
-           ║
-Week 15-18 ║ 🎓 Finalization & Defense
-           ║ → Final refinements, documentation, thesis, project defense
-```
+**Planned Phases:**
+- 🔜 **Phase 1 (Weeks 1-8)**: Complete NLP implementation, data augmentation, web dashboard
+- 🔜 **Phase 2 (Weeks 9-14)**: Testing, evaluation, and human-AI agreement analysis
+- 🔜 **Phase 3 (Weeks 15-18)**: Final system polish, thesis writing, defense preparation
 
 ---
 
@@ -192,48 +179,35 @@ Week 15-18 ║ 🎓 Finalization & Defense
 
 <div align="center">
 
-### 🔍 Currently Under Research
+### ✅ Finalized Architecture
 
-*Technology choices will be finalized during Weeks 5-7 (Design & Planning phase)*
+*Based on Fall 2025 research and design phase*
 
 </div>
 
-We are exploring various options across different components:
+### 🎤 Audio Processing Layer
+- **ASR**: OpenAI Whisper (large-v3) with Wav2Vec2 fallback
+- **Diarization**: Speaker separation for Agent vs. Customer identification
+- **Format**: 16kHz, 16-bit mono PCM WAV
 
-### 🎤 Audio Processing
-- Researching speech recognition solutions
-- Investigating speaker diarization approaches
-- Evaluating audio preprocessing techniques
+### 🧠 NLP Analysis Layer
+- **Base Model**: RoBERTa-base (fine-tuned on customer service corpus)
+- **Framework**: PyTorch, Hugging Face Transformers
+- **Quality Dimensions**: 7 dimensions (Script Compliance, Factual Accuracy, Politeness, Empathy, Conflict, Resolution, Severity)
 
-### 🧠 Natural Language Processing
-- Exploring pre-trained language models
-- Investigating text classification methods
-- Researching sentiment analysis approaches
+### 💻 Backend & API
+- **Framework**: FastAPI (async ML inference)
+- **Database**: PostgreSQL (relational data), MongoDB (logs/documents)
+- **Caching**: Redis
+- **Storage**: AWS S3 (audio files, models)
 
-### 💻 Development Stack
-- Backend frameworks and languages
-- Database solutions
-- Frontend technologies
-- Deployment platforms
-
-**All decisions will be documented as we finalize our technical approach.**
-
----
-
-## 📊 Success Metrics
-
-<div align="center">
-
-### Technical Performance Targets
+### 📊 Performance Targets
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| **🎯 Transcription Accuracy** | WER < 15% | Compare with manual transcripts |
-| **🤝 Human Agreement** | > 70% | AI vs. human evaluator scores |
-| **⚡ Processing Speed** | < 5 min | 10-minute call processing time |
-| **🎯 MVP Success** | > 60% | Agreement on ≥1 quality dimension |
-
-</div>
+| **🎯 WER (Word Error Rate)** | < 15% (MVP), < 8% (Prod) | Compared to manual transcripts |
+| **🤝 Human Agreement** | > 70% | Cohen's Kappa > 0.75 |
+| **⚡ Processing Speed** | < 5 minutes | For 10-minute call |
 
 ---
 
@@ -241,19 +215,20 @@ We are exploring various options across different components:
 
 <div align="center">
 
-### 📍 **Week 4 - Planning Phase**
+### 📍 **Fall 2025 Completed - Entering Spring 2026 Implementation**
 
-**✅ Completed:**
-- Project proposal drafted
-- Team roles assigned
-- GitHub repository initialized
-- Technology research underway
+**✅ Fall 2025 Achievements:**
+- System architecture finalized
+- Technology stack selected and validated
+- Quality assessment framework established (7 dimensions)
+- Market research and competitive analysis completed
+- Implementation roadmap developed
 
-**🔜 Next Steps:**
-- Finalize project proposal submission
-- Begin architecture design
-- Set up development environment
-- Start literature review
+**🔜 Spring 2026 Next Steps:**
+- Begin full NLP model implementation
+- Develop data augmentation pipeline
+- Build web dashboard and API
+- Conduct testing and evaluation with human analysts
 
 </div>
 
@@ -263,12 +238,13 @@ We are exploring various options across different components:
 
 <div align="center">
 
-| Document | Status | Link |
-|----------|--------|------|
-| 📋 Project Proposal | ✅ Complete | `docs/proposal/` (Coming Soon) |
-| 🏗️ Architecture Design | 🔜 Planned | Week 5-7 |
-| 📚 API Documentation | 🔜 Planned | Implementation Phase |
-| 📖 User Guide | 🔜 Planned | Testing Phase |
+| Document | Status | Description |
+|----------|--------|-------------|
+| 📋 Final Report (Fall 2025) | ✅ Complete | Comprehensive planning & design document |
+| 🏗️ Architecture Design | ✅ Complete | Three-layer system architecture |
+| 📊 Implementation Roadmap | ✅ Complete | 18-week Spring 2026 plan |
+| 🔜 API Documentation | Planned | Spring 2026 implementation phase |
+| 🔜 User Guide | Planned | Spring 2026 testing phase |
 
 </div>
 
@@ -296,18 +272,13 @@ We are exploring various options across different components:
 ### 🎓 Academic Context
 
 **Institution**: Zewail City of Science and Technology
-**School**: Computing and Information Technology
+**School**: Computer Science and Artificial Intelligence (CSAI)
 **Course**: CSAI 498/499 - Senior Project
-**Duration**: Fall 2025 - Spring 2026
+**Academic Year**: 2025-2026
+**Project Phase**: Transitioning from Planning (Fall 2025) to Implementation (Spring 2026)
 
 ---
 
-### 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<sub>Built with ❤️ by the CallTone Team | © 2025 Zewail City</sub>
+<sub>Built with ❤️ by the CallTone Team | © 2025-2026 Zewail City</sub>
 
 </div>
