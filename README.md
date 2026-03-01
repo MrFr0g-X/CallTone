@@ -1,284 +1,142 @@
-<div align="center">
+# Grad Project — Audio Analysis Pipeline
 
-# 🎙️ CallTone
+An end-to-end pipeline for processing call-center audio: enhancement, transcription, speaker diarization, emotion detection, and role identification via LLM.
 
-### AI-Powered Quality Assurance for Customer Service Calls
+## Project Structure
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Status](https://img.shields.io/badge/Status-In%20Development-blue)]()
-[![Institution](https://img.shields.io/badge/Institution-Zewail%20City-red)]()
-
-**Transforming call center quality management through artificial intelligence**
-
-[Overview](#-overview) • [Problem](#-the-problem) • [Solution](#-our-solution) • [Team](#-team) • [Timeline](#-project-timeline) • [Contact](#-contact)
-
----
-
-</div>
-
-## 📖 Overview
-
-**CallTone** is an intelligent system designed to revolutionize quality assurance in customer service call centers. By leveraging cutting-edge speech recognition and natural language processing technologies, CallTone automatically evaluates 100% of customer interactions, providing comprehensive insights that traditional manual QA cannot achieve.
-
-<div align="center">
-
-### 🎯 Core Objective
-
-*Replace time-consuming manual call reviews with automated, scalable, and consistent AI-powered quality assessment*
-
-</div>
-
----
-
-## 🔍 The Problem
-
-Call centers today struggle with **inefficient manual quality assurance** processes:
-
-<table>
-<tr>
-<td width="25%" align="center">
-
-### 📊 2-5%
-**Coverage**
-
-Only a tiny fraction of calls reviewed due to resource limits
-
-</td>
-<td width="25%" align="center">
-
-### ⚖️ 15-30%
-**Variance**
-
-Inconsistent evaluations between different QA analysts
-
-</td>
-<td width="25%" align="center">
-
-### ⏰ 1-3 Weeks
-**Delay**
-
-Feedback arrives too late to be actionable
-
-</td>
-<td width="25%" align="center">
-
-### 💰 High Cost
-**Scalability**
-
-Manual QA teams don't scale with call volume
-
-</td>
-</tr>
-</table>
-
-### Business Impact
-- **Compliance Risks**: Unmonitored calls may contain violations
-- **Customer Churn**: Poor service quality drives customers away
-- **Missed Insights**: Patterns across thousands of calls go undetected
-- **Agent Development**: Inconsistent feedback hinders performance improvement
-
----
-
-## 💡 Our Solution
-
-CallTone provides **end-to-end automated quality assessment** with four key capabilities:
-
-<div align="center">
-
-```mermaid
-graph LR
-    A[📞 Call Recording] --> B[🎤 Speech-to-Text]
-    B --> C[🧠 AI Analysis]
-    C --> D[📊 Quality Report]
-
-    style A fill:#e1f5ff
-    style B fill:#fff4e1
-    style C fill:#ffe1f5
-    style D fill:#e1ffe1
+```
+grad_project/
+├── LAYER_1/                    # Audio processing pipeline
+│   ├── pipeline/               # Core pipeline (transcription + diarization)
+│   ├── audio_emotion_detection_enhanced/  # Emotion detection from audio
+│   ├── resemble-enhance/       # Audio enhancement (noise removal)
+│   └── models/                 # Model weights (downloaded separately)
+│
+├── skill_implementation/       # LLM-based role identification
+│   ├── skills/                 # Prompt-only skill definitions
+│   ├── skill_runtime/          # Runtime framework
+│   ├── runner/                 # CLI interface
+│   └── models/                 # LLM weights (downloaded separately)
+│
+├── Test_audio/                 # Sample audio for testing
+├── download_models.py          # Script to download all model weights
+└── README.md
 ```
 
-</div>
+## Pipeline Overview
 
-### 🎯 Key Features
+```
+Raw Audio
+   │
+   ▼
+[LAYER_1] Audio Enhancement (resemble-enhance)
+   │
+   ▼
+[LAYER_1] Transcription + Speaker Diarization (SenseVoice + pyannote)
+   │
+   ▼
+[LAYER_1] Emotion Detection per utterance (Audio2Emotion)
+   │
+   ▼
+[skill_implementation] Role Identification (Llama 3.1 8B)
+   │
+   ▼
+Structured Output (JSON)
+```
 
-| Feature | Description |
-|---------|-------------|
-| **🎤 Automated Transcription** | Convert audio to text with speaker identification |
-| **👥 Speaker Diarization** | Separate agent and customer speech segments |
-| **🧠 Quality Assessment** | Evaluate compliance, politeness, resolution |
-| **📈 Actionable Reports** | Generate insights with conversation excerpts |
+## Quick Start
 
-### 📊 Quality Dimensions Evaluated
+### 1. Install dependencies
 
-<div align="center">
+```bash
+# LAYER_1 dependencies
+pip install -r LAYER_1/requirements_full.txt
 
-| ✅ Script Compliance | 💬 Politeness & Tone | 🎯 Issue Resolution | ✔️ Factual Accuracy |
-|:-------------------:|:-------------------:|:-------------------:|:------------------:|
-| Did agent follow procedures? | Was interaction professional? | Was problem solved? | Was information correct? |
+# skill_implementation dependencies
+pip install -r skill_implementation/requirements.txt
+```
 
-</div>
+### 2. Download model weights (~12.5 GB total)
 
----
+> Models are not included in this repo due to size. Use the download script:
 
-## 👥 Team
+```bash
+# Install the downloader dependency first
+pip install huggingface-hub
 
-<div align="center">
+# See what will be downloaded
+python download_models.py --list
 
-### Zewail City of Science and Technology
-**Fall 2025 - Spring 2026**
+# Download all models (except pyannote — requires token)
+python download_models.py
 
-</div>
+# Download ALL models including pyannote (requires HuggingFace token)
+# First accept terms at:
+#   https://huggingface.co/pyannote/segmentation-3.0
+#   https://huggingface.co/pyannote/speaker-diarization-3.1
+python download_models.py --hf-token YOUR_HF_TOKEN
 
-| 👤 Team Member | 🆔 ID | 🎓 Program | 💼 Role | 🔧 Technical Focus |
-|----------------|-------|-----------|--------|-------------------|
-| **Hothifa Hamdan** | 202201792 | DSAI | ML Architecture | Model development, training, evaluation |
-| **Mazen Khaled** | 202201534 | DSAI | NLP Pipeline | Data processing, feature extraction |
-| **Habiba Magdy** | 202202112 | SWD | System Integration | Backend API, software architecture |
-| **Nasreldin Khaled** | 202201444 | IT (DSAI Minor) | Infrastructure | Audio processing, deployment |
+# Download a single model
+python download_models.py --model llama
+python download_models.py --model sensevoice
+```
 
-<div align="center">
+| Model Key             | Size      | Used by                        |
+|-----------------------|-----------|-------------------------------|
+| `llama`               | ~8.0 GB   | skill_implementation (LLM)    |
+| `sensevoice`          | ~893 MB   | LAYER_1 transcription         |
+| `resemble`            | ~681 MB   | LAYER_1 audio enhancement     |
+| `audio2emotion`       | ~1.2 GB   | LAYER_1 emotion detection     |
+| `pyannote-segmentation` | ~500 MB | LAYER_1 diarization (token)   |
+| `pyannote-wespeaker`  | ~500 MB   | LAYER_1 diarization (token)   |
 
-**Course**: CSAI 498/499 - Senior Project
-**Supervisor**: *Dr. Mohamed Fakhry Eldin Ghalwash*
+### 3. Run the pipeline
 
-</div>
+```bash
+# Run the full LAYER_1 pipeline on an audio file
+cd LAYER_1
+python pipeline.py --input /path/to/audio.mp3
 
----
+# Run role identification skill
+cd skill_implementation
+python runner/run_skill.py --skill identify-call-roles --file examples/sample_transcript.txt
+```
 
-## 📅 Project Timeline
+## Components
 
-<div align="center">
+### LAYER_1 — Audio Processing
 
-### 🍂 Fall 2025 Semester (CSAI 498) - ✅ Completed
-**September 21, 2025 - January 19, 2026**
+Handles everything from raw audio to an annotated transcript with speaker labels and emotions.
 
-</div>
+- **Audio enhancement**: removes background noise using [resemble-enhance](https://github.com/resemble-ai/resemble-enhance)
+- **Transcription**: speech-to-text via [SenseVoice](https://huggingface.co/iic/SenseVoiceSmall)
+- **Diarization**: who spoke when via [pyannote.audio](https://github.com/pyannote/pyannote-audio)
+- **Emotion detection**: per-utterance emotion from audio using [Audio2Emotion](https://huggingface.co/nvidia/Audio2Emotion-v3.0)
 
-**Major Accomplishments:**
-- ✅ Comprehensive market analysis and competitive landscape review
-- ✅ Three-layer system architecture designed (Audio Processing, NLP Analysis, Reporting/API)
-- ✅ Technology stack finalized (Whisper, RoBERTa, FastAPI, PostgreSQL)
-- ✅ 7 quality dimensions defined and validated
-- ✅ 18-week implementation roadmap for Spring 2026 developed
+See [LAYER_1/LAYER_1_ARCHITECTURE.md](LAYER_1/LAYER_1_ARCHITECTURE.md) for a detailed architecture overview.
 
-<div align="center">
+### skill_implementation — LLM Skills
 
-### 🌸 Spring 2026 Semester (CSAI 499) - 🚀 Upcoming
-**February 8, 2026 - June 11, 2026**
+A lightweight framework for deterministic, prompt-only LLM tasks using local models.
 
-</div>
+- **Model**: Meta-Llama-3.1-8B-Instruct (Q8 GGUF, runs on CPU/GPU)
+- **Current skills**: `identify-call-roles` — labels speakers as Agent/Customer
+- **Deterministic**: same input always produces same output (temperature=0)
 
-**Planned Phases:**
-- 🔜 **Phase 1 (Weeks 1-8)**: Complete NLP implementation, data augmentation, web dashboard
-- 🔜 **Phase 2 (Weeks 9-14)**: Testing, evaluation, and human-AI agreement analysis
-- 🔜 **Phase 3 (Weeks 15-18)**: Final system polish, thesis writing, defense preparation
+See [skill_implementation/README.md](skill_implementation/README.md) for full documentation.
 
----
+## Requirements
 
-## 🛠️ Technology Stack
+- Python 3.9+
+- CUDA (optional, improves speed for LAYER_1 models)
+- ~15 GB disk space for all models
+- ~8 GB RAM minimum (16 GB recommended)
 
-<div align="center">
+## HuggingFace Token
 
-### ✅ Finalized Architecture
+pyannote models require accepting usage terms and authenticating:
 
-*Based on Fall 2025 research and design phase*
-
-</div>
-
-### 🎤 Audio Processing Layer
-- **ASR**: OpenAI Whisper (large-v3) with Wav2Vec2 fallback
-- **Diarization**: Speaker separation for Agent vs. Customer identification
-- **Format**: 16kHz, 16-bit mono PCM WAV
-
-### 🧠 NLP Analysis Layer
-- **Base Model**: RoBERTa-base (fine-tuned on customer service corpus)
-- **Framework**: PyTorch, Hugging Face Transformers
-- **Quality Dimensions**: 7 dimensions (Script Compliance, Factual Accuracy, Politeness, Empathy, Conflict, Resolution, Severity)
-
-### 💻 Backend & API
-- **Framework**: FastAPI (async ML inference)
-- **Database**: PostgreSQL (relational data), MongoDB (logs/documents)
-- **Caching**: Redis
-- **Storage**: AWS S3 (audio files, models)
-
-### 📊 Performance Targets
-
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| **🎯 WER (Word Error Rate)** | < 15% (MVP), < 8% (Prod) | Compared to manual transcripts |
-| **🤝 Human Agreement** | > 70% | Cohen's Kappa > 0.75 |
-| **⚡ Processing Speed** | < 5 minutes | For 10-minute call |
-
----
-
-## 🚀 Current Status
-
-<div align="center">
-
-### 📍 **Fall 2025 Completed - Entering Spring 2026 Implementation**
-
-**✅ Fall 2025 Achievements:**
-- System architecture finalized
-- Technology stack selected and validated
-- Quality assessment framework established (7 dimensions)
-- Market research and competitive analysis completed
-- Implementation roadmap developed
-
-**🔜 Spring 2026 Next Steps:**
-- Begin full NLP model implementation
-- Develop data augmentation pipeline
-- Build web dashboard and API
-- Conduct testing and evaluation with human analysts
-
-</div>
-
----
-
-## 📄 Documentation
-
-<div align="center">
-
-| Document | Status | Description |
-|----------|--------|-------------|
-| 📋 Final Report (Fall 2025) | ✅ Complete | Comprehensive planning & design document |
-| 🏗️ Architecture Design | ✅ Complete | Three-layer system architecture |
-| 📊 Implementation Roadmap | ✅ Complete | 18-week Spring 2026 plan |
-| 🔜 API Documentation | Planned | Spring 2026 implementation phase |
-| 🔜 User Guide | Planned | Spring 2026 testing phase |
-
-</div>
-
----
-
-## 📧 Contact
-
-<div align="center">
-
-**Have questions or want to collaborate?**
-
-| Team Member | Email |
-|-------------|-------|
-| Hothifa Hamdan | s-hothifa.mohamed@zewailcity.edu.eg |
-| Mazen Khaled | s-mazen.ahmed@zewailcity.edu.eg |
-| Habiba Magdy | s-habiba.sayed@zewailcity.edu.eg |
-| Nasreldin Khaled | s-nasreldin.mohamed@zewailcity.edu.eg |
-
-</div>
-
----
-
-<div align="center">
-
-### 🎓 Academic Context
-
-**Institution**: Zewail City of Science and Technology
-**School**: Computer Science and Artificial Intelligence (CSAI)
-**Course**: CSAI 498/499 - Senior Project
-**Academic Year**: 2025-2026
-**Project Phase**: Transitioning from Planning (Fall 2025) to Implementation (Spring 2026)
-
----
-
-<sub>Built with ❤️ by the CallTone Team | © 2025-2026 Zewail City</sub>
-
-</div>
+1. Create a free account at [huggingface.co](https://huggingface.co)
+2. Accept terms at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
+3. Generate a token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+4. Pass it via `python download_models.py --hf-token YOUR_TOKEN` or set `HF_TOKEN=YOUR_TOKEN`
