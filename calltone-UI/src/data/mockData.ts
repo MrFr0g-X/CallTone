@@ -7,6 +7,9 @@ export interface Call {
   empathy: number;
   conflict: boolean;
   resolution: boolean;
+  scriptCompliance: boolean;
+  factualAccuracy: number;
+  severity: string;
   status: "reviewed" | "pending" | "flagged";
   agentId?: string;
 }
@@ -34,10 +37,13 @@ export interface CallDetail {
   customerName: string;
   overallScore: number;
   scores: {
+    scriptCompliance: { compliant: boolean; confidence: number; evidence: string };
+    factualAccuracy: { score: number; confidence: number; evidence: string };
     politeness: { score: number; confidence: number; evidence: string };
     empathy: { score: number; confidence: number; evidence: string };
     conflict: { detected: boolean; confidence: number; evidence: string };
     resolution: { resolved: boolean; confidence: number; evidence: string };
+    severity: { level: string; confidence: number; evidence: string };
   };
   flagForReview: boolean;
   transcript: TranscriptLine[];
@@ -57,16 +63,16 @@ export const qaUser = {
 };
 
 export const agentCalls: Call[] = [
-  { id: "call-001", date: "2026-02-28", duration: "4:32", overallScore: 92, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-002", date: "2026-02-27", duration: "6:15", overallScore: 78, politeness: 3, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-003", date: "2026-02-27", duration: "8:47", overallScore: 45, politeness: 2, empathy: 2, conflict: true, resolution: false, status: "flagged" },
-  { id: "call-004", date: "2026-02-26", duration: "3:21", overallScore: 88, politeness: 4, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-005", date: "2026-02-26", duration: "5:58", overallScore: 95, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-006", date: "2026-02-25", duration: "7:12", overallScore: 62, politeness: 3, empathy: 2, conflict: true, resolution: true, status: "flagged" },
-  { id: "call-007", date: "2026-02-25", duration: "2:45", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-008", date: "2026-02-24", duration: "9:03", overallScore: 38, politeness: 1, empathy: 2, conflict: true, resolution: false, status: "flagged" },
-  { id: "call-009", date: "2026-02-24", duration: "4:18", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-  { id: "call-010", date: "2026-02-23", duration: "5:30", overallScore: 82, politeness: 4, empathy: 3, conflict: false, resolution: true, status: "pending" },
+  { id: "call-001", date: "2026-02-28", duration: "4:32", overallScore: 92, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+  { id: "call-002", date: "2026-02-27", duration: "6:15", overallScore: 78, politeness: 3, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+  { id: "call-003", date: "2026-02-27", duration: "8:47", overallScore: 45, politeness: 2, empathy: 2, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 3, severity: "major", status: "flagged" },
+  { id: "call-004", date: "2026-02-26", duration: "3:21", overallScore: 88, politeness: 4, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+  { id: "call-005", date: "2026-02-26", duration: "5:58", overallScore: 95, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+  { id: "call-006", date: "2026-02-25", duration: "7:12", overallScore: 62, politeness: 3, empathy: 2, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "flagged" },
+  { id: "call-007", date: "2026-02-25", duration: "2:45", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+  { id: "call-008", date: "2026-02-24", duration: "9:03", overallScore: 38, politeness: 1, empathy: 2, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 2, severity: "critical", status: "flagged" },
+  { id: "call-009", date: "2026-02-24", duration: "4:18", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+  { id: "call-010", date: "2026-02-23", duration: "5:30", overallScore: 82, politeness: 4, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "pending" },
 ];
 
 export const agents: Agent[] = [
@@ -90,65 +96,65 @@ export const agents: Agent[] = [
 export const agentCallsMap: Record<string, Call[]> = {
   "agent-1": agentCalls,
   "agent-2": [
-    { id: "call-201", date: "2026-02-28", duration: "3:45", overallScore: 96, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-202", date: "2026-02-27", duration: "5:12", overallScore: 89, politeness: 4, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-203", date: "2026-02-26", duration: "7:30", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-201", date: "2026-02-28", duration: "3:45", overallScore: 96, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-202", date: "2026-02-27", duration: "5:12", overallScore: 89, politeness: 4, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+    { id: "call-203", date: "2026-02-26", duration: "7:30", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
   ],
   "agent-3": [
-    { id: "call-301", date: "2026-02-28", duration: "6:22", overallScore: 65, politeness: 3, empathy: 2, conflict: true, resolution: true, status: "flagged" },
-    { id: "call-302", date: "2026-02-27", duration: "8:45", overallScore: 72, politeness: 3, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-303", date: "2026-02-26", duration: "4:10", overallScore: 80, politeness: 4, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-301", date: "2026-02-28", duration: "6:22", overallScore: 65, politeness: 3, empathy: 2, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "flagged" },
+    { id: "call-302", date: "2026-02-27", duration: "8:45", overallScore: 72, politeness: 3, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+    { id: "call-303", date: "2026-02-26", duration: "4:10", overallScore: 80, politeness: 4, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-4": [
-    { id: "call-401", date: "2026-02-28", duration: "5:55", overallScore: 83, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-402", date: "2026-02-27", duration: "4:30", overallScore: 79, politeness: 3, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-401", date: "2026-02-28", duration: "5:55", overallScore: 83, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+    { id: "call-402", date: "2026-02-27", duration: "4:30", overallScore: 79, politeness: 3, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-5": [
-    { id: "call-501", date: "2026-02-28", duration: "3:15", overallScore: 98, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-502", date: "2026-02-27", duration: "4:48", overallScore: 94, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-501", date: "2026-02-28", duration: "3:15", overallScore: 98, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-502", date: "2026-02-27", duration: "4:48", overallScore: 94, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
   ],
   "agent-6": [
-    { id: "call-601", date: "2026-02-28", duration: "9:30", overallScore: 42, politeness: 2, empathy: 1, conflict: true, resolution: false, status: "flagged" },
-    { id: "call-602", date: "2026-02-27", duration: "6:15", overallScore: 71, politeness: 3, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-603", date: "2026-02-26", duration: "7:45", overallScore: 58, politeness: 2, empathy: 2, conflict: true, resolution: true, status: "flagged" },
+    { id: "call-601", date: "2026-02-28", duration: "9:30", overallScore: 42, politeness: 2, empathy: 1, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 2, severity: "critical", status: "flagged" },
+    { id: "call-602", date: "2026-02-27", duration: "6:15", overallScore: 71, politeness: 3, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "minor", status: "reviewed" },
+    { id: "call-603", date: "2026-02-26", duration: "7:45", overallScore: 58, politeness: 2, empathy: 2, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "flagged" },
   ],
   "agent-7": [
-    { id: "call-701", date: "2026-02-28", duration: "4:10", overallScore: 93, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-702", date: "2026-02-27", duration: "6:40", overallScore: 88, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-701", date: "2026-02-28", duration: "4:10", overallScore: 93, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-702", date: "2026-02-27", duration: "6:40", overallScore: 88, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-8": [
-    { id: "call-801", date: "2026-02-28", duration: "10:15", overallScore: 48, politeness: 2, empathy: 2, conflict: true, resolution: false, status: "flagged" },
-    { id: "call-802", date: "2026-02-27", duration: "7:20", overallScore: 67, politeness: 3, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-803", date: "2026-02-26", duration: "5:50", overallScore: 55, politeness: 2, empathy: 2, conflict: true, resolution: true, status: "flagged" },
+    { id: "call-801", date: "2026-02-28", duration: "10:15", overallScore: 48, politeness: 2, empathy: 2, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 2, severity: "major", status: "flagged" },
+    { id: "call-802", date: "2026-02-27", duration: "7:20", overallScore: 67, politeness: 3, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "minor", status: "reviewed" },
+    { id: "call-803", date: "2026-02-26", duration: "5:50", overallScore: 55, politeness: 2, empathy: 2, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "flagged" },
   ],
   "agent-9": [
-    { id: "call-901", date: "2026-02-28", duration: "3:55", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-902", date: "2026-02-27", duration: "5:25", overallScore: 87, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-901", date: "2026-02-28", duration: "3:55", overallScore: 91, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-902", date: "2026-02-27", duration: "5:25", overallScore: 87, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-10": [
-    { id: "call-1001", date: "2026-02-28", duration: "6:05", overallScore: 78, politeness: 3, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-1002", date: "2026-02-27", duration: "8:10", overallScore: 73, politeness: 3, empathy: 3, conflict: true, resolution: true, status: "pending" },
+    { id: "call-1001", date: "2026-02-28", duration: "6:05", overallScore: 78, politeness: 3, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+    { id: "call-1002", date: "2026-02-27", duration: "8:10", overallScore: 73, politeness: 3, empathy: 3, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "pending" },
   ],
   "agent-11": [
-    { id: "call-1101", date: "2026-02-28", duration: "3:30", overallScore: 97, politeness: 5, empathy: 5, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-1102", date: "2026-02-27", duration: "4:15", overallScore: 92, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-1101", date: "2026-02-28", duration: "3:30", overallScore: 97, politeness: 5, empathy: 5, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-1102", date: "2026-02-27", duration: "4:15", overallScore: 92, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
   ],
   "agent-12": [
-    { id: "call-1201", date: "2026-02-28", duration: "7:50", overallScore: 66, politeness: 3, empathy: 2, conflict: true, resolution: true, status: "flagged" },
-    { id: "call-1202", date: "2026-02-27", duration: "5:35", overallScore: 75, politeness: 3, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-1201", date: "2026-02-28", duration: "7:50", overallScore: 66, politeness: 3, empathy: 2, conflict: true, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "flagged" },
+    { id: "call-1202", date: "2026-02-27", duration: "5:35", overallScore: 75, politeness: 3, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-13": [
-    { id: "call-1301", date: "2026-02-28", duration: "4:45", overallScore: 90, politeness: 5, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-1302", date: "2026-02-27", duration: "6:00", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-1301", date: "2026-02-28", duration: "4:45", overallScore: 90, politeness: 5, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 5, severity: "minor", status: "reviewed" },
+    { id: "call-1302", date: "2026-02-27", duration: "6:00", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
   "agent-14": [
-    { id: "call-1401", date: "2026-02-28", duration: "11:20", overallScore: 38, politeness: 1, empathy: 1, conflict: true, resolution: false, status: "flagged" },
-    { id: "call-1402", date: "2026-02-27", duration: "8:30", overallScore: 52, politeness: 2, empathy: 2, conflict: true, resolution: false, status: "flagged" },
-    { id: "call-1403", date: "2026-02-26", duration: "6:45", overallScore: 64, politeness: 3, empathy: 2, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-1401", date: "2026-02-28", duration: "11:20", overallScore: 38, politeness: 1, empathy: 1, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 2, severity: "critical", status: "flagged" },
+    { id: "call-1402", date: "2026-02-27", duration: "8:30", overallScore: 52, politeness: 2, empathy: 2, conflict: true, resolution: false, scriptCompliance: false, factualAccuracy: 3, severity: "major", status: "flagged" },
+    { id: "call-1403", date: "2026-02-26", duration: "6:45", overallScore: 64, politeness: 3, empathy: 2, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 3, severity: "moderate", status: "reviewed" },
   ],
   "agent-15": [
-    { id: "call-1501", date: "2026-02-28", duration: "4:20", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, status: "reviewed" },
-    { id: "call-1502", date: "2026-02-27", duration: "5:50", overallScore: 82, politeness: 4, empathy: 3, conflict: false, resolution: true, status: "reviewed" },
+    { id: "call-1501", date: "2026-02-28", duration: "4:20", overallScore: 85, politeness: 4, empathy: 4, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
+    { id: "call-1502", date: "2026-02-27", duration: "5:50", overallScore: 82, politeness: 4, empathy: 3, conflict: false, resolution: true, scriptCompliance: true, factualAccuracy: 4, severity: "minor", status: "reviewed" },
   ],
 };
 
@@ -171,6 +177,16 @@ export const callDetail: CallDetail = {
   customerName: "Alex Thompson",
   overallScore: 45,
   scores: {
+    scriptCompliance: {
+      compliant: false,
+      confidence: 82,
+      evidence: "Agent failed to verify customer identity before accessing account. Skipped de-escalation protocol when conflict arose",
+    },
+    factualAccuracy: {
+      score: 3,
+      confidence: 75,
+      evidence: "Agent stated charges were for different billing periods, which may be incorrect. Refund timeline of 5-7 days appears standard",
+    },
     politeness: {
       score: 2,
       confidence: 89,
@@ -190,6 +206,11 @@ export const callDetail: CallDetail = {
       resolved: false,
       confidence: 87,
       evidence: "Call ended without agreed-upon next steps. Customer expressed ongoing dissatisfaction at 8:30",
+    },
+    severity: {
+      level: "major",
+      confidence: 90,
+      evidence: "Dismissive agent behavior combined with unresolved billing issue and active conflict. Customer threatened cancellation",
     },
   },
   flagForReview: true,

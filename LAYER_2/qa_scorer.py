@@ -3,7 +3,8 @@
 LAYER 2 QA Scorer — Scores customer service calls using the score-call-quality skill.
 
 Takes a LAYER 1 JSON output file and produces a qa_report.json with:
-- 4 dimension scores (Politeness, Empathy, Conflict, Resolution)
+- 7 dimension scores (Script Compliance, Factual Accuracy, Politeness, Empathy,
+  Conflict, Resolution, Overall Severity)
 - Overall weighted score (0-100)
 - Flag for review when confidence is low
 - Evidence quotes from the transcript
@@ -87,10 +88,13 @@ def condense_transcript_for_scoring(l1_data: dict) -> str:
 def compute_overall_score(dimensions: list) -> float:
     """Compute weighted overall score normalized to 0-100.
 
-    Normalization:
-    - Politeness/Empathy (1-5 scale): (score - 1) / 4 → 0.0-1.0
-    - Conflict (0=no conflict=good, 1=conflict=bad): invert → (1 - score)
-    - Resolution (0=unresolved=bad, 1=resolved=good): keep as-is
+    Normalization (all mapped to 0.0–1.0 where 1.0 = best):
+    - Script Compliance (binary 0/1): 1=compliant=good, keep as-is
+    - Factual Accuracy (1-5 scale): (score - 1) / 4
+    - Politeness/Empathy (1-5 scale): (score - 1) / 4
+    - Conflict Detection (binary 0/1): invert → (1 - score), 0=good
+    - Issue Resolution (binary 0/1): 1=resolved=good, keep as-is
+    - Overall Severity (1-4 scale): invert → (4 - score) / 3, 1=minor=best
 
     Args:
         dimensions: List of dimension dicts with name, weight, score.
@@ -106,15 +110,18 @@ def compute_overall_score(dimensions: list) -> float:
         score = dim["score"]
         weight = dim["weight"]
 
-        if name in ("Politeness & Tone", "Empathy"):
+        if name in ("Politeness & Tone", "Empathy", "Factual Accuracy"):
             # 1-5 scale → normalize to 0-1
             normalized = (score - 1.0) / 4.0
         elif name == "Conflict Detection":
             # 0=no conflict (good), 1=conflict (bad) → invert
             normalized = 1.0 - score
-        elif name == "Issue Resolution":
-            # 0=unresolved (bad), 1=resolved (good) → keep
+        elif name in ("Issue Resolution", "Script Compliance"):
+            # 0=bad, 1=good → keep as-is
             normalized = float(score)
+        elif name == "Overall Severity":
+            # 1=minor (best), 4=critical (worst) → invert
+            normalized = (4.0 - score) / 3.0
         else:
             normalized = score
 
@@ -280,9 +287,9 @@ def score_call(l1_json_path: str) -> dict:
             raise ValueError(f"No JSON found in skill output:\n{raw_output}")
 
     dimensions = skill_result.get("dimensions", [])
-    if len(dimensions) != 4:
+    if len(dimensions) != 7:
         raise ValueError(
-            f"Expected 4 dimensions, got {len(dimensions)}. "
+            f"Expected 7 dimensions, got {len(dimensions)}. "
             f"Raw output:\n{raw_output}"
         )
 

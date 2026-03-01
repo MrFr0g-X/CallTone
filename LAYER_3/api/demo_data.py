@@ -52,7 +52,9 @@ TREND_DATA = [
 REAL_CALL_ENTRY = {
     "id": "call-bad-cs", "date": "2026-02-28", "duration": "1:31",
     "overallScore": 38, "politeness": 2, "empathy": 1,
-    "conflict": True, "resolution": True, "status": "flagged",
+    "conflict": True, "resolution": True,
+    "scriptCompliance": False, "factualAccuracy": 3, "severity": "major",
+    "status": "flagged",
     "agentId": "agent-1",
 }
 
@@ -61,80 +63,80 @@ REAL_CALL_ENTRY = {
 # ---------------------------------------------------------------------------
 AGENT_CALLS = [
     REAL_CALL_ENTRY,
-    {"id": "call-001", "date": "2026-02-28", "duration": "4:32", "overallScore": 92, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-002", "date": "2026-02-27", "duration": "6:15", "overallScore": 78, "politeness": 3, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-003", "date": "2026-02-27", "duration": "8:47", "overallScore": 45, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "status": "flagged"},
-    {"id": "call-004", "date": "2026-02-26", "duration": "3:21", "overallScore": 88, "politeness": 4, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-005", "date": "2026-02-26", "duration": "5:58", "overallScore": 95, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-006", "date": "2026-02-25", "duration": "7:12", "overallScore": 62, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "status": "flagged"},
-    {"id": "call-007", "date": "2026-02-25", "duration": "2:45", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-008", "date": "2026-02-24", "duration": "9:03", "overallScore": 38, "politeness": 1, "empathy": 2, "conflict": True, "resolution": False, "status": "flagged"},
-    {"id": "call-009", "date": "2026-02-24", "duration": "4:18", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-    {"id": "call-010", "date": "2026-02-23", "duration": "5:30", "overallScore": 82, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "status": "pending"},
+    {"id": "call-001", "date": "2026-02-28", "duration": "4:32", "overallScore": 92, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+    {"id": "call-002", "date": "2026-02-27", "duration": "6:15", "overallScore": 78, "politeness": 3, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+    {"id": "call-003", "date": "2026-02-27", "duration": "8:47", "overallScore": 45, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 3, "severity": "major", "status": "flagged"},
+    {"id": "call-004", "date": "2026-02-26", "duration": "3:21", "overallScore": 88, "politeness": 4, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+    {"id": "call-005", "date": "2026-02-26", "duration": "5:58", "overallScore": 95, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+    {"id": "call-006", "date": "2026-02-25", "duration": "7:12", "overallScore": 62, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "flagged"},
+    {"id": "call-007", "date": "2026-02-25", "duration": "2:45", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+    {"id": "call-008", "date": "2026-02-24", "duration": "9:03", "overallScore": 38, "politeness": 1, "empathy": 2, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 2, "severity": "critical", "status": "flagged"},
+    {"id": "call-009", "date": "2026-02-24", "duration": "4:18", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+    {"id": "call-010", "date": "2026-02-23", "duration": "5:30", "overallScore": 82, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "pending"},
 ]
 
 AGENT_CALLS_MAP = {
     "agent-1": AGENT_CALLS,
     "agent-2": [
-        {"id": "call-201", "date": "2026-02-28", "duration": "3:45", "overallScore": 96, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-202", "date": "2026-02-27", "duration": "5:12", "overallScore": 89, "politeness": 4, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-203", "date": "2026-02-26", "duration": "7:30", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-201", "date": "2026-02-28", "duration": "3:45", "overallScore": 96, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-202", "date": "2026-02-27", "duration": "5:12", "overallScore": 89, "politeness": 4, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+        {"id": "call-203", "date": "2026-02-26", "duration": "7:30", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
     ],
     "agent-3": [
-        {"id": "call-301", "date": "2026-02-28", "duration": "6:22", "overallScore": 65, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "status": "flagged"},
-        {"id": "call-302", "date": "2026-02-27", "duration": "8:45", "overallScore": 72, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-303", "date": "2026-02-26", "duration": "4:10", "overallScore": 80, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-301", "date": "2026-02-28", "duration": "6:22", "overallScore": 65, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "flagged"},
+        {"id": "call-302", "date": "2026-02-27", "duration": "8:45", "overallScore": 72, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+        {"id": "call-303", "date": "2026-02-26", "duration": "4:10", "overallScore": 80, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-6": [
-        {"id": "call-601", "date": "2026-02-28", "duration": "9:30", "overallScore": 42, "politeness": 2, "empathy": 1, "conflict": True, "resolution": False, "status": "flagged"},
-        {"id": "call-602", "date": "2026-02-27", "duration": "6:15", "overallScore": 71, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-603", "date": "2026-02-26", "duration": "7:45", "overallScore": 58, "politeness": 2, "empathy": 2, "conflict": True, "resolution": True, "status": "flagged"},
+        {"id": "call-601", "date": "2026-02-28", "duration": "9:30", "overallScore": 42, "politeness": 2, "empathy": 1, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 2, "severity": "critical", "status": "flagged"},
+        {"id": "call-602", "date": "2026-02-27", "duration": "6:15", "overallScore": 71, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "minor", "status": "reviewed"},
+        {"id": "call-603", "date": "2026-02-26", "duration": "7:45", "overallScore": 58, "politeness": 2, "empathy": 2, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "flagged"},
     ],
     "agent-8": [
-        {"id": "call-801", "date": "2026-02-28", "duration": "10:15", "overallScore": 48, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "status": "flagged"},
-        {"id": "call-802", "date": "2026-02-27", "duration": "7:20", "overallScore": 67, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-803", "date": "2026-02-26", "duration": "5:50", "overallScore": 55, "politeness": 2, "empathy": 2, "conflict": True, "resolution": True, "status": "flagged"},
+        {"id": "call-801", "date": "2026-02-28", "duration": "10:15", "overallScore": 48, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 2, "severity": "major", "status": "flagged"},
+        {"id": "call-802", "date": "2026-02-27", "duration": "7:20", "overallScore": 67, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "minor", "status": "reviewed"},
+        {"id": "call-803", "date": "2026-02-26", "duration": "5:50", "overallScore": 55, "politeness": 2, "empathy": 2, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "flagged"},
     ],
     "agent-4": [
-        {"id": "call-401", "date": "2026-02-28", "duration": "5:55", "overallScore": 83, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-402", "date": "2026-02-27", "duration": "4:30", "overallScore": 79, "politeness": 3, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-401", "date": "2026-02-28", "duration": "5:55", "overallScore": 83, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+        {"id": "call-402", "date": "2026-02-27", "duration": "4:30", "overallScore": 79, "politeness": 3, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-5": [
-        {"id": "call-501", "date": "2026-02-28", "duration": "3:15", "overallScore": 98, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-502", "date": "2026-02-27", "duration": "4:48", "overallScore": 94, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-501", "date": "2026-02-28", "duration": "3:15", "overallScore": 98, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-502", "date": "2026-02-27", "duration": "4:48", "overallScore": 94, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
     ],
     "agent-7": [
-        {"id": "call-701", "date": "2026-02-28", "duration": "4:10", "overallScore": 93, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-702", "date": "2026-02-27", "duration": "6:40", "overallScore": 88, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-701", "date": "2026-02-28", "duration": "4:10", "overallScore": 93, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-702", "date": "2026-02-27", "duration": "6:40", "overallScore": 88, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-9": [
-        {"id": "call-901", "date": "2026-02-28", "duration": "3:55", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-902", "date": "2026-02-27", "duration": "5:25", "overallScore": 87, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-901", "date": "2026-02-28", "duration": "3:55", "overallScore": 91, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-902", "date": "2026-02-27", "duration": "5:25", "overallScore": 87, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-10": [
-        {"id": "call-1001", "date": "2026-02-28", "duration": "6:05", "overallScore": 78, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-1002", "date": "2026-02-27", "duration": "8:10", "overallScore": 73, "politeness": 3, "empathy": 3, "conflict": True, "resolution": True, "status": "pending"},
+        {"id": "call-1001", "date": "2026-02-28", "duration": "6:05", "overallScore": 78, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+        {"id": "call-1002", "date": "2026-02-27", "duration": "8:10", "overallScore": 73, "politeness": 3, "empathy": 3, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "pending"},
     ],
     "agent-11": [
-        {"id": "call-1101", "date": "2026-02-28", "duration": "3:30", "overallScore": 97, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-1102", "date": "2026-02-27", "duration": "4:15", "overallScore": 92, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-1101", "date": "2026-02-28", "duration": "3:30", "overallScore": 97, "politeness": 5, "empathy": 5, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-1102", "date": "2026-02-27", "duration": "4:15", "overallScore": 92, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
     ],
     "agent-12": [
-        {"id": "call-1201", "date": "2026-02-28", "duration": "7:50", "overallScore": 66, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "status": "flagged"},
-        {"id": "call-1202", "date": "2026-02-27", "duration": "5:35", "overallScore": 75, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-1201", "date": "2026-02-28", "duration": "7:50", "overallScore": 66, "politeness": 3, "empathy": 2, "conflict": True, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "flagged"},
+        {"id": "call-1202", "date": "2026-02-27", "duration": "5:35", "overallScore": 75, "politeness": 3, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-13": [
-        {"id": "call-1301", "date": "2026-02-28", "duration": "4:45", "overallScore": 90, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-1302", "date": "2026-02-27", "duration": "6:00", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-1301", "date": "2026-02-28", "duration": "4:45", "overallScore": 90, "politeness": 5, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 5, "severity": "minor", "status": "reviewed"},
+        {"id": "call-1302", "date": "2026-02-27", "duration": "6:00", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
     "agent-14": [
-        {"id": "call-1401", "date": "2026-02-28", "duration": "11:20", "overallScore": 38, "politeness": 1, "empathy": 1, "conflict": True, "resolution": False, "status": "flagged"},
-        {"id": "call-1402", "date": "2026-02-27", "duration": "8:30", "overallScore": 52, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "status": "flagged"},
-        {"id": "call-1403", "date": "2026-02-26", "duration": "6:45", "overallScore": 64, "politeness": 3, "empathy": 2, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-1401", "date": "2026-02-28", "duration": "11:20", "overallScore": 38, "politeness": 1, "empathy": 1, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 2, "severity": "critical", "status": "flagged"},
+        {"id": "call-1402", "date": "2026-02-27", "duration": "8:30", "overallScore": 52, "politeness": 2, "empathy": 2, "conflict": True, "resolution": False, "scriptCompliance": False, "factualAccuracy": 3, "severity": "major", "status": "flagged"},
+        {"id": "call-1403", "date": "2026-02-26", "duration": "6:45", "overallScore": 64, "politeness": 3, "empathy": 2, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 3, "severity": "moderate", "status": "reviewed"},
     ],
     "agent-15": [
-        {"id": "call-1501", "date": "2026-02-28", "duration": "4:20", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "status": "reviewed"},
-        {"id": "call-1502", "date": "2026-02-27", "duration": "5:50", "overallScore": 82, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "status": "reviewed"},
+        {"id": "call-1501", "date": "2026-02-28", "duration": "4:20", "overallScore": 85, "politeness": 4, "empathy": 4, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
+        {"id": "call-1502", "date": "2026-02-27", "duration": "5:50", "overallScore": 82, "politeness": 4, "empathy": 3, "conflict": False, "resolution": True, "scriptCompliance": True, "factualAccuracy": 4, "severity": "minor", "status": "reviewed"},
     ],
 }
 
@@ -196,6 +198,22 @@ def _load_real_call_detail() -> dict:
         "customerName": "John Carter",
         "overallScore": 38,
         "scores": {
+            "scriptCompliance": {
+                "compliant": False,
+                "confidence": 85,
+                "evidence": (
+                    "Agent skipped empathetic greeting and customer verification. "
+                    "Jumped directly into troubleshooting checklist without following standard protocol"
+                ),
+            },
+            "factualAccuracy": {
+                "score": 3,
+                "confidence": 78,
+                "evidence": (
+                    "Agent provided correct troubleshooting steps (check bag, check underneath). "
+                    "No factual errors detected, but information was delivered without context"
+                ),
+            },
             "politeness": {
                 "score": 2,
                 "confidence": 87,
@@ -217,7 +235,7 @@ def _load_real_call_detail() -> dict:
                 "confidence": 94,
                 "evidence": (
                     "Customer anger detected at 0.88-0.95 confidence across 20+ utterances. "
-                    'Progressive escalation throughout the call'
+                    "Progressive escalation throughout the call"
                 ),
             },
             "resolution": {
@@ -228,15 +246,29 @@ def _load_real_call_detail() -> dict:
                     "Agent correctly identified the fix via bag question"
                 ),
             },
+            "severity": {
+                "level": "major",
+                "confidence": 88,
+                "evidence": (
+                    "Significant empathy deficit (1/5) combined with sustained conflict and "
+                    "script non-compliance. Customer experience severely impacted despite resolution"
+                ),
+            },
         },
         "flagForReview": True,
         "transcript": transcript,
         "aiReport": """## Call Quality Assessment Report
 
 ### Executive Summary
-This call scored **38/100** and has been **flagged for supervisor review**. Agent Tanya handled a vacuum cleaner malfunction complaint from an increasingly frustrated customer. While the issue was ultimately resolved (full vacuum bag), the agent demonstrated critical empathy deficits throughout the 1:31 interaction.
+This call scored **38/100** and has been **flagged for supervisor review**. Agent Tanya handled a vacuum cleaner malfunction complaint from an increasingly frustrated customer. While the issue was ultimately resolved (full vacuum bag), the agent demonstrated critical empathy deficits throughout the 1:31 interaction. Overall severity classified as **Major**.
 
 ### Key Findings
+
+**Script Compliance (Non-Compliant)**
+Agent skipped the empathetic greeting protocol and customer identity verification. Jumped directly into a rapid-fire troubleshooting checklist without following the standard call opening procedure.
+
+**Factual Accuracy (Score: 3/5)**
+The troubleshooting steps provided were technically correct — checking underneath the vacuum and asking about the bag were valid diagnostic questions. No factual errors or contradictions detected, but information lacked context.
 
 **Politeness & Tone (Score: 2/5)**
 The agent opened professionally ("All pro vacuums, this is Tanya") but immediately shifted to a rapid-fire troubleshooting checklist without acknowledging the customer's emotional state. Questions were asked in quick succession without pausing for the customer's full responses.
@@ -250,11 +282,15 @@ Active conflict signals were present throughout the call. The customer's tone wa
 **Resolution (Resolved)**
 Despite poor delivery, the agent correctly diagnosed the problem. The vacuum bag was completely full. The customer confirmed this finding. This prevented what could have escalated to a formal complaint or return.
 
+**Overall Severity: Major**
+The combination of script non-compliance, critical empathy deficit (1/5), and sustained unaddressed conflict constitutes a major service failure. The issue was resolved, which prevented escalation to critical severity.
+
 ### Recommendations
 1. **Immediate**: Empathy scripting — require agents to verbally acknowledge customer emotion before troubleshooting
 2. **Coaching**: Tanya should review call recordings where agents demonstrate active listening
-3. **Process**: "Is the bag full?" should be question #1, not #4, in the vacuum troubleshooting script
-4. **Follow-up**: Customer satisfaction survey recommended within 48 hours""",
+3. **Script compliance**: Reinforce standard call opening protocol (greeting, verification, empathy)
+4. **Process**: "Is the bag full?" should be question #1, not #4, in the vacuum troubleshooting script
+5. **Follow-up**: Customer satisfaction survey recommended within 48 hours""",
     }
 
 
@@ -270,10 +306,13 @@ _MOCK_CALL_DETAIL = {
     "customerName": "Alex Thompson",
     "overallScore": 45,
     "scores": {
+        "scriptCompliance": {"compliant": False, "confidence": 82, "evidence": "Agent failed to verify customer identity before accessing account. Skipped de-escalation protocol when conflict arose"},
+        "factualAccuracy": {"score": 3, "confidence": 75, "evidence": "Agent stated charges were for different billing periods, which may be incorrect. Refund timeline of 5-7 days appears standard"},
         "politeness": {"score": 2, "confidence": 89, "evidence": '"Look, I already told you this isn\'t going to work" — Agent used dismissive tone at 2:34'},
         "empathy": {"score": 2, "confidence": 91, "evidence": '"I understand that\'s frustrating" was said once but not followed with supportive action'},
         "conflict": {"detected": True, "confidence": 94, "evidence": 'Raised voices detected at 3:15-4:02. Customer said "This is unacceptable" and agent responded defensively'},
         "resolution": {"resolved": False, "confidence": 87, "evidence": "Call ended without agreed-upon next steps. Customer expressed ongoing dissatisfaction at 8:30"},
+        "severity": {"level": "major", "confidence": 90, "evidence": "Dismissive agent behavior combined with unresolved billing issue and active conflict. Customer threatened cancellation"},
     },
     "flagForReview": True,
     "transcript": [

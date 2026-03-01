@@ -207,21 +207,33 @@ const CallDetailPage = () => {
               {/* Scoring Panel */}
               <GlassCard glow="accent" className="p-5 sm:p-6">
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6 flex items-center gap-2">
-                  <Shield className="w-4 h-4" /> QA Scoring
+                  <Shield className="w-4 h-4" /> QA Scoring — 7 Dimensions
                 </h2>
-                <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-6">
+                {/* Radial scores: Politeness, Empathy, Factual Accuracy */}
+                <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-6">
                   {renderScoreRadial(call.scores.politeness.score, 5, "Politeness", call.scores.politeness.confidence)}
                   {renderScoreRadial(call.scores.empathy.score, 5, "Empathy", call.scores.empathy.confidence)}
+                  {renderScoreRadial(call.scores.factualAccuracy.score, 5, "Factual Accuracy", call.scores.factualAccuracy.confidence)}
                 </div>
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                {/* Binary badges: Script Compliance, Conflict, Resolution */}
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                   <div className="text-center p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.04]">
+                     <span className={cn(
+                       "text-[11px] px-2.5 py-1 rounded-full font-medium",
+                       call.scores.scriptCompliance.compliant ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+                     )}>
+                       {call.scores.scriptCompliance.compliant ? "Compliant" : "Non-Compliant"}
+                     </span>
+                     <p className="text-[10px] text-muted-foreground mt-2">Script · {call.scores.scriptCompliance.confidence}%</p>
+                   </div>
                    <div className="text-center p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.04]">
                      <span className={cn(
                        "text-[11px] px-2.5 py-1 rounded-full font-medium",
                        call.scores.conflict.detected ? "bg-destructive/10 text-destructive" : "bg-success/10 text-success"
                      )}>
-                       {call.scores.conflict.detected ? "Conflict Detected" : "No Conflict"}
+                       {call.scores.conflict.detected ? "Conflict" : "No Conflict"}
                      </span>
-                     <p className="text-[10px] text-muted-foreground mt-2">{call.scores.conflict.confidence}% confidence</p>
+                     <p className="text-[10px] text-muted-foreground mt-2">Detection · {call.scores.conflict.confidence}%</p>
                    </div>
                    <div className="text-center p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.04]">
                     <span className={cn(
@@ -230,14 +242,30 @@ const CallDetailPage = () => {
                     )}>
                       {call.scores.resolution.resolved ? "Resolved" : "Unresolved"}
                     </span>
-                    <p className="text-[10px] text-muted-foreground mt-2">{call.scores.resolution.confidence}% confidence</p>
+                    <p className="text-[10px] text-muted-foreground mt-2">Resolution · {call.scores.resolution.confidence}%</p>
                   </div>
+                </div>
+                {/* Severity badge */}
+                <div className="mb-6 p-3.5 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.04] flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Overall Severity</p>
+                    <p className="text-[10px] text-muted-foreground">{call.scores.severity.confidence}% confidence</p>
+                  </div>
+                  <span className={cn(
+                    "text-[11px] px-3 py-1.5 rounded-full font-semibold capitalize",
+                    call.scores.severity.level === "minor" && "bg-success/10 text-success",
+                    call.scores.severity.level === "moderate" && "bg-warning/10 text-warning",
+                    call.scores.severity.level === "major" && "bg-orange-500/10 text-orange-500",
+                    call.scores.severity.level === "critical" && "bg-destructive/10 text-destructive",
+                  )}>
+                    {call.scores.severity.level}
+                  </span>
                 </div>
                 {/* Evidence Quotes */}
                 <div className="space-y-2">
                   {Object.entries(call.scores).map(([key, val]) => (
                     <div key={key} className="p-3.5 rounded-xl bg-foreground/[0.02] border border-foreground/[0.04]">
-                      <p className="text-[10px] font-medium text-muted-foreground capitalize mb-1.5 uppercase tracking-wider">{key}</p>
+                      <p className="text-[10px] font-medium text-muted-foreground capitalize mb-1.5 uppercase tracking-wider">{key.replace(/([A-Z])/g, " $1").trim()}</p>
                       <p className="text-xs italic text-foreground/60 leading-relaxed">"{val.evidence}"</p>
                     </div>
                   ))}
