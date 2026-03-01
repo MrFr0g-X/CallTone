@@ -1,142 +1,137 @@
-# Grad Project — Audio Analysis Pipeline
+# CallTone — AI-Powered QA for Customer Service Calls
 
-An end-to-end pipeline for processing call-center audio: enhancement, transcription, speaker diarization, emotion detection, and role identification via LLM.
+Automated quality assurance system that processes call recordings end-to-end: raw audio in, structured QA report out. Replaces manual QA (2-5% coverage) with 100% call analysis. Fully offline — no cloud APIs.
+
+## Architecture
+
+```
+Raw Audio (MP3/WAV)
+    |
+    v
+LAYER 1 — Audio Intelligence Pipeline
+  Enhancement (resemble-enhance) -> Diarization (pyannote) ->
+  Transcription (SenseVoice) -> Role ID (Llama 3.1 8B) ->
+  Emotion Detection (Audio2Emotion)
+  Output: JSON with speakers, roles, emotions, behavioral signals
+    |
+    v
+LAYER 2 — QA Scoring Engine
+  Scores calls on 4 dimensions using LLM skill
+  Output: qa_report.json with scores, confidence, evidence
+    |
+    v
+LAYER 3 — REST API (FastAPI)
+  11 endpoints serving dashboards + call detail
+    |
+    v
+UI — React Frontend (separate repo)
+  QA Dashboard, Agent Dashboard, Admin Panel
+```
 
 ## Project Structure
 
 ```
-grad_project/
-├── LAYER_1/                    # Audio processing pipeline
-│   ├── pipeline/               # Core pipeline (transcription + diarization)
-│   ├── audio_emotion_detection_enhanced/  # Emotion detection from audio
-│   ├── resemble-enhance/       # Audio enhancement (noise removal)
-│   └── models/                 # Model weights (downloaded separately)
-│
-├── skill_implementation/       # LLM-based role identification
-│   ├── skills/                 # Prompt-only skill definitions
-│   ├── skill_runtime/          # Runtime framework
-│   ├── runner/                 # CLI interface
-│   └── models/                 # LLM weights (downloaded separately)
-│
-├── Test_audio/                 # Sample audio for testing
-├── download_models.py          # Script to download all model weights
-└── README.md
-```
-
-## Pipeline Overview
-
-```
-Raw Audio
-   │
-   ▼
-[LAYER_1] Audio Enhancement (resemble-enhance)
-   │
-   ▼
-[LAYER_1] Transcription + Speaker Diarization (SenseVoice + pyannote)
-   │
-   ▼
-[LAYER_1] Emotion Detection per utterance (Audio2Emotion)
-   │
-   ▼
-[skill_implementation] Role Identification (Llama 3.1 8B)
-   │
-   ▼
-Structured Output (JSON)
+grad-project-main/
+├── LAYER_1/                          # Audio processing pipeline
+│   ├── pipeline.py                   # Main entry point
+│   ├── pipeline/transcribe_diarize.py
+│   ├── role_identification.py
+│   ├── emotion_integration.py
+│   └── audio_emotion_detection_enhanced/
+├── LAYER_2/                          # QA scoring engine
+│   ├── qa_scorer.py                  # Scores calls using LLM skill
+│   └── test_determinism.py
+├── LAYER_3/                          # REST API
+│   └── api/
+│       ├── main.py                   # FastAPI — 11 endpoints
+│       ├── demo_data.py              # Mock data + real L1 transformer
+│       └── models.py                 # Pydantic schemas
+├── skill_implementation/             # LLM skills framework
+│   ├── skills/
+│   │   ├── identify-call-roles/      # Speaker role identification
+│   │   └── score-call-quality/       # QA scoring (4 dimensions)
+│   └── skill_runtime/                # Framework runtime
+├── Test_audio/                       # Sample audio + pipeline outputs
+├── config.py                         # Portable path resolution
+└── download_models.py                # Downloads all models (~12.5 GB)
 ```
 
 ## Quick Start
 
-### 1. Install dependencies
+### 1. Download models
 
 ```bash
-# LAYER_1 dependencies
-pip install -r LAYER_1/requirements_full.txt
-
-# skill_implementation dependencies
-pip install -r skill_implementation/requirements.txt
-```
-
-### 2. Download model weights (~12.5 GB total)
-
-> Models are not included in this repo due to size. Use the download script:
-
-```bash
-# Install the downloader dependency first
 pip install huggingface-hub
-
-# See what will be downloaded
-python download_models.py --list
-
-# Download all models (except pyannote — requires token)
-python download_models.py
-
-# Download ALL models including pyannote (requires HuggingFace token)
-# First accept terms at:
-#   https://huggingface.co/pyannote/segmentation-3.0
-#   https://huggingface.co/pyannote/speaker-diarization-3.1
-python download_models.py --hf-token YOUR_HF_TOKEN
-
-# Download a single model
-python download_models.py --model llama
-python download_models.py --model sensevoice
+python download_models.py --list     # see what will be downloaded
+python download_models.py            # download all (except pyannote)
 ```
 
-| Model Key             | Size      | Used by                        |
-|-----------------------|-----------|-------------------------------|
-| `llama`               | ~8.0 GB   | skill_implementation (LLM)    |
-| `sensevoice`          | ~893 MB   | LAYER_1 transcription         |
-| `resemble`            | ~681 MB   | LAYER_1 audio enhancement     |
-| `audio2emotion`       | ~1.2 GB   | LAYER_1 emotion detection     |
-| `pyannote-segmentation` | ~500 MB | LAYER_1 diarization (token)   |
-| `pyannote-wespeaker`  | ~500 MB   | LAYER_1 diarization (token)   |
+pyannote models need a HuggingFace token:
+```bash
+python download_models.py --hf-token YOUR_TOKEN
+```
 
-### 3. Run the pipeline
+### 2. Run LAYER 1 pipeline
 
 ```bash
-# Run the full LAYER_1 pipeline on an audio file
 cd LAYER_1
-python pipeline.py --input /path/to/audio.mp3
-
-# Run role identification skill
-cd skill_implementation
-python runner/run_skill.py --skill identify-call-roles --file examples/sample_transcript.txt
+python pipeline.py --input /path/to/call.mp3
 ```
 
-## Components
+### 3. Run QA scoring
 
-### LAYER_1 — Audio Processing
+```bash
+python LAYER_2/qa_scorer.py Test_audio/bad_cs_results/bad_cs_denoised_diarized_with_emotions.json
+```
 
-Handles everything from raw audio to an annotated transcript with speaker labels and emotions.
+### 4. Start the API
 
-- **Audio enhancement**: removes background noise using [resemble-enhance](https://github.com/resemble-ai/resemble-enhance)
-- **Transcription**: speech-to-text via [SenseVoice](https://huggingface.co/iic/SenseVoiceSmall)
-- **Diarization**: who spoke when via [pyannote.audio](https://github.com/pyannote/pyannote-audio)
-- **Emotion detection**: per-utterance emotion from audio using [Audio2Emotion](https://huggingface.co/nvidia/Audio2Emotion-v3.0)
+```bash
+cd LAYER_3/api
+pip install -r requirements.txt
+uvicorn main:app --reload
+# http://localhost:8000/docs for interactive API docs
+```
 
-See [LAYER_1/LAYER_1_ARCHITECTURE.md](LAYER_1/LAYER_1_ARCHITECTURE.md) for a detailed architecture overview.
+### 5. Start the UI (separate repo)
 
-### skill_implementation — LLM Skills
+```bash
+# Clone: https://github.com/MrFr0g-X/calltone-UI
+cd calltone-UI
+npm install
+npm run dev
+# http://localhost:8080
+```
 
-A lightweight framework for deterministic, prompt-only LLM tasks using local models.
+## QA Dimensions
 
-- **Model**: Meta-Llama-3.1-8B-Instruct (Q8 GGUF, runs on CPU/GPU)
-- **Current skills**: `identify-call-roles` — labels speakers as Agent/Customer
-- **Deterministic**: same input always produces same output (temperature=0)
+| Dimension | Weight | Scale | Good Score |
+|-----------|--------|-------|------------|
+| Politeness & Tone | 15% | 1-5 | 4+ |
+| Empathy | 10% | 1-5 | 4+ |
+| Conflict Detection | 15% | 0 or 1 | 0 (no conflict) |
+| Issue Resolution | 5% | 0 or 1 | 1 (resolved) |
 
-See [skill_implementation/README.md](skill_implementation/README.md) for full documentation.
+Overall score normalized to 0-100. Calls flagged for review when any dimension confidence < 0.7.
+
+## Models
+
+| Model | Size | Purpose |
+|-------|------|---------|
+| Meta-Llama-3.1-8B-Instruct | ~8 GB | Role ID + QA scoring (GGUF) |
+| SenseVoiceSmall | ~893 MB | Transcription |
+| resemble-enhance | ~681 MB | Audio denoising |
+| Audio2Emotion-v3.0 | ~1.2 GB | Emotion detection (ONNX) |
+| pyannote segmentation + wespeaker | ~1 GB | Speaker diarization |
 
 ## Requirements
 
 - Python 3.9+
-- CUDA (optional, improves speed for LAYER_1 models)
-- ~15 GB disk space for all models
-- ~8 GB RAM minimum (16 GB recommended)
+- CUDA optional (recommended for speed)
+- ~15 GB disk for models
+- 8 GB RAM minimum, 16 GB recommended
 
-## HuggingFace Token
+## Related
 
-pyannote models require accepting usage terms and authenticating:
-
-1. Create a free account at [huggingface.co](https://huggingface.co)
-2. Accept terms at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
-3. Generate a token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
-4. Pass it via `python download_models.py --hf-token YOUR_TOKEN` or set `HF_TOKEN=YOUR_TOKEN`
+- **UI Repository**: [MrFr0g-X/calltone-UI](https://github.com/MrFr0g-X/calltone-UI)
+- Graduation project — CSAI 498/499, Zewail City of Science and Technology
