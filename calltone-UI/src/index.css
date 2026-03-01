@@ -1,0 +1,275 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ── Light Mode ── */
+  :root,
+  .light {
+    --background: 220 20% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 224 76% 40%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 192 91% 36%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 14% 92%;
+    --muted-foreground: 215 16% 44%;
+
+    --accent: 187 92% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 160 84% 34%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 11%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 91%;
+    --ring: 224 76% 48%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 224 76% 48%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 90%;
+    --sidebar-ring: 224 76% 48%;
+  }
+
+  /* ── Dark Mode ── */
+  .dark {
+    --background: 222 80% 8%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 40% 11%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 224 76% 40%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 192 91% 36%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 222 25% 16%;
+    --muted-foreground: 215 16% 54%;
+
+    --accent: 187 92% 43%;
+    --accent-foreground: 222 80% 8%;
+
+    --destructive: 0 72% 56%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 80% 8%;
+
+    --border: 222 20% 18%;
+    --input: 222 25% 14%;
+    --ring: 224 76% 48%;
+
+    --sidebar-background: 222 40% 10%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 224 76% 48%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 222 25% 16%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 222 20% 18%;
+    --sidebar-ring: 224 76% 48%;
+  }
+}
+
+@layer base {
+  /* Global custom scrollbar */
+  * {
+    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.15) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.15);
+    border-radius: 999px;
+    transition: background 0.2s;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.3);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/40 ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  /* Glass — adaptive for light/dark */
+  .glass {
+    @apply backdrop-blur-2xl border shadow-xl;
+    background: hsl(var(--card) / 0.5);
+    border-color: hsl(var(--border) / 0.5);
+  }
+
+  .dark .glass {
+    background: hsl(0 0% 100% / 0.04);
+    border-color: hsl(0 0% 100% / 0.06);
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-3xl border shadow-2xl;
+    background: hsl(var(--card) / 0.7);
+    border-color: hsl(var(--border) / 0.6);
+  }
+
+  .dark .glass-strong {
+    background: hsl(0 0% 100% / 0.07);
+    border-color: hsl(0 0% 100% / 0.08);
+  }
+
+  .glass-input {
+    @apply backdrop-blur-xl border text-foreground placeholder:text-muted-foreground focus:border-accent/40 focus:ring-2 focus:ring-accent/20 transition-all duration-300 outline-none;
+    background: hsl(var(--input) / 0.5);
+    border-color: hsl(var(--border));
+  }
+
+  .dark .glass-input {
+    background: hsl(0 0% 100% / 0.04);
+    border-color: hsl(0 0% 100% / 0.08);
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary to-secondary;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 40px -10px hsl(224 76% 48% / 0.2);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 40px -10px hsl(160 84% 39% / 0.2);
+  }
+
+  .glow-warning {
+    box-shadow: 0 0 40px -10px hsl(38 92% 50% / 0.2);
+  }
+
+  .glow-destructive {
+    box-shadow: 0 0 40px -10px hsl(0 72% 56% / 0.2);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 40px -10px hsl(187 92% 43% / 0.2);
+  }
+
+  .display-score {
+    @apply text-5xl sm:text-6xl font-extralight tracking-tight;
+  }
+
+  /* Custom scrollbar for overlay panels */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+  }
+
+  /* Firefox */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -20px) scale(1.02); }
+  66% { transform: translate(-15px, 15px) scale(0.98); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* View Transition for theme switching */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}

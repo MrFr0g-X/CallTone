@@ -9,29 +9,27 @@ Raw Audio (MP3/WAV)
     |
     v
 LAYER 1 — Audio Intelligence Pipeline
-  Enhancement (resemble-enhance) -> Diarization (pyannote) ->
-  Transcription (SenseVoice) -> Role ID (Llama 3.1 8B) ->
-  Emotion Detection (Audio2Emotion)
+  Enhancement -> Diarization -> Transcription -> Role ID -> Emotion Detection
   Output: JSON with speakers, roles, emotions, behavioral signals
     |
     v
 LAYER 2 — QA Scoring Engine
-  Scores calls on 4 dimensions using LLM skill
+  Scores calls on 4 dimensions using LLM skill (Llama 3.1 8B)
   Output: qa_report.json with scores, confidence, evidence
     |
     v
 LAYER 3 — REST API (FastAPI)
-  11 endpoints serving dashboards + call detail
+  11 endpoints serving dashboards + call detail data
     |
     v
-UI — React Frontend (separate repo)
+calltone-UI — React Frontend
   QA Dashboard, Agent Dashboard, Admin Panel
 ```
 
 ## Project Structure
 
 ```
-grad-project-main/
+CallTone/
 ├── LAYER_1/                          # Audio processing pipeline
 │   ├── pipeline.py                   # Main entry point
 │   ├── pipeline/transcribe_diarize.py
@@ -43,7 +41,7 @@ grad-project-main/
 │   └── test_determinism.py
 ├── LAYER_3/                          # REST API
 │   └── api/
-│       ├── main.py                   # FastAPI — 11 endpoints
+│       ├── main.py                   # FastAPI — 11 endpoints under /api
 │       ├── demo_data.py              # Mock data + real L1 transformer
 │       └── models.py                 # Pydantic schemas
 ├── skill_implementation/             # LLM skills framework
@@ -51,6 +49,10 @@ grad-project-main/
 │   │   ├── identify-call-roles/      # Speaker role identification
 │   │   └── score-call-quality/       # QA scoring (4 dimensions)
 │   └── skill_runtime/                # Framework runtime
+├── calltone-UI/                      # React frontend
+│   ├── src/pages/                    # QA, Agent, Admin dashboards
+│   ├── src/services/api.ts           # API client
+│   └── src/contexts/AuthContext.tsx   # Role-based auth
 ├── Test_audio/                       # Sample audio + pipeline outputs
 ├── config.py                         # Portable path resolution
 └── download_models.py                # Downloads all models (~12.5 GB)
@@ -62,16 +64,11 @@ grad-project-main/
 
 ```bash
 pip install huggingface-hub
-python download_models.py --list     # see what will be downloaded
-python download_models.py            # download all (except pyannote)
+python download_models.py --list
+python download_models.py
 ```
 
-pyannote models need a HuggingFace token:
-```bash
-python download_models.py --hf-token YOUR_TOKEN
-```
-
-### 2. Run LAYER 1 pipeline
+### 2. Run the full pipeline
 
 ```bash
 cd LAYER_1
@@ -84,24 +81,24 @@ python pipeline.py --input /path/to/call.mp3
 python LAYER_2/qa_scorer.py Test_audio/bad_cs_results/bad_cs_denoised_diarized_with_emotions.json
 ```
 
-### 4. Start the API
+### 4. Start the API + UI
 
 ```bash
+# Terminal 1 — API (port 8000)
 cd LAYER_3/api
 pip install -r requirements.txt
 uvicorn main:app --reload
-# http://localhost:8000/docs for interactive API docs
-```
 
-### 5. Start the UI (separate repo)
-
-```bash
-# Clone: https://github.com/MrFr0g-X/calltone-UI
+# Terminal 2 — UI (port 8080)
 cd calltone-UI
 npm install
 npm run dev
-# http://localhost:8080
 ```
+
+Open `http://localhost:8080` and login:
+- `qa@calltone.tech` — QA Dashboard
+- `agent@calltone.tech` — Agent Dashboard
+- `admin@calltone.tech` — Admin Panel
 
 ## QA Dimensions
 
@@ -112,7 +109,7 @@ npm run dev
 | Conflict Detection | 15% | 0 or 1 | 0 (no conflict) |
 | Issue Resolution | 5% | 0 or 1 | 1 (resolved) |
 
-Overall score normalized to 0-100. Calls flagged for review when any dimension confidence < 0.7.
+Overall score normalized to 0-100. Calls flagged when any dimension confidence < 0.7.
 
 ## Models
 
@@ -127,11 +124,11 @@ Overall score normalized to 0-100. Calls flagged for review when any dimension c
 ## Requirements
 
 - Python 3.9+
+- Node.js 18+ (for UI)
 - CUDA optional (recommended for speed)
 - ~15 GB disk for models
 - 8 GB RAM minimum, 16 GB recommended
 
-## Related
+---
 
-- **UI Repository**: [MrFr0g-X/calltone-UI](https://github.com/MrFr0g-X/calltone-UI)
-- Graduation project — CSAI 498/499, Zewail City of Science and Technology
+Graduation project — CSAI 498/499, Zewail City of Science and Technology
