@@ -1,28 +1,29 @@
 """
-CallTone LAYER 3 — REST API for QA scoring.
+CallTone LAYER 3 — REST API serving demo data + real LAYER 1 call detail.
 
-Endpoints:
-    POST /analyze       Score a call (from pre-processed JSON or raw audio)
-    GET  /health        Health check
-    GET  /reports/{id}  Retrieve a stored report
+All endpoints live under the /api prefix to match the calltone-UI frontend.
+Auth is mock (email-based role resolution). Dashboards serve realistic mock
+data. CallDetail for "call-bad-cs" serves real LAYER 1 transcript data.
 """
 
-import shutil
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
-from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 # Add repo root to path
 REPO_ROOT = Path(__file__).parent.parent.parent.resolve()
 sys.path.insert(0, str(REPO_ROOT))
 
-from LAYER_2.qa_scorer import score_call
-from LAYER_3.api.models import ErrorResponse, HealthResponse, QAReport
+from LAYER_3.api.demo_data import (
+    AGENTS,
+    AGENT_CALLS,
+    AGENT_CALLS_MAP,
+    TREND_DATA,
+    get_call_detail,
+)
 
 app = FastAPI(
     title="CallTone QA API",
@@ -38,132 +39,130 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory report store (keyed by call_id)
-_reports: dict[str, dict] = {}
+router = APIRouter(prefix="/api")
 
 
-@app.get("/health", response_model=HealthResponse)
+# ── Auth (mock) ──────────────────────────────────────────────────────────────
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str = ""
+
+
+@router.post("/auth/login")
+async def login(body: LoginRequest):
+    name = body.email.split("@")[0]
+    display = name[0].upper() + name[1:] if name else "User"
+    role = "agent"
+    if "admin" in body.email:
+        role = "admin"
+    elif "qa" in body.email:
+        role = "qa"
+    return {"token": f"demo-token-{role}", "user": {"name": display, "role": role}}
+
+
+@router.post("/auth/logout")
+async def logout():
+    return {"message": "ok"}
+
+
+@router.get("/auth/me")
+async def me():
+    return {"name": "Demo User", "role": "qa", "email": "demo@calltone.tech"}
+
+
+# ── Agent Dashboard ──────────────────────────────────────────────────────────
+
+
+@router.get("/agent/dashboard")
+async def agent_dashboard(range: str = "Weekly"):
+    calls = AGENT_CALLS
+    n = len(calls) or 1
+    avg = round(sum(c["overallScore"] for c in calls) / n)
+    pol = round(sum(c["politeness"] for c in calls) / n, 1)
+    emp = round(sum(c["empathy"] for c in calls) / n, 1)
+    conflict_pct = round(sum(1 for c in calls if c["conflict"]) / n * 100)
+    resolution_pct = round(sum(1 for c in calls if c["resolution"]) / n * 100)
+
+    return {
+        "scores": {
+            "overall": avg,
+            "politeness": pol,
+            "empathy": emp,
+            "conflictRate": conflict_pct,
+            "resolutionRate": resolution_pct,
+        },
+        "trend": TREND_DATA,
+    }
+
+
+@router.get("/agent/calls")
+async def agent_calls(range: str = "Weekly", sortBy: str = "time", page: int = 1):
+    calls = list(AGENT_CALLS)
+    if sortBy == "rating":
+        calls.sort(key=lambda c: c["overallScore"], reverse=True)
+    return {"calls": calls, "total": len(calls)}
+
+
+# ── QA Dashboard ─────────────────────────────────────────────────────────────
+
+
+@router.get("/qa/summary")
+async def qa_summary(range: str = "Monthly"):
+    total = sum(a["callCount"] for a in AGENTS)
+    avg = round(sum(a["overallScore"] for a in AGENTS) / len(AGENTS))
+    flagged = sum(
+        1 for calls in AGENT_CALLS_MAP.values() for c in calls if c["status"] == "flagged"
+    )
+    return {"totalCalls": total, "avgScore": avg, "flaggedCalls": flagged}
+
+
+@router.get("/qa/agents")
+async def qa_agents(range: str = "Monthly"):
+    return AGENTS
+
+
+@router.get("/qa/agents/{agent_id}/calls")
+async def qa_agent_calls(agent_id: str, range: str = "Monthly", sortBy: str = "time"):
+    calls = list(AGENT_CALLS_MAP.get(agent_id, []))
+    if sortBy == "rating":
+        calls.sort(key=lambda c: c["overallScore"], reverse=True)
+    return calls
+
+
+@router.get("/qa/calls/{call_id}")
+async def qa_call_detail(call_id: str):
+    detail = get_call_detail(call_id)
+    if not detail:
+        raise HTTPException(status_code=404, detail=f"Call not found: {call_id}")
+    return detail
+
+
+# ── Health ───────────────────────────────────────────────────────────────────
+
+
+@router.get("/health")
 async def health():
-    """Health check endpoint."""
-    return HealthResponse()
+    return {"status": "healthy", "layer1": "available", "layer2": "demo_mode"}
 
 
-@app.post("/analyze", response_model=QAReport, responses={400: {"model": ErrorResponse}})
-async def analyze(
-    json_path: Optional[str] = Form(None),
-    file: Optional[UploadFile] = File(None),
-):
-    """Score a customer service call.
-
-    Two modes:
-        - **json_path**: Path to a pre-processed LAYER 1 JSON (fast, for demo).
-        - **file**: Raw audio upload — runs full LAYER 1 pipeline then LAYER 2 (slow).
-
-    At least one of json_path or file must be provided.
-    """
-    if json_path is None and file is None:
-        raise HTTPException(
-            status_code=400,
-            detail="Provide either 'json_path' (path to LAYER 1 JSON) or 'file' (audio upload).",
-        )
-
-    l1_json_path: str
-
-    if json_path is not None:
-        # Fast path: score pre-processed LAYER 1 JSON directly
-        resolved = Path(json_path)
-        if not resolved.is_absolute():
-            resolved = REPO_ROOT / json_path
-        if not resolved.exists():
-            raise HTTPException(status_code=400, detail=f"File not found: {resolved}")
-        l1_json_path = str(resolved)
-    else:
-        # Slow path: run full LAYER 1 pipeline on uploaded audio
-        l1_json_path = await _run_layer1_pipeline(file)
-
-    try:
-        report = score_call(l1_json_path)
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-
-    # Store report for later retrieval
-    _reports[report["call_id"]] = report
-
-    return report
+# ── Analyze (stub) ───────────────────────────────────────────────────────────
 
 
-@app.get(
-    "/reports/{call_id}",
-    response_model=QAReport,
-    responses={404: {"model": ErrorResponse}},
-)
-async def get_report(call_id: str):
-    """Retrieve a previously scored QA report by call_id."""
-    if call_id not in _reports:
-        raise HTTPException(status_code=404, detail=f"Report not found: {call_id}")
-    return _reports[call_id]
+@router.post("/analyze")
+async def analyze():
+    detail = get_call_detail("call-bad-cs")
+    if not detail:
+        raise HTTPException(status_code=503, detail="Demo data not available")
+    return detail
 
 
-async def _run_layer1_pipeline(file: UploadFile) -> str:
-    """Run the full LAYER 1 pipeline on an uploaded audio file.
+# ── Mount & root ─────────────────────────────────────────────────────────────
 
-    Saves the upload to a temp directory, runs pipeline.py as a subprocess,
-    then locates the output JSON.
+app.include_router(router)
 
-    Returns:
-        Path to the LAYER 1 output JSON.
-    """
-    suffix = Path(file.filename).suffix if file.filename else ".wav"
-    tmp_dir = Path(tempfile.mkdtemp(prefix="calltone_"))
-    tmp_audio = tmp_dir / f"upload{suffix}"
 
-    try:
-        # Save uploaded file
-        with open(tmp_audio, "wb") as f:
-            content = await file.read()
-            f.write(content)
-
-        # Run LAYER 1 pipeline
-        pipeline_script = REPO_ROOT / "LAYER_1" / "pipeline.py"
-        result = subprocess.run(
-            [sys.executable, str(pipeline_script), str(tmp_audio)],
-            capture_output=True,
-            text=True,
-            timeout=600,  # 10 minutes max
-            cwd=str(REPO_ROOT / "LAYER_1"),
-        )
-
-        if result.returncode != 0:
-            raise HTTPException(
-                status_code=500,
-                detail=f"LAYER 1 pipeline failed: {result.stderr[:500]}",
-            )
-
-        # Find the output JSON — pipeline produces <base>_diarized_with_emotions.json
-        stem = tmp_audio.stem
-        candidates = [
-            tmp_dir / f"{stem}_diarized_with_emotions.json",
-            tmp_dir / f"{stem}_enhanced_diarized_with_emotions.json",
-            tmp_dir / f"{stem}_diarized.json",
-        ]
-        for candidate in candidates:
-            if candidate.exists():
-                return str(candidate)
-
-        # Fallback: find any JSON in tmp_dir
-        jsons = list(tmp_dir.glob("*.json"))
-        if jsons:
-            return str(jsons[0])
-
-        raise HTTPException(
-            status_code=500,
-            detail="LAYER 1 pipeline completed but no output JSON found.",
-        )
-    except subprocess.TimeoutExpired:
-        raise HTTPException(status_code=504, detail="LAYER 1 pipeline timed out (>10 min).")
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Pipeline error: {e}")
+@app.get("/")
+async def root():
+    return {"message": "CallTone API", "docs": "/docs"}
