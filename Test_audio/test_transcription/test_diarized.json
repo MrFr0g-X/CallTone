@@ -1,0 +1,532 @@
+{
+  "call_metadata": {
+    "file": "test.wav",
+    "duration_seconds": 90.75,
+    "num_speakers": 2,
+    "total_segments": 40,
+    "roles_identified": true,
+    "role_mapping": {
+      "SPEAKER_A": "Customer Service Agent",
+      "SPEAKER_B": "Customer"
+    }
+  },
+  "speaker_summary": {
+    "Customer Service Agent": {
+      "talk_time_seconds": 19.79,
+      "talk_time_pct": 21.8,
+      "median_pitch_hz": null,
+      "behavioral_signals": {
+        "QUESTIONING": 4,
+        "SATISFIED": 1
+      },
+      "role": "Customer Service Agent"
+    },
+    "Customer": {
+      "talk_time_seconds": 70.96,
+      "talk_time_pct": 78.2,
+      "median_pitch_hz": null,
+      "behavioral_signals": {
+        "QUESTIONING": 1
+      },
+      "role": "Customer"
+    }
+  },
+  "transcript": [
+    {
+      "id": 1,
+      "start": 6.93,
+      "end": 8.59,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "All pro vacuums, this is Tanya.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 2,
+      "start": 9.82,
+      "end": 13.33,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Hey, Tanya, I'm having a problem with my distraction cleaner.",
+      "role": "Customer"
+    },
+    {
+      "id": 3,
+      "start": 13.92,
+      "end": 18.26,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "s stopped working on me and I don't know why it's stopped working, it's not old.",
+      "role": "Customer"
+    },
+    {
+      "id": 4,
+      "start": 18.26,
+      "end": 20.92,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Did you check underneath to see if anything is blocking it?",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 5,
+      "start": 22.12,
+      "end": 25.66,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Well yeah, of course I did, that was one of the first things that I did.",
+      "role": "Customer"
+    },
+    {
+      "id": 6,
+      "start": 27.49,
+      "end": 29.02,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "All right, this is what happened.",
+      "role": "Customer"
+    },
+    {
+      "id": 7,
+      "start": 29.51,
+      "end": 32.19,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "This morning, I started back into my son's room.",
+      "role": "Customer"
+    },
+    {
+      "id": 8,
+      "start": 32.92,
+      "end": 35.43,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "it's a pretty good science room, it's not a 12 by 12.",
+      "role": "Customer"
+    },
+    {
+      "id": 9,
+      "start": 36.26,
+      "end": 38.66,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And it was working so fine.",
+      "role": "Customer"
+    },
+    {
+      "id": 10,
+      "start": 39.48,
+      "end": 42.2,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And then I moved into the living room, which is even a larger room.",
+      "role": "Customer"
+    },
+    {
+      "id": 11,
+      "start": 42.34,
+      "end": 45.07,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "How about the belt, Did you check to see if it was broken?",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 12,
+      "start": 48.55,
+      "end": 49.51,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "It wasn't the belt.",
+      "role": "Customer"
+    },
+    {
+      "id": 13,
+      "start": 50.42,
+      "end": 51.28,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I check that too.",
+      "role": "Customer"
+    },
+    {
+      "id": 14,
+      "start": 51.85,
+      "end": 54.94,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I'm trying to explain that what I was doing.",
+      "role": "Customer"
+    },
+    {
+      "id": 15,
+      "start": 57.96,
+      "end": 61.88,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I'm trying to explain to you what happened when the vacuum broke what I was doing.",
+      "role": "Customer"
+    },
+    {
+      "id": 16,
+      "start": 62.7,
+      "end": 64.11,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "When I was actually in the living room.",
+      "role": "Customer"
+    },
+    {
+      "id": 17,
+      "start": 64.98,
+      "end": 67.51,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I started noticing that I wasn't picking up stuff so good.",
+      "role": "Customer"
+    },
+    {
+      "id": 18,
+      "start": 68.29,
+      "end": 71.31,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "So I turned it off and I got down and started looking at it.",
+      "role": "Customer"
+    },
+    {
+      "id": 19,
+      "start": 71.8,
+      "end": 73.54,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And the carpet was kind of high, but.",
+      "role": "Customer"
+    },
+    {
+      "id": 20,
+      "start": 74.2,
+      "end": 75.82,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "You know, nothing was clogged underneath.",
+      "role": "Customer"
+    },
+    {
+      "id": 21,
+      "start": 76.78,
+      "end": 79.16,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And also, I did look at the belt and it seemed okay.",
+      "role": "Customer"
+    },
+    {
+      "id": 22,
+      "start": 79.51,
+      "end": 82.68,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Did the vacuum clean and work when you first started using it today?",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 23,
+      "start": 84.22,
+      "end": 85.89,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I just said that.",
+      "role": "Customer"
+    },
+    {
+      "id": 24,
+      "start": 86.53,
+      "end": 91.12,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I remember I told you that I started off backing my son's room.",
+      "role": "Customer"
+    },
+    {
+      "id": 25,
+      "start": 91.81,
+      "end": 93.25,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And it worked just fine.",
+      "role": "Customer"
+    },
+    {
+      "id": 26,
+      "start": 94.09,
+      "end": 98.5,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And while I was vacuuming the living room, that's when it's stopped working.",
+      "role": "Customer"
+    },
+    {
+      "id": 27,
+      "start": 98.55,
+      "end": 99.69,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Have you ever checked it bag?",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 28,
+      "start": 100.34,
+      "end": 102.04,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "They get full and you have to replace them.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 29,
+      "start": 103.19,
+      "end": 104.07,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And.",
+      "role": "Customer"
+    },
+    {
+      "id": 30,
+      "start": 106.71,
+      "end": 107.88,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "You know what.",
+      "role": "Customer"
+    },
+    {
+      "id": 31,
+      "start": 109.58,
+      "end": 112.2,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Gosh, okay, let me check the bag.",
+      "role": "Customer"
+    },
+    {
+      "id": 32,
+      "start": 113.38,
+      "end": 117.73,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "That might be a holdout at this moment, I'm working to be on the phone.",
+      "role": "Customer"
+    },
+    {
+      "id": 33,
+      "start": 117.73,
+      "end": 118.32,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Okay.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 34,
+      "start": 122.19,
+      "end": 123.62,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "See here.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 35,
+      "start": 132.11,
+      "end": 133.02,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Alright.",
+      "role": "Customer"
+    },
+    {
+      "id": 36,
+      "start": 134.63,
+      "end": 135.76,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Completely full.",
+      "role": "Customer"
+    },
+    {
+      "id": 37,
+      "start": 136.45,
+      "end": 139.5,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Can't we my girlfriend and change the bag?",
+      "role": "Customer"
+    },
+    {
+      "id": 38,
+      "start": 140.18,
+      "end": 142.08,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Well, it sounds like that fixed your problem.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 39,
+      "start": 143.74,
+      "end": 144.78,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Yeah,.",
+      "role": "Customer Service Agent"
+    },
+    {
+      "id": 40,
+      "start": 145.22,
+      "end": 146.96,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "SATISFIED"
+      ],
+      "text": "Yeah, thank you, okay, no problem.",
+      "role": "Customer Service Agent"
+    }
+  ],
+  "rating_criteria": [
+    {
+      "id": 1,
+      "name": "Script Compliance",
+      "weight": 0.25,
+      "description": "Did the agent follow required protocols and scripts?"
+    },
+    {
+      "id": 2,
+      "name": "Factual Accuracy",
+      "weight": 0.25,
+      "description": "Were statements and information provided correct?"
+    },
+    {
+      "id": 3,
+      "name": "Politeness & Tone",
+      "weight": 0.15,
+      "description": "Was communication professional and courteous?"
+    },
+    {
+      "id": 4,
+      "name": "Empathy",
+      "weight": 0.1,
+      "description": "Were customer feelings acknowledged appropriately?"
+    },
+    {
+      "id": 5,
+      "name": "Conflict Detection",
+      "weight": 0.15,
+      "description": "Were escalations or conflicts present?"
+    },
+    {
+      "id": 6,
+      "name": "Issue Resolution",
+      "weight": 0.05,
+      "description": "Was the customer's problem resolved?"
+    },
+    {
+      "id": 7,
+      "name": "Overall Severity",
+      "weight": 0.05,
+      "description": "Classify the call as: Minor / Moderate / Major / Critical"
+    }
+  ]
+}

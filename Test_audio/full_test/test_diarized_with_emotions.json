@@ -1,0 +1,936 @@
+{
+  "call_metadata": {
+    "file": "test.wav",
+    "duration_seconds": 90.75,
+    "num_speakers": 2,
+    "total_segments": 40,
+    "roles_identified": true,
+    "role_mapping": {
+      "SPEAKER_A": "Customer Service Agent",
+      "SPEAKER_B": "Customer"
+    }
+  },
+  "speaker_summary": {
+    "Customer Service Agent": {
+      "talk_time_seconds": 19.79,
+      "talk_time_pct": 21.8,
+      "median_pitch_hz": null,
+      "behavioral_signals": {
+        "QUESTIONING": 4,
+        "SATISFIED": 1
+      },
+      "role": "Customer Service Agent"
+    },
+    "Customer": {
+      "talk_time_seconds": 70.96,
+      "talk_time_pct": 78.2,
+      "median_pitch_hz": null,
+      "behavioral_signals": {
+        "QUESTIONING": 1
+      },
+      "role": "Customer"
+    }
+  },
+  "transcript": [
+    {
+      "id": 1,
+      "start": 6.93,
+      "end": 8.59,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "All pro vacuums, this is Tanya.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "joy",
+      "audio_emotion_confidence": 0.790081799030304,
+      "audio_emotion_scores": {
+        "anger": 0.15352138876914978,
+        "disgust": 0.006903769448399544,
+        "fear": 0.033475112169981,
+        "joy": 0.790081799030304,
+        "neutral": 0.011294119991362095,
+        "sadness": 0.004723821766674519
+      }
+    },
+    {
+      "id": 2,
+      "start": 9.82,
+      "end": 13.33,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Hey, Tanya, I'm having a problem with my distraction cleaner.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7384312152862549,
+      "audio_emotion_scores": {
+        "anger": 0.7384312152862549,
+        "disgust": 0.03463185951113701,
+        "fear": 0.0077014826238155365,
+        "joy": 0.11684314161539078,
+        "neutral": 0.09022524952888489,
+        "sadness": 0.012167086824774742
+      }
+    },
+    {
+      "id": 3,
+      "start": 13.92,
+      "end": 18.26,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "s stopped working on me and I don't know why it's stopped working, it's not old.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8864807486534119,
+      "audio_emotion_scores": {
+        "anger": 0.8864807486534119,
+        "disgust": 0.034606706351041794,
+        "fear": 0.006581787019968033,
+        "joy": 0.03186842426657677,
+        "neutral": 0.029469886794686317,
+        "sadness": 0.010992447845637798
+      }
+    },
+    {
+      "id": 4,
+      "start": 18.26,
+      "end": 20.92,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Did you check underneath to see if anything is blocking it?",
+      "role": "Customer Service Agent",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.5134568810462952,
+      "audio_emotion_scores": {
+        "anger": 0.5134568810462952,
+        "disgust": 0.017822174355387688,
+        "fear": 0.07467909902334213,
+        "joy": 0.3802456557750702,
+        "neutral": 0.008127418346703053,
+        "sadness": 0.005668747238814831
+      }
+    },
+    {
+      "id": 5,
+      "start": 22.12,
+      "end": 25.66,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Well yeah, of course I did, that was one of the first things that I did.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.919187605381012,
+      "audio_emotion_scores": {
+        "anger": 0.919187605381012,
+        "disgust": 0.038536809384822845,
+        "fear": 0.004346292931586504,
+        "joy": 0.015823297202587128,
+        "neutral": 0.015456580556929111,
+        "sadness": 0.006649485323578119
+      }
+    },
+    {
+      "id": 6,
+      "start": 27.49,
+      "end": 29.02,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "All right, this is what happened.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9535432457923889,
+      "audio_emotion_scores": {
+        "anger": 0.9535432457923889,
+        "disgust": 0.008881128393113613,
+        "fear": 0.00409793620929122,
+        "joy": 0.02362969145178795,
+        "neutral": 0.006981508806347847,
+        "sadness": 0.0028664914425462484
+      }
+    },
+    {
+      "id": 7,
+      "start": 29.51,
+      "end": 32.19,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "This morning, I started back into my son's room.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8957868218421936,
+      "audio_emotion_scores": {
+        "anger": 0.8957868218421936,
+        "disgust": 0.0304497629404068,
+        "fear": 0.005818807054311037,
+        "joy": 0.033438924700021744,
+        "neutral": 0.024988248944282532,
+        "sadness": 0.009517556987702847
+      }
+    },
+    {
+      "id": 8,
+      "start": 32.92,
+      "end": 35.43,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "it's a pretty good science room, it's not a 12 by 12.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7770220637321472,
+      "audio_emotion_scores": {
+        "anger": 0.7770220637321472,
+        "disgust": 0.031123695895075798,
+        "fear": 0.01738082244992256,
+        "joy": 0.12265872955322266,
+        "neutral": 0.03528234362602234,
+        "sadness": 0.016532311215996742
+      }
+    },
+    {
+      "id": 9,
+      "start": 36.26,
+      "end": 38.66,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And it was working so fine.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7357907891273499,
+      "audio_emotion_scores": {
+        "anger": 0.7357907891273499,
+        "disgust": 0.08134341239929199,
+        "fear": 0.052110519260168076,
+        "joy": 0.0568884052336216,
+        "neutral": 0.03677840903401375,
+        "sadness": 0.03708842396736145
+      }
+    },
+    {
+      "id": 10,
+      "start": 39.48,
+      "end": 42.2,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And then I moved into the living room, which is even a larger room.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8506156206130981,
+      "audio_emotion_scores": {
+        "anger": 0.8506156206130981,
+        "disgust": 0.02810259908437729,
+        "fear": 0.008839339949190617,
+        "joy": 0.07179678231477737,
+        "neutral": 0.027832897379994392,
+        "sadness": 0.012812763452529907
+      }
+    },
+    {
+      "id": 11,
+      "start": 42.34,
+      "end": 45.07,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "How about the belt, Did you check to see if it was broken?",
+      "role": "Customer Service Agent",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.5778544545173645,
+      "audio_emotion_scores": {
+        "anger": 0.5778544545173645,
+        "disgust": 0.017485283315181732,
+        "fear": 0.0446619987487793,
+        "joy": 0.3404538631439209,
+        "neutral": 0.012862841598689556,
+        "sadness": 0.006681464612483978
+      }
+    },
+    {
+      "id": 12,
+      "start": 48.55,
+      "end": 49.51,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "It wasn't the belt.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9423765540122986,
+      "audio_emotion_scores": {
+        "anger": 0.9423765540122986,
+        "disgust": 0.007267825771123171,
+        "fear": 0.005958243738859892,
+        "joy": 0.036979202181100845,
+        "neutral": 0.005236214026808739,
+        "sadness": 0.0021820273250341415
+      }
+    },
+    {
+      "id": 13,
+      "start": 50.42,
+      "end": 51.28,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I check that too.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8663262128829956,
+      "audio_emotion_scores": {
+        "anger": 0.8663262128829956,
+        "disgust": 0.011578097008168697,
+        "fear": 0.005278128664940596,
+        "joy": 0.10449270904064178,
+        "neutral": 0.00891459733247757,
+        "sadness": 0.003410332603380084
+      }
+    },
+    {
+      "id": 14,
+      "start": 51.85,
+      "end": 54.94,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I'm trying to explain that what I was doing.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.910912036895752,
+      "audio_emotion_scores": {
+        "anger": 0.910912036895752,
+        "disgust": 0.03700738400220871,
+        "fear": 0.004044640809297562,
+        "joy": 0.02553822472691536,
+        "neutral": 0.01730404980480671,
+        "sadness": 0.005193705670535564
+      }
+    },
+    {
+      "id": 15,
+      "start": 57.96,
+      "end": 61.88,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I'm trying to explain to you what happened when the vacuum broke what I was doing.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9423675537109375,
+      "audio_emotion_scores": {
+        "anger": 0.9423675537109375,
+        "disgust": 0.01515219546854496,
+        "fear": 0.0047273701056838036,
+        "joy": 0.02739689312875271,
+        "neutral": 0.006882965099066496,
+        "sadness": 0.0034730834886431694
+      }
+    },
+    {
+      "id": 16,
+      "start": 62.7,
+      "end": 64.11,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "When I was actually in the living room.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.914934515953064,
+      "audio_emotion_scores": {
+        "anger": 0.914934515953064,
+        "disgust": 0.012982330285012722,
+        "fear": 0.003655483713373542,
+        "joy": 0.04997355118393898,
+        "neutral": 0.015353402122855186,
+        "sadness": 0.0031008515506982803
+      }
+    },
+    {
+      "id": 17,
+      "start": 64.98,
+      "end": 67.51,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I started noticing that I wasn't picking up stuff so good.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9226189851760864,
+      "audio_emotion_scores": {
+        "anger": 0.9226189851760864,
+        "disgust": 0.016810378059744835,
+        "fear": 0.006263229995965958,
+        "joy": 0.03533889725804329,
+        "neutral": 0.013897345401346684,
+        "sadness": 0.0050711557269096375
+      }
+    },
+    {
+      "id": 18,
+      "start": 68.29,
+      "end": 71.31,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "So I turned it off and I got down and started looking at it.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9033091068267822,
+      "audio_emotion_scores": {
+        "anger": 0.9033091068267822,
+        "disgust": 0.026802750304341316,
+        "fear": 0.004396966192871332,
+        "joy": 0.03939659893512726,
+        "neutral": 0.020803017541766167,
+        "sadness": 0.005291408393532038
+      }
+    },
+    {
+      "id": 19,
+      "start": 71.8,
+      "end": 73.54,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And the carpet was kind of high, but.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7640318870544434,
+      "audio_emotion_scores": {
+        "anger": 0.7640318870544434,
+        "disgust": 0.016500428318977356,
+        "fear": 0.01411515288054943,
+        "joy": 0.1739635467529297,
+        "neutral": 0.02303771674633026,
+        "sadness": 0.008351143449544907
+      }
+    },
+    {
+      "id": 20,
+      "start": 74.2,
+      "end": 75.82,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "You know, nothing was clogged underneath.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.958041787147522,
+      "audio_emotion_scores": {
+        "anger": 0.958041787147522,
+        "disgust": 0.0109092453494668,
+        "fear": 0.002749816281720996,
+        "joy": 0.014397670514881611,
+        "neutral": 0.010941790416836739,
+        "sadness": 0.002959802281111479
+      }
+    },
+    {
+      "id": 21,
+      "start": 76.78,
+      "end": 79.16,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And also, I did look at the belt and it seemed okay.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9248642921447754,
+      "audio_emotion_scores": {
+        "anger": 0.9248642921447754,
+        "disgust": 0.009847466833889484,
+        "fear": 0.0041274260729551315,
+        "joy": 0.05062254145741463,
+        "neutral": 0.007693604566156864,
+        "sadness": 0.0028446840588003397
+      }
+    },
+    {
+      "id": 22,
+      "start": 79.51,
+      "end": 82.68,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Did the vacuum clean and work when you first started using it today?",
+      "role": "Customer Service Agent",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.5785307288169861,
+      "audio_emotion_scores": {
+        "anger": 0.5785307288169861,
+        "disgust": 0.07953964918851852,
+        "fear": 0.03940442577004433,
+        "joy": 0.2708863615989685,
+        "neutral": 0.018408307805657387,
+        "sadness": 0.013230476528406143
+      }
+    },
+    {
+      "id": 23,
+      "start": 84.22,
+      "end": 85.89,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I just said that.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8658028244972229,
+      "audio_emotion_scores": {
+        "anger": 0.8658028244972229,
+        "disgust": 0.043754443526268005,
+        "fear": 0.004385060630738735,
+        "joy": 0.06955254077911377,
+        "neutral": 0.010774190537631512,
+        "sadness": 0.005730960052460432
+      }
+    },
+    {
+      "id": 24,
+      "start": 86.53,
+      "end": 91.12,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "I remember I told you that I started off backing my son's room.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8049277067184448,
+      "audio_emotion_scores": {
+        "anger": 0.8049277067184448,
+        "disgust": 0.041779205203056335,
+        "fear": 0.011693147011101246,
+        "joy": 0.09393132477998734,
+        "neutral": 0.033681899309158325,
+        "sadness": 0.013986684381961823
+      }
+    },
+    {
+      "id": 25,
+      "start": 91.81,
+      "end": 93.25,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And it worked just fine.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.872979998588562,
+      "audio_emotion_scores": {
+        "anger": 0.872979998588562,
+        "disgust": 0.05696902424097061,
+        "fear": 0.004679717589169741,
+        "joy": 0.03628460317850113,
+        "neutral": 0.02059291861951351,
+        "sadness": 0.008493679575622082
+      }
+    },
+    {
+      "id": 26,
+      "start": 94.09,
+      "end": 98.5,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And while I was vacuuming the living room, that's when it's stopped working.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7885152697563171,
+      "audio_emotion_scores": {
+        "anger": 0.7885152697563171,
+        "disgust": 0.03947438672184944,
+        "fear": 0.008943931199610233,
+        "joy": 0.12369262427091599,
+        "neutral": 0.028389621526002884,
+        "sadness": 0.010984046384692192
+      }
+    },
+    {
+      "id": 27,
+      "start": 98.55,
+      "end": 99.69,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Have you ever checked it bag?",
+      "role": "Customer Service Agent",
+      "audio_emotion": "joy",
+      "audio_emotion_confidence": 0.8995420336723328,
+      "audio_emotion_scores": {
+        "anger": 0.07022479921579361,
+        "disgust": 0.006415865384042263,
+        "fear": 0.01406627893447876,
+        "joy": 0.8995420336723328,
+        "neutral": 0.006780935917049646,
+        "sadness": 0.0029701280873268843
+      }
+    },
+    {
+      "id": 28,
+      "start": 100.34,
+      "end": 102.04,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "They get full and you have to replace them.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8501427173614502,
+      "audio_emotion_scores": {
+        "anger": 0.8501427173614502,
+        "disgust": 0.011445244774222374,
+        "fear": 0.01040589902549982,
+        "joy": 0.12136121094226837,
+        "neutral": 0.00450582941994071,
+        "sadness": 0.0021391005720943213
+      }
+    },
+    {
+      "id": 29,
+      "start": 103.19,
+      "end": 104.07,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "And.",
+      "role": "Customer",
+      "audio_emotion": "disgust",
+      "audio_emotion_confidence": 0.48653319478034973,
+      "audio_emotion_scores": {
+        "anger": 0.17026112973690033,
+        "disgust": 0.48653319478034973,
+        "fear": 0.024039702489972115,
+        "joy": 0.19726739823818207,
+        "neutral": 0.048044364899396896,
+        "sadness": 0.07385427504777908
+      }
+    },
+    {
+      "id": 30,
+      "start": 106.71,
+      "end": 107.88,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "You know what.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8813938498497009,
+      "audio_emotion_scores": {
+        "anger": 0.8813938498497009,
+        "disgust": 0.024804307147860527,
+        "fear": 0.005138509441167116,
+        "joy": 0.06834933161735535,
+        "neutral": 0.01633691042661667,
+        "sadness": 0.003977237734943628
+      }
+    },
+    {
+      "id": 31,
+      "start": 109.58,
+      "end": 112.2,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Gosh, okay, let me check the bag.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9136728644371033,
+      "audio_emotion_scores": {
+        "anger": 0.9136728644371033,
+        "disgust": 0.019123908132314682,
+        "fear": 0.005597393959760666,
+        "joy": 0.03543413057923317,
+        "neutral": 0.01977849006652832,
+        "sadness": 0.006393220275640488
+      }
+    },
+    {
+      "id": 32,
+      "start": 113.38,
+      "end": 117.73,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "That might be a holdout at this moment, I'm working to be on the phone.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.8865129351615906,
+      "audio_emotion_scores": {
+        "anger": 0.8865129351615906,
+        "disgust": 0.052770256996154785,
+        "fear": 0.0061432900838553905,
+        "joy": 0.02630247361958027,
+        "neutral": 0.01937357895076275,
+        "sadness": 0.008897436782717705
+      }
+    },
+    {
+      "id": 33,
+      "start": 117.73,
+      "end": 118.32,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Okay.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "joy",
+      "audio_emotion_confidence": 0.6933196783065796,
+      "audio_emotion_scores": {
+        "anger": 0.057041242718696594,
+        "disgust": 0.023108864203095436,
+        "fear": 0.015890035778284073,
+        "joy": 0.6933196783065796,
+        "neutral": 0.2040838599205017,
+        "sadness": 0.00655631348490715
+      }
+    },
+    {
+      "id": 34,
+      "start": 122.19,
+      "end": 123.62,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "See here.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "disgust",
+      "audio_emotion_confidence": 0.3892842233181,
+      "audio_emotion_scores": {
+        "anger": 0.06936065107584,
+        "disgust": 0.3892842233181,
+        "fear": 0.04004288464784622,
+        "joy": 0.34654584527015686,
+        "neutral": 0.053289659321308136,
+        "sadness": 0.10147671401500702
+      }
+    },
+    {
+      "id": 35,
+      "start": 132.11,
+      "end": 133.02,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Alright.",
+      "role": "Customer",
+      "audio_emotion": "joy",
+      "audio_emotion_confidence": 0.6650580167770386,
+      "audio_emotion_scores": {
+        "anger": 0.056747522205114365,
+        "disgust": 0.14039991796016693,
+        "fear": 0.04123888909816742,
+        "joy": 0.6650580167770386,
+        "neutral": 0.034137334674596786,
+        "sadness": 0.06241830810904503
+      }
+    },
+    {
+      "id": 36,
+      "start": 134.63,
+      "end": 135.76,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Completely full.",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.9355610609054565,
+      "audio_emotion_scores": {
+        "anger": 0.9355610609054565,
+        "disgust": 0.008817018941044807,
+        "fear": 0.00421592453494668,
+        "joy": 0.04300873726606369,
+        "neutral": 0.006052375305444002,
+        "sadness": 0.0023449158761650324
+      }
+    },
+    {
+      "id": 37,
+      "start": 136.45,
+      "end": 139.5,
+      "speaker": "Customer",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "QUESTIONING"
+      ],
+      "text": "Can't we my girlfriend and change the bag?",
+      "role": "Customer",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7552455067634583,
+      "audio_emotion_scores": {
+        "anger": 0.7552455067634583,
+        "disgust": 0.07646326720714569,
+        "fear": 0.011088528670370579,
+        "joy": 0.09664524346590042,
+        "neutral": 0.04341139644384384,
+        "sadness": 0.017145978286862373
+      }
+    },
+    {
+      "id": 38,
+      "start": 140.18,
+      "end": 142.08,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Well, it sounds like that fixed your problem.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "anger",
+      "audio_emotion_confidence": 0.7924515008926392,
+      "audio_emotion_scores": {
+        "anger": 0.7924515008926392,
+        "disgust": 0.016676265746355057,
+        "fear": 0.011858641169965267,
+        "joy": 0.1583736389875412,
+        "neutral": 0.014974444173276424,
+        "sadness": 0.005665545351803303
+      }
+    },
+    {
+      "id": 39,
+      "start": 143.74,
+      "end": 144.78,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [],
+      "text": "Yeah,.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "disgust",
+      "audio_emotion_confidence": 0.5354352593421936,
+      "audio_emotion_scores": {
+        "anger": 0.0891992375254631,
+        "disgust": 0.5354352593421936,
+        "fear": 0.03657686337828636,
+        "joy": 0.2969758212566376,
+        "neutral": 0.010354905389249325,
+        "sadness": 0.031457941979169846
+      }
+    },
+    {
+      "id": 40,
+      "start": 145.22,
+      "end": 146.96,
+      "speaker": "Customer Service Agent",
+      "emotion": "EMO_UNKNOWN",
+      "event": "Speech",
+      "signals": [
+        "SATISFIED"
+      ],
+      "text": "Yeah, thank you, okay, no problem.",
+      "role": "Customer Service Agent",
+      "audio_emotion": "joy",
+      "audio_emotion_confidence": 0.5513094067573547,
+      "audio_emotion_scores": {
+        "anger": 0.33242136240005493,
+        "disgust": 0.02326309122145176,
+        "fear": 0.06376530975103378,
+        "joy": 0.5513094067573547,
+        "neutral": 0.016097936779260635,
+        "sadness": 0.013142875395715237
+      }
+    }
+  ],
+  "rating_criteria": [
+    {
+      "id": 1,
+      "name": "Script Compliance",
+      "weight": 0.25,
+      "description": "Did the agent follow required protocols and scripts?"
+    },
+    {
+      "id": 2,
+      "name": "Factual Accuracy",
+      "weight": 0.25,
+      "description": "Were statements and information provided correct?"
+    },
+    {
+      "id": 3,
+      "name": "Politeness & Tone",
+      "weight": 0.15,
+      "description": "Was communication professional and courteous?"
+    },
+    {
+      "id": 4,
+      "name": "Empathy",
+      "weight": 0.1,
+      "description": "Were customer feelings acknowledged appropriately?"
+    },
+    {
+      "id": 5,
+      "name": "Conflict Detection",
+      "weight": 0.15,
+      "description": "Were escalations or conflicts present?"
+    },
+    {
+      "id": 6,
+      "name": "Issue Resolution",
+      "weight": 0.05,
+      "description": "Was the customer's problem resolved?"
+    },
+    {
+      "id": 7,
+      "name": "Overall Severity",
+      "weight": 0.05,
+      "description": "Classify the call as: Minor / Moderate / Major / Critical"
+    }
+  ],
+  "metadata": {
+    "audio_emotion_model": "nvidia/Audio2Emotion-v3.0",
+    "audio_emotion_processed": true
+  }
+}
