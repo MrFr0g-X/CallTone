@@ -1,0 +1,309 @@
+[0.01,2.531]	1	Male,English	it has to be something where there's an intense need
+[2.987,7.981]	1	Male,English	and um and maybe it's not too dangerous and so the, and one of the natural places it started was on the 
+[8.01,13.256]	1	Male,English	eBay auction site where it's small dollar transactions, maybe forty dollars for the typical amount
+[13.673,18.085]	1	Male,English	and ah if you send check across the country, that's like a seven to ten delay
+[18.221,21.45]	1	Male,English	ten day delay. it's slow um most, most people aren't[+]
+[21.673,26.599]	1	Male,English	set up to process credit cards. your roommate probably couldn't process credit cards and so ah
+[26.657,31.176]	1	Male,English	and so you know, but since you could make PayPal payments with a credit card, you could never find
+[31.331,33.416]	1	Male,English	send a credit card payment
+[33.901,40.359]	1	Male,English	to um three hundred million people, whereas there are only something like three or four million that are set up to process ah
+[40.553,47.176]	1	Male,English	um there are like a hundred and fifty million people with emails in the U S at the time and there maybe three million that were set up to process credit cards[+]
+[47.244,51.152]	1	Male,English	small businesses, things like that. so we expanded it by, you know, one hundred forty seven million
+[51.278,59.53]	2	Male,English	do you remember what it felt like as it started compounding the way you're talking about? like what it felt like as it was growing and you realized, like wow we really have this[+]
+[59.559,64.136]	1	Male,English	now you are, you know, you're at the, at the, at the forefront of like some sort of revolutionary thing[+]
+[64.301,69.256]	1	Male,English	it's ah, it's incredibly ah exciting and it's incredibly scary and it was ah
+[69.324,73.513]	1	Male,English	it's like we're gonna take over the world and we're all gonna die and move several times between, you know
+[73.891,76.81]	1	Male,English	um that, those two ah several times a day
+[76.839,83.016]	2	Male,English	yeah, was there any bizarre push back from banks or any[~]anyone that was doing financial transa[~] transactions traditionally[+]
+[83.055,88.776]	1	Male,English	there were cer[~] certainly like more than, more than our share of challenges. you had a, you had an enormous problem of
+[88.815,92.616]	1	Male,English	fraud where people just ah figured it out ways to hack the system and steal money
+[92.616,93.004]	2	Male,English	mhm
+[93.033,96.204]	1	Male,English	and then um and you can't simply get rid of fraud because
+[96.495,101.615]	1	Male,English	you can always get it defrauded and make it cumbersome but it's easy, then it's also easy to defraud. so challenge is how do you get it[+]
+[101.828,105.891]	1	Male,English	to be easy to use but hard to defraud and that took, you know, took some time
+[106.25,111.467]	1	Male,English	there are um certainly ah banks didn't like it there were, you know, there were all the, the common payers
+[111.719,117.964]	1	Male,English	that didn't like something new and then of course, it was sort of in this um in this ah strange regulatory zone where
+[118.022,121.92]	1	Male,English	ah and it was a new form of payment, a new form of moving money and ah
+[122.279,128.136]	1	Male,English	and you know I, the, the way I often thought about it at the time was that we were in a race between technology and politics and.
+[128.427,133.644]	1	Male,English	you know, the politicians didn't like us but if we got the system, the PayPal network to be big enough
+[133.896,137.872]	1	Male,English	it would sort of overwhelm the regulators and they'd have to accept it as a, as a
+[137.891,138.638]	0	U	[UNKNOWN]
+[138.657,145.28]	2	Male,English	so the Libertarian Party must have loved that concept. like you were actually doing something that Libertarians are supposed to do[+]
+[145.29,149.101]	1	Male,English	no, there was ah an early two thousand conversation ah in one of the,
+[149.13,155.21]	1	Male,English	one of the execs ah ah PayPal said that, you know, we need to hire a whole bunch of lawyers to tell us what we, what we can do or can't do
+[155.239,161.057]	1	Male,English	no, we're not gonna hire them. the[~] they, they'll tell us what we can't do. so we have to just go ahead and not hire the lawyers and just, just do it
+[161.164,161.61]	2	Male,English	yeah
+[161.639,166.633]	1	Male,English	now you know the, the sort of a, I, I, I actually, I do not know of a company like PayPal
+[166.798,171.695]	1	Male,English	could have been started even two, three years later. so you know, in the, in the aftermath of nine eleven
+[171.85,177.794]	1	Male,English	we got the Patriot Act in the U S and that ah, that attached, you know, much more regulatory scrutiny
+[177.959,182.885]	1	Male,English	to ah to financial transactions, to payments, they know your customer rules became much,
+[182.953,186.599]	1	Male,English	much trickier and so ah, so I do think that ah
+[186.667,191.719]	1	Male,English	there was a weird way but there was an opening to start a business like PayPal in nineteen ninety nine, two thousand
+[192.0,194.696]	1	Male,English	even the three years later, I, I think it might not have been possible.
+[194.764,197.13]	2	Male,English	yeah, and it's so cool to me just knowing
+[197.731,205.256]	2	Male,English	a lot of your ideology and the Libertarian ideas you care about and, and just going ahead and building want you wanna build instead of waiting for other people to do it
+[205.45,209.513]	2	Male,English	I mean you actually did it and, and that's a pretty, it's a pretty great thing
+[209.513,213.324]	1	Male,English	well, it was, it was um it was sort of a sen[~] sense that, you know, we were gonna
+[213.634,217.678]	1	Male,English	change the world, we're gonna now um give people more control over their money
+[217.794,221.896]	1	Male,English	we had all these ideas but you know, getting rid of central banks and creating a new currency we never quite
+[222.255,223.341]	1	Male,English	you know got to the Bitcoin
+[223.36,223.719]	2	Male,English	yeah
+[223.719,224.262]	1	Male,English	stage of it
+[224.272,225.232]	2	Male,English	we'll get to that later[+]
+[225.232,231.952]	1	Male,English	ah but, but certainly ah certainly these ideas were, you know, were incredibly motivational in, in doing it and
+[232.398,236.587]	1	Male,English	it, it is always a little bit of a contrast from, you know, I, I always have this
+[236.907,241.261]	1	Male,English	um view on politics where it's both, you know, incredibly important
+[241.581,246.216]	1	Male,English	and then ah in many ways, incredibly frustrating because ah it's so um[+]
+[246.439,252.238]	1	Male,English	it's like the air we breath, it permeates our whole system and then it's also so hard to to ever change, you know as a
+[252.548,258.318]	1	Male,English	you know as a college student, I started in having this ah conservative Libertarian news papers in Stanford, The Stamford Review and ah[+]
+[258.667,263.118]	1	Male,English	and it's a lot, and it's important to have debates to discuss things and it's often so hard
+[263.176,269.508]	1	Male,English	to ah to change things and the, the, the PayPal hack was in way, you know we, we're, we're gonna sustain the world. we're aren't gonna ask for promotion
+[269.518,270.148]	2	Male,English	yeah[+]
+[270.177,272.718]	1	Male,English	you know we're just tech[~] technology over politics.
+[272.912,279.564]	2	Male,English	well, speaking of changing the world, let's flash forward a couple of years. so we're just doing some business background first before we get to a lot of your, your ideas of a day
+[279.884,286.09]	2	Male,English	ah you were the first outside investor in Facebook. five hundred grand to this Zuckerberg guy,
+[286.691,291.811]	2	Male,English	did you know him well before that? have you guys communicated a lot? how did that even come to path?
+[291.85,295.37]	1	Male,English	not really, it was the, sort of, actually literally the first day we met, we
+[295.399,295.981]	2	Male,English	oh wow[+]
+[296.0,299.724]	1	Male,English	for an hour, we came back and we, we, we get him the term sheet about an hour later. so it was,
+[299.724,300.141]	2	Male,English	wow
+[300.16,301.547]	1	Male,English	it was a, it was a fast decision.
+[302.051,309.615]	1	Male,English	ah I think, I think people always have this sort of shark tank image of these things, there's some sort of you know, super sophisticated pitch and
+[309.857,311.205]	1	Male,English	you say just for the right thing
+[311.215,311.593]	2	Male,English	right[+]
+[311.816,315.559]	1	Male,English	that's what works and, and it was nothing of the sort and he was a, he was a, you know,
+[316.17,318.187]	1	Male,English	kind of introverted nineteen year old ah
+[318.497,319.535]	1	Male,English	you know, sophomore
+[319.816,323.278]	1	Male,English	um between sophomore and junior year, summer, summer of two thousand four
+[323.714,324.548]	1	Male,English	and ah
+[325.033,326.216]	1	Male,English	and um
+[326.73,330.57]	1	Male,English	and the, the main and, and, and, and, and the main, to get going purpose, it was just
+[330.696,337.804]	1	Male,English	growing fast. they were, they were something like twenty college campuses. they had about a hundred thousand people on the network and they just needed
+[337.998,343.564]	1	Male,English	more money for computers because there was such demand for, for the product as they were gonna launch it at more colleges in the fall.
+[343.593,348.713]	2	Male,English	so is that what appealed to you more than the product itself? just that you saw engagement to people[+]
+[348.713,356.199]	1	Male,English	it was already working, yeah um and then but I, I would, I would say the other, the other pa[~] part of it was that there was like a prehistory to it so ah
+[356.587,360.902]	1	Male,English	one of my ah one of my good friends from PayPal back from Stanford, this guy named Reid Hoffman
+[360.912,361.29]	2	Male,English	mhm[+]
+[361.61,368.912]	1	Male,English	um he started LinkedIn later years but ah and he worked with me at PayPal in the late nineties, early two thousands but before that um
+[369.096,374.701]	1	Male,English	he had started the social networking company back in nineteen ninety seven. seven years before Facebook
+[375.147,381.033]	1	Male,English	and they had, they already had um you know, they had, Social Net was the name of the company. so that's Social Networking
+[381.295,383.874]	1	Male,English	and the name of the company seven years before
+[383.884,384.136]	2	Male,English	huh
+[384.136,387.588]	1	Male,English	and there were all these things that they had, they had thought about
+[387.85,391.913]	1	Male,English	doing, so it was gonna be you know, it was gonna be um the nineteen nineties
+[391.952,395.753]	1	Male,English	version of social networking was we were gonna have this avatars and cyberspace
+[396.131,402.308]	1	Male,English	and I might be a cat and you might be a dog and like a virtual cat and you're a virtual dog and it's great how we relate
+[402.599,408.64]	1	Male,English	and it turns out um people aren't, weren't really interested in that. they weren't really interested in some sort of fictional[+]
+[408.679,411.84]	1	Male,English	online persona, it was much more about real identity.
+[412.393,416.233]	1	Male,English	and ah and somehow Facebook was the first one
+[416.456,420.296]	1	Male,English	to crack the problem of real identity, where, you know, even it was
+[420.587,426.153]	1	Male,English	always a little bit curated, certainly for the most part, people on Facebook are who they, they say they are.
+[426.211,432.592]	2	Male,English	yeah, for the most part at least. so am ah am I mistaken, you're the only person who's been on the board of Facebook the entire way out except for Mark, right?
+[432.592,433.833]	1	Male,English	right, right. since the beginning, yes.
+[433.833,440.33]	2	Male,English	yeah, ah what can I ask you about that, that, that ah Facebook won't get too angry, about, if I ask you
+[440.708,445.033]	2	Male,English	well, with just what's the experience like of being a pa[~] you're part of a board from the beginning of[+]
+[445.392,451.404]	2	Male,English	really the thing of the internet. what seems to drive conversation the most on the internet.
+[451.627,452.713]	1	Male,English	well there's um
+[453.537,459.336]	1	Male,English	you know there's, I mean it's, it's been through like this incredible trajectory, you know ah where it's, it's, it's gotten
+[459.617,468.752]	1	Male,English	you know, probably much bigger than I would have thought possible. at the time, you know, I was, you know, I was incredibly optimistic and bullish on it certainly back in ah back in two thousand four, two thousand five
+[469.295,470.439]	1	Male,English	I think that ah
+[471.273,472.068]	1	Male,English	I think that
+[472.427,477.537]	1	Male,English	one, one kind of perspective for a lot of the world class entrepreneurs
+[477.935,479.855]	1	Male,English	is they're not specialists
+[480.013,482.728]	1	Male,English	they're, they're something close to polymath and so
+[483.019,488.682]	1	Male,English	um you know if you have a conversation with ah Mark Zuckerberg, he'd be able to speak of
+[488.934,495.635]	1	Male,English	you know, with, with, you know, surprising amount of understanding about a lot of things. we could speak about the details of the Facebook product. he could talk about
+[496.081,501.618]	1	Male,English	um you know, the, the, the way people think about social media, the psychology, the ah
+[501.938,507.058]	1	Male,English	the um, the, the way the culture is shifting, the um management of the company, his ideas on that
+[507.203,512.401]	1	Male,English	his ideas on um and then how it fits into the bigger history of technology and so it's ah
+[512.682,517.676]	1	Male,English	you know with, with sort of an academic view, it's often that you're like a, sort of a narrow expert on one thing.
+[517.715,518.122]	2	Male,English	mhm
+[518.122,521.797]	1	Male,English	and that's what you do and, and what it is about, it's, it's much more
+[522.03,527.635]	1	Male,English	ah sort of this, this polymath like ah intellect to understands all these different things
+[527.664,527.916]	0	U	[UNKNOWN]
+[527.955,531.717]	1	Male,English	the kinds of board conversations we've had over the last ah
+[532.163,537.099]	1	Male,English	you know, to ah thirteen, fourteen years have a, it's just been this, this crazy range
+[537.099,537.235]	0	U	[NOISE]
+[537.235,545.07]	2	Male,English	yeah, it must be particularly interesting for you though as sort of the outsider in Silicon Valley and we're gonna talk about you, why you moved down to
+[545.264,550.442]	2	Male,English	L A and all that stuff ah that you've been there the whole time, that it's not, you know, they didn't,
+[550.481,555.882]	2	Male,English	for all the reasons that Silicon Valley maybe what it is, you weren't ever booted off the board or anything like that, they've
+[556.115,559.848]	2	Male,English	they've let you be the contrarian guy there. so that, that actually must
+[560.653,565.608]	2	Male,English	that's a good thing about Silicon Valley, I suppose, or at least within the little microcosm that you sit in, right[+]
+[566.025,571.698]	1	Male,English	no, I, I ah you know I, I don't experience, you know, a great deal of hostility to meet personally.
+[572.018,575.121]	1	Male,English	you know, pep[~] you know the, it's, it's, it's ah, it's you, you just
+[575.557,578.224]	1	Male,English	ah you, you always ah you know it's
+[578.67,583.043]	1	Male,English	it's, it's sort, manifests in all sorts of other ways like I do think Silicon Valley at this point
+[583.334,588.493]	1	Male,English	has a bit of a conformity problem, it has, you know, a bit of way which people are
+[588.784,594.379]	1	Male,English	you know too, too much all ah thinking the same way. it's just like the, there was, you know, the, the Apple
+[595.019,598.161]	1	Male,English	I saw this, this meme on the internet the other day, there was the, sort of the
+[598.568,601.797]	1	Male,English	ah Silicon Valley nineteen ninety seven, colon think different
+[601.904,604.939]	1	Male,English	and Silicon Valley two thousand eighteen, colon think the same[+]
+[604.978,605.395]	2	Male,English	yeah
+[605.424,609.894]	1	Male,English	and ah and so there is something that's ah that's gone, that's gone a bit wrong even though
+[610.156,614.859]	1	Male,English	you know it's, it's, I'm hard pressed, society thinks were, you know, it's, it's really affected me personally
+[614.927,619.184]	2	Male,English	yeah, alright, well, well I was actually gonna push that to a little bit later but let's just stay with that for now, then
+[619.184,625.283]	2	Male,English	do you remember moments, did you see some markers along the way where you realized some of this group think
+[625.739,628.716]	2	Male,English	was affecting the actual products
+[629.259,635.853]	2	Male,English	where, where the actual ability to create new technologies or new products, where that was actually causing stagnation
+[637.715,638.161]	1	Male,English	ah
+[638.161,641.71]	2	Male,English	cause I sense it's been, I sense it's been sort of a long road to get here but you have[+]
+[641.933,646.859]	2	Male,English	sort of been talking about this for a while now and I think there's a direct connection to The Diversity Myth
+[647.14,650.117]	2	Male,English	which ah we'll also talk about, which you wrote, you know, twenty years ago[+]
+[650.185,651.378]	1	Male,English	right. well, I
+[651.94,659.213]	1	Male,English	I do think Silicon Valley has shifted a lot over, over the years and I was an undergraduate at Stanford in the late nineteen eighties.
+[659.562,661.075]	1	Male,English	ah Stanford was sort of a
+[661.424,663.47]	1	Male,English	very liberal, politically correct place.
+[663.984,668.231]	1	Male,English	but um the Silicon Valley surrounding, not so much. it was
+[668.561,673.836]	1	Male,English	vaguely libertarian ah you know, it was, it was a moderate republican congressional district.
+[674.253,679.635]	1	Male,English	and um and then so by the late nineties, I would say that shifted to being sort of a moderate
+[679.887,685.521]	1	Male,English	um moderate democrat which was around the time I started PayPal and if you fast forward another twenty years,
+[685.802,689.487]	1	Male,English	it's sort of um it's, it's, it's sort of a pretty hard left
+[689.487,691.727]	2	Male,English	yeah, so what do you think, what do you think happened there[+]
+[692.202,697.419]	2	Male,English	because it seems to me that if I was taking the people that I wanted to be the most creative, the most outside the box
+[697.458,702.607]	2	Male,English	the most to look at the system and go how do we fix the system from the outside, you'd want a lot of libertarian thinkers
+[702.607,707.058]	2	Male,English	that's, that's the way I would at least look at it. so you'd think that everyone in Silicon Valley would be
+[707.087,709.618]	2	Male,English	pretty libertarian, they wanna do things on their own.
+[709.899,711.916]	2	Male,English	and yet somehow, in those twenty years
+[712.236,713.71]	2	Male,English	it, it became the opposite[+]
+[713.739,717.259]	1	Male,English	it's all like when you ask a question, wh[~] why is it, why is it so ah so
+[717.288,717.676]	0	U	[UNKNOWN]
+[717.676,721.002]	1	Male,English	I think these things are, you know, they're, they're somewhat over determined. so I would, I would say
+[721.264,726.607]	1	Male,English	ah part of it is um is that ah it's probably the most educated part of the country
+[726.888,729.099]	1	Male,English	in terms of how much time people spent in college
+[729.099,729.584]	2	Male,English	mhm
+[729.584,732.454]	1	Male,English	and I think one of the downside to too much education is that you get
+[732.755,733.938]	1	Male,English	ah the most brainwashed
+[734.19,737.487]	1	Male,English	and so it's, it's the most educated can also mean that it is
+[737.642,740.202]	1	Male,English	it is the, it is the most brainwashed ah
+[740.687,741.676]	1	Male,English	you know um
+[742.5,742.888]	0	U	[UNKNOWN]
+[742.898,747.717]	1	Male,English	not so true with the founders but certainly of um of many of the, the rank and file people 
+[747.882,748.59]	1	Male,English	who are um
+[748.716,749.075]	0	U	[UNKNOWN]
+[749.133,751.858]	1	Male,English	you know if you're sort of like a really good engineer
+[752.139,757.588]	1	Male,English	or um you know, ah really good at some specific thing. um your education typically does not involve you
+[757.744,760.595]	1	Male,English	thinking that much about, about politics and so
+[760.837,764.308]	1	Male,English	ah it's not necessarily from deep ideological conviction
+[764.522,767.858]	1	Male,English	it's often more as a fashion statement than as a question of,
+[768.139,769.428]	1	Male,English	of power and so ah
+[769.739,773.579]	1	Male,English	and so one of the things that's always a little bit hard to score is that, even if you took a survey
+[773.802,775.082]	1	Male,English	in Silicon Valley, it's, it's
+[775.344,776.207]	1	Male,English	it comes out as
+[776.585,777.807]	1	Male,English	you konw quite far to the left
+[778.262,781.996]	1	Male,English	you know weirdly um uniformed, weird sort of group thing
+[782.345,785.322]	1	Male,English	it's ah super hard to know whether people really believe this
+[785.603,788.018]	1	Male,English	whether they're, whether they're just going along.
+[788.27,790.801]	1	Male,English	so I, I think it's pretty liberal[+]
+[791.111,793.923]	1	Male,English	but um but of course not as liberal as it looks and that
+[794.117,796.464]	1	Male,English	that's in a way, worse because it means people are
+[796.619,798.898]	1	Male,English	you know, too scared to, to articulate thingsright[+]there was a dinner I had 
+[800.865,805.647]	1	Male,English	at my house ah a week before the ah twenty sixteen election with the group of sort of center-right
+[806.064,808.439]	1	Male,English	Silicon Valley people, one of them was ah
+[808.75,811.882]	1	Male,English	ah is a very prominent angel investor in Silicon Valley
+[812.231,813.298]	1	Male,English	and he said um
+[814.19,816.595]	1	Male,English	ah you know I'm voting for Trump in a week
+[816.885,819.31]	1	Male,English	but because I live in Silicon Valley, I'm lying about it
+[819.921,820.755]	1	Male,English	and so ah
+[820.803,821.075]	0	U	[UNKNOWN]
+[821.075,822.384]	2	Male,English	meanwhile he's saying this to you[+]
+[822.384,823.654]	1	Male,English	there's a little like, about
+[823.955,825.235]	1	Male,English	twelve, twelve people at dinner[+]
+[825.293,825.836]	2	Male,English	yeah, yeah[+]
+[825.845,826.699]	1	Male,English	ah and ah
+[826.796,828.822]	2	Male,English	you're like I'm the guy who just spoke at the convention[+]
+[828.842,831.858]	1	Male,English	he was honest about lying so it was unusual. it's, it's a little bit unusual
+[831.877,832.197]	2	Male,English	yeah
+[832.207,838.093]	1	Male,English	and um and the way I lie is I tell people, I'm voting for Gary Johnson, the libertarian. so it's like he couldn't, he couldn't quite get away
+[838.296,840.74]	1	Male,English	telling people that he was voting for Hillary Clinton
+[840.75,841.099]	2	Male,English	mhm
+[841.099,844.677]	1	Male,English	because like your facial muscles wouldn't work and people can tell that you're lying and so
+[844.813,848.081]	1	Male,English	small lies, Gary Johnson, that was sort of what you, what you could do
+[848.119,848.488]	2	Male,English	yeah
+[848.498,855.499]	1	Male,English	and ah and I think, you know, if you just sort of looked at what happened in the weeks before the election, the ah, the Gary Johnson support
+[855.693,857.71]	1	Male,English	sort of collapsed, it all went to Trump
+[857.71,858.321]	2	Male,English	mhm
+[858.379,861.676]	1	Male,English	and the ah the question you have to ask is whether
+[861.996,862.384]	1	Male,English	ah
+[862.791,865.031]	1	Male,English	did those people just changed their minds the last minutes
+[865.477,869.55]	1	Male,English	or were they lying all along or were they lying to themselves?
+[869.647,872.148]	1	Male,English	and ah and so I think the, the sort of political
+[872.488,873.361]	1	Male,English	correctness
+[873.739,879.984]	1	Male,English	you know it's always bad for thought but it always makes things appear more uniform than they are, even in Silicon Valley.
+[880.013,887.062]	2	Male,English	yeah, well I think you know this, I said I was gonna vote for G[~] Gary Johnson and I did vote for Gary Johnson and as I always say I should be judged accordingly
+[887.091,894.064]	2	Male,English	but here we are. so this is actually a perfect segue then to The Diversity Myth because twenty years ago, you're, you're at Stanford
+[894.675,902.51]	2	Male,English	and you saw a lot of the problems that we are talking about today over and over again. I, I told you a couple months ago
+[902.83,906.99]	2	Male,English	I was listening on C SPAN to a talk you gave about The Diversity Myth[+]
+[907.407,911.78]	2	Male,English	and again, it's from about, I think at that point, it was like eighteen years ago or something and I was listening to it
+[912.042,915.911]	2	Male,English	and David walked into the room and he said, who is that talking
+[916.163,923.028]	2	Male,English	because it was all true and it was, he thought it was somebody I, he thought I was listening to the news of today. like somebody laying out what's going on today
+[923.378,929.002]	2	Male,English	but you saw this, this issue with multiculturalism, with faux diversity, the focus
+[929.39,934.616]	2	Male,English	on equality of outcome, not opportunity. you saw all this way before[+]
+[934.936,937.671]	2	Male,English	seemingly anyone did, ho[~] how did that come to be?
+[938.447,939.475]	1	Male,English	well, it was um
+[939.814,943.635]	1	Male,English	there was certainly um quite a wave of this stuff in the late
+[943.858,947.475]	1	Male,English	eighties, early nineties on, you know, number of college campuses and
+[947.756,949.23]	1	Male,English	for variety of reasons um
+[949.647,955.571]	1	Male,English	you know a lot of it crystallized at Stanford. there was a, there was this ah, there was this um super intense debate about
+[955.814,958.898]	1	Male,English	ah Western culture which was both a freshman
+[959.159,959.984]	1	Male,English	one year along
+[960.21,962.769]	1	Male,English	freshmen, sort of general humanities course
+[963.09,966.61]	1	Male,English	where you learned about you know Western culture history, Western civilization
+[967.085,971.206]	1	Male,English	um but then it was a course and ah and Mr. Jesse Jackson showed up at campus
+[971.409,976.083]	1	Male,English	one, one day and sort of led this chant, hey, hey, ho, ho, Western culture's gotta go
+[976.404,978.41]	1	Male,English	and people were talking about both the course
+[978.798,979.593]	1	Male,English	and of course
+[979.759,983.851]	1	Male,English	the whole society and culture that was represented by that and ah
+[984.112,988.845]	1	Male,English	and, and ah, and, and so there were a lot of these different debates that got ah um
+[989.038,991.947]	1	Male,English	got sort of thrown up so it was a, you know, this concern about
+[992.21,997.417]	1	Male,English	discrimina[~] racial discrimination, gender discrimination you know other kinds of people who were victimized
+[997.717,1000.433]	1	Male,English	ah and then um and then in many cases
+[1000.626,1010.352]	1	Male,English	it felt like it was this incredible overreach where people were in some sense using their victim status as a stick with which to beat other people up or, or so[~] something like that or were[+]
+[1010.449,1014.503]	1	Male,English	and we're gonna now victimize the victimizers and ah and so we're gonna be sort of
+[1014.736,1019.817]	1	Male,English	ah something like that and ah and so multiculturalism and political correctness
+[1020.01,1025.13]	1	Male,English	was somehow um very linked, the, the multiculturalism part was where we're, we're gonna
+[1025.353,1028.747]	1	Male,English	um give out special privileges um
+[1028.912,1034.857]	1	Male,English	you know, not to disadvantage people and we're gonna somehow correct these injustices of the past and the politically,
+[1034.993,1040.976]	1	Male,English	the intolerant politically correct part was where we're gonna go after other oppressors whether they were
+[1041.198,1046.416]	1	Male,English	real or imagined and ah and in many ways it, it felt like you know incredible overreach
+[1046.639,1050.672]	1	Male,English	how you ended up with ah with these ah draconian speech codes on campus
+[1051.09,1051.603]	1	Male,English	um
+[1052.079,1055.084]	1	Male,English	and, and with, with sort of the humanities in a sense
+[1055.531,1058.77]	1	Male,English	effectively got gutted in the late eighties at Stanford and of course it took
+[1059.177,1062.416]	1	Male,English	you know many years for that to, to, to fully play out but ah
+[1062.707,1065.392]	1	Male,English	and then, then of course one of the buzz words then is now
+[1065.684,1068.04]	1	Male,English	um was diversity which um[+]
+[1068.592,1069.456]	1	Male,English	which ah
+[1069.872,1070.406]	1	Male,English	and
+[1070.9,1075.341]	1	Male,English	and ah you know, I think, I think diversity is a good thing. I think specially, you know, diversity of ideas
+[1075.37,1075.826]	2	Male,English	mhm
+[1075.826,1080.753]	1	Male,English	is, is, is, is, is to be valued but you don't have real diversity when you just have
+[1081.043,1085.009]	1	Male,English	a group of people ah who look different and ah and think alike
+[1085.194,1087.249]	1	Male,English	and so it's, it's it has to me it has to be more
+[1087.541,1092.883]	1	Male,English	than just ah you know, than just um having the extras from the Space Cantina from Star Wars or something like that
+[1093.136,1095.918]	1	Male,English	right? and ah and that's and so that's always
+[1096.18,1099.37]	1	Male,English	that's always, so it's always like an internal critique, The Diversity Myth is
+[1099.632,1103.957]	1	Male,English	that it's, it's not about diversity at all it's about, it's about ah conformity
+[1104.209,1112.141]	2	Male,English	was that the first time that you had really staked out what is seemingly an unpopular position, although I think actually especially in twenty eighteen
+[1112.52,1117.233]	2	Male,English	is, is quite a popular position even if it's thought of as, as out there
+[1117.456,1125.262]	2	Male,English	was that the first time you had publicly, because nobody wants to be the guy that says this stuff and then immediately is gonna be called a racist and a bigot and a homophobe or all those things
+[1125.417,1127.657]	2	Male,English	had you ever done anything like that before?
+[1128.501,1130.197]	1	Male,English	you know it's, it's ah
+[1131.341,1136.53]	1	Male,English	you know I, I probably, you know I and it's, it's hard to know how, how far to go back in the pre autobiographical sphere,
+[1136.559,1136.947]	2	Male,English	right
+[1136.947,1137.8]	1	Male,English	sphere, how good ah
+[1138.101,1138.838]	1	Male,English	I am at this but
+[1139.274,1143.657]	1	Male,English	but probably already in the junior high school, high school I would you know I would um
+[1144.267,1149.262]	1	Male,English	you know I would take the positions that I believed in and, and they wouldn't, they wouldn't necessarily be the
+[1149.427,1151.986]	1	Male,English	the majority positions and so it was you know, and it
+[1152.432,1155.535]	1	Male,English	you know in, you know, junior high school I was um
+[1156.466,1158.929]	1	Male,English	totally against drug legalization of any sort
+[1159.21,1165.32]	1	Male,English	and that was a minority, that was a minority view where ah I, I supported Reagan in nineteen eighty and you know[+]
+[1165.678,1170.062]	1	Male,English	you know, we're sort of in a relatively liberal area, that was again sort of a, a minority view, so
+[1170.188,1172.341]	1	Male,English	so I think I, I would have had a
+[1173.107,1178.662]	1	Male,English	I would, I wouldn't say like extreme outlier positions but ah but I, I've, I've always thought that ah
+[1178.954,1180.524]	1	Male,English	it was ah important to think for yourself
+[1180.563,1186.062]	2	Male,English	yeah, so when you wrote the book and then started talking about these issues, what kind of push back did you get? because that I think
+[1186.352,1189.136]	2	Male,English	is the core issue that most of my viewers
+[1189.485,1196.05]	2	Male,English	are identifying with these days. that they're taking positions that are true, that don't mean that they're racists or bigots or a homophobes[+]
+[1196.438,1201.14]	2	Male,English	but that they mean they care about, more about diversity of ideas than diversity of skin color or those things[+]
+[1201.586,1204.37]	2	Male,English	and, and they're scared to say those ideas

@@ -1,0 +1,954 @@
+[0.001,2.25]	0	U	[NOISE]
+[2.56,3.016]	0	U	[NOISE]
+[3.055,3.52]	1	Male,English	see that?
+[3.627,10.182]	1	Male,English	a lot of non native English speakers have trouble with T H that's a true for a lot of my students regardless of where they're from what their native language is
+[10.182,10.735]	1	Male,English	so
+[10.764,14.856]	1	Male,English	the thirty three thieves thought that they thrilled the throne throughout Thursday
+[15.118,15.632]	0	U	[NOISE]
+[16.01,17.93]	1	Male,English	well I've never seen this one[+]
+[17.93,20.17]	1	Male,English	yeah me either but I just thought it was good because the
+[20.432,21.644]	1	Male,English	remember T H
+[22.032,22.575]	1	Male,English	so
+[22.672,26.444]	1	Male,English 	the thirty three thieves thought that they've thrilled the throne throughout Thursday
+[26.502,26.89]	0	U	[NOISE]
+[27.307,28.005]	1	Male,English	wanna give a try?
+[28.034,28.897]	2	Female,English	yeah I'm gonna try
+[29.033,32.592]	2	Female,English	the thirty three thieves thought that they thrilled the thrown throughout Thursday
+[32.834,36.296]	2	Female,English	um that's a good one that's a really good one for T H sounds I think
+[36.451,40.97]	2	Female,English	it's not its I think the consonant sounds like the hard consonant sounds like the E sounds
+[41.319,41.998]	2	Female,English	or the
+[42.114,43.559]	2	Female,English	well maybe even the W sound a little
+[44.044,44.587]	0	U	[NOISE]
+[46.497,48.592]	2	Female,English	like it's easy to say that quickly but this one's
+[48.592,49.93]	0	U	[*]
+[50.211,50.88]	2	Female,English	clearly
+[51.239,53.392]	0	U	[*]
+[53.44,54.565]	0	U	[NOISE]
+[54.604,55.496]	2	Female,English	there's nothing come out of
+[55.535,56.427]	0	U	[*]
+[56.456,58.347]	1	Male,English	spitting a lot there that maybe tough
+[58.347,62.953]	2	Female,English	OK ah I guess I get my next one I really have no pay that I'm getting to be able to say this at all
+[62.953,63.215]	0	U	[NOISE]
+[63.215,65.901]	2	Female,English	this is like the hardest thing that I can go all the time
+[65.93,70.924]	2	Female,English	I'm gonna have to read it slowly. the six thick cheek fix sheep thick
+[70.953,71.37]	0	U	[NOISE]
+[72.805,73.571]	2	Female,English	yeah
+[73.581,74.347]	1	Male,English	what OK
+[74.347,75.307]	0	U	[NOISE]
+[75.336,76.655]	1	Male,English	six thick cheek
+[76.81,78.41]	1	Male,English	six sheep thick
+[78.439,78.827]	2	Female,English	yeah
+[78.827,80.301]	1	Male,English	the six thick oh
+[80.33,81.261]	0	U	[LAUGHTER]
+[81.261,83.336]	2	Female,English	no, like the second word you can instead 
+[83.336,83.724]	0	U	[NOISE]
+[83.724,84.645]	2	Female,English	it's really hard
+[84.674,86.439]	1	Male,English	one more time right this this six
+[86.575,87.428]	1	Male,English	six cheeks
+[87.428,88.175]	1	Male,English	six cheap
+[88.175,89.232]	1	Male,English	six oh
+[89.232,90.182]	1	Male,English	oh
+[90.182,91.307]	2	Female,English	that was good that was good
+[91.307,92.558]	2	Female,English	oh grand but I thought[+]
+[92.577,94.827]	1	Male,English	leave on that one the six yeah it didn't want the six[+]
+[94.953,97.096]	2	Female,English	thick cheek thick sheep thick
+[97.096,97.513]	0	U	[*]
+[97.581,101.518]	2	Female,English	that's really hard it's really I don't think I can say any faster than that
+[101.576,102.061]	0	U	[NOISE]
+[102.284,103.952]	1	Male,English	the six thick sheep thick
+[104.107,104.679]	0	U	[*]
+[104.747,105.736]	0	U	[NOISE]
+[106.056,106.696]	0	U	[LAUGHTER]
+[106.696,108.781]	1	Male,English	I can't um I'm I'm ah lost of word
+[108.781,109.421]	0	U	[NOISE]
+[109.44,109.867]	1	Male,English	but they'll[+]
+[109.896,110.73]	0	U	[NOISE]
+[110.827,111.564]	2	Female,English	OK[+]
+[111.564,112.592]	1	Male,English	one more time OK[+]
+[114.095,118.73]	1	Male,English	the six thick cheek six sheep thick the six sick go
+[118.953,120.068]	1	Male,English	what I want is[+]
+[120.068,120.844]	2	Female,English	you you gotta um[+]
+[120.844,122.347]	2	Female,English	one time I was thought about[+]
+[122.376,123.084]	2	Female,English	but if I could[+]
+[123.084,123.627]	1	Male,English	I give up[+]
+[123.627,125.295]	2	Female,English	good OK OK next one
+[125.382,125.77]	0	U	[NOISE]
+[125.77,127.05]	2	Female,English	my next one is
+[127.137,127.593]	0	U	[NOISE]
+[127.651,130.628]	1	Male,English	the soldiers shoulder surely hurts
+[131.055,136.999]	1	Male,English	another one actually never heard but I liked it because everyone knows Sally sells sea shells down by the sea shore
+[137.067,144.737]	1	Male,English	the S and the S H is confusing and many times as an English like surely there's no S H but it makes up that S H sound so[+]
+[144.737,145.358]	1	Male,English	on one
+[145.358,147.375]	1	Male,English	the soldier shoulder surely hurt[+]
+[147.53,149.547]	1	Male,English	the soldiers shoulder surely hurt
+[149.935,150.817]	1	Male,English	now give the try
+[150.827,152.553]	2	Female,English	the soldier shoulder surely hurt
+[152.65,160.068]	02	UFemale,English	This is the tough part here for me anyway is that the soldier that shoulder making that sound a little bit that the soldier shoulder surely hurt
+[160.107,160.495]	1	Male,English	yeah
+[160.524,161.232]	0	U	[*]
+[162.987,163.695]	2	Female,English	not really
+[163.879,170.027]	2	Female,English	OK ah onto the last one this one is really short actually it's only two words
+[170.754,173.76]	2	Female,English	but it's tricky it's really tricky I can't say this fast
+[173.77,174.119]	0	U	[NOISE]
+[174.313,175.399]	2	Female,English	Irish
+[175.399,176.01]	2	Female,English	wish
+[176.039,177.775]	0	U	[LAUGHTER]
+[177.833,178.541]	0	U	[NOISE]
+[178.56,180.577]	2	Female,English	OK Irish buy itself is fine
+[180.655,184.388]	2	Female,English	wristwatch is fine but together they're really hard to say
+[184.388,185.833]	2	Female,English	Irish wish
+[185.901,187.84]	0	U	[LAUGHTER]
+[187.918,188.364]	0	U	[NOISE]
+[188.393,190.478]	2	Female,English	I can't say it Irish
+[190.633,191.176]	2	Female,English	wrist
+[191.176,192.039]	2	Female,English	watch
+[192.175,193.484]	2	Female,English	oh really hard
+[193.484,194.25]	1	Male,English	Irish
+[194.376,195.084]	1	Male,English	wrist
+[195.084,195.559]	1	Male,English	watch
+[195.598,196.073]	2	Female,English	yeah[+]
+[196.102,197.13]	1	Male,English	slow OK Irish
+[197.295,197.964]	1	Male,English	oh wow
+[197.993,198.536]	0	U	[LAUGHTER]
+[198.575,199.651]	2	Female,English	really hard
+[199.661,200.912]	1	Male,English	doesn't if you you just
+[200.931,201.416]	0	U	[*]
+[201.445,201.891]	2	Female,English	yeah
+[201.901,202.667]	1	Male,English	bang your thought come on
+[202.793,203.365]	1	Male,English	OK I
+[203.404,205.002]	1	Male,English	Irish wristwatch Irish
+[205.002,205.392]	0	U	[*]
+[205.576,207.273]	0	U	[LAUGHTER]
+[207.302,211.113]	1	Male,English	Irish wristwatch Irish wristwatch Irish wristwatch[+]
+[211.307,211.753]	2	Female,English	nice
+[211.821,212.296]	1	Male,English	there we go
+[212.335,213.072]	2	Female,English	Irish rish
+[213.188,213.867]	2	Female,English	I
+[213.935,214.41]	0	U	[LAUGHTER]
+[214.439,217.067]	2	Female,English	I can't say this one Irish wrist wrist
+[217.096,217.416]	0	U	[LAUGHTER]
+[217.707,219.239]	0	U	[LAUGHTER]
+[219.278,225.254]	2	Female,English	maybe I can try this one's hard this is really hard for me but yeah only two words it's just it's just the combination of the
+[225.254,225.499]	0	U	[*]
+[225.499,225.71]	2	Female,English	and the
+[225.71,226.347]	0	U	[*]
+[226.347,227.21]	2	Female,English	that's just
+[227.501,231.312]	2	Female,English	I can't I got nothing on that one. alright do you have anymore?
+[231.399,232.33]	1	Male,English	no, I think that's it
+[232.359,234.415]	2	Female,English	oh wow that was a good one
+[234.473,237.537]	2	Female,English	that was really tough that was really tough OK we'll
+[238.691,239.021]	0	U	[NOISE]
+[245.411,245.706]	0	U	[NOISE]
+[259.297,262.604]	2	Female,English	for useful for S and which might be useful for you as you practice your
+[262.701,263.273]	0	U	[*]
+[263.341,265.513]	2	Female,English	so, let's begin you wanna start?
+[266.095,266.541]	1	Male,English	sure
+[267.113,267.656]	2	Female,English	go for it
+[267.714,272.553]	1	Male,English	um I would say, absorb media this is something that actually
+[272.553,275.501]	1	Male,English	when I meet someone and they sound like a native English speaker
+[275.53,276.16]	0	U	[*]
+[276.296,281.61]	1	Male,English	you know where you from are you from Australia America?no no no I'm from bla bla bla, what?
+[282.017,289.484]	1	Male,English	you mean you're not a native English speaker? and every single time they tell me I said you know how did you learn? please I'm an English teacher I wanna know I wanna help you bla bla bla
+[289.804,292.451]	1	Male,English	and every single time tell me oh I just love
+[292.558,293.896]	1	Male,English	bla bla bla culture
+[293.896,298.57]	1	Male,English	so usually I love american cultural I love Justin Bieber and Lady Gaga bla bla bla
+[298.696,305.135]	1	Male,English	and so all day everyday they're reading they're watching movies they're sitting on Youtube and just absorbing it
+[305.222,307.879]	1	Male,English	and it doesn't feel like you're studying but you are
+[308.015,312.175]	1	Male,English	um and so then you're more like the study so it's like a fun way to study
+[312.204,312.873]	0	U	[NOISE]
+[312.999,318.418]	1	Male,English	helped me I changed everything on my iPod  so even when I'm lazy I have no choice but to listen to the language of
+[318.418,318.633]	0	U	[*]
+[318.701,319.215]	0	U	[NOISE]
+[319.215,320.372]	2	Female,English	yeah I think that's really the good
+[320.372,320.505]	0	U	[*]
+[320.505,324.713]	2	Female,English	but I had the same thing essentially mine is just slightly different I said find something that interest
+[324.81,331.278]	2	Female,English	you and your target language so if English is your target language whatever it might be if it's music if it's movies if it's comic book
+[331.53,334.575]	2	Female,English	I don't know if it if your interested in
+[334.575,341.033]	2	Female,English	some dating someone who speak your target language whatever it is find something to motivate you something that's gonna make you want
+[341.159,344.136]	2	Female,English	that and makes you want to learn that language that you have that
+[344.417,348.141]	2	Female,English	that a drive to it I totally I agree with you now it's a great step
+[348.267,352.999]	2	Female,English	OK cool so we had one thing that was the same I guess I'll share another one of mine
+[353.028,353.319]	0	U	[*]
+[354.056,355.821]	2	Female,English	um my next one
+[356.073,360.204]	2	Female,English	is one that I try to deal myself but I know that I I I miss
+[360.204,365.13]	2	Female,English	and mess up everyone go out um practice every day even if it's just
+[365.227,369.067]	2	Female,English	a few minutes ah whether you can spare an hour or two hours or just
+[369.232,370.376]	2	Female,English	ah I myself
+[370.415,371.404]	0	U	[*]
+[371.433,378.153]	2	Female,English	you know commuting to work on on the subway ah just find something that you can do every single day so that you don't lose
+[378.211,380.373]	2	Female,English	you know lose your place in your studies just
+[380.519,384.398]	2	Female,English	whether it's vocabulary or picking this grammar point to be looking at or just
+[384.582,390.439]	2	Female,English	finding a new phrase on T V this is a without interesting just being an active learner every single day really really
+[390.536,391.273]	2	Female,English	contribute by
+[391.312,391.564]	0	U	[NOISE]
+[391.564,394.114]	2	Female,English	your ability to speak and understand another language
+[394.57,395.947]	2	Female,English	practice every single day
+[396.839,398.187]	1	Male,English	um I think this is
+[398.439,401.193]	1	Male,English	really useful piece of advice for anything
+[401.513,404.034]	1	Male,English	I mean a lot of people you get overwhelmed and you know[+]
+[404.17,409.416]	1	Male,English	you think and I want to be here whether it's exercising or playing a piano or whatever
+[409.474,414.032]	1	Male,English	and you just want it finish you know a years worth of of time in one day
+[414.032,420.81]	1	Male,English	you study really hard you know you procrastinate and one day you can cram as much as you can you get burnt out and then you don't do it for a week
+[420.81,421.421]	0	U	[*]
+[421.421,426.512]	1	Male,English	and that's not the way humans work creatures of habit any of the best the greatest whether they speak
+[426.638,433.736]	1	Male,English	a language like you it's wonder place you do whatever or play piano or whatever every single time you ask and then it's brick by brick by brick
+[433.959,438.061]	1	Male,English	so I I agree one hundred percent and I also don't follow this hype all the time up[+]
+[438.09,443.268]	1	Male,English	I think the key is to not give up so for me ah honestly my my language is
+[443.268,451.113]	1	Male,English	aren't I'm not as confident but just far as exercise you know you get lazy and you pig out and you go down but you can't just give up and just let it go down[+]
+[451.113,457.513]	1	Male,English	just remember the big picture that you are making progress even if there's some some some decline so if you've been this work whatever[+]
+[457.513,458.793]	1	Male,English	get back on it keep practicing
+[458.822,459.055]	2	Female,English	yeah
+[459.142,460.364]	1	Male,English	English if I can
+[460.422,461.576]	0	U	[*]
+[461.644,463.176]	0	U	[NOISE]
+[463.234,464.776]	2	Female,English	one is your neck hit
+[465.164,468.296]	1	Male,English	um so my next ship is ah
+[468.616,473.358]	1	Male,English	also related to practice every day it's practice seriously so this means
+[474.153,474.415]	0	U	[NOISE]
+[474.473,476.684]	1	Male,English	you know it's easy to
+[477.004,479.205]	1	Male,English	learn some basic phrases in English
+[479.205,479.845]	1	Male,English	hello I'm
+[480.004,486.413]	1	Male,English	fine thank you and you?you sound like a robot and you feel comfort[~]comfortable in your little way comfort zone but you don't expand[+]
+[486.413,489.836]	1	Male,English	you gotta be willing to make mistakes my thing it's the same as with dancing
+[490.127,496.459]	1	Male,English	if you're afraid you look stupid if you're you're reserve and you're off on to the side
+[496.498,498.796]	1	Male,English	of the club and you're just kinda moving
+[498.796,501.841]	1	Male,English	one shoulder and your little comfort bubble it looks really stupid
+[501.841,502.161]	2	Female,English	mhm
+[502.219,506.418]	1	Male,English	it looks way more stupid than if you were actually going all out and just having fun with it
+[506.437,506.796]	2	Female,English	yeah
+[506.825,510.219]	1	Male,English	I think it's the same thing with language don't just stick to your little comfort of
+[510.248,512.905]	1	Male,English	hello I'm fine thank you and you it sound like a robot
+[512.915,513.128]	0	U	[*]
+[513.157,515.843]	1	Male,English	gotta have some fun with it try to use those big words it
+[515.95,519.402]	1	Male,English	maybe you mess it's OK that's how you learn just like a kid
+[519.761,520.236]	1	Male,English	um
+[520.362,521.933]	1	Male,English	go let's do your other one
+[521.962,526.859]	2	Female,English	my tip my last tip then ah its kinda general I guess I've just chosen immersion
+[526.898,534.733]	2	Female,English	um this doesn't necessarily mean that you have to go to the country you know where they speak the language that you're studying but just find a way to
+[535.315,540.144]	2	Female,English	even if it's just for a short period of time everyday or once a week or whatever it is if there's
+[540.144,543.887]	2	Female,English	some some way that you can immerse yourself in the language that your studying
+[543.887,548.464]	2	Female,English	for a period of time that only studying in spanish only study english in your day
+[548.464,553.836]	2	Female,English	a for for for a period of time everyday every week every month whatever it is on a regular basis
+[553.836,554.767]	2	Female,English	so you get use
+[554.825,558.316]	2	Female,English	just hearing that and just experiencing that I think it's really good
+[558.316,558.801]	0	U	[NOISE]
+[558.859,560.275]	0	U	[NOISE]
+[560.323,562.515]	1	Male,English	I agree um I think that's
+[563.397,564.299]	1	Male,English	no no there's nothings
+[564.435,565.385]	1	Male,English	um
+[565.453,565.87]	0	U	[NOISE]
+[565.899,567.276]	0	U	[*]
+[567.596,574.888]	1	Male,English	um yeah I agree one of the things that ah most people don't realize is that now it's the twenty first century, everyone's connected
+[574.888,578.282]	1	Male,English	so lot of people just assumed that if you move to the country
+[578.282,581.938]	1	Male,English	you're going to pick up the language because immersion is is one of the best most
+[582.122,586.602]	1	Male,English	you know time time again proof way proved ways to learn a language
+[586.893,593.235]	1	Male,English	so that's not really the case like I have a lot of friends in different countries who don't learn it at all they're married to a local but they just
+[593.38,597.036]	1	Male,English	if you just sit on Facebook and taught me your old friend that never actually
+[597.036,599.761]	1	Male,English	you know practice put it out there so um
+[600.323,606.403]	1	Male,English	if you can't make it up to another country, don't worry about it 'cause even if you do is sometimes you know it's the mindset it's actually doing
+[607.567,608.653]	2	Female,English	yeah I agree[+]
+[608.711,609.099]	0	U	[NOISE]
+[609.138,610.379]	2	Female,English	OK what's your last tip?
+[610.379,612.008]	1	Male,English	our last tip is
+[612.202,614.384]	1	Male,English	take grammar with a grain of salt
+[614.801,618.059]	1	Male,English	so of course grammar is essential
+[618.127,622.316]	1	Male,English	for learning a language absolutely not without about it you should definitely focus on that[+]
+[622.442,627.213]	1	Male,English	but what I found is that when you're learning from a non native English speaker
+[627.533,634.03]	1	Male,English	they feel safe teaching grammar because there set rules they can teach even if their pronunciation isn't correct any of that
+[634.447,635.281]	1	Male,English	and
+[635.339,638.18]	1	Male,English	you know you you you can get in to that rag
+[638.219,642.544]	1	Male,English	but the reality of most languages is we break those rules all the time
+[642.544,646.762]	1	Male,English	so don't worry too much if your if your grammar's a little lag or you're having trouble learning it
+[646.956,650.253]	1	Male,English	just just kinda go with it and just tryna to repeat what you hear
+[650.253,650.835]	2	Female,English	yeah
+[650.854,651.795]	1	Male,English	I don't know about you though with
+[651.824,653.482]	2	Female,English	no I think I think that's an interesting point
+[694.539,698.03]	2	Female,English	think so because I think like you said grammar is a really safe
+[698.03,698.573]	2	Female,English	place
+[698.641,703.218]	2	Female,English	for a lot of people because like you say there there a rule clear that I see it if you know
+[703.237,708.687]	2	Female,English	if I'd put a noun and a verb like this and I'm gonna make a sentence it's like this and I understand that
+[708.687,709.802]	2	Female,English	till you've understand
+[709.802,714.602]	2	Female,English	but I think that something that a lot of learners don't myself until I get this too but there's a limit
+[714.602,715.979]	2	Female,English	how much more that she can learn
+[716.047,719.208]	2	Female,English	and once you learn the grammar you're you you've learned the grammar
+[719.247,719.79]	0	U	[*]
+[719.79,727.082]	2	Female,English	possible I think to master the grammar of any language but if the vocabulary that continues to change every year there are new word
+[727.111,732.619]	2	Female,English	every single language that get fellas people are making up new words every day especially in English so experiment
+[732.619,736.265]	2	Female,English	you know one[~] once you find that you know you've learned you've learned the grammar
+[736.42,737.477]	2	Female,English	move on
+[737.477,738.738]	0	U	[*]
+[738.738,743.693]	2	Female,English	keep exploring new vocabulary find new interesting things to do with the tools that you given to yourself
+[743.693,747.824]	2	Female,English	so don't be afraid to experiment with your vocabulary too you find something that you might like to try them
+[747.95,750.122]	2	Female,English	make a verb out of like google for example
+[750.5,758.83]	2	Female,English	give it a try see if it works and see people around you are confused maybe it didn't work see if people around you laugh or you know continue with the conversation hey maybe you just made a new word
+[759.014,760.779]	2	Female,English	you never know so give it a try
+[760.779,763.281]	2	Female,English	ah thanks very much for joining us for our
+[765.424,766.355]	0	U	[NOISE]
+[767.79,768.779]	0	U	[NOISE]
+[781.55,782.471]	1	Male,English	it is
+[782.481,783.082]	0	U	[*]
+[783.111,784.498]	1	Male,English	random
+[784.876,785.225]	0	U	[NOISE]
+[785.671,788.367]	1	Male,English	passive sorry cut the cheese
+[788.493,788.91]	0	U	[NOISE]
+[788.978,790.791]	1	Male,English	cut the cheese um
+[790.898,795.261]	1	Male,English	it's a weird one we stay and we kinda accept this so this means fart
+[795.571,798.83]	1	Male,English	means to fart but I don't think it will be sound like a fart when you cut the cheese
+[799.082,801.555]	1	Male,English	you ask who do you think who cut the cheese right what
+[801.555,803.407]	2	Female,English	I don't think that this revert to a sound
+[803.523,804.047]	0	U	[*]
+[804.202,805.007]	1	Male,English	no
+[805.162,807.664]	1	Male,English	yeah wha[~] what do you think it comes I don't have no idea that's
+[807.664,809.138]	2	Female,English	you are so full of it[+]
+[809.157,810.127]	0	U	[*]
+[810.156,811.562]	2	Female,English	explain this one right there[+]
+[811.63,812.522]	2	Female,English	it's your first to this
+[812.561,817.196]	2	Female,English	smell when you have gas from your body your guys are gonna make me
+[817.351,817.933]	1	Male,English	oh
+[817.962,818.35]	2	Female,English	you may[+]
+[818.35,819.853]	1	Male,English	no, I swear I[+]
+[819.853,821.521]	1	Male,English	swear I didn't know that[+]
+[821.55,822.035]	0	U	[NOISE]
+[822.064,822.995]	1	Male,English	ah
+[823.024,825.099]	2	Female,English	small thing if you cut a fresh
+[825.351,827.407]	2	Female,English	cheese thing it smells kind of
+[827.407,827.921]	0	U	[NOISE]
+[827.95,828.619]	2	Female,English	bad
+[828.658,829.298]	1	Male,English	ah it's you
+[829.298,832.304]	2	Female,English	so your body is well if you release gas
+[832.333,837.298]	2	Female,English	from from body it may smell similar to a freshly cut block of cheese
+[837.298,838.19]	1	Male,English	ah
+[838.374,840.333]	2	Female,English	and now I've explained
+[840.362,841.778]	0	U	[NOISE]
+[841.778,843.63]	2	Female,English	something inspired me enough in internet[+]
+[843.63,844.842]	0	U	[NOISE]
+[845.133,845.482]	0	U	[NOISE]
+[845.521,846.481]	1	Male,English	yeah shouldn't be like
+[846.539,849.419]	1	Male,English	frying the egg or something it's a time of smell cheese
+[849.419,850.476]	2	Female,English	what do you do to your egg?
+[850.505,852.396]	0	U	[NOISE]
+[852.483,855.819]	1	Male,English	my cheese is my fart is also like cheese it smell like egg more than
+[855.916,857.419]	1	Male,English	cheese just saying I
+[857.458,859.407]	1	Male,English	I swear I thought that was the sound of
+[859.504,860.047]	0	U	[NOISE]
+[860.076,860.687]	1	Male,English	like it's a
+[860.755,861.744]	2	Female,English	what how often?[+]
+[861.744,862.83]	1	Male,English	well that's very cool
+[862.859,864.042]	0	U	[NOISE]
+[864.236,864.459]	0	U	[NOISE]
+[864.488,865.167]	1	Male,English	what about you?
+[865.196,866.447]	0	U	[NOISE]
+[866.447,868.59]	2	Female,English	God this is only the first one
+[868.658,869.773]	0	U	[NOISE]
+[869.802,871.363]	2	Female,English	I'm so sorry about this now
+[871.538,877.065]	2	Female,English	that is I like to point out that phrase as one of used a lot by kids and parents who are talking to kids
+[877.065,878.762]	2	Female,English	that's like a nice way to
+[879.247,882.195]	2	Female,English	I guess it's the only way to revert to it otherwise[+]
+[882.34,882.883]	2	Female,English	rather on
+[882.893,883.155]	0	U	[*]
+[883.184,886.578]	2	Female,English	well, no it's always on far as I can imagine modely function
+[886.675,890.99]	2	Female,English	so I don't recommend using that with your adult friend but
+[891.271,895.247]	2	Female,English	you be the kid it usually uses the question I should point out
+[895.247,896.837]	1	Male,English	so obtainable you're like it
+[896.847,898.243]	0	U	[NOISE]
+[898.253,900.144]	2	Female,English	but I think the last time I said this
+[900.27,902.956]	2	Female,English	it's been like years since I've said that[+]
+[902.956,907.921]	1	Male,English	yeah it's like cheesy stick on like I don't think I've ever said it in my life ever I think you just maybe you hear it
+[907.95,909.453]	0	U	[*]
+[909.491,910.219]	1	Male,English	lot of this weird ones
+[910.859,912.362]	2	Female,English	um you know I [+]
+[912.401,912.963]	0	U	[*]
+[913.06,916.115]	2	Female,English	you use this do you use the phrase cut the cheese as an adult?[+]
+[916.144,917.395]	1	Male,English	I no
+[917.676,918.51]	1	Male,English	never in my life
+[918.607,919.79]	1	Male,English	maybe S B D
+[919.79,920.876]	1	Male,English	sounded but deadly
+[920.876,922.03]	1	Male,English	that's something I've used
+[922.321,925.715]	1	Male,English	it is from you know fart related but cut the cheese probably never
+[926.19,926.801]	0	U	[NOISE]
+[926.859,928.42]	0	U	[NOISE]
+[929.07,930.379]	2	Female,English	OK well[+]
+[930.388,930.602]	0	U	[*]
+[930.602,935.315]	2	Female,English	I'm gonna continue on maybe I'm gonna fix something to um combat that one[+]
+[935.567,938.505]	2	Female,English	let's see if I pick I pick this one
+[939.281,940.784]	2	Female,English	ah no I pick this one
+[940.842,946.573]	2	Female,English	I'm gonna choose this there there there kind of few variations on this one ah hit the back and hit the head they both mean go to bed
+[946.796,947.475]	2	Female,English	um
+[947.562,949.424]	2	Female,English	they're just casual expressions
+[949.482,949.899]	0	U	[NOISE]
+[949.996,952.915]	2	Female,English	but please rhyme on to the day not gonna go[+]
+[953.031,958.83]	2	Female,English	um but yeah I have no idea I I just kick the head I'm with my sounds like if you're going to sleep on the piled
+[958.888,960.003]	0	U	[*]
+[960.006,960.976]	1	Female,English	I wanna say[+]
+[961.005,963.981]	0	U	[*]
+[965.135,966.513]	0	U	[*]
+[966.61,967.085]	1	Female,English	perhaps
+[967.124,968.073]	0	U	[NOISE]
+[968.083,968.519]	0	U	[*]
+[968.529,969.451]	2	Male,English	ah she's great
+[969.48,970.381]	0	U	[*]
+[970.381,970.769]	0	U	[NOISE]
+[970.769,972.524]	1	Female,English	no we're specific good
+[972.718,973.804]	1	Female,English	it's on today but
+[973.833,975.25]	2	Male,English	so may I get some mix in?
+[976.005,976.976]	0	U	[*]
+[976.976,980.718]	2	Male,English	I think that this one I actually use I don't I don't use cotton cheese but I use[+]
+[980.806,982.183]	2	Male,English	I use this one for sure[+]
+[982.192,984.015]	0	U	[NOISE]
+[984.297,985.49]	0	U	[NOISE]
+[985.49,986.101]	1	Female,English	sorry
+[986.449,987.187]	0	U	[NOISE]
+[987.187,988.165]	0	U	[NOISE]
+[988.244,989.582]	2	Male,English	this is sad this is sad
+[989.639,990.096]	0	U	[NOISE]
+[990.221,990.639]	2	Male,English	um
+[990.697,991.53]	1	Female,English	do you say anything else?
+[991.569,992.908]	0	U	[NOISE]
+[994.605,996.331]	2	Male,English	passed out I say passed out
+[996.36,996.66]	0	U	[NOISE]
+[996.689,999.365]	2	Male,English	I'm gonna passed out which is also like when you're
+[999.375,999.783]	0	U	[*]
+[999.793,1003.827]	2	Male,English	I don't know say faint passed out or if you're like drunk you passed out
+[1004.302,1005.427]	2	Male,English	ah actually it's like deep
+[1005.902,1006.9]	2	Male,English	deep deep sleep
+[1006.929,1007.279]	1	Female,English	yeah
+[1007.793,1008.529]	2	Male,English	it is ah
+[1008.723,1009.422]	0	U	[*]
+[1010.479,1011.206]	0	U	[*]
+[1011.312,1011.701]	2	Male,English	um
+[1011.73,1012.176]	0	U	[*]
+[1012.592,1012.913]	2	Male,English	um
+[1013.077,1013.746]	2	Male,English	more later
+[1013.872,1014.289]	1	Female,English	yeah
+[1014.61,1015.25]	1	Female,English	OK
+[1015.686,1016.21]	1	Female,English	that's all
+[1016.326,1016.782]	0	U	[NOISE]
+[1017.295,1018.062]	1	Female,English	good Micheal
+[1018.062,1018.381]	0	U	[*]
+[1018.381,1018.856]	2	Male,English	yeah[+]
+[1018.866,1020.816]	1	Female,English	next one please don't fart
+[1020.913,1022.357]	0	U	[NOISE]
+[1022.997,1024.209]	2	Male,English	a it is
+[1024.238,1025.547]	2	Male,English	I don't know what is it
+[1025.907,1026.536]	2	Male,English	ah
+[1026.799,1028.302]	2	Male,English	use someone's thunder
+[1028.747,1030.987]	2	Male,English	um this one doesn't make sense at all
+[1031.249,1032.112]	2	Male,English	so
+[1032.685,1034.323]	2	Male,English	who's thunder? is this God?
+[1034.546,1034.964]	2	Male,English	is this
+[1035.496,1037.039]	0	U	[*]
+[1037.136,1037.514]	2	Male,English	um
+[1037.524,1041.159]	1	Female,English	so the meaning of this phrase is like to take credit for something that's someone else's done
+[1041.742,1043.119]	1	Female,English	to feel someone's thunder
+[1043.216,1044.021]	2	Male,English	using of thunder
+[1044.05,1045.62]	1	Female,English	I wonder where this this precious
+[1045.746,1046.358]	0	U	[*]
+[1046.416,1046.958]	1	Female,English	yeah
+[1047.123,1049.266]	1	Female,English	and thunder is not tangible
+[1049.645,1052.37]	1	Female,English	thunder if you're wondering is that sound that[+]
+[1052.428,1052.941]	1	Female,English	of
+[1053.262,1054.037]	1	Female,English	occurs
+[1054.164,1054.571]	2	Male,English	um
+[1054.61,1061.553]	1	Female,English	when there's a big storm is it's usually accompanied by lighting up right flash of light in the storm thunder is this sound that could've rumbling sound
+[1061.649,1062.056]	1	Female,English	hear
+[1062.095,1062.445]	2	Male,English	um
+[1062.445,1063.113]	1	Female,English	um
+[1063.444,1063.861]	0	U	[NOISE]
+[1064.18,1065.072]	1	Female,English	I don't know
+[1065.46,1069.833]	1	Female,English	that's a good question but to feel someone's thunder is yes it kinda present for someone else done
+[1069.969,1070.474]	2	Male,English	um
+[1071.084,1072.141]	1	Female,English	I wonder what the history with that is
+[1072.627,1076.486]	2	Male,English	no idea this is one of actually used before I mean you hear it sometimes but
+[1077.009,1081.616]	2	Male,English	yeah I I've got some good ones today and these are real perfect for con topic starters
+[1081.616,1082.197]	1	Female,English	alright
+[1082.245,1083.593]	2	Male,English	what about you? what's your next one?
+[1083.603,1089.101]	1	Female,English	my next one um like be I will pick ah to burn the candle at both end
+[1089.295,1093.446]	1	Female,English	this expression means to work really hard so ah I guess
+[1093.553,1096.238]	1	Female,English	I at least in my mind the meaning of this no it's not
+[1096.432,1097.781]	1	Female,English	not that Matthew[+]
+[1097.839,1098.672]	2	Male,English	no I
+[1098.77,1100.205]	2	Male,English	I thought this is real
+[1100.205,1102.261]	2	Male,English	like your life is a candle right?[+]
+[1102.29,1109.009]	2	Male,English	yeah or so I thought maybe I'm reading this wrong but I thought you light to this candle and normally, you light it to the top and it slowly go down and then you die[+]
+[1109.009,1114.449]	2	Male,English	so if you live a crazy life you know you party all time you know sleep and you drive as fast with no helmet
+[1114.449,1118.987]	2	Male,English	you're lighting the candle at both end so you you know live fast die young kind of a
+[1119.638,1122.004]	2	Male,English	however that phrase goes that's what I thought
+[1122.004,1128.685]	1	Female,English	I can see that that too in my mind it was it's just that somebody is working really really hard like burning the candle at both end like you're
+[1129.005,1129.489]	0	U	[*]
+[1129.576,1130.159]	0	U	[NOISE]
+[1130.255,1131.274]	1	Female,English	progressing so
+[1131.409,1131.982]	0	U	[*]
+[1132.05,1133.097]	1	Female,English	so that's through like yeah[+]
+[1133.136,1133.456]	2	Male,English	yeah
+[1133.456,1134.707]	1	Female,English	well I could see that um[+]
+[1135.473,1136.646]	2	Male,English	yeah huh
+[1136.724,1137.907]	1	Female,English	I meant this[+]
+[1138.226,1139.506]	2	Male,English	idioms are indeed
+[1139.564,1139.845]	0	U	[*]
+[1139.884,1143.318]	1	Female,English	means that means that depending on the person then you are a little different
+[1144.141,1145.518]	1	Female,English	what now? OK what's your next one?
+[1145.616,1148.205]	2	Male,English	um ah I don't know well um
+[1148.592,1149.194]	0	U	[*]
+[1150.958,1153.547]	2	Male,English	ah this is a classic one I don't know
+[1154.323,1155.758]	2	Male,English	raining cats and dogs
+[1156.04,1156.757]	0	U	[*]
+[1156.757,1157.707]	2	Male,English	raining cats and dogs
+[1158.095,1159.366]	2	Male,English	do you always hear this?
+[1159.793,1160.879]	2	Male,English	and um
+[1161.227,1162.313]	2	Male,English	doesn't make sense to me
+[1163.312,1164.108]	1	Female,English	this is means of
+[1164.147,1164.65]	1	Female,English	pouring
+[1164.815,1165.291]	2	Male,English	um
+[1165.446,1173.33]	2	Male,English	pouring really heavy rain I I think this is like the classic this is the archetype idioms that they use and I thought about idioms English you always hear raining cats and dogs[+]
+[1173.862,1174.445]	2	Male,English	but
+[1174.445,1178.159]	2	Male,English	it doesn't literally rains cats and dogs and why cats and dogs?
+[1178.197,1178.604]	0	U	[*]
+[1178.867,1181.262]	2	Male,English	I don't know it's raining whales it's raining
+[1181.998,1184.53]	1	Female,English	yes, good point. why cats and dogs?
+[1184.646,1186.478]	1	Female,English	why not like apples and orange
+[1186.575,1187.535]	2	Male,English	um[+]
+[1187.914,1188.592]	1	Female,English	while in this
+[1188.66,1189.775]	0	U	[*]
+[1189.94,1190.581]	0	U	[NOISE]
+[1190.61,1191.88]	1	Female,English	or penguin
+[1191.918,1192.461]	1	Female,English	and[+]
+[1192.84,1193.46]	1	Female,English	on that
+[1194.701,1195.216]	0	U	[NOISE]
+[1195.506,1196.495]	0	U	[NOISE]
+[1196.495,1197.901]	1	Female,English	I should do study ages
+[1197.959,1199.084]	0	U	[NOISE]
+[1199.142,1200.141]	0	U	[NOISE]
+[1200.141,1205.998]	1	Female,English	I don't know but yeah it does it does means it's a down pour I wonder if it's true that one is too you know[+]
+[1206.261,1211.982]	1	Female,English	linguistic history phrases or maybe it's just some guy who just said a phrase and then all of his friends picked up on it
+[1212.495,1214.445]	1	Female,English	heard it first time or the less
+[1215.152,1215.764]	1	Female,English	OK
+[1215.986,1216.724]	1	Female,English	um
+[1216.724,1217.489]	0	U	[NOISE]
+[1217.645,1218.216]	0	U	[NOISE]
+[1218.226,1220.273]	1	Female,English	I don't know I don't know to go with that one
+[1220.273,1226.886]	1	Female,English	um then my last one I pick another animal related one then this one is to hear something straight from the horse's mouth
+[1227.051,1231.502]	1	Female,English	ah when you hear something straight from the horses mouth that means you get news directly from the source
+[1231.783,1233.965]	1	Female,English	why you're hearing it from a horse?
+[1233.965,1235.119]	1	Female,English	who is able to talk
+[1235.119,1235.38]	0	U	[*]
+[1235.409,1236.205]	0	U	[*]
+[1236.273,1238.416]	1	Female,English	not know um but it just mean
+[1238.832,1243.661]	1	Female,English	that you are getting the information directly from the person who has the the information
+[1244.147,1244.747]	1	Female,English	ah
+[1245.078,1246.581]	1	Female,English	and and oppose to hearing it
+[1247.336,1249.072]	1	Female,English	yeah here's the hair something like that
+[1249.295,1250.741]	1	Female,English	that you hear something straight from the horses
+[1250.77,1251.187]	0	U	[NOISE]
+[1251.632,1253.107]	1	Female,English	it kind of a weird phrase like
+[1253.233,1253.514]	0	U	[NOISE]
+[1253.524,1253.843]	1	Female,English	um
+[1254.124,1260.05]	1	Female,English	why why is it a horse? again why why this is like a horse why is that a specific animal that has been chosen that[+]
+[1260.05,1262.193]	1	Female,English	to rely informations to human
+[1262.358,1265.81]	1	Female,English	and why is the horse also being reliable a reliable sources?
+[1265.839,1266.77]	0	U	[*]
+[1267.119,1269.097]	2	Male,English	don't worry just ask ask the horse[+]
+[1269.136,1270.832]	1	Female,English	yeah, yeah[+]
+[1270.861,1273.586]	1	Female,English	it's like I know a guy who knows a horse let me go ask him
+[1273.839,1274.604]	0	U	[NOISE]
+[1274.604,1276.021]	1	Female,English	you want of this do that
+[1276.273,1276.844]	2	Male,English	yeah
+[1276.941,1277.524]	0	U	[*]
+[1277.639,1282.159]	2	Male,English	I was thinking the same thing, I tryna think of idioms that are weird is the great one
+[1282.73,1283.622]	2	Male,English	I heard of it[+]
+[1283.632,1283.953]	1	Female,English	fine
+[1284.05,1286.61]	2	Male,English	so why oh yeah again it's it's it's
+[1286.764,1290.478]	2	Male,English	and to more prizing in giving this random objects
+[1290.896,1295.754]	2	Male,English	human quality but why a horse why a great one I think a horse makes a little more sense 'cause at least it's like
+[1296.044,1298.838]	2	Male,English	has a mouth but a great hind what it's a little
+[1298.838,1303.696]	1	Female,English	no I think this is a great hind just refers to the way it greet by grows kind of in this like it cross pattern
+[1303.889,1306.896]	1	Female,English	and so that kind of the way that the information travel[+]
+[1306.964,1307.826]	1	Female,English	when you hear something
+[1307.826,1308.776]	0	U	[*]
+[1308.815,1309.359]	1	Female,English	you it
+[1309.398,1313.227]	1	Female,English	it it transverses or crosses you know many different people and then it get
+[1313.576,1315.177]	1	Female,English	like much in a way than the first time
+[1315.729,1316.563]	2	Male,English	that will make
+[1316.621,1317.107]	0	U	[*]
+[1317.136,1317.456]	2	Male,English	um
+[1317.582,1319.22]	1	Female,English	so maybe an expression like
+[1319.22,1320.85]	1	Female,English	your convince it's a great find meaning
+[1320.879,1321.839]	1	Female,English	to hear it from a few
+[1321.868,1323.216]	1	Female,English	or via a huge different
+[1323.216,1325.165]	1	Female,English	people of kind of the office that it hearing some people
+[1325.611,1326.28]	1	Female,English	from the source
+[1326.29,1326.803]	0	U	[NOISE]
+[1327.889,1329.043]	0	U	[*]
+[1329.101,1330.13]	1	Female,English	sort as it goes to
+[1331.603,1332.118]	0	U	[NOISE]
+[1332.176,1332.65]	0	U	[NOISE]
+[1332.844,1333.33]	0	U	[NOISE]
+[1333.62,1334.6]	0	U	[NOISE]
+[1334.997,1335.463]	0	U	[*]
+[1335.502,1340.118]	1	Female,English	OK so those are some weird English idioms give them a try if you have the opportunity
+[1340.205,1341.582]	1	Female,English	you have anything to add Micheal?
+[1341.736,1342.066]	0	U	[NOISE]
+[1354.643,1355.525]	0	U	[*]
+[1355.632,1356.563]	2	Male,English	um
+[1356.592,1358.037]	2	Male,English	I'm going to have a start with
+[1358.037,1358.513]	0	U	[NOISE]
+[1358.61,1359.861]	2	Male,English	the arrogant
+[1359.861,1361.45]	2	Male,English	american stereotype
+[1361.742,1362.188]	0	U	[NOISE]
+[1362.255,1362.896]	2	Male,English	so this
+[1362.896,1363.245]	0	U	[NOISE]
+[1363.274,1364.428]	2	Male,English	this I think
+[1364.466,1364.883]	0	U	[NOISE]
+[1364.912,1367.249]	2	Male,English	maybe in the past had been ah
+[1367.249,1368.782]	2	Male,English	a little bit more accurate
+[1368.84,1375.055]	2	Male,English	but ever since the internet and ever since like the sixties with the Vietnam war and ah the hippie movement everything going on then
+[1375.055,1381.301]	2	Male,English	this is really die down a bit you know I'm proud to be an American but I'm not one of the the stereotypical American that
+[1381.301,1383.541]	2	Male,English	we're number one we're the best bla bla
+[1383.541,1385.392]	2	Male,English	this really is die down um
+[1385.392,1387.284]	2	Male,English	yeah I hear this a lot on the internet but um
+[1387.312,1387.982]	2	Male,English	um[+]
+[1388.244,1393.034]	1	Female,English	yeah I know what you mean in the hole you know number one thing at least for me one of the things that I
+[1393.46,1394.643]	1	Female,English	I don't know I feel like
+[1394.672,1395.051]	0	U	[NOISE]
+[1395.564,1398.222]	1	Female,English	if you say this is the greatest country in the world
+[1398.222,1400.296]	1	Female,English	I I don't know I think that'ts a silly thing to say
+[1400.403,1406.037]	1	Female,English	that you're the greatest country in the world not that I don't you know for america or you know appreciate all the things
+[1406.066,1406.861]	0	U	[*]
+[1406.958,1407.376]	0	U	[NOISE]
+[1407.473,1408.559]	1	Female,English	like for me and for
+[1408.753,1411.206]	1	Female,English	I don't I feel like I'm I'm treading in dangerous waters
+[1411.216,1412.621]	0	U	[NOISE]
+[1412.689,1413.262]	1	Female,English	but
+[1413.93,1414.764]	1	Female,English	I don't know
+[1414.832,1417.616]	1	Female,English	there are plenty of good things about other countries too
+[1418.101,1419.603]	1	Female,English	I'm gonna stop here before
+[1419.603,1420.582]	0	U	[NOISE]
+[1420.718,1425.169]	1	Female,English	get on this like anyway I'm gonna go on my first one my first one um
+[1425.237,1428.466]	1	Female,English	is maybe you I don't know maybe this plan that you start as well
+[1428.524,1428.912]	0	U	[NOISE]
+[1428.912,1431.502]	1	Female,English	hamburgers are the only American food
+[1431.57,1431.947]	0	U	[NOISE]
+[1432.044,1434.954]	1	Female,English	this is a misconception that I heard a lot
+[1435.022,1440.005]	1	Female,English	ah hamburgers and variations of hamburgers, cheeseburgers bacon cheeseburgers avocado
+[1440.009,1440.745]	1	Female,English	burgers that you
+[1441.143,1441.589]	0	U	[NOISE]
+[1470.001,1476.081]	1	Female,English	burgers whatever anything burger is not the only American food there plenty of other American food like
+[1476.081,1478.001]	1	Female,English	ah if he ah even if you just
+[1506.772,1513.492]	1	Female,English	stick around like the fast food ball park for a while there are like hot dogs there are like chili cheese stick which are delicious
+[1513.492,1516.682]	1	Female,English	if you go to the south there's all kinds of interesting um like
+[1516.692,1517.555]	0	U	[*]
+[1517.584,1520.338]	1	Female,English	food that you can try on night you can eat crocodile you can eat
+[1520.396,1524.692]	1	Female,English	frog legs which I mean probably a frog doesn't like sense from french cuisine
+[1524.692,1529.269]	1	Female,English	um there lots of fresh fish like salmon from washington organ where I'm from
+[1529.269,1532.721]	1	Female,English	we talked a lot about tack's max and California burrito culture
+[1532.721,1538.607]	1	Female,English	there's so so much good stuff to try in america it's not just burger like american food is more than just
+[1538.607,1542.864]	1	Female,English	burgers that drives me crazy when people say oh you're american you must like hamburgers right?
+[1543.242,1546.607]	1	Female,English	oh wow this are great but there's so much other good stuff to try
+[1547.218,1547.703]	0	U	[*]
+[1547.8,1552.493]	2	Male,English	likewise just with the hamburger thing when you think hamburgers you think fast food right?[+]
+[1552.493,1557.08]	2	Male,English	and so that's the other stereotype and even if you  want a good authentic american hamburger
+[1557.08,1560.115]	2	Male,English	don't go to one of the fast food restaurant that's when they think oh you[+]
+[1560.115,1564.915]	2	Male,English	you're american you can appreciate the real good high quality cheese and bla bla bla
+[1565.002,1568.6]	2	Male,English	if you have a really good authentic american hamburger you'll
+[1569.065,1569.967]	2	Male,English	if you really have it
+[1569.967,1570.481]	1	Female,English	yeah
+[1570.665,1570.966]	2	Male,English	yeah
+[1571.053,1572.818]	2	Male,English	you really have it's really good um
+[1572.847,1573.303]	0	U	[NOISE]
+[1573.749,1574.292]	2	Male,English	um
+[1574.379,1576.6]	1	Female,English	did I miss any like the american food?
+[1576.6,1578.355]	1	Female,English	I feel like I can I like the big one
+[1578.355,1578.743]	2	Male,English	yes
+[1578.762,1579.344]	1	Female,English	like you know
+[1579.383,1581.778]	0	U	[*]
+[1581.875,1583.378]	2	Male,English	that was the first thing I thought of
+[1583.378,1589.681]	2	Male,English	and you got to this Louisiana as far as like something that people don't usually think about when they think about america food and that's amazing food[+]
+[1589.749,1591.543]	2	Male,English	and I think you know
+[1591.698,1592.406]	2	Male,English	to to
+[1592.532,1599.0]	2	Male,English	take a little bit further um while travelling and teaching people would say oh your name's not really american name because my last name is German
+[1599.213,1600.144]	2	Male,English	but
+[1600.144,1606.476]	2	Male,English	I would tell them that there is no american name like a truly american name would be like native the Americans form way back when
+[1606.583,1610.423]	2	Male,English	and of the beauties of america is that it's a melting pot is always here
+[1610.423,1613.904]	2	Male,English	and it's a lot of different cultures so as you were saying about Louisiana food it's
+[1613.904,1615.504]	2	Male,English	probably borrowed from french and
+[1615.572,1616.338]	2	Male,English	you know
+[1616.338,1621.904]	2	Male,English	america food isn't just hamburger so it's a whole wide ray and as we talk about the before the Mexican foods so[+]
+[1622.195,1624.6]	2	Male,English	absolutely there's a big variety and it's not just
+[1624.629,1625.521]	0	U	[NOISE]
+[1625.579,1628.12]	1	Female,English	yeah explore for america ncuisine there's a lot of it
+[1628.12,1628.847]	0	U	[*]
+[1629.012,1629.72]	1	Female,English	alright
+[1629.739,1631.31]	1	Female,English	ah what's your name?
+[1631.475,1632.726]	1	Female,English	misconception
+[1632.852,1633.143]	0	U	[NOISE]
+[1633.172,1635.092]	2	Male,English	next misconception is
+[1635.315,1638.195]	2	Male,English	well this one's a little bit specific to where I'm from
+[1638.505,1641.744]	2	Male,English	is that everybody sees or snowboards in Colorado
+[1641.744,1642.2]	0	U	[*]
+[1642.229,1645.041]	2	Male,English	so this is something I think this is natural when you meet somebody
+[1645.167,1650.326]	2	Male,English	from any different state province whatever is that you think about[+]
+[1650.384,1652.876]	2	Male,English	the tourist attractions of that place
+[1652.905,1653.303]	1	Female,English	ah
+[1653.322,1660.246]	2	Male,English	and you say you know so I meet another American even yeah even with american they say oh you're you're from Colorado do you ski snowboard?
+[1660.915,1665.104]	2	Male,English	yeah you know sometimes but it just because I'm from there, doesn't mean I'd do it
+[1665.104,1671.698]	2	Male,English	and to me I think you know it's kind of rough analogy but if you feel like meeting someone from France I mean like oh you go to Eiffel tower everyday like
+[1671.698,1672.047]	1	Female,English	um
+[1672.076,1673.463]	2	Male,English	yeah once when I was a kid
+[1673.463,1673.841]	2	Male,English	no[+]
+[1673.841,1674.452]	1	Female,English	ah yeah[+]
+[1674.539,1677.875]	2	Male,English	yeah same thing as America oh you know it sets the whole country as what
+[1677.875,1678.166]	0	U	[NOISE]
+[1678.195,1680.745]	2	Male,English	statue of liberty as you come to think where did get that[+]
+[1680.755,1683.053]	1	Female,English	yeah every once in a while they're like um
+[1683.179,1686.961]	1	Female,English	I'm from Oregon so we have like you know skis snowboard culture there but
+[1686.961,1688.561]	1	Female,English	I'm trying to think if if there's
+[1688.561,1689.618]	1	Female,English	when I say that I'm
+[1689.618,1690.219]	1	Female,English	I wasn't
+[1690.219,1693.099]	1	Female,English	raised in Oregon if there's something that I usually get back
+[1693.138,1694.127]	1	Female,English	I don't think I do
+[1694.224,1696.561]	1	Female,English	I think California maybe more so like
+[1696.687,1703.95]	1	Female,English	if you say he's in California it might be something like oh well do you surf or do you go to the beach or I think that there's it's really easy to kind of make an image
+[1703.96,1710.806]	1	Female,English	ah of that of that state of what that state people might be like and then to ask a question about that but I don't think that it's necessarily
+[1711.155,1711.63]	1	Female,English	like
+[1711.727,1712.716]	1	Female,English	out of
+[1712.939,1719.407]	1	Female,English	I don't know mount as if people say such thing I think it just trying to make a connection oh I'm I'm familiar with some degree with your
+[1719.407,1723.538]	1	Female,English	state or I I know something about your state maybe this is the way we can have a conversation about it
+[1723.761,1725.545]	1	Female,English	but yeah its like kind of
+[1725.545,1726.195]	0	U	[*]
+[1726.195,1726.699]	1	Female,English	people
+[1726.806,1727.155]	2	Male,English	um
+[1727.184,1729.463]	1	Female,English	like trying to stereotype people by tongue you know
+[1729.608,1735.184]	1	Female,English	where they're from and what you presumed they might like to do I get they could come off a little like
+[1735.252,1735.853]	1	Female,English	ah
+[1735.853,1736.338]	0	U	[*]
+[1736.367,1737.395]	1	Female,English	little irritating
+[1737.424,1738.161]	0	U	[*]
+[1738.161,1745.172]	2	Male,English	yeah I don't I don't mind it 'cause I know that it's good intention they're just tryna make a connection and I I do the same thing that I think of all the musicians or[+]
+[1745.172,1749.167]	2	Male,English	famous actors or actresses from whatever the country they're from and I'll say that
+[1749.167,1753.395]	2	Male,English	oh we're just tryna make conversations so it's not a big deal but again it's it's a stereotyping[+]
+[1753.395,1756.721]	2	Male,English	just try to relate it and put for yourself in the shot what what can a
+[1756.75,1759.058]	2	Male,English	towards attraction to stereotype so I not really
+[1759.058,1762.646]	1	Female,English	yeah yeah oh I've been there just set attraction for it
+[1762.675,1763.441]	0	U	[*]
+[1763.499,1763.848]	2	Male,English	um
+[1763.858,1765.012]	1	Female,English	yeah if I think it isn't it
+[1765.012,1765.264]	0	U	[*]
+[1765.264,1767.824]	1	Female,English	not just really bad its just one of those things[+]
+[1768.008,1768.978]	0	U	[*]
+[1769.104,1769.802]	1	Female,English	alright[+]
+[1769.938,1775.436]	1	Female,English	ah next one let's see the next one that I have I've heard this noun now and then
+[1775.446,1776.328]	0	U	[NOISE]
+[1776.726,1779.315]	1	Female,English	this one that I've heard is American's all owned
+[1779.344,1782.04]	1	Female,English	gun I've heard this I don't hear it so[+]
+[1782.04,1782.932]	2	Male,English	me too
+[1782.932,1783.378]	2	Male,English	ah[+]
+[1783.407,1784.396]	0	U	[*]
+[1784.406,1786.035]	0	U	[NOISE]
+[1786.035,1787.121]	1	Female,English	oh gosh
+[1787.15,1794.607]	1	Female,English	we both have this one but this is one that I think I maybe because of action movies maybe because of the new stories that come out about
+[1794.636,1801.395]	1	Female,English	shootings in America which are horribly tragic and unfortunate but for some reason some people this image that Americans all own of guns
+[1801.492,1801.705]	1	Female,English	um
+[1801.715,1803.499]	1	Female,English	um I don't own a gun
+[1804.149,1804.566]	2	Male,English	me either
+[1804.595,1805.487]	0	U	[NOISE]
+[1805.555,1809.899]	1	Female,English	so like I I there's one certain few people who do not own parents the family would have
+[1810.035,1811.16]	1	Female,English	would have that um
+[1811.218,1812.886]	0	U	[*]
+[1813.138,1813.913]	1	Female,English	more their families
+[1813.972,1814.321]	0	U	[NOISE]
+[1814.932,1817.589]	1	Female,English	um but as far as like a handgun I don't think I've ever
+[1818.006,1820.11]	1	Female,English	that anyone that I know of
+[1820.44,1820.779]	0	U	[NOISE]
+[1820.808,1822.195]	1	Female,English	no wait I did that one guy
+[1822.292,1822.961]	2	Male,English	see this is[+]
+[1823.0,1823.863]	1	Female,English	the little
+[1824.28,1824.658]	0	U	[NOISE]
+[1824.726,1827.247]	1	Female,English	I'm not gonna say anything I I really uncomfortable
+[1827.276,1828.304]	0	U	[NOISE]
+[1828.343,1829.07]	1	Female,English	video so
+[1829.08,1830.127]	0	U	[NOISE]
+[1830.166,1831.504]	1	Female,English	so it's like getting controversial
+[1831.64,1832.241]	2	Male,English	yeah yeah
+[1832.241,1832.648]	1	Female,English	OK
+[1832.658,1833.075]	2	Male,English	so
+[1833.356,1834.859]	1	Female,English	let's go to the last one
+[1834.966,1835.509]	1	Female,English	'cause it's
+[1836.11,1837.623]	1	Female,English	not controversial
+[1837.652,1838.709]	0	U	[NOISE]
+[1838.728,1839.504]	1	Female,English	go the last one
+[1839.504,1839.921]	0	U	[NOISE]
+[1839.96,1845.642]	1	Female,English	ah my last one is it will be quick and easy to see the whole country no America's
+[1845.652,1850.035]	1	Female,English	huge especially well compared to a lot of other countries around the world america's
+[1850.044,1851.092]	1	Female,English	very very large
+[1851.121,1851.47]	0	U	[NOISE]
+[1851.47,1853.332]	1	Female,English	ah my heard of people saying
+[1853.332,1858.84]	1	Female,English	you know like they're gonna go to visit New York and they say OK and then we're gonna we're gonna rent a car we're gonna drive to California
+[1859.208,1861.235]	1	Female,English	and the Americans in the room will go
+[1861.235,1861.555]	0	U	[NOISE]
+[1861.584,1863.155]	1	Female,English	you know how long it might take you right?
+[1863.184,1867.916]	1	Female,English	I am so 'cause that they're how far that is ah you know a few hours or you know couple days
+[1867.955,1868.76]	1	Female,English	ah no
+[1868.789,1869.361]	0	U	[NOISE]
+[1869.39,1872.619]	1	Female,English	it's far it's like five thousand miles across the country so you should
+[1872.648,1873.016]	1	Female,English	plan
+[1873.046,1873.298]	0	U	[NOISE]
+[1873.298,1874.006]	1	Female,English	sometime
+[1874.161,1876.236]	1	Female,English	I heard about a guy recently he took
+[1876.333,1877.332]	1	Female,English	like a month
+[1877.429,1878.806]	1	Female,English	to bicycle
+[1878.806,1880.532]	1	Female,English	from New York to California
+[1880.92,1883.024]	1	Female,English	crazy so he has some he has some
+[1883.538,1884.498]	1	Female,English	people with him
+[1884.556,1885.749]	0	U	[*]
+[1885.875,1886.195]	0	U	[NOISE]
+[1886.224,1890.966]	1	Female,English	um but have you ever run to somebody who'd like has no who no concept of how large the country is?
+[1891.121,1891.606]	2	Male,English	um
+[1891.625,1892.12]	2	Male,English	all the time
+[1892.12,1892.595]	1	Female,English	really?
+[1892.624,1897.88]	2	Male,English	usually I mean again like we're talking about the you you wanna make a connection so usually it is name everyone knows
+[1898.006,1898.898]	2	Male,English	New York,
+[1898.898,1907.402]	2	Male,English	Texas, California that's pretty much it when you think America and so even even Americans I know you you really don't put it on scale of how how big it is
+[1907.402,1912.464]	2	Male,English	unless you look at a picture and you place like you're on top and you go wow this is this is pretty huge
+[1912.464,1912.842]	1	Female,English	mhm
+[1912.852,1913.298]	2	Male,English	um
+[1913.647,1915.693]	2	Male,English	generally though I I met anybody who's like
+[1915.732,1919.989]	2	Male,English	planning a trip and going I think when you plan a trip they make a little more of preparations as well[+]
+[1920.012,1924.404]	1	Male,English	yeah think they've really have no idea no like frame of reference I guess kind of it's own
+[1924.501,1925.141]	2	Female,English	yeah
+[1925.141,1925.364]	1	Male,English	thing
+[1925.403,1927.953]	2	Female,English	and then if you like wanna include like Alaska and Hawaii you will
+[1927.963,1928.409]	0	U	[*]
+[1928.884,1929.689]	2	Female,English	way out there
+[1929.747,1931.347]	0	U	[*]
+[1931.483,1932.404]	2	Female,English	your week long trip
+[1932.433,1933.839]	0	U	[NOISE]
+[1933.839,1934.964]	2	Female,English	yeah it's quite large
+[1935.09,1935.575]	2	Female,English	alright
+[1935.575,1935.798]	0	U	[NOISE]
+[1935.827,1939.638]	2	Female,English	so this is in misconception about America? Anything else you wanna add?
+[1939.958,1940.821]	2	Female,English	thing else you would
+[1940.821,1941.558]	0	U	[*]
+[1965.238,1966.324]	2	Female,English	conversation go
+[1966.683,1968.147]	1	Male,English	this is very important
+[1968.312,1968.748]	0	U	[NOISE]
+[1968.981,1969.388]	0	U	[NOISE]
+[1969.611,1972.21]	1	Male,English	don't say I'm fine thank you and you?
+[1972.598,1976.506]	1	Male,English	you hear this all the time from second language English learners are
+[1976.506,1977.65]	1	Male,English	non native speakers
+[1977.815,1982.838]	1	Male,English	you learn this, this one's the first thing you learn in an English class it's easy it's good it's basic
+[1982.838,1983.604]	1	Male,English	foundation
+[1983.604,1984.632]	1	Male,English	OK that's fine
+[1984.632,1986.775]	1	Male,English	but as soon as you can switch it up
+[1986.775,1989.946]	1	Male,English	because to me when I need a foreigner like come up and if they say
+[1989.946,1990.935]	1	Male,English	hey how are you?
+[1991.119,1993.301]	1	Male,English	Bill I'm fine you know I'm good whatever
+[1993.301,1996.278]	1	Male,English	how about you and they say I'm fine thank you and you and it's just
+[1996.278,2000.118]	1	Male,English	it's almost robotic because I've said it so many times and when I hear that I think
+[2000.147,2000.409]	0	U	[NOISE]
+[2000.632,2001.97]	1	Male,English	English isn't that good
+[2002.038,2002.358]	2	Female,English	um
+[2002.387,2005.335]	1	Male,English	and inside I'm just gonna be really polite and say
+[2005.335,2009.146]	1	Male,English	hello and talk slowly and try to get out there as quick as I can so
+[2009.146,2013.626]	1	Male,English	really impress the foreigner in my opinion I think the best way to do it is say something you know
+[2013.81,2018.969]	1	Male,English	use the big word or just like a slang word something like that when I hear that I go wow man
+[2018.969,2019.415]	0	U	[*]
+[2022.644,2023.323]	0	U	[NOISE]
+[2025.301,2026.232]	0	U	[NOISE]
+[2039.895,2041.01]	0	U	[NOISE]
+[2041.427,2042.067]	0	U	[NOISE]
+[2042.203,2042.455]	0	U	[NOISE]
+[2045.422,2046.033]	0	U	[NOISE]
+[2046.547,2050.775]	1	Male,English	want to know what this person think I wanna get their point of view I'm really excited and then
+[2050.775,2053.209]	1	Male,English	I've had great conversations because of that um
+[2053.209,2053.752]	1	Male,English	yeah
+[2053.752,2053.975]	0	U	[NOISE]
+[2054.072,2060.695]	2	Female,English	that's a really really really good one and actually I think on this YouTube channel actually from a couple years ago there was a video
+[2060.986,2061.907]	2	Female,English	all about
+[2062.13,2069.713]	2	Female,English	better answers to the question how are you then I'm fine thank you and you? or someone says hey how are you I'm good, you?
+[2070.072,2070.741]	2	Female,English	or
+[2070.809,2073.204]	2	Female,English	fine, you? never I'm fine thank you
+[2073.708,2075.066]	2	Female,English	never but try to ask
+[2086.586,2087.09]	0	U	[*]
+[2087.09,2087.643]	2	Female,English	you know
+[2088.176,2095.478]	2	Female,English	phrase to the native speaker with you so then that's the clue to the native speaker then oh maybe this person is ready for conversation beyond you know basic English
+[2095.895,2097.175]	2	Female,English	so that's a really good point
+[2097.301,2098.804]	2	Female,English	like that I didn't think of thing
+[2100.598,2102.285]	2	Female,English	not to do I only thought of thing
+[2102.324,2102.867]	0	U	[*]
+[2103.352,2104.118]	2	Female,English	oh OK
+[2104.186,2104.884]	2	Female,English	cool
+[2104.913,2107.696]	2	Female,English	um let's see let's go to my
+[2107.725,2109.335]	2	Female,English	first one um
+[2109.432,2109.723]	2	Female,English	oh oh
+[2109.81,2110.198]	2	Female,English	oh oh
+[2110.45,2114.93]	2	Female,English	so um this strategy in general just ask me other person of question
+[2115.211,2121.01]	2	Female,English	ah I think and I'm guilty of this too when I'm learning another language I tend to only get input
+[2121.01,2127.371]	2	Female,English	like somebody else is always asking me the question and then I forget my self the ask the other person a question
+[2127.371,2132.346]	2	Female,English	so one question that I like to ask or you know a variation any kind of
+[2132.346,2136.729]	2	Female,English	W H question is good like a good question what where um something like this
+[2136.729,2143.827]	2	Female,English	if you've been paying attention you can use anyway the transmission in your conversation this is on a previous video you can ask them to like anyway up to anything
+[2143.827,2147.861]	2	Female,English	fun this weekend this is a pretty casual conversational question that you can
+[2154.222,2154.445]	0	U	[NOISE]
+[2155.124,2156.627]	2	Female,English	ask just about anybody
+[2156.85,2159.866]	2	Female,English	um whether you just met them or whether you've known them
+[2159.866,2165.587]	2	Female,English	for a while but just just get in the habit of asking other people the question don't wait for someone else
+[2165.587,2169.844]	2	Female,English	ask you the question um so that that the strategy that I try to use
+[2170.067,2170.765]	0	U	[*]
+[2170.804,2174.741]	1	Male,English	yeah me too I agree and I'm gonna say same this because
+[2174.741,2178.872]	1	Male,English	actually two of my questions were exactly what you said agree one hundred percent
+[2178.93,2181.267]	1	Male,English	this is kind of cheating this tip one but
+[2181.335,2181.587]	0	U	[NOISE]
+[2181.655,2183.022]	1	Male,English	so always ask questions
+[2183.051,2183.342]	2	Female,English	mhm
+[2183.381,2186.862]	1	Male,English	so you know again you forget it's really easy I'm really guilty of it
+[2186.93,2187.386]	0	U	[NOISE]
+[2187.415,2190.324]	1	Male,English	English non English whatever I'm I'm guilty of this
+[2190.518,2197.015]	1	Male,English	ah and the other thing is ask deep open in the question so if you asking a yes or no questions so again like at least we thank
+[2197.083,2198.615]	1	Male,English	it it just dead end
+[2198.683,2200.273]	1	Male,English	you can't just say you know[+]
+[2200.467,2203.609]	1	Male,English	do you like cheese? Yes or no, right?
+[2203.638,2210.581]	1	Male,English	so you wanna say what do you think about cheese what is your favorite kind then kinda open it up to something else and let it let it just kinda snow ball
+[2210.61,2210.959]	2	Female,English	right
+[2211.347,2216.186]	2	Female,English	right yeah I think I think that's that's really a key like I have another variation on which I get
+[2216.186,2216.564]	0	U	[*]
+[2216.603,2218.775]	2	Female,English	then you ask 'cause it's kinda relate to what you're talking about
+[2218.862,2225.165]	2	Female,English	like he saying always ask questions always ask deep open ended question so like you may you just said don't ask a yes or no question
+[2225.204,2227.541]	2	Female,English	because yes or no ends with a yes and a no
+[2227.822,2233.97]	2	Female,English	so one of the thing I'll do is um use the pattern similar to this like hey did you see or hey did you hear about blah blah blah
+[2233.97,2238.198]	2	Female,English	so you can use this little blah blah blah as your ah you can ask about
+[2238.198,2238.867]	2	Female,English	the new
+[2238.867,2239.032]	0	U	[NOISE]
+[2239.129,2243.056]	2	Female,English	ah you can ask about something funny you saw on the internet you can ask about
+[2243.095,2247.226]	2	Female,English	um you know some something that you heard from another friend of yours whatever
+[2247.226,2254.091]	2	Female,English	ah it's just the way to check in with the other person and say oh did you also experience this thing that I experience let's talk about
+[2254.13,2254.324]	0	U	[NOISE]
+[2254.363,2255.158]	2	Female,English	so that might be another
+[2255.158,2255.478]	0	U	[NOISE]
+[2255.643,2256.079]	0	U	[NOISE]
+[2256.564,2261.432]	1	Male,English	I like that one. I really like the one because ah you gotta stay within people's comfort zone
+[2261.432,2268.569]	1	Male,English	so maybe you're asking maybe they don't want it right so a good thing is did you hear about it that's up to them maybe they don't want to talk about it they can say oh yeah I've heard about that
+[2268.695,2272.312]	1	Male,English	and you can kinda feel ah the the atmosphere and
+[2272.312,2279.003]	1	Male,English	and realize um maybe I shouldn't talk about this change the subject or they get passionate they start talking about it and there you go just let it go
+[2279.032,2279.769]	1	Male,English	um
+[2280.215,2281.049]	1	Male,English	yeah actually
+[2281.049,2281.291]	2	Female,English	um
+[2281.33,2285.044]	1	Male,English	one thing I get on guilty of this is you do gotta keep keep returning
+[2285.044,2285.238]	0	U	[*]
+[2285.306,2287.565]	1	Male,English	don't let it don't just say oh yeah and what I think about
+[2287.565,2288.506]	0	U	[*]
+[2288.603,2290.833]	1	Male,English	bring it back as then what about you?
+[2290.862,2292.666]	0	U	[*]
+[2292.695,2293.044]	2	Female,English	yeah
+[2293.975,2294.45]	2	Female,English	OK
+[2294.615,2298.426]	2	Female,English	um good I have one more this one um
+[2298.61,2301.364]	2	Female,English	use when you speak did, don't, I guess
+[2301.451,2302.615]	0	U	[NOISE]
+[2303.09,2310.072]	2	Female,English	OK I'll just introduce it compliment the other person or compliment the other person this can be a nice strategy to just to show that you are join 
+[2310.072,2316.026]	2	Female,English	the other persons company um it can be a simple as oh I like your shirt today or oh that's nice dress you're wearing today
+[2316.045,2317.044]	2	Female,English	oh did you get a new
+[2317.044,2317.684]	0	U	[*]
+[2317.781,2321.941]	2	Female,English	sit on the something like that so this is a nice a nice way to the other person maybe what
+[2321.97,2323.541]	0	U	[*]
+[2323.764,2324.365]	1	Male,English	yeah
+[2324.462,2325.936]	1	Male,English	I agree one hundred percent ah
+[2326.13,2327.09]	0	U	[NOISE]
+[2327.478,2327.895]	0	U	[NOISE]

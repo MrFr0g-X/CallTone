@@ -1,0 +1,1026 @@
+[0.001,2.114]	1	Male,English	and yet you were doing it a long time ago
+[2.124,2.735]	0	U	[NOISE]
+[2.754,3.656]	1	Male,English	well it's
+[3.714,4.422]	1	Male,English	ah
+[4.548,5.896]	1	Male,English	it's it's always a
+[5.896,8.262]	1	Male,English	It's always a very tricky thing so it's it's
+[8.262,9.387]	1	Male,English	it's um
+[9.387,11.937]	1	Male,English	on some level on on some level
+[11.947,12.655]	1	Male,English	the we've
+[12.684,14.255]	1	Male,English	you know we've just been talking about it
+[14.255,16.262]	1	Male,English	Aha there aren't that many people who will
+[16.262,19.559]	1	Male,English	who will graduated disagree with us. The people in the yo[~] you know what people
+[19.559,20.684]	1	Male,English	and there some people but
+[20.684,21.838]	1	Male,English	Most people would say you know.[+]
+[21.867,22.342]	2	Male,English	find out[+]
+[22.371,22.662]	0	U	[*]
+[22.662,24.01]	1	Male,English	You know we don't we we[+]
+[24.01,27.501]	1	Male,English	We don't want any different views or you know we do surprise views people
+[27.53,28.752]	1	Male,English	and some people say that's are not
+[28.752,29.799]	1	Male,English	not really that many
+[29.799,33.232]	2	Male,English	Right we'll be asked in other ways right? No one's gonna how right say that[+]
+[33.251,35.239]	1	Male,English	but then in practice you end up[+]
+[35.297,40.747]	1	Male,English	with this ah with this ah with this incredible conformity you know that's not theory with people
+[40.747,41.765]	1	Male,English	with people want
+[41.775,42.473]	2	Male,English	mhm[+]
+[42.502,43.307]	1	Male,English	one of the
+[43.307,50.415]	1	Male,English	One of the professors I studied under at Stanford is ah an ancient art as through this ah cultural critic philosopher.
+[50.415,51.656]	1	Male,English	Ah literary
+[51.656,52.199]	1	Male,English	ah
+[52.199,53.508]	1	Male,English	there is just really
+[53.508,54.953]	1	Male,English	really gone it serve always
+[54.953,59.52]	1	Male,English	had this dramatic theory that people imitate each other, They copy each other. They're sort of
+[59.52,60.141]	1	Male,English	um
+[60.141,62.09]	1	Male,English	They're much more prone to fashion
+[62.09,63.855]	1	Male,English	and things like this and the
+[63.855,65.736]	1	Male,English	and one of the user who's from france
+[65.736,66.735]	1	Male,English	and some one of the
+[66.735,68.616]	1	Male,English	One of the metaphors you had for
+[68.616,69.615]	1	Male,English	what of the
+[69.615,72.078]	1	Male,English	sort of more politically correct professors
+[72.078,73.387]	1	Male,English	at Stanford
+[73.387,74.473]	1	Male,English	was um
+[74.473,75.656]	1	Male,English	that they all thought
+[75.656,81.29]	1	Male,English	they were in the Franch resistance but but um if they had lived in bit in France they would have all been collaborators. 
+[81.29,81.901]	0	U	[*]
+[81.93,88.272]	1	Male,English	and ah and and so the the the self understanding people have that they're super courageous
+[88.272,89.862]	1	Male,English	independent thinkers
+[89.862,90.599]	1	Male,English	and
+[90.599,91.879]	1	Male,English	that's why they
+[91.976,95.341]	1	Male,English	in and and and and that they would've been in the resistance in France
+[95.341,96.97]	1	Male,English	but then in reality
+[96.97,98.502]	1	Male,English	if you ask them what the views
+[98.502,99.53]	1	Male,English	are that they have
+[99.53,101.285]	1	Male,English	it's the same as everybody else surround them
+[101.295,102.575]	1	Male,English	Yeah! well that's right the[+]
+[102.594,104.97]	1	Male,English	and you have to always ask everyone has the same views
+[105.038,107.045]	1	Male,English	it can mean one of two things it can mean
+[107.045,109.13]	1	Male,English	that you've reach the absolute truth
+[109.198,110.352]	1	Male,English	or it can mean
+[110.352,112.175]	1	Male,English	that ah that you have a
+[112.175,113.038]	1	Male,English	You have the sort of
+[113.067,114.347]	1	Male,English	Incredible conformity
+[114.376,121.736]	1	Male,English	Yeah well it's so interesting because he was talking about the resistance in France and now we have a group of people in America that think that they're part of the resistance.
+[121.736,124.267]	1	Male,English	and I suspect that if they were empower
+[124.267,125.993]	1	Male,English	they would be treating
+[125.993,131.084]	1	Male,English	The people who were the the resistance of them much worse than they're being treated right now[+]
+[131.084,135.942]	1	Male,English	I[~] I[~] I thought that the[~] the[~] this reward critic could also applied of them that a
+[136.039,136.97]	1	Male,English	that a
+[136.97,139.85]	1	Male,English	You know by identifying yourself is part of
+[139.85,140.684]	1	Male,English	in a some
+[140.684,141.896]	1	Male,English	mobile like
+[141.896,143.399]	1	Male,English	resistance movement
+[143.399,144.01]	1	Male,English	you're
+[144.01,145.959]	1	Male,English	You're suggesting the exact opposite[+]
+[145.988,146.638]	2	Male,English	Yeah[+]
+[146.667,147.472]	1	Male,English	that a
+[147.472,148.044]	1	Male,English	You know it
+[148.044,148.907]	1	Male,English	it it
+[148.907,149.644]	1	Male,English	counts
+[149.644,151.215]	1	Male,English	in a political views
+[151.234,152.737]	1	Male,English	You know I I respect
+[152.815,153.581]	1	Male,English	a
+[153.707,154.512]	0	U	[*]
+[154.512,158.633]	1	Male,English	I think there are people to have some serve abusing and that they're in the overwhelming majority
+[158.633,159.244]	1	Male,English	but it's
+[159.244,160.388]	1	Male,English	it's impressive
+[160.388,161.707]	1	Male,English	if you're in the minority
+[161.707,162.599]	1	Male,English	so if you're
+[162.599,163.617]	1	Male,English	if you're
+[163.617,165.838]	1	Male,English	speaking out against President Trump
+[165.838,167.748]	1	Male,English	and your small town in Alabama
+[168.136,168.97]	1	Male,English	mhm
+[169.067,169.833]	1	Male,English	and something that
+[169.833,170.793]	2	Male,English	You like the person[+]
+[170.822,171.947]	1	Male,English	Yeah! if you're
+[171.976,173.004]	1	Male,English	if you're an
+[173.004,175.215]	1	Male,English	If you're in San Francisco women have an
+[175.215,176.01]	1	Male,English	um
+[176.01,177.125]	1	Male,English	and ah
+[177.125,179.627]	1	Male,English	and you're you're part of the resistance mhm
+[179.627,181.673]	1	Male,English	I I suspect something very different is going on[+]
+[181.673,183.079]	2	Male,English	that that's really interesting actually[+]
+[183.108,185.125]	2	Male,English	You know like what what like we're getting up this is
+[185.125,185.678]	1	Male,English	Yeah[+]
+[185.707,189.033]	1	Male,English	is ah it's o[~] you know in a democracy we always think
+[189.033,193.319]	1	Male,English	the majority is right so it's fifty one and forty nine. Fifty one is probably right.
+[193.319,196.393]	1	Male,English	It was a big majority it's even more right so seventy thirty
+[196.432,197.227]	1	Male,English	even
+[197.227,198.216]	1	Male,English	even more right
+[198.216,198.992]	1	Male,English	but if it's
+[198.992,201.154]	1	Male,English	a hundred to zero nine nine
+[201.154,202.017]	1	Male,English	to one
+[202.337,203.278]	1	Male,English	um
+[203.278,205.896]	1	Male,English	that's ah that's we start to suspect
+[205.896,208.388]	1	Male,English	that we're not a democracy but we're North Korea
+[208.388,211.695]	1	Male,English	where that's something is gone wrong with voting machine or something like this
+[211.695,213.033]	1	Male,English	and so when we have
+[213.033,213.896]	1	Male,English	these sort of
+[213.896,215.496]	1	Male,English	hot house environments
+[215.496,217.639]	1	Male,English	at at places like Stanford
+[217.639,219.695]	1	Male,English	or a or Silicon Valley
+[219.695,220.364]	1	Male,English	um
+[220.364,221.838]	1	Male,English	Where ah you have this
+[221.838,222.992]	1	Male,English	complete and
+[222.992,224.844]	1	Male,English	You know uniformity of thought
+[224.844,225.552]	1	Male,English	um
+[225.552,229.867]	1	Male,English	The thing you have to suspect that's not the wisdom of crowds. It's not that everyone's figured out the truth.
+[229.867,231.438]	1	Male,English	It's a madness of crowds.
+[231.438,232.107]	1	Male,English	It's some
+[232.107,233.319]	1	Male,English	Psycho social
+[233.319,234.056]	1	Male,English	insanity
+[234.085,237.45]	1	Male,English	Yeah and this seems to be directly linked to what's going on on our campuses
+[237.479,242.696]	1	Male,English	today, right?. I mean if if twenty years ago you have been thinking these things, do you think your prediction would have been
+[242.764,246.284]	1	Male,English	oh will be able to break these ideas enough so that the
+[246.284,249.998]	1	Male,English	the class of teachers and professors may not be
+[249.998,250.977]	1	Male,English	so addicted
+[250.977,253.673]	2	Male,English	Yeah you know it seems a it seems a come back with a vengeance[+]
+[253.838,254.284]	1	Male,English	Yeah[+]
+[254.284,256.01]	2	Male,English	a on on calls or even
+[256.01,256.747]	1	Male,English	even
+[256.747,258.318]	1	Male,English	You know radicalized further
+[258.347,260.17]	1	Male,English	but ah but again it it
+[260.17,261.353]	1	Male,English	it's a
+[261.353,265.697]	1	Male,English	You know this is sort of is it like it a it's a it's a subtle. You mean I wanna always psychologize
+[265.697,266.318]	1	Male,English	a
+[266.318,267.782]	1	Male,English	people you disagree with but
+[267.792,269.314]	1	Male,English	but the the question one
+[269.314,272.272]	1	Male,English	You look at what's happening on the campuses or in various places.
+[272.359,273.484]	1	Male,English	is always
+[273.484,275.21]	1	Male,English	is this really what people think
+[275.21,276.335]	1	Male,English	or is it just
+[276.335,279.147]	1	Male,English	are they just under you know incredible peer pressure to put in
+[279.147,282.599]	1	Male,English	Yeah do you see that as a bizarre direct connection to the way
+[282.764,288.679]	1	Male,English	Many other institutions seem to be crumbling now. The way people don't trust the media. The way they used to
+[288.679,294.032]	1	Male,English	the way that we're just seeing sort of a new. You know a lot none broke in last week. You're sitting here today.
+[294.032,298.851]	1	Male,English	The way that people want different conversations we're gonna sit here for as long as it take[+]
+[298.861,300.49]	2	Male,English	do people people can see through it[+]
+[300.519,300.878]	1	Male,English	Yeah
+[300.897,302.604]	2	Male,English	They can they can see through
+[302.827,303.68]	1	Male,English	um
+[303.68,306.095]	1	Male,English	the manufactured consent they can see
+[306.095,310.061]	1	Male,English	they can um you know it's it's if you have conformity and it
+[310.061,311.331]	1	Male,English	and it looks real
+[311.331,312.912]	1	Male,English	that's powerful if it
+[312.97,316.16]	1	Male,English	if it's conformity and people sense that it's forced
+[316.16,318.352]	1	Male,English	that's that's what shake here and so there's
+[318.352,323.268]	1	Male,English	If it's sort of like. I don't know it's like the. I'm not sure with the right metaphors but it's like maybe maybe it's like you know
+[323.268,329.484]	1	Male,English	The wizard of buzz where you have man behind the curtain and we're looking at the man behind the curtain on the internet and ah
+[329.484,330.192]	1	Male,English	and that
+[330.192,332.461]	1	Male,English	it doesn't quite work and you know I I think I should
+[332.461,333.295]	1	Male,English	media
+[333.295,334.788]	1	Male,English	political machine
+[334.788,338.337]	1	Male,English	maybe it maybe it always work when people don't understand how it works cause of you
+[338.347,341.411]	1	Male,English	this is resource see what's going on sausage making factory
+[341.45,342.4]	1	Male,English	and you know
+[342.41,344.553]	1	Male,English	He might not on needed as much sausage anymore
+[344.553,348.878]	1	Male,English	Yeah alright well this is clearly gonna be a theme to almost everything else we talk about so let's let's
+[348.936,352.291]	1	Male,English	sort of catch up to where you are today and then we're gonna go back to some of that stuff
+[352.291,354.153]	1	Male,English	Ah tell me a little bit about volunteer
+[354.279,357.857]	2	Male,English	Well this was ah this was another company I started ah in a
+[357.857,359.331]	2	Male,English	in two thousand four
+[359.467,361.29]	2	Male,English	ah it was um
+[361.513,366.536]	2	Male,English	Ah it sort of the big pic with the big picture of paper was revolutionize money in payments
+[366.662,368.194]	2	Male,English	the big picture
+[368.815,372.17]	2	Male,English	propellant in service like in the wake of nine eleven
+[372.17,373.353]	2	Male,English	few years after that
+[373.392,374.594]	2	Male,English	was on
+[374.594,375.68]	2	Male,English	could one
+[375.68,377.358]	2	Male,English	do something from a
+[377.358,378.599]	2	Male,English	Libertarian
+[378.599,380.587]	2	Male,English	or civil liberties point of view
+[380.587,381.576]	2	Male,English	that would
+[381.576,382.536]	2	Male,English	still be
+[382.536,382.953]	2	Male,English	You know
+[382.953,384.388]	2	Male,English	top on terrorism
+[384.388,387.462]	2	Male,English	and ah and and things like this and um
+[387.627,388.587]	2	Male,English	and the
+[388.587,389.77]	2	Male,English	the sort of a
+[389.77,392.398]	2	Male,English	the sort of sense I had was better
+[392.398,393.484]	2	Male,English	that ah
+[393.484,398.245]	2	Male,English	The way we're going with just you know ridiculous airport security checks and a
+[398.245,399.855]	2	Male,English	the super intrusive
+[399.884,402.153]	2	Male,English	um surveillance all the time
+[402.153,403.976]	2	Male,English	and it wasn't really making us safer
+[403.976,406.662]	1	Male,English	So this was sort of you are answer to the patriot act in a way[+]
+[406.662,408.834]	1	Male,English	in a way that's so sort of. Yo[~] you know it's like I'd
+[408.844,409.319]	1	Male,English	this
+[409.319,412.102]	1	Male,English	that you've had the ridiculous lines at airports you'd been
+[412.102,412.868]	1	Male,English	in a through
+[412.868,415.021]	1	Male,English	oh all all the ways that a
+[415.021,416.737]	1	Male,English	in response to um
+[416.747,419.811]	1	Male,English	and ah and was and was a question was there some way
+[419.947,424.068]	1	Male,English	was there's some technological tech and one way is often think of technology
+[424.068,424.97]	1	Male,English	is um
+[424.97,427.152]	1	Male,English	that it's a way to do more with less
+[427.239,428.49]	1	Male,English	and um
+[428.49,430.284]	1	Male,English	and so you know you can um
+[430.284,431.661]	1	Male,English	You can get um
+[431.661,432.65]	1	Male,English	You know you can get
+[432.65,437.13]	1	Male,English	more energy for less money that's like an energy innovation cleaner energy for[+]
+[437.227,439.021]	1	Male,English	it will less pollution
+[439.593,440.621]	1	Male,English	um
+[440.621,445.392]	1	Male,English	that more energy that pull it's plus that it was like a technolo[~] technology innovation and clean energy
+[445.537,449.804]	1	Male,English	and in the security space the doing more with less is something like
+[449.804,450.764]	1	Male,English	um
+[450.987,453.256]	1	Male,English	is something like more security
+[453.256,453.741]	1	Male,English	with
+[453.77,456.204]	1	Male,English	less intrusion on people civil liberties
+[456.204,457.29]	1	Male,English	and that's kind of a
+[457.29,458.444]	1	Male,English	that's kind of the
+[458.444,459.375]	1	Male,English	the trade off
+[459.375,460.296]	1	Male,English	that you want
+[460.296,461.324]	1	Male,English	and that a
+[461.324,463.244]	1	Male,English	the non technological debate
+[463.244,464.679]	1	Male,English	that we had in the U S and
+[464.679,467.811]	1	Male,English	two thousand four and anyway but we still have in two thousand eighteen
+[467.947,469.004]	1	Male,English	is um
+[469.004,469.799]	1	Male,English	it's always
+[469.799,470.41]	1	Male,English	are
+[470.41,471.137]	1	Male,English	it's always
+[471.137,472.592]	1	Male,English	You do more with more
+[472.592,474.531]	1	Male,English	crisis lot's with less, right? so[+]
+[474.56,475.433]	1	Male,English	You can have
+[475.433,476.238]	1	Male,English	the um
+[476.238,477.964]	1	Male,English	the Neocon um
+[478.09,479.147]	1	Male,English	shiny
+[479.147,480.0]	2	Male,English	[*]
+[480.004,480.74]	1	Male,English	I would be
+[480.74,482.224]	1	Male,English	that we're gonna have um
+[482.224,483.407]	1	Male,English	You know we're gonna have
+[483.407,484.27]	1	Male,English	um
+[484.27,487.315]	1	Male,English	in a more security with more civil liberties violations
+[487.334,489.196]	1	Male,English	and then you can sure say that they
+[489.196,490.796]	1	Male,English	um equally La diet
+[490.796,492.173]	1	Male,English	They seal you
+[492.202,493.773]	1	Male,English	would say something like
+[493.773,495.78]	1	Male,English	we're gonna have few words um
+[495.78,496.362]	1	Male,English	mhm
+[496.362,500.745]	1	Male,English	You know so liberties violations and we're gonna have less security and um[+]
+[500.745,501.482]	1	Male,English	and
+[501.482,504.711]	1	Male,English	that's kind of the that the I with the idea logical debate
+[504.721,511.082]	1	Male,English	gets framed now I I'm sympathetically I seal you on civil liberties but I think they will always lose that debate[+]
+[511.082,512.081]	1	Male,English	because a
+[512.081,516.493]	1	Male,English	the way you've preserved civil liberties is not have terrorist attacks because when you get a terrorist attack
+[516.493,517.841]	1	Male,English	You got the patriot act
+[517.938,518.956]	1	Male,English	and a
+[518.956,520.081]	1	Male,English	You know it if the
+[520.081,521.196]	1	Male,English	World trade center
+[521.196,524.522]	1	Male,English	would a road civil liberties as much they did in two thousand one.
+[524.522,526.956]	1	Male,English	I didn't even wanna think would happen if you had another
+[526.956,529.603]	1	Male,English	terrorist attack so you have to prevent it[+]
+[529.603,532.076]	1	Male,English	to want to stop a to stop more on
+[532.076,533.637]	0	U	[*]
+[533.938,535.15]	1	Male,English	is a
+[535.15,536.401]	1	Male,English	is um
+[536.42,539.562]	1	Male,English	it it it ah it's sort of that is a way for um
+[539.95,541.104]	1	Male,English	for a
+[541.579,542.83]	1	Male,English	for um
+[542.927,544.643]	1	Male,English	in a patterns and data
+[544.643,545.681]	1	Male,English	to be um
+[545.681,548.968]	1	Male,English	visualize through a combination of computers and human analysts
+[549.133,550.51]	1	Male,English	and um
+[550.568,551.761]	1	Male,English	and then um
+[551.761,554.602]	1	Male,English	and then in a way that doesn't simply
+[554.602,555.882]	1	Male,English	discover the planet
+[555.882,558.258]	1	Male,English	and get all the information that everybody so just
+[558.258,560.43]	1	Male,English	There's something suspicious then you work some more
+[560.43,560.905]	2	Male,English	mhm
+[560.905,562.214]	1	Male,English	and and so there's sort of a
+[562.282,563.407]	1	Male,English	There's a natural
+[563.407,565.104]	1	Male,English	product that you build before you
+[565.104,566.287]	1	Male,English	investigate people
+[566.287,567.761]	1	Male,English	and in in that sense it's
+[567.761,568.934]	1	Male,English	it's way less and through so
+[568.944,571.95]	2	Male,English	is this a tough position to hold just because people
+[571.95,574.064]	2	Male,English	seem all to eager to give up
+[574.083,577.71]	2	Male,English	their civil liberties like we always want easy answers so that's why
+[577.778,581.298]	2	Male,English	I think the patriot act past with two descent in votes if I'm not mistaken[+]
+[581.298,585.516]	2	Male,English	Ah the people don't really we act so emotionally all the time[+]
+[585.516,589.744]	2	Male,English	and especially after time like September eleventh we we're really I think out of whack
+[589.744,591.722]	2	Male,English	individually and collectively[+]
+[591.761,592.585]	2	Male,English	that
+[592.585,598.985]	2	Male,English	You can come in with the a more sane answer and say I understand civil liberties and they don't want big government but I want us all to be[+]
+[598.985,599.79]	2	Male,English	safe
+[599.819,605.414]	2	Male,English	and that that's it's almost doesn't ring for people because they just want the easy answer. They want the bumper sticker answer.
+[605.414,606.064]	1	Male,English	Yes
+[606.83,608.362]	1	Male,English	Yes I I think it's
+[608.362,610.195]	1	Male,English	It's not the easiest so
+[610.195,611.31]	1	Male,English	but a
+[611.407,614.801]	1	Male,English	but I'd I think there is a certainly a lot more awareness today
+[614.801,616.013]	1	Male,English	about how much
+[616.013,617.807]	1	Male,English	civil rites have been eroded
+[617.807,618.728]	1	Male,English	You know how we're
+[618.728,621.676]	1	Male,English	living in this claws I surveillance state all the time and how
+[621.676,623.247]	1	Male,English	the deeply uncomfortable
+[623.247,625.264]	1	Male,English	and that is on on on so many levels
+[625.322,627.087]	1	Male,English	I think that a
+[627.087,628.658]	1	Male,English	I think that a
+[628.658,629.899]	1	Male,English	the way um
+[630.025,630.927]	1	Male,English	You know I think
+[630.927,632.042]	1	Male,English	and certainly
+[632.042,633.555]	1	Male,English	If it worked if they
+[633.555,634.67]	1	Male,English	if the La diet
+[634.728,635.727]	1	Male,English	heavy handed
+[636.173,638.064]	1	Male,English	approaches actually worked
+[638.083,638.636]	2	Male,English	mhm
+[638.636,639.315]	1	Male,English	um
+[639.344,642.156]	1	Male,English	then I think people. People would be more tolerant.
+[642.156,644.367]	1	Male,English	and then there's this sort of a sunset they
+[644.367,645.327]	1	Male,English	they don't even
+[645.327,646.122]	1	Male,English	They don't even work
+[646.151,653.87]	2	Male,English	Yeah it is hard to define what worked even means because something could say work for three years. Make sure everybody safe even if it's violating all sorts of
+[653.87,657.361]	2	Male,English	personal privacy and all that but then if there's an attack then well it doesn't work[+]
+[657.361,661.802]	1	Male,English	but what work means you you prevent tourist attacks happening in the the in in that narrow narrow
+[661.802,666.893]	2	Male,English	So it's just about the the window that it works basically because the second it doesn't work it doesn't work any[+]
+[667.019,668.59]	1	Male,English	well it's it's ah
+[668.59,671.596]	1	Male,English	It's ah it's how many you prevent that would otherwise happened
+[671.596,672.168]	2	Male,English	Yeah
+[672.168,673.293]	1	Male,English	So I mean it's it's
+[673.293,676.677]	1	Male,English	it it it maybe if it works perfectly front of them if it
+[676.91,679.218]	1	Male,English	and works pretty well prevents most and
+[679.218,680.178]	1	Male,English	something like that[+]
+[680.178,686.568]	2	Male,English	So this must be a little bit of a a tricky situation for you cause you obviously have to work with the government and follow this stuff, right?
+[686.568,689.836]	2	Male,English	and I'm sure that that's probably not thrilling for you at some level
+[689.836,691.727]	1	Male,English	well I look I I
+[691.727,693.298]	1	Male,English	I believe that ah
+[693.298,694.762]	1	Male,English	I believe that ah
+[695.082,695.974]	1	Male,English	ah
+[696.265,697.002]	1	Male,English	It's
+[697.613,700.968]	1	Male,English	You know that ah I I believe you can be both a a libertarian
+[700.968,702.51]	1	Male,English	and a and
+[702.51,703.441]	1	Male,English	and work
+[703.596,705.477]	1	Male,English	with the government or even worked
+[705.477,707.659]	1	Male,English	for the government to work in the government
+[707.659,709.162]	1	Male,English	ah and the
+[709.288,712.721]	1	Male,English	and even even if you believe that there's be a much smaller
+[712.721,714.34]	1	Male,English	much less intrusive government
+[714.34,715.882]	1	Male,English	You can still fight to work
+[715.882,717.618]	1	Male,English	to make it function better
+[717.618,720.43]	1	Male,English	and and and so there's suppose an outside and inside game
+[720.43,720.818]	2	Male,English	Yeah
+[720.837,724.677]	1	Male,English	it wasn't always versions like this so it's like you're true libertarian should you refuse to
+[724.716,726.161]	1	Male,English	take a social security check
+[726.161,726.636]	0	U	[NOISE]
+[726.636,727.557]	1	Male,English	and ah
+[727.557,730.854]	1	Male,English	well in in begin social security and still personally collect to check
+[730.854,734.859]	1	Male,English	I'm pretty sure I'm into you know if you're you know if you're libertarian[+]
+[734.927,738.214]	1	Male,English	should you refuse to be a public school teacher because you're
+[738.214,739.3]	0	U	[*]
+[739.3,739.911]	1	Male,English	maybe
+[739.921,743.14]	1	Male,English	maybe it's actually better be a public school teacher rather from
+[743.14,746.418]	1	Male,English	the socialist a person who otherwise get it by default so
+[746.418,747.562]	1	Male,English	like I think a[+]
+[747.562,749.259]	1	Male,English	I think ah I think we can
+[749.259,751.538]	1	Male,English	We have certain kinds of principles and then
+[751.538,755.591]	1	Male,English	and then act in and pragmatic ways and this isn't necessarily hypocrisy
+[755.591,760.43]	2	Male,English	You once said to me and I'm sure you've said it to other people that I wouldn't be a libertarian if it worked.
+[760.973,762.243]	2	Male,English	Do you sort of
+[762.243,768.721]	2	Male,English	picture a moment or do you remember a moment where you think it. I guess basically big government stopped working.
+[768.721,771.62]	2	Male,English	cause it it didn't work for a while basically, right?[+]
+[771.62,772.871]	1	Male,English	not not nor lifetimes
+[772.978,774.859]	1	Male,English	not or not very well in our lifetimes
+[774.917,775.499]	2	Male,English	mhm
+[775.538,777.099]	1	Male,English	I would say a
+[777.099,781.899]	1	Male,English	It's it's easier to see with ah with with the benefit of hindsight but I think ah
+[781.967,788.357]	1	Male,English	Yeah I I I used to think you know when I was in in college in nineteen eighties. I used to think that libertarians is most a
+[788.357,789.521]	1	Male,English	timeless
+[789.521,791.247]	1	Male,English	and eternal thing it was just these
+[791.247,793.38]	1	Male,English	capture the truth for all time
+[793.38,794.767]	1	Male,English	or places and all times
+[794.767,795.31]	2	Male,English	mhm
+[795.339,795.979]	1	Male,English	and
+[796.047,798.316]	1	Male,English	I've I've now come to think that it's
+[798.316,801.322]	1	Male,English	it can be sort of the certain contexts where it's more true
+[801.322,802.418]	1	Male,English	or less true
+[802.476,804.522]	1	Male,English	and so if you have
+[804.522,805.317]	1	Male,English	um
+[805.317,806.83]	1	Male,English	and if you've incredibly
+[806.927,808.556]	1	Male,English	well functioning
+[808.721,811.058]	1	Male,English	government political institutions
+[811.058,812.037]	1	Male,English	they're sort of
+[812.037,813.288]	1	Male,English	You know less of a
+[813.288,817.128]	1	Male,English	need for libertarians and so you know the nineteen fifties or nineteen sixties
+[817.128,818.127]	1	Male,English	when ah
+[818.127,819.533]	1	Male,English	still California had
+[819.533,822.064]	1	Male,English	First create public schools across the board[+]
+[822.064,822.733]	1	Male,English	um
+[822.733,826.379]	1	Male,English	and if you said will the government can't do anything the public schools can't work
+[826.379,827.019]	1	Male,English	um
+[827.019,827.853]	1	Male,English	that might been
+[827.95,829.201]	1	Male,English	problems with them but
+[829.201,831.693]	1	Male,English	that with that argue with gotten a lot less attraction
+[831.693,832.595]	1	Male,English	and it would
+[832.595,833.904]	1	Male,English	today in twenty eighteen
+[833.923,836.59]	2	Male,English	cause you would be the Utopian person at that point, right?[+]
+[836.619,840.711]	1	Male,English	Yeah or you'd be or you'd be to the[~] you'd be too pessimistic and obviously thinks[+]
+[840.779,843.727]	1	Male,English	thing things weren't that bad and um[+]
+[843.727,847.567]	1	Male,English	and and certainly um or in the military context we had a
+[847.567,848.973]	1	Male,English	You know we had the a
+[848.973,850.059]	1	Male,English	the um
+[850.059,850.922]	1	Male,English	You know the um
+[850.922,856.139]	1	Male,English	the atom bomb. We had the Manhattan project. We had the Apollo space program in the nineteen sixties.
+[856.168,859.087]	1	Male,English	um were you got a man on the moon so
+[859.087,861.036]	1	Male,English	He said government can't do anything
+[861.036,861.996]	1	Male,English	that a
+[861.996,863.984]	1	Male,English	that that felt ah somewhat wrong
+[863.984,864.808]	0	U	[*]
+[864.808,865.739]	1	Male,English	Now I think
+[865.904,868.687]	1	Male,English	They're think the thing if we're honest this is this is always the
+[868.716,871.635]	1	Male,English	You know somewhat disturbing thing is that our government works
+[871.635,873.38]	1	Male,English	much less were gonna used to
+[873.39,874.02]	2	Male,English	mhm
+[874.088,874.738]	1	Male,English	um
+[874.738,875.921]	1	Male,English	You know I think
+[875.921,879.79]	2	Male,English	So that's my question do you do you look at a moment where that right[+]
+[879.79,880.915]	1	Male,English	Libertarianism
+[880.915,883.853]	1	Male,English	You know it started probably failing in the nineteen seventies.
+[883.911,887.596]	1	Male,English	Ah in a serious when we already building up in various ways but a
+[887.693,888.818]	1	Male,English	and um
+[888.818,891.921]	1	Male,English	and Libertarianism Libertarian party in the U S started
+[891.921,893.162]	1	Male,English	in the early seventies
+[893.162,895.441]	1	Male,English	and it sort of make sense because
+[895.441,896.847]	1	Male,English	it was sort of more of an opening
+[896.847,898.922]	1	Male,English	and so i[~] it was more true
+[899.494,901.104]	1	Male,English	than it had been before
+[901.104,905.7]	1	Male,English	and I would argue that ah it is ah it is m[~] much more true in twenty eighteen.
+[905.7,907.087]	1	Male,English	than it was a
+[907.087,907.882]	1	Male,English	Thirty years
+[907.882,908.91]	1	Male,English	Thirty years ago
+[908.939,910.762]	1	Male,English	um you know the ah the
+[910.801,911.693]	1	Male,English	um
+[911.693,913.739]	1	Male,English	and when then I ran books for written
+[913.739,917.036]	1	Male,English	in the nineteen fifties it was like it it felt like it was crazy
+[917.065,917.676]	0	U	[NOISE]
+[917.676,919.315]	1	Male,English	now my life when I first[+]
+[919.499,922.961]	1	Male,English	and this was like so bleak so pessimistic and just so[+]
+[922.961,924.202]	1	Male,English	in a so um
+[924.367,928.614]	1	Male,English	So busted, so broke and you won't when I first read them in like the late eighties
+[928.653,929.516]	1	Male,English	um
+[929.933,930.602]	1	Male,English	it
+[930.602,932.26]	1	Male,English	It still felt pretty crazy
+[932.26,933.802]	1	Male,English	You know ah and then
+[933.899,935.179]	1	Male,English	The last decade
+[935.179,936.818]	1	Male,English	It's it's in many ways felt
+[936.818,937.904]	1	Male,English	in a much more correct
+[937.904,938.796]	0	U	[*]
+[938.825,941.133]	1	Male,English	in a in outlaw shrugged there's a
+[941.133,941.773]	1	Male,English	um
+[941.773,942.636]	0	U	[*]
+[942.675,946.02]	1	Male,English	You know um who is [PII] the clues eventually take them
+[946.02,947.436]	1	Male,English	to the state where
+[947.436,951.664]	1	Male,English	everything has gone haywire state of Michigan and others as[+]
+[951.683,954.195]	1	Male,English	great company the twentieth century american motor company
+[954.214,956.231]	1	Male,English	sort of a then we disguise general motors
+[956.435,958.035]	1	Male,English	but had just gone bankrupt
+[958.035,960.003]	1	Male,English	and it was because we've been completely miss mana[~]
+[960.006,961.809]	1	Male,English	and I want to be sort socialist
+[961.809,963.284]	1	Male,English	kinds of principles
+[963.284,964.02]	1	Male,English	um
+[964.02,967.696]	1	Male,English	and Detroit was for the falling apart someone's farming in the middle of the city
+[967.793,968.753]	1	Male,English	and a
+[968.782,970.644]	1	Male,English	this was like nineteen fifty seven
+[970.644,972.234]	1	Male,English	was a sort of crazy[+]
+[972.244,975.317]	1	Male,English	thing and then it's it's it's it's disturbingly more true that
+[975.346,977.519]	2	Male,English	Yeah will your own Brock who used to be the head of it
+[977.519,978.895]	0	U	[*]
+[978.924,981.872]	2	Male,English	to the pat on the show many times and I I do some speaking that's with
+[981.902,985.169]	2	Male,English	He always tells me that when he travels internationally now
+[985.169,989.678]	2	Male,English	that it's the countries better sort of worse off at the moment that are just trying to reset
+[989.678,999.279]	2	Male,English	that find those ideas the most interesting because they're just desperate for ideas so in a way it almost sounds like y[~] you're calling libertarian almost the course correction for when[+]
+[999.279,1001.519]	2	Male,English	either capitalism or
+[1001.548,1005.902]	2	Male,English	not necessary capitalism for when big government just gets out of control libertarian can come in
+[1005.902,1008.005]	2	Male,English	Libertarianism can come in and kind of
+[1008.015,1011.885]	1	Male,English	well that's so unfair yeah it's that the hope I mean certainly um[+]
+[1011.885,1012.592]	1	Male,English	ah
+[1012.592,1016.102]	1	Male,English	a lot of these sort of bad um Brock democratic things
+[1016.239,1018.566]	1	Male,English	Don't don't to correct that much
+[1018.644,1019.662]	1	Male,English	and a
+[1019.662,1021.135]	1	Male,English	It is probably very hard
+[1021.135,1024.461]	1	Male,English	for there to be incremental reform from within and that's why something
+[1024.461,1029.078]	1	Male,English	that's sort a Libertarian shock therapy maybe maybe what you actually a[+]
+[1029.078,1030.987]	1	Male,English	maybe what you actually need um
+[1031.016,1035.622]	1	Male,English	but ah but then one one way to think about what what's happen in the U S is
+[1035.622,1036.495]	1	Male,English	You had
+[1036.495,1037.233]	1	Male,English	um
+[1037.233,1039.473]	1	Male,English	You had sort institution set up
+[1039.473,1041.072]	1	Male,English	and then overtime
+[1041.169,1042.101]	1	Male,English	um
+[1042.101,1044.438]	1	Male,English	They sort of ossified and degraded
+[1044.438,1046.929]	1	Male,English	So in with that so we started in a
+[1046.929,1048.403]	1	Male,English	in the nineteen fifties
+[1048.598,1049.421]	1	Male,English	You had
+[1049.421,1052.844]	1	Male,English	No great scientist who are driven motivated
+[1052.844,1055.822]	1	Male,English	and then eventually became so more and more bureaucratic
+[1055.822,1056.753]	1	Male,English	and somehow
+[1056.753,1058.838]	1	Male,English	The politics replace the science
+[1058.838,1060.205]	1	Male,English	and we can't we said that
+[1060.65,1064.559]	2	Male,English	So is that we're we're something something like this. I think something like this happens by the way in a lot of[+]
+[1064.559,1066.245]	1	Male,English	the private sector were no[+]
+[1066.245,1069.165]	1	Male,English	Big companies become bureaucratic and less functional
+[1069.165,1070.542]	1	Male,English	but in the private sector
+[1070.542,1072.685]	1	Male,English	You can have new companies to get started
+[1072.685,1075.119]	1	Male,English	and a a big companies are too badly one
+[1075.119,1076.166]	1	Male,English	They go broke
+[1076.166,1076.815]	1	Male,English	and
+[1076.815,1081.005]	1	Male,English	i[~] in the government thing you know for government to go broke and that's be incredibly bad and the
+[1081.005,1084.302]	1	Male,English	and the tricky question was how do you course correct before you get there right
+[1084.302,1087.57]	2	Male,English	So do you have a general prescription for how government
+[1087.599,1091.797]	2	Male,English	and private enterprise can work together is is there a general view
+[1091.797,1097.392]	2	Male,English	on when it is right that seems to be a lot of people are talking about right now cause I do sense that there's a
+[1097.392,1101.775]	2	Male,English	as I would call it sort of a classic or liberal movement happening right now or libertarian movement
+[1101.833,1106.838]	2	Male,English	and the question always says well when then is the right moment for government to do more
+[1106.838,1109.194]	2	Male,English	or or do less depending on which way you will get it[+]
+[1109.204,1112.588]	1	Male,English	You know I don't I don't if I have a so formulated general answer maybe[+]
+[1112.617,1116.399]	1	Male,English	My um my idea logical by is the Libertarian is
+[1116.399,1119.725]	1	Male,English	that we should a smaller government that's less intrusive
+[1119.725,1121.101]	1	Male,English	plus regulatory
+[1121.101,1122.604]	1	Male,English	mostly across the board
+[1122.604,1124.621]	1	Male,English	I don't think I have to tell you exactly
+[1124.621,1130.925]	1	Male,English	how small it should be. It's just be and to do left or  right. You know and we don't have to talk about and we do have to privatize roads or
+[1130.925,1131.467]	1	Male,English	know
+[1131.477,1133.009]	0	U	[*]
+[1133.009,1136.112]	1	Male,English	Don't have don't don't unsettled the boundaries we know[+]
+[1136.112,1137.324]	1	Male,English	and we have those a lot of
+[1137.324,1138.342]	1	Male,English	lot of room
+[1138.342,1140.176]	1	Male,English	ah to go ah big picture
+[1140.205,1142.639]	1	Male,English	and then I think in terms the details
+[1142.639,1143.366]	1	Male,English	um
+[1143.366,1145.965]	1	Male,English	There are a course always these ways that you can
+[1145.965,1148.166]	1	Male,English	try to reform things. Try to make things
+[1148.166,1149.126]	1	Male,English	work better
+[1149.126,1157.233]	1	Male,English	ah recognizing that you often have in a super entrenched bureaucracy so you have to you can shift from public schools to charter schools that's the way that
+[1157.262,1159.181]	1	Male,English	changed bureaucracy if you could
+[1159.181,1161.771]	1	Male,English	If you could ah shift things where you could um
+[1161.771,1166.832]	1	Male,English	You could fire people. You shut down agencies that would probably reform things quite a bit and you know that's
+[1166.832,1168.821]	1	Male,English	that's a seemingly a very hard left
+[1168.821,1175.152]	2	Male,English	Yeah so I wanted to hold trump a little bit longer but I feel like this is the right same way because there's an interesting
+[1175.152,1179.729]	2	Male,English	piece of trump that I think a lot of people a lot of libertarians are happy with when it
+[1179.787,1182.095]	2	Male,English	You know comes to cutting taxes
+[1182.095,1186.159]	2	Male,English	cutting regulation which is done a ton up in a in a few other things in that regard
+[1186.159,1193.46]	2	Male,English	and then on the other hand it seems that there is a piece of him that's more than happy to do as many things by is exe[~] executive action has been allow him to do[+]
+[1193.46,1196.495]	2	Male,English	and maybe in some cases he would try to do things that they wouldn't allow to do
+[1196.912,1199.473]	2	Male,English	So you supported the guy so le[~] le[~]let's just
+[1199.473,1207.725]	2	Male,English	start there when when it was bubbling up in your head that that you were gonna support him or at least or get you gave his campaign money and all that
+[1208.84,1214.803]	2	Male,English	What kind that internal discussion if where you having with there example, you were having it with friends and colleagues and things like that
+[1215.376,1216.073]	1	Male,English	well
+[1216.073,1216.743]	1	Male,English	um
+[1217.557,1218.77]	1	Male,English	well then a
+[1218.77,1221.33]	1	Male,English	Well one of the things that ah that I would say was
+[1221.33,1221.959]	1	Male,English	mhm
+[1221.959,1222.668]	1	Male,English	is I think
+[1222.668,1227.719]	1	Male,English	that's super important issue for me and ah and I think should be for for libertarians generally
+[1227.719,1229.62]	1	Male,English	is is foreign policy
+[1229.639,1232.918]	1	Male,English	and I believe that ah the U S should have a less
+[1232.918,1235.855]	1	Male,English	intervention as foreign policy I believe that we've got into
+[1235.855,1237.872]	1	Male,English	Ah too many stupid word
+[1237.872,1238.639]	1	Male,English	um
+[1238.697,1239.976]	1	Male,English	Over the years
+[1239.976,1240.724]	1	Male,English	um
+[1240.724,1242.188]	1	Male,English	and that a
+[1242.188,1244.273]	1	Male,English	Um you know that serve these questions of
+[1244.273,1246.193]	1	Male,English	and of the government can kill you
+[1246.193,1246.764]	1	Male,English	can
+[1246.764,1248.015]	0	U	[*]
+[1248.015,1249.616]	1	Male,English	One most intrusive forms of
+[1249.616,1252.582]	1	Male,English	Government actually you should think that count there[+]
+[1252.582,1253.62]	1	Male,English	You know how often
+[1253.62,1256.432]	1	Male,English	ah we we we do that and um
+[1256.432,1257.742]	1	Male,English	and then there were some
+[1257.742,1259.148]	1	Male,English	There were some need to
+[1259.148,1260.689]	1	Male,English	to reset that and I think
+[1260.718,1261.582]	0	U	[*]
+[1261.901,1262.822]	1	Male,English	and so
+[1262.861,1263.793]	1	Male,English	if you
+[1263.793,1265.295]	1	Male,English	from my point of view if you
+[1265.295,1266.701]	1	Male,English	If you got someone
+[1266.701,1267.496]	1	Male,English	who's
+[1267.496,1270.153]	1	Male,English	not great on a lot of issues but was
+[1270.153,1272.044]	1	Male,English	Libertarian and foreign policy
+[1272.044,1273.557]	1	Male,English	that would count for a lot
+[1273.557,1276.524]	1	Male,English	and if you had one who is good on a lot of other issues
+[1276.524,1278.319]	1	Male,English	but that on the foreign policy
+[1278.445,1279.249]	1	Male,English	um
+[1279.249,1280.335]	1	Male,English	that would actually
+[1280.335,1287.599]	1	Male,English	eroded in a lot of ways and I think you know the Bush forty three administration was also sort of lower tax entire regulatory[+]
+[1287.599,1288.937]	1	Male,English	but then because you had
+[1288.937,1290.993]	1	Male,English	the i[~] the insane war in Iraq
+[1290.993,1291.982]	1	Male,English	um
+[1291.982,1293.94]	1	Male,English	and you got have all the deficits
+[1293.94,1296.141]	1	Male,English	and you do congressional log rolling
+[1296.141,1299.438]	1	Male,English	and so then you end up with no trial left behind. You end up with the
+[1299.438,1301.165]	1	Male,English	medicare party the whole
+[1301.165,1303.181]	1	Male,English	and the all the sort of crazy
+[1303.181,1304.85]	1	Male,English	expansion of um
+[1304.85,1306.323]	1	Male,English	of the welfare state
+[1306.323,1308.718]	1	Male,English	as part of the log rolling exercise for
+[1308.718,1310.832]	1	Male,English	for the for the foreign wars and so
+[1310.919,1311.628]	1	Male,English	um
+[1311.628,1313.101]	1	Male,English	If we're gonna do the untie
+[1313.101,1314.536]	1	Male,English	Bush forty three
+[1314.536,1315.08]	1	Male,English	and I hope
+[1315.08,1317.136]	1	Male,English	We have a[~] actually the smaller government
+[1317.136,1318.222]	1	Male,English	maybe the um
+[1318.222,1319.055]	1	Male,English	Those are committed
+[1319.055,1320.17]	0	U	[*]
+[1320.238,1322.759]	1	Male,English	from roving that is foreign policy
+[1322.759,1324.244]	1	Male,English	and it's for us to be a
+[1324.244,1326.445]	1	Male,English	to be less engaged and I I think that that is
+[1326.61,1328.491]	1	Male,English	um you know and i[~] it was
+[1328.491,1330.643]	1	Male,English	and this was this was the place where
+[1330.643,1332.011]	1	Male,English	where trump broke
+[1332.05,1333.678]	1	Male,English	the most sharply
+[1333.678,1339.719]	1	Male,English	from a republican orthodoxy and the primaries. You know is the person who is most opposed to us you know[+]
+[1339.719,1340.37]	0	U	[*]
+[1340.37,1341.775]	1	Male,English	Yeah with somehow
+[1341.843,1344.461]	1	Male,English	represented and just a continuation of
+[1344.461,1348.273]	1	Male,English	of the war strategy yeah these devastating questions like you know
+[1348.341,1350.997]	1	Male,English	was was the a rack or a bad idea
+[1351.084,1352.209]	1	Male,English	They just never thought about it
+[1352.209,1355.061]	0	U	[*]
+[1355.09,1356.118]	1	Male,English	and um
+[1356.118,1356.883]	1	Male,English	and it was
+[1356.883,1358.513]	1	Male,English	and they'd never thought about it
+[1358.513,1359.947]	1	Male,English	because you had
+[1359.947,1362.091]	1	Male,English	This ah Washing D C
+[1362.12,1363.855]	1	Male,English	um pro war
+[1363.924,1365.62]	1	Male,English	foreign policy bubble
+[1365.62,1370.255]	1	Male,English	and it was acquainted the Bushes. You know Obama and maybe moderated a little but that's still
+[1370.255,1372.04]	1	Male,English	They've pulled into Syria way
+[1372.04,1374.037]	1	Male,English	So messed up Libya even more
+[1374.037,1375.366]	1	Male,English	and have been before
+[1375.376,1376.559]	1	Male,English	and the
+[1376.743,1377.839]	1	Male,English	and the
+[1377.839,1380.815]	1	Male,English	and the and and and and and I think trump represent
+[1380.815,1383.889]	1	Male,English	You know it really big break I gave I gave to a
+[1384.141,1384.85]	1	Male,English	did
+[1384.85,1387.399]	1	Male,English	Now I spoke at the convention twenty sixteen and then I[+]
+[1387.399,1389.969]	1	Male,English	also spoken in in the fall the a
+[1389.969,1392.879]	1	Male,English	at the a Washing Pres Con both speeches I
+[1392.879,1396.399]	1	Male,English	I stressed this foreign policy theme so it was a
+[1396.399,1397.707]	1	Male,English	it was that a
+[1397.707,1399.366]	1	Male,English	You know should we um
+[1399.502,1402.091]	1	Male,English	should we should the U S really be
+[1402.091,1402.799]	1	Male,English	You know
+[1402.799,1405.678]	1	Male,English	Ah how grisly should the U S be involve in Syria
+[1405.678,1407.957]	1	Male,English	and risk you know a confrontation with a
+[1407.957,1409.198]	1	Male,English	with with Russia
+[1409.198,1409.781]	2	Male,English	mhm
+[1409.781,1411.953]	1	Male,English	and and and I think trumps instincts
+[1411.953,1413.136]	1	Male,English	continue to be
+[1413.33,1414.164]	1	Male,English	um
+[1414.164,1416.753]	1	Male,English	You know much less in this in this sort of
+[1416.753,1418.964]	1	Male,English	A superpower confrontation and if you
+[1418.964,1420.37]	1	Male,English	If you look at where the opposition
+[1420.718,1422.416]	1	Male,English	to President Trump comes from
+[1422.416,1422.958]	1	Male,English	in the
+[1422.958,1425.392]	1	Male,English	the the so the most deranged part of it
+[1425.421,1426.828]	1	Male,English	is from mhm
+[1426.828,1428.341]	1	Male,English	the new conservative republican
+[1428.36,1428.883]	2	Male,English	mhm
+[1428.883,1430.89]	1	Male,English	because this is where he's broken
+[1430.929,1435.506]	1	Male,English	the most with orthodoxy yeah you know I think that the Russia debate is a completely insane
+[1435.506,1437.582]	1	Male,English	debate that we have like this were
+[1437.582,1438.503]	1	Male,English	um
+[1438.736,1439.725]	1	Male,English	You know it's in
+[1439.754,1440.015]	0	U	[*]
+[1440.015,1440.716]	1	Male,English	and I think
+[1440.716,1443.8]	1	Male,English	Trump has been consistent for in a thirty years which should not have a
+[1443.984,1444.75]	1	Male,English	You know
+[1444.75,1449.259]	1	Male,English	It in even if put in is an evil man. It doesn't mean that we should and we'll be risking a nuclear war with
+[1449.259,1449.938]	1	Male,English	with Russia
+[1449.967,1450.704]	0	U	[*]
+[1450.743,1453.361]	2	Male,English	that used to be a position of the left by the way[+]
+[1453.361,1455.475]	2	Male,English	right and when an empty war of this[+]
+[1455.504,1457.492]	1	Male,English	twenty twelve when you know in Rome
+[1457.492,1459.15]	1	Male,English	was hot in on Russia and
+[1459.15,1460.721]	1	Male,English	Obama said the eighties are calling
+[1460.721,1461.303]	2	Male,English	They are
+[1461.322,1462.806]	1	Male,English	and this is like ah and then
+[1462.806,1465.899]	1	Male,English	and so it's it's it's there's something about that just incredibly
+[1465.899,1467.412]	1	Male,English	A crazy how tribal it is
+[1467.412,1472.047]	2	Male,English	Well it's so interesting because that moment in the debate between Romney and Obama if the left
+[1472.086,1479.882]	2	Male,English	was being consistent about this. They be looking at Obama now and going man! you must have been the worst president of all time cause you miss judged that and then that let us
+[1479.882,1483.606]	2	Male,English	to our Russian puppet president or something but you don't see that side.
+[1483.606,1486.263]	2	Male,English	You don't see that sort of consistency at anyone these days I suppose[+]
+[1486.263,1490.287]	1	Male,English	Yeah it's it's it's in i[~] i[~] i[~] it feels that incredibly deranged but a
+[1490.316,1492.527]	1	Male,English	but certainly the intuition is that a
+[1492.527,1494.195]	1	Male,English	um we shouldn't be
+[1494.195,1495.698]	1	Male,English	this fixated on
+[1495.698,1497.007]	1	Male,English	You know escalating
+[1497.007,1499.8]	1	Male,English	um a school in this potentially military complex with
+[1499.8,1501.875]	1	Male,English	with places like Russia and
+[1501.875,1503.504]	1	Male,English	and to the extent we have that has
+[1503.504,1505.967]	1	Male,English	has the focus to distract us from
+[1505.967,1508.168]	1	Male,English	from a lava it distract us from the
+[1508.168,1510.709]	1	Male,English	it very real like economic competition have with the China
+[1510.709,1511.407]	2	Male,English	mhm
+[1511.446,1512.726]	1	Male,English	and ah which I think
+[1512.726,1514.607]	1	Male,English	is something that we should be taking more seriously
+[1514.607,1516.052]	1	Male,English	and then of course
+[1516.052,1519.242]	1	Male,English	um even more importantly maybe distract us from um
+[1519.242,1521.395]	1	Male,English	from a solving some problems at home
+[1521.395,1522.035]	1	Male,English	so I
+[1522.035,1522.898]	1	Male,English	I do think
+[1522.898,1523.664]	0	U	[*]
+[1523.664,1526.641]	1	Male,English	foreign paw having a less aggressive foreign policy
+[1526.641,1527.465]	1	Male,English	that's maybe the
+[1527.465,1528.047]	1	Male,English	preliminary
+[1528.076,1528.978]	0	U	[*]
+[1529.288,1530.607]	1	Male,English	to getting a
+[1530.607,1532.653]	1	Male,English	so then ah it really fixing on
+[1532.663,1533.875]	1	Male,English	You know solving any problems
+[1533.875,1535.64]	2	Male,English	cause that show you how
+[1535.659,1541.778]	2	Male,English	How they arrange the conversation has gotten because if you listen to conventional thinking and it's most of I think Trumps critics
+[1541.943,1550.292]	2	Male,English	will say look! he's saying all these things about North Korea or he's making all these threats about Syria or we drop the mother of all bombs or all these things
+[1551.155,1558.04]	2	Male,English	but you're actually making the reverse are. I mean they're trying to argue that he's really the war man and he's the one that's gonna lead us to world war three
+[1558.04,1560.396]	2	Male,English	and really your argument is
+[1560.396,1560.881]	2	Male,English	He's
+[1560.881,1564.915]	2	Male,English	the one doing the reverse of those things at least at least for now[+]
+[1564.915,1566.738]	1	Male,English	Yes! I mean that look I think I think there is
+[1566.835,1570.452]	1	Male,English	We have a certain type of military industrial complex so there are
+[1570.452,1572.973]	1	Male,English	parts of the third sort of almost an autopilot
+[1572.983,1575.669]	1	Male,English	but ah but but certainly I think all of
+[1575.669,1577.909]	1	Male,English	President Trumps instincts are
+[1577.909,1578.52]	1	Male,English	the
+[1578.84,1580.178]	1	Male,English	You know it's like
+[1580.178,1581.681]	1	Male,English	You know it it um
+[1581.681,1583.63]	1	Male,English	We have to rethink Nadir we have to
+[1583.63,1584.784]	0	U	[*]
+[1584.978,1587.732]	1	Male,English	You know how much we should really be committed to Afghanistan.
+[1587.732,1588.498]	1	Male,English	We have to
+[1588.595,1590.185]	1	Male,English	You know we shouldn't be
+[1590.185,1591.32]	1	Male,English	escalating
+[1591.368,1594.103]	1	Male,English	like crazy with with Russia so um[+]
+[1594.103,1594.636]	1	Male,English	You know
+[1594.636,1596.721]	1	Male,English	um yeah the North Korea
+[1597.099,1599.989]	1	Male,English	dictators and genocidal maniac but
+[1599.989,1601.046]	1	Male,English	will talked up
+[1601.201,1603.567]	1	Male,English	So I I think the instincts are um
+[1603.567,1606.195]	1	Male,English	are are very powerful in the a
+[1606.195,1607.349]	1	Male,English	the escalatory side
+[1607.368,1609.802]	2	Male,English	What is it about Trump that
+[1609.909,1613.72]	2	Male,English	made you think this is the guy could do that because where they are if you're hearing you say that
+[1613.72,1616.212]	2	Male,English	You could've said we'll run ah run for a
+[1616.241,1619.412]	2	Male,English	He's doing a pretty good job on that stuff, right? .He's been talking about
+[1619.441,1623.32]	2	Male,English	getting out of these wars for a long time like you could've been like alright it will even[+]
+[1623.32,1628.275]	2	Male,English	when I would watch the debates I bet that this poor guy. He's on the state with the wrong group of people. He's making a lot of sense to me.
+[1628.401,1631.058]	1	Male,English	Well it's true I supported you know I did support[+]
+[1631.058,1635.092]	1	Male,English	run poll ah run poll in both two thousand eight and two thousand twelve
+[1635.412,1636.265]	1	Male,English	ah
+[1636.372,1638.185]	1	Male,English	I think that a
+[1638.544,1640.852]	1	Male,English	You know I think in in in some ways a
+[1640.881,1641.812]	1	Male,English	um
+[1641.812,1642.452]	1	Male,English	um
+[1642.452,1644.653]	1	Male,English	run poll was sort of making these arguments
+[1644.653,1647.475]	1	Male,English	Well I I actually think Trump made them more powerfully
+[1647.475,1649.938]	1	Male,English	in the twenty fifteen, twenty sixteen primaries
+[1649.938,1650.869]	1	Male,English	then even
+[1650.869,1655.533]	1	Male,English	even ah run the poll and the invited critique run poll a little bit on this a[+]
+[1655.533,1656.561]	1	Male,English	it um
+[1656.561,1657.327]	1	Male,English	it was sort of
+[1657.327,1661.041]	1	Male,English	He was remaking this judgment call and that hadn't been able to get enough votes
+[1661.041,1661.972]	1	Male,English	and together the
+[1661.972,1666.006]	1	Male,English	A little bit a less establish on form a poll. They had be a little bit more agreeable[+]
+[1666.161,1667.635]	1	Male,English	and of course um
+[1667.635,1668.12]	1	Male,English	He did
+[1668.12,1668.915]	1	Male,English	and they're doing
+[1668.915,1670.544]	1	Male,English	much less swollen is that
+[1670.544,1671.756]	1	Male,English	because is sort of
+[1671.756,1672.658]	1	Male,English	in a way
+[1672.658,1673.812]	1	Male,English	ah downplayed
+[1673.812,1676.023]	1	Male,English	What might have been one is best issues and then
+[1676.081,1678.99]	1	Male,English	and then Trump just particularly form more powerfully
+[1679.058,1682.035]	2	Male,English	So what is that X factor thing with Trump because
+[1682.035,1687.795]	2	Male,English	Obviously this was starting to be like a runaway train and the all the momentum was there. All the media attention was there.
+[1687.824,1688.241]	2	Male,English	it
+[1688.28,1691.412]	2	Male,English	takes us kind of back to the beginning of when we sat down
+[1691.412,1697.521]	2	Male,English	the way you describe paper when it started really getting into that growth phase. So you must've seen that too and thought all right
+[1697.521,1701.002]	2	Male,English	the right ideas are kinda here but really what I'm saying is
+[1701.012,1702.641]	1	Male,English	Well its its well there's um
+[1702.738,1705.327]	2	Male,English	You're at least talking about something. You're talking about[+]
+[1705.327,1708.721]	2	Male,English	Some of the important some of the things that we should be talking about and the
+[1708.818,1709.846]	1	Male,English	and the
+[1709.846,1712.59]	1	Male,English	You know part of the part of the the negative part is that it's a
+[1712.59,1714.219]	1	Male,English	contrast to how bad
+[1714.219,1717.943]	1	Male,English	and a lot of the other people work. I mean I I I met a number of the[+]
+[1717.943,1719.989]	1	Male,English	different republican candidates running
+[1719.989,1722.84]	1	Male,English	in twenty sixteen in small one on one meetings
+[1722.888,1724.372]	1	Male,English	and and they like a zombies
+[1724.43,1724.915]	0	U	[*]
+[1724.915,1728.047]	1	Male,English	You know and it was just. You know you had just with the ideological talking points
+[1728.144,1728.852]	1	Male,English	um
+[1728.852,1729.492]	1	Male,English	was sort of
+[1729.492,1730.704]	1	Male,English	not fluid
+[1730.704,1731.693]	1	Male,English	very hard
+[1731.693,1732.808]	1	Male,English	to um
+[1732.808,1733.681]	1	Male,English	to um
+[1733.681,1735.058]	1	Male,English	get off scripted
+[1735.058,1736.212]	1	Male,English	to say anything
+[1736.212,1737.24]	1	Male,English	and um
+[1737.24,1737.909]	1	Male,English	and
+[1737.909,1739.16]	1	Male,English	that somehow
+[1739.344,1741.526]	1	Male,English	wasn't wasn't quite always called for
+[1741.526,1742.544]	1	Male,English	and of course you know
+[1742.544,1745.366]	1	Male,English	hope you know there's something else about in a whole continent that was very
+[1745.366,1746.869]	1	Male,English	much like this and the
+[1746.985,1748.052]	1	Male,English	and I think he know
+[1748.052,1749.904]	1	Male,English	I think the the revisionist
+[1749.904,1752.406]	1	Male,English	in a sort of history people like to now say is that
+[1752.406,1753.715]	0	U	[*]
+[1753.715,1755.179]	1	Male,English	this terrible Canada
+[1755.218,1757.487]	1	Male,English	and I and I think I think she was she was the
+[1757.487,1759.475]	1	Male,English	about candidate this time is was could put up
+[1759.669,1760.425]	1	Male,English	mhm
+[1760.425,1761.88]	1	Male,English	and it was just the ideas were wrong
+[1761.88,1763.024]	1	Male,English	They didn't make sense
+[1763.305,1765.749]	1	Male,English	in a whole Pres Con think she should run again in twenty twenty
+[1765.749,1766.253]	0	U	[NOISE]
+[1766.263,1769.201]	1	Male,English	and and in a way she's right because[+]
+[1769.55,1772.469]	1	Male,English	in from her point you like understand why she thinks that because
+[1772.488,1776.338]	1	Male,English	Um she's smarter than the other democrats. She has more experience[+]
+[1776.338,1777.046]	1	Male,English	and
+[1777.075,1778.743]	1	Male,English	You know within the
+[1778.743,1780.44]	1	Male,English	Zombie establishment
+[1780.595,1781.458]	1	Male,English	um
+[1781.458,1783.378]	1	Male,English	It may so make more sense for
+[1783.378,1784.726]	0	U	[*]
+[1784.726,1785.589]	1	Male,English	You know someone like
+[1785.589,1786.51]	0	U	[*]
+[1786.578,1787.441]	1	Male,English	Kamala Harris
+[1787.48,1787.887]	2	Male,English	Yeah
+[1787.887,1788.566]	1	Male,English	but um
+[1788.595,1791.223]	1	Male,English	The ideas are just the ideas were ju[~] just become
+[1791.223,1792.086]	1	Male,English	You know
+[1792.086,1793.463]	1	Male,English	completely ossified
+[1793.463,1797.846]	2	Male,English	What does it say about sort of the state of the west that when things there are
+[1797.846,1801.783]	2	Male,English	basically pretty good not to say they're perfect but basically pretty good
+[1801.938,1805.293]	2	Male,English	that in there's always this feeling that the establishment
+[1805.293,1806.961]	2	Male,English	has to be destroyed
+[1806.961,1808.328]	2	Male,English	or washed away
+[1809.395,1810.2]	1	Male,English	well
+[1810.2,1811.024]	1	Male,English	um
+[1813.109,1814.03]	1	Male,English	well we
+[1814.03,1814.738]	1	Male,English	there's
+[1814.767,1817.075]	1	Male,English	Well tha[~] that's a big question but
+[1817.075,1819.412]	1	Male,English	I I I think there's something it goes back in our
+[1819.722,1821.041]	1	Male,English	and we we are
+[1821.361,1822.961]	1	Male,English	You know there's something about
+[1822.961,1825.618]	1	Male,English	western in western civilization that is
+[1826.103,1829.361]	1	Male,English	it is perhaps unique a sort of like it's it's open
+[1829.361,1830.447]	1	Male,English	it's um
+[1830.447,1831.339]	1	Male,English	it's so
+[1831.339,1833.618]	1	Male,English	referential, self-critical
+[1833.715,1835.063]	1	Male,English	and so on
+[1835.063,1836.246]	1	Male,English	and so ah
+[1836.246,1838.001]	1	Male,English	and and you don't have
+[1838.001,1840.435]	1	Male,English	the sort of internal self-criticism
+[1840.435,1843.664]	1	Male,English	and um in other society and other cultures and so[+]
+[1843.664,1844.692]	1	Male,English	and there's always
+[1844.692,1846.864]	1	Male,English	is always an argument that in hours and is in strict
+[1846.864,1848.978]	1	Male,English	extremely, racist, sexist
+[1848.978,1851.722]	1	Male,English	to side discriminates and all kinds of ways and
+[1851.722,1852.498]	1	Male,English	mhm
+[1852.76,1853.623]	1	Male,English	and without
+[1853.623,1854.903]	1	Male,English	challenging that for now
+[1854.903,1855.601]	1	Male,English	mhm
+[1855.601,1860.44]	1	Male,English	You can also it ours is a side that cares a lot about racism sex and the cares a lot about
+[1860.566,1862.127]	1	Male,English	injustices that
+[1862.127,1864.338]	1	Male,English	the way is things are not working and so I think
+[1864.338,1865.24]	1	Male,English	um
+[1865.269,1867.286]	1	Male,English	and so I think the establishment
+[1867.286,1869.516]	1	Male,English	and is not gotten a free pass
+[1869.623,1870.99]	1	Male,English	in our society
+[1870.99,1871.921]	1	Male,English	for a
+[1871.921,1873.802]	1	Male,English	for a very long time and that's
+[1873.802,1874.51]	1	Male,English	and
+[1874.51,1875.412]	1	Male,English	You can say that's
+[1875.412,1877.749]	1	Male,English	that's unhealthy and makes us weaker
+[1877.749,1878.573]	1	Male,English	divided
+[1878.573,1880.144]	1	Male,English	but um but I think it's
+[1880.28,1881.075]	1	Male,English	It's a
+[1881.201,1883.441]	1	Male,English	it so that's part of the motor the tribes are
+[1883.441,1885.138]	1	Male,English	for civilization and you know it
+[1885.138,1886.486]	1	Male,English	may[~] maybe you you know
+[1886.486,1887.882]	1	Male,English	Maybe goes back to
+[1888.367,1889.143]	0	U	[*]
+[1889.298,1889.812]	0	U	[*]
+[1889.88,1890.481]	0	U	[*]
+[1890.481,1892.983]	1	Male,English	The enlightenment or the renaissance for
+[1893.012,1893.904]	1	Male,English	um
+[1893.904,1897.424]	1	Male,English	You know that Rick or Rome or Judea Christian traditions but a
+[1897.424,1898.345]	1	Male,English	You know it's a
+[1898.345,1901.487]	1	Male,English	when when when Jesus Christ and that he's the Son of God
+[1901.681,1902.612]	1	Male,English	um
+[1902.699,1906.646]	1	Male,English	You know that you can say you can describe that as a metaphysical religious statement
+[1906.665,1907.063]	2	Male,English	mhm
+[1907.063,1910.059]	1	Male,English	but you can describe it as a politically atheist statement.
+[1910.389,1911.281]	1	Male,English	because
+[1911.281,1912.076]	1	Male,English	Caesar
+[1912.076,1913.259]	1	Male,English	Augustus
+[1913.259,1914.384]	1	Male,English	was the emperor
+[1914.384,1915.48]	1	Male,English	and Caesar
+[1915.48,1918.195]	1	Male,English	his to adapted father had been David atheist
+[1918.321,1919.892]	1	Male,English	and so Caesar Augustus
+[1920.012,1921.708]	1	Male,English	also claimed to be the Son of God
+[1921.708,1924.656]	1	Male,English	and so when Jesus Christ says that he's the Son of God
+[1924.656,1925.626]	1	Male,English	that is a
+[1925.626,1930.639]	1	Male,English	challenge the establishment that's an act of political atheist in this state is not
+[1930.639,1931.541]	1	Male,English	Divine
+[1931.57,1933.529]	1	Male,English	The establishment is not Divine
+[1933.548,1934.324]	1	Male,English	and
+[1934.363,1935.633]	1	Male,English	that I think that's
+[1935.701,1940.501]	1	Male,English	that's just that's that's just been part of our civilization and I be I be much more worried that people
+[1940.501,1941.17]	1	Male,English	stopped
+[1941.17,1942.159]	1	Male,English	stopped a
+[1942.363,1944.729]	1	Male,English	stop it stop asking these questions
+[1944.729,1948.627]	2	Male,English	Yeah so for the people that are watching or listening to this right now that
+[1948.811,1951.73]	2	Male,English	still have all the concerns about Trump
+[1952.118,1957.723]	2	Male,English	that you may or may not have or or that you feel may be or somewhat deranged in terms of the conversation
+[1958.004,1961.359]	2	Male,English	You've met the guy obviously a bunch with times you know there's that one
+[1961.359,1964.685]	2	Male,English	a video when you guys had that slightly awkward handshake
+[1964.695,1968.884]	2	Male,English	is there anything well first I guess I have two parse is one is, do you have any regrets
+[1968.884,1973.403]	2	Male,English	about supporting him or speaking at the convention and I want to talk a little bit more about that in a minute also
+[1973.403,1974.324]	2	Male,English	um
+[1974.324,1979.25]	2	Male,English	but also if there's something that you can impart on us that maybe we don't know that's that's not being told
+[1979.289,1986.445]	2	Male,English	Ah you know just fun sitting down with the guy it is easy more stable than than the way the media would portray it or
+[1986.445,1987.541]	2	Male,English	something along those lines
+[1987.541,1988.782]	1	Male,English	We certainly[+]
+[1988.792,1990.421]	1	Male,English	He certainly very smart.
+[1990.809,1994.387]	1	Male,English	and ah and it it sort of the common sense
+[1994.387,1996.181]	1	Male,English	and to we look science others
+[1996.181,1997.364]	1	Male,English	the sort of a way that
+[1997.364,2002.29]	1	Male,English	You know he can X-ray people and get an immediate read on on somebody that's
+[2002.29,2003.764]	1	Male,English	that's incredibly impressive
+[2003.764,2004.268]	2	Male,English	Yeah
+[2004.268,2004.879]	1	Male,English	and so
+[2004.879,2007.662]	2	Male,English	Do you think there's a risk in that also always relying on that[+]
+[2007.73,2009.485]	2	Male,English	instinct that's opposed to remind[+]
+[2009.495,2010.29]	1	Male,English	it's
+[2010.387,2013.296]	1	Male,English	Why you know there always a risk with these things but this[+]
+[2013.296,2013.849]	1	Male,English	that's
+[2013.849,2014.421]	1	Male,English	You know
+[2014.421,2015.546]	1	Male,English	It's it's a
+[2015.546,2016.942]	1	Male,English	It's a powerful ability
+[2016.942,2017.243]	2	Male,English	mhm
+[2017.243,2017.756]	1	Male,English	ah
+[2017.941,2019.192]	1	Male,English	and um
+[2019.192,2020.346]	1	Male,English	and then a
+[2020.346,2022.227]	1	Male,English	and then there is the degree to which in the
+[2022.227,2022.77]	0	U	[*]
+[2022.77,2024.205]	1	Male,English	He has his ideas
+[2024.215,2025.524]	1	Male,English	and um
+[2025.815,2027.764]	1	Male,English	You know i[~]i[~] it[~]it's sort of
+[2028.249,2031.051]	1	Male,English	his thought these things through from self and a
+[2031.051,2032.283]	1	Male,English	and so the evidence that
+[2032.283,2032.758]	1	Male,English	You know
+[2032.758,2034.358]	1	Male,English	He's not as conformist is that
+[2034.387,2036.249]	1	Male,English	is that the ideas are actually pretty different
+[2036.249,2036.763]	0	U	[*]
+[2036.821,2037.335]	1	Male,English	it's
+[2037.529,2041.495]	1	Male,English	and it was broken with the republican orthodoxy on foreign policy
+[2041.495,2042.193]	1	Male,English	You know
+[2042.193,2043.027]	1	Male,English	There is um
+[2043.027,2044.821]	1	Male,English	You know rethinking the immigration
+[2044.821,2047.507]	1	Male,English	question rethinking the the free trade questions
+[2047.507,2048.69]	1	Male,English	and um
+[2048.69,2049.398]	1	Male,English	and these are
+[2049.398,2049.941]	1	Male,English	These are
+[2049.941,2050.843]	1	Male,English	These were like
+[2050.843,2053.267]	1	Male,English	not ah not mainstream views at all
+[2053.267,2054.45]	1	Male,English	Free twenty sixteen
+[2054.45,2054.896]	0	U	[*]
+[2054.896,2055.992]	1	Male,English	and um
+[2055.992,2057.718]	1	Male,English	and there is a way in which a
+[2057.718,2059.027]	1	Male,English	and what I what I I think has been
+[2059.027,2060.501]	1	Male,English	even more impressive then I
+[2060.598,2061.325]	1	Male,English	would've
+[2061.325,2062.421]	1	Male,English	expected is
+[2062.421,2064.758]	1	Male,English	is the degree to which the debate has shifted
+[2064.758,2066.29]	1	Male,English	So if we if we take the
+[2066.319,2067.153]	1	Male,English	the um
+[2067.153,2070.547]	1	Male,English	the debate about free trade. You know the consensus in twenty fifteen
+[2070.644,2071.759]	1	Male,English	would've been
+[2071.759,2072.341]	1	Male,English	um
+[2072.341,2073.97]	1	Male,English	We create a simply good
+[2073.97,2075.89]	1	Male,English	in all times small places[+]
+[2075.958,2079.633]	1	Male,English	and um if you don't understand that and you didn't study Econ one
+[2079.633,2082.998]	1	Male,English	and you're you know you're the like new person and the argument
+[2083.133,2084.278]	1	Male,English	and um
+[2084.433,2086.324]	1	Male,English	and at this point
+[2086.324,2087.788]	1	Male,English	You know it's it's much closer
+[2087.798,2088.409]	0	U	[*]
+[2088.496,2089.65]	1	Male,English	Others are something just
+[2089.65,2093.684]	1	Male,English	very very wrong with a lot of the trade arrangements in the world that's like a
+[2094.004,2094.867]	1	Male,English	You know we have
+[2094.867,2095.41]	1	Male,English	We have a
+[2096.05,2097.078]	1	Male,English	We um
+[2097.243,2102.741]	1	Male,English	Import four hundred seventy five billion dollars a year from China. We export one hundred billion a year to China.
+[2102.741,2104.312]	1	Male,English	and it's completely
+[2104.312,2106.203]	1	Male,English	unbalanced and um
+[2106.203,2110.421]	1	Male,English	and this is actually not if we we had a genuinely globalizing world that's not the way we look at all
+[2110.43,2110.838]	2	Male,English	aha
+[2110.838,2112.186]	1	Male,English	and a globalizing world
+[2112.283,2113.146]	1	Male,English	um
+[2113.146,2114.067]	1	Male,English	the a
+[2114.067,2117.044]	1	Male,English	Do you love to build parse the world would grow faster.

@@ -21,6 +21,7 @@ import AdminSettings from "./pages/AdminSettings";
 import CallDetail from "./pages/CallDetail";
 import NotFound from "./pages/NotFound";
 import NotAuthorized from "./pages/NotAuthorized";
+import AcceptInvite from "./pages/AcceptInvite";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
+        <Route path="/accept-invite" element={<AcceptInvite />} />
 
         {/* Agent routes */}
         <Route path="/agent/dashboard" element={
@@ -55,8 +57,8 @@ const AnimatedRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin" element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminLayout />
+          <ProtectedRoute allowedRoles={["admin", "super_admin", "manager", "viewer"]}>
+          <AdminLayout />
           </ProtectedRoute>
         }>
           <Route path="dashboard" element={<AdminDashboard />} />

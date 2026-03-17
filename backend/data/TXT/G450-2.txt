@@ -1,0 +1,883 @@
+[0.01,0.553]	1	Male,English	[NOISE]
+[0.737,2.444]	1	Male,English	Do I remember years ago.
+[2.628,6.856]	1	Male,English	people would say when I when everyone charging the L G B T community.
+[6.895,7.632]	1	Male,English	[*]
+[7.651,8.16]	1	Male,English	I remember
+[8.16,8.447]	0	U	[*]
+[8.447,9.872]	1	Male,English	  I have no
+[10.192,13.12]	1	Male,English	more insight in to the T part of this.
+[13.12,13.45]	2	Male,English	mhm
+[13.857,17.261]	1	Male,English	Then ah a straight cisgender heterosexual male would
+[17.319,18.541]	1	Male,English	You knew what I mean I I just
+[19.084,20.354]	1	Male,English	I don't I I
+[20.742,21.518]	1	Male,English	maybe I have
+[22.381,26.056]	1	Male,English	somehow slightly ah little more inherent empathy
+[26.599,30.255]	1	Male,English	by being an outsider somehow well but I don't have any more knowledge of it.[+]
+[30.73,33.096]	1	Male,English	and now it seems like the trans issue has almost
+[33.484,35.048]	1	Male,English	superseded all of the other
+[35.048,35.861]	0	U	[*]
+[35.861,37.537]	1	Male,English	 last year I mean everywhere
+[37.77,44.684]	1	Male,English	everywhere you go there's you know every time I open the twitter search bar its another trans story or there is someone being fired for this joke or that[+]
+[44.713,45.799]	1	Male,English	[NOISE]
+[45.857,47.37]	1	Male,English	wh[~]what do you think happened there that
+[47.661,49.193]	1	Male,English	catapulted this so quickly
+[49.29,52.199]	1	Male,English	and what are the issues around it that we're kind of afraid to talk about right now
+[53.547,55.37]	2	Male,English	it's really complicated pro topic
+[55.408,56.398]	0	U	[*]
+[56.398,57.804]	2	Male,English	I think like[+]
+[59.239,63.632]	2	Male,English	the legitimate issue about trans is there are people who
+[63.69,64.068]	2	Male,English	um
+[64.136,70.313]	2	Male,English	are trans or feel trans and they want their rights respected and that's totally legitimate and and good for them and[+]
+[70.604,72.747]	2	Male,English	raising awareness about that is fine
+[73.348,75.278]	2	Male,English	there's so a much who larger group of people
+[76.17,77.411]	2	Male,English	who I think are using
+[77.576,79.855]	2	Male,English	trans issues as a kind of wedge
+[80.485,81.6]	2	Male,English	to destroy
+[82.25,83.627]	2	Male,English	ah the gender binary
+[84.432,86.061]	2	Male,English	or to kind of muddy the waters
+[86.371,89.61]	2	Male,English	or basically as a weapon to beat up evolutionary psychology
+[89.707,90.056]	1	Male,English	[NOISE]
+[90.211,92.044]	2	Male,English	or evolutionary biology to say
+[92.267,93.867]	2	Male,English	there's no such thing as
+[94.992,95.496]	2	Male,English	sex
+[95.69,100.402]	2	Male,English	really there's no such thing as biological sex or sex is totally dissociated from gender
+[100.422,106.279]	1	Male,English	so when someone says and the next time someone says that on twitter what's the answer tha[~]that the person watching this should give[+]
+[107.307,107.879]	2	Male,English	that
+[107.976,109.45]	1	Male,English	maybe twitters not the best one for it
+[109.45,110.313]	2	Male,English	ah I mean
+[111.37,114.347]	2	Male,English	male and female are evolved strategies
+[114.57,115.181]	2	Male,English	that
+[115.491,117.033]	2	Male,English	exist because
+[117.159,120.844]	2	Male,English	over thousands of generations they were like a path
+[121.358,121.775]	2	Male,English	to
+[122.124,123.598]	2	Male,English	successful reproduction
+[124.325,124.713]	2	Male,English	um
+[124.936,126.022]	2	Male,English	if you are not
+[127.118,131.724]	2	Male,English	clearly male and functioning as a male or you're not clearly female and functioning as a female
+[131.724,132.17]	1	Male,English	[NOISE]
+[132.558,134.497]	2	Male,English	you're you're a genetic dead end
+[134.73,135.564]	2	Male,English	selection
+[136.01,137.29]	2	Male,English	hammers against
+[137.445,137.93]	2	Male,English	any
+[138.347,139.152]	2	Male,English	ambiguity
+[139.336,139.695]	2	Male,English	there
+[140.451,144.291]	2	Male,English	so it's not surprising that the vast majority of humans alive today
+[145.29,147.491]	2	Male,English	clearly identify as one sex or the other
+[147.52,148.015]	1	Male,English	mhm
+[148.364,148.81]	1	Male,English	um
+[149.799,154.977]	2	Male,English	ah doesn't mean everyone should it doesn't have any kind of moral implications about that but just descriptive way
+[156.073,160.388]	2	Male,English	it means there is a gender binary and it evolved for good reasons
+[160.776,161.416]	2	Male,English	and
+[161.92,164.073]	2	Male,English	everyone that teaches biology hopefully
+[164.364,165.033]	2	Male,English	knows this
+[165.838,167.312]	2	Male,English	and it shouldn't be that
+[167.622,168.553]	2	Male,English	controversial[+]
+[168.747,169.105]	1	Male,English	right?
+[169.164,169.522]	0	U	[*]
+[169.833,174.245]	2	Male,English	now if we wanna like genetically engineer people in use crisper on whatever it to
+[174.507,176.233]	2	Male,English	destroy the gender binary
+[177.096,178.987]	2	Male,English	for the twenty second and twenty third centuries
+[180.364,181.935]	2	Male,English	we can do that we could talk about that
+[182.691,183.176]	2	Male,English	um
+[184.64,186.638]	2	Male,English	I don't have any particular attachment
+[187.501,189.537]	2	Male,English	to the kind of male female dichotomy
+[189.828,190.439]	2	Male,English	ethically
+[191.37,191.758]	2	Male,English	um
+[191.874,193.998]	2	Male,English	but I think descriptively it's really important
+[195.462,202.696]	2	Male,English	to kind of accept it and and to go it it's here it's valuable to understand and we shouldn't necessarily try to
+[204.015,205.576]	2	Male,English	pretend it out of existence
+[205.576,206.439]	2	Male,English	[NOISE]
+[206.575,208.01]	2	Male,English	um or pretend that
+[208.427,210.25]	2	Male,English	were doing it and the name the trends, right?
+[211.588,213.072]	1	Male,English	you can have trends right so now[+]
+[214.119,214.953]	2	Male,English	saying
+[215.622,216.679]	2	Male,English	there's no such thing as
+[217.425,217.968]	2	Male,English	sex
+[217.998,219.598]	1	Male,English	so this gets to the heart of what I think
+[220.548,223.118]	1	Male,English	is really happening in this country right now which is
+[223.244,226.347]	1	Male,English	everything has become politicized to the point that
+[226.541,228.335]	1	Male,English	experts in the field
+[228.548,229.896]	1	Male,English	seem afraid to talk
+[229.935,230.953]	2	Male,English	[NOISE]
+[231.438,235.297]	1	Male,English	you right now are are taking a risk by talking about these[+]
+[235.753,236.199]	1	Male,English	issue
+[236.616,236.878]	2	Male,English	yeah
+[237.227,242.638]	1	Male,English	are you seeing this across the board are you are you seeing this amongst colleagues the fear to talk about these things?
+[243.016,243.404]	2	Male,English	yeah
+[243.627,244.364]	2	Male,English	absolutely
+[245.072,248.097]	2	Male,English	now the vast majority of people like at my university
+[248.524,252.112]	2	Male,English	don't really touch upon anything that's particularly politicized
+[252.645,255.952]	2	Male,English	right, they're just teaching civil engineering or law or
+[256.553,259.627]	2	Male,English	um immunology or whatever and most of that
+[259.724,260.684]	2	Male,English	isn't really
+[261.091,262.09]	2	Male,English	politicized yet
+[262.255,262.885]	2	Male,English	however
+[262.992,263.855]	1	Male,English	yeah is the
+[263.884,265.455]	2	Male,English	yeah right it[+]
+[265.959,266.347]	2	Male,English	[NOISE]
+[266.638,267.724]	2	Male,English	I mean you get little better
+[267.792,271.147]	2	Male,English	bit about what's the gender representation in certain fields but
+[271.913,272.941]	1	Male,English	[NOISE]
+[272.941,274.57]	2	Male,English	in my department in psychology
+[274.88,278.468]	2	Male,English	you do get almost everything having a kind of political edge
+[279.719,282.793]	2	Male,English	and I have colleagues who are frightened to teach certain classes
+[283.588,286.701]	2	Male,English	like I teach psychology of human sexuality and I'm I'm pretty
+[286.73,287.147]	1	Male,English	[NOISE]
+[288.039,292.936]	2	Male,English	upfront and out spoken about what I cover and and what my view is but a lot of my colleagues
+[293.867,295.457]	2	Male,English	will touch it with a barge pole
+[296.553,299.559]	2	Male,English	because there's so much risk that students will
+[300.073,302.497]	2	Male,English	just get upset about one little thing you say
+[302.565,302.895]	1	Male,English	yeah
+[302.924,304.107]	2	Male,English	and complain to a dean
+[304.97,306.861]	2	Male,English	and then you'll get called into the office
+[307.307,308.335]	2	Male,English	and um
+[308.781,311.302]	1	Male,English	so what would be that type of thing beyond what you just said about
+[311.632,312.592]	1	Male,English	the need ah[+]
+[312.65,314.89]	1	Male,English	and the evidence of of gender[+]
+[315.239,316.257]	1	Male,English	differences[+]
+[316.49,319.787]	1	Male,English	what what are the other type of things that just talking about?[+]
+[320.039,320.524]	0	U	[NOISE]
+[320.524,321.474]	1	Male,English	are scaring
+[321.581,322.279]	1	Male,English	the academic
+[322.638,324.839]	2	Male,English	it's very awkward to talk about sex differences
+[325.324,326.759]	2	Male,English	in any mental traits
+[327.273,329.164]	2	Male,English	or motivations of preferences
+[329.639,331.559]	2	Male,English	it's hard to talk about sexual coercion
+[331.811,332.17]	2	Male,English	rape
+[332.364,332.907]	2	Male,English	fake rape
+[333.382,335.244]	2	Male,English	harassment, stalking, etcetera[+]
+[335.273,335.719]	2	Male,English	[NOISE]
+[335.748,336.617]	1	Male,English	that must been an incredibly
+[336.617,337.639]	0	U	[*]
+[337.697,338.153]	2	Male,English	yeah
+[338.541,339.21]	2	Male,English	yeah
+[339.724,340.17]	2	Male,English	um
+[340.461,341.479]	2	Male,English	it's hard to talk about
+[341.993,342.507]	2	Male,English	um
+[343.118,344.931]	2	Male,English	aggression in general either
+[345.358,349.295]	2	Male,English	between individuals or between groups and how that relates to sexuality
+[350.061,350.856]	2	Male,English	like why
+[351.845,353.707]	2	Male,English	hunter gatherer tribes go to war
+[353.804,354.599]	2	Male,English	right it's not
+[355.307,357.935]	2	Male,English	typically about land or food it's about women
+[357.954,358.478]	1	Male,English	mhm
+[359.302,359.855]	2	Male,English	and
+[360.873,362.919]	2	Male,English	that doesn't tip the kind of marks this picture
+[363.53,364.616]	2	Male,English	pre historic warfare
+[364.674,365.168]	1	Male,English	mhm
+[365.168,365.518]	2	Male,English	right?
+[367.535,369.552]	2	Male,English	and then if you talked about stuff like
+[369.794,370.347]	2	Male,English	um
+[371.016,371.918]	2	Male,English	pregnancy,
+[372.461,374.371]	2	Male,English	child care, parenting
+[375.273,376.456]	2	Male,English	are you being
+[377.552,379.753]	2	Male,English	you know overly Pronatalist
+[380.461,387.016]	2	Male,English	and sort of family values for talking about that stuff is that alienating to certain students who might be[+]
+[387.821,390.061]	2	Male,English	homosexual or infertile or or
+[390.827,392.33]	2	Male,English	adopt to kids or whatever
+[392.776,393.135]	2	Male,English	um
+[393.319,394.564]	0	U	[*]
+[394.564,401.639]	1	Male,English	cause I have here these types of stories from academic all the time not only in here but but online and people email me all the time and I was like god[+]
+[402.56,406.982]	1	Male,English	oh we've failed I mean the universities really had failed at that point
+[407.215,408.97]	1	Male,English	like if you're afraid to talk about
+[409.387,412.257]	1	Male,English	child rearing because that might have set a gay person
+[412.364,412.752]	2	Male,English	yeah
+[413.518,414.313]	1	Male,English	Jesus
+[414.313,416.33]	1	Male,English	I mean wha[~]whats left at that point?
+[418.405,420.742]	2	Male,English	It's so frustrating and it means
+[422.09,426.987]	2	Male,English	I feel bad for the students but I also feel bad for the parents who are often putting the tuition bill
+[427.559,429.13]	2	Male,English	cause the parents have faith
+[429.76,431.108]	2	Male,English	that if I send my kid
+[431.855,435.084]	2	Male,English	to a state university and I pay tens of thousands in tuition
+[435.879,438.982]	2	Male,English	and they take a course on topic acts like human sexuality
+[439.312,442.308]	2	Male,English	that they're gonna get professors who are willing to profess
+[442.764,444.044]	2	Male,English	to say what they really think
+[444.684,446.245]	2	Male,English	and often are not getting that
+[446.827,448.592]	2	Male,English	so there's a kind of bait and switch
+[449.096,451.21]	2	Male,English	where universities are pretending to be
+[451.724,454.672]	2	Male,English	these bastions of free speech and inquiry and and
+[455.399,456.107]	2	Male,English	honesty
+[456.679,457.581]	2	Male,English	and in fact
+[457.736,458.124]	2	Male,English	um
+[458.541,460.267]	2	Male,English	everyone's kinda running scared
+[460.393,460.975]	2	Male,English	and
+[461.576,463.147]	2	Male,English	these kids are not getting
+[463.69,464.931]	2	Male,English	our best insights
+[466.444,468.713]	2	Male,English	they're paying the money but we're not delivering service
+[469.799,477.935]	1	Male,English	how much of an infection not just in the classroom do you see this as but I think correct me if I'm wrong I think you written around a hundred and ten publish papers, is that right?
+[478.255,480.0]	1	Male,English	did I get the exact number, right? is it a hundred[+]
+[480.004,480.43]	1	Male,English	or less
+[480.43,482.738]	2	Male,English	more more ah human's is kind ah ah at some point [+]
+[483.155,487.121]	1	Male,English	um I'm sure your well aware of the Peter symposium ah so called hoax[+]
+[487.402,495.344]	1	Male,English	that it's not just what's happening in the classroom that's causing the chaos but it actually maybe what's happening before that related to all of these papers[+]
+[495.596,496.178]	1	Male,English	that[+]
+[496.517,498.224]	1	Male,English	at certain disciplines basically have
+[498.253,498.699]	2	Male,English	mhm
+[499.31,500.076]	1	Male,English	ah I don't think um
+[500.173,501.899]	1	Male,English	all rest I mean they almost have no standard
+[502.219,502.927]	1	Male,English	at this point[+]
+[503.499,505.962]	1	Male,English	that that is gotta be just incredibly
+[506.059,508.202]	1	Male,English	frustrating for someone that actually has published[+]
+[508.464,509.618]	1	Male,English	something legitimately
+[510.258,511.848]	2	Male,English	it's kind of frustrating but
+[512.013,513.904]	1	Male,English	I can see you didn't look at frustrated forty years old but
+[513.923,514.243]	1	Male,English	um
+[514.282,516.241]	2	Male,English	like doesn't bug me as much as
+[516.784,519.053]	2	Male,English	maybe it bug some other people partly cause
+[519.664,521.642]	2	Male,English	I spent um lot of my undergraduate
+[521.807,522.282]	2	Male,English	um
+[522.476,524.483]	2	Male,English	years taking courses on
+[525.482,530.699]	2	Male,English	critical theory and I read a lot of dairy done Fuko and Leotard and all those french dudes and
+[531.116,535.567]	2	Male,English	one reason I love those courses is it was so easy to get an A
+[535.722,536.265]	2	Male,English	[NOISE]
+[536.333,537.613]	2	Male,English	by writing a kind of[+]
+[537.7,538.961]	2	Male,English	bullshit paper
+[539.436,540.648]	2	Male,English	using the right terms
+[540.677,541.395]	0	U	[NOISE]
+[541.967,544.459]	2	Male,English	and make using sufficiently obscure syntax
+[545.196,545.904]	2	Male,English	right the
+[546.447,548.018]	2	Male,English	ah so I know that game
+[548.299,551.635]	2	Male,English	that that's real really real[+]
+[551.722,555.281]	2	Male,English	and it's great fun I understand the appeal of that stuff[+]
+[555.795,559.567]	2	Male,English	it's just can't imagine spending my adult life doing nothing but that
+[560.779,563.116]	2	Male,English	and that's what's happening in a lot of the humanities
+[564.299,565.201]	2	Male,English	so it like
+[566.471,568.556]	2	Male,English	if if those folks wanna do that
+[569.293,570.641]	2	Male,English	and and get paid
+[570.922,572.784]	2	Male,English	typically not a very good salary
+[573.259,574.539]	2	Male,English	to do that I don't
+[574.791,576.915]	2	Male,English	it doesn't really viscerally offend me
+[576.915,577.516]	1	Male,English	mhm
+[577.642,579.601]	2	Male,English	the only dangerous when
+[579.717,580.435]	2	Male,English	is when they
+[581.715,585.138]	2	Male,English	turn into activists and they give people like me grief
+[586.02,587.921]	2	Male,English	based on not understanding what I do
+[588.018,588.454]	1	Male,English	yeah
+[588.91,591.79]	1	Male,English	well I would imagine a lot of interesting leaks into your classroom[+]
+[591.887,592.43]	1	Male,English	and then
+[592.43,592.944]	0	U	[NOISE]
+[592.973,594.253]	1	Male,English	and all bets are off
+[595.019,599.053]	2	Male,English	it's weird that doesn't actually leak in like what I teach in sexuality[+]
+[600.013,601.875]	2	Male,English	the kids have a sort of vague
+[602.447,603.087]	2	Male,English	um
+[604.619,607.431]	2	Male,English	political correctness that they've absorbed mostly in
+[607.431,609.516]	2	Male,English	K through twelve public school I think
+[610.195,611.795]	2	Male,English	but if you actually ask them
+[612.328,613.104]	2	Male,English	have you had
+[613.385,615.247]	2	Male,English	any courses on gender feminism?
+[615.79,616.139]	2	Male,English	no
+[616.294,616.837]	1	Male,English	mhm
+[617.419,620.241]	2	Male,English	have you heard of any of these leading figures from
+[620.619,623.218]	2	Male,English	critical theory or a history of feminism or
+[623.683,626.098]	2	Male,English	even history of gay rights they know nothing about
+[626.893,629.133]	2	Male,English	so it's not like they've been indoctrinated
+[629.802,630.694]	2	Male,English	at least not in
+[631.024,632.362]	2	Male,English	big state schools
+[633.254,636.018]	2	Male,English	but they kind of soaped up some stuff from my school
+[636.493,637.065]	2	Male,English	I think
+[637.259,637.773]	1	Male,English	hmm
+[637.773,638.122]	2	Male,English	that
+[638.568,639.848]	2	Male,English	influences how they
+[640.362,641.516]	2	Male,English	interpret everything
+[642.35,643.407]	1	Male,English	so as two guys
+[643.407,648.847]	1	Male,English	wearing might I say very nice shirts right now a shiny purple shirt and a shiny blue shirt[+]
+[648.847,651.533]	2	Male,English	let's talk about evolutionary aesthetics[+]
+[651.533,652.047]	0	U	[*]
+[652.144,653.55]	1	Male,English	people don't talk about aesthetics
+[653.773,654.19]	2	Male,English	yeah
+[654.19,656.944]	1	Male,English	that much but you think that sort of the things we're looking at
+[657.322,661.899]	1	Male,English	in the west or maybe not as exciting as they should be and that there's a problem there is that
+[662.19,662.927]	1	Male,English	care to say?
+[664.081,665.516]	2	Male,English	yeah I've been really into art
+[665.778,668.58]	2	Male,English	for a long time and I think art and beauty are important
+[668.716,670.51]	2	Male,English	um particularly
+[671.218,673.196]	2	Male,English	the places people live and work
+[673.962,676.396]	2	Male,English	and I think as humans we kind of deserve
+[676.648,679.276]	2	Male,English	the best from artists, interior designers
+[679.887,683.242]	2	Male,English	um stylist whatever architects that
+[684.367,686.287]	2	Male,English	make our lives as pleasant as possible
+[686.578,690.699]	2	Male,English	and I think basically ever since about nineteen ten art in architecture has failed
+[691.213,693.54]	2	Male,English	and has not very very good job of delivering
+[694.791,696.013]	2	Male,English	visual environment
+[696.362,698.35]	2	Male,English	that are actually humane
+[698.67,700.813]	2	Male,English	and appealing and enjoyable
+[700.968,702.51]	2	Male,English	and that kinda promote
+[702.927,704.013]	2	Male,English	mental and physical health
+[704.051,705.176]	1	Male,English	what happened around nineteen
+[705.205,706.311]	2	Male,English	modernism man[+]
+[706.34,707.368]	2	Male,English	[NOISE]
+[707.523,708.047]	2	Male,English	um
+[708.91,709.763]	2	Male,English	if you look at
+[710.442,714.117]	2	Male,English	the way domestic architecture worked up until about that period
+[715.659,716.619]	2	Male,English	it was all sort of
+[716.842,719.722]	2	Male,English	human scale and arts and crafts and
+[720.43,721.041]	2	Male,English	um
+[721.477,725.201]	2	Male,English	there are places you'd wanna live where you didn't have to be educated
+[726.035,727.693]	2	Male,English	into a particular elite
+[728.294,730.98]	2	Male,English	notion of what how should be in order to appreciate it
+[731.087,731.727]	1	Male,English	mhm
+[731.756,732.687]	2	Male,English	right and then you get
+[733.298,735.567]	2	Male,English	the bow house international modernism
+[736.333,737.797]	2	Male,English	white structures
+[738.34,740.551]	2	Male,English	crest hard lines um
+[741.899,743.344]	2	Male,English	bad acoustics
+[744.333,745.894]	2	Male,English	and suddenly that becomes
+[746.156,746.99]	2	Male,English	the fashion
+[747.077,749.104]	2	Male,English	the right at that comes what people think are[+]
+[749.288,750.636]	2	Male,English	ah i[~]i[~] is the future
+[751.528,752.808]	2	Male,English	and nobody likes it
+[753.002,753.419]	1	Male,English	yeah
+[753.477,756.328]	2	Male,English	but it's kind of imposed pop down by the elite
+[756.978,757.802]	2	Male,English	you must
+[758.18,759.722]	2	Male,English	live like this like it or not
+[759.761,764.464]	2	Male,English	is is that tapped down from from the elite or is that just that often those things are easier to build?
+[764.493,767.47]	2	Male,English	probably and cheaper to build or maybe that became actually[+]
+[768.139,769.39]	2	Male,English	well the irony is like
+[770.098,771.407]	2	Male,English	you could have taken
+[772.299,776.401]	2	Male,English	cheap easy to build reinforced concrete structures and built[+]
+[776.75,777.778]	2	Male,English	a lot of awesome
+[778.282,780.134]	2	Male,English	cheap houses that were okay
+[780.939,782.481]	2	Male,English	or you could do the traditional route
+[782.568,786.796]	2	Male,English	but instead what you get is every house must be distinct and must have its own shape
+[786.922,787.31]	1	Male,English	mhm
+[787.339,788.619]	2	Male,English	and there can't be any
+[788.881,789.453]	2	Male,English	um
+[790.607,791.635]	2	Male,English	standardization
+[792.081,794.156]	2	Male,English	so the houses end up being extensive
+[794.99,798.956]	2	Male,English	and experimental and hard to maintain and they leak and everyone's miserable
+[798.995,799.625]	1	Male,English	mhm
+[799.848,800.236]	2	Male,English	um
+[800.643,802.699]	2	Male,English	so they're not really serving the needs of the
+[803.727,805.482]	2	Male,English	the people at large they're just
+[807.276,808.624]	2	Male,English	great for architect egos
+[808.973,814.025]	1	Male,English	yeah it's interesting because I just spend a couple months bouncing through a lot of different countries in Europe
+[814.19,818.243]	1	Male,English	you know especially on most country's history goes back so far
+[818.311,820.464]	1	Male,English	we see incredible architecture and you see
+[820.464,820.968]	0	U	[*]
+[821.133,827.203]	1	Male,English	you know I'd see chairs that were a hundred fifty years old and like the would work that would go into it and the craftsmanship[+]
+[827.62,828.338]	1	Male,English	and it was like
+[828.687,831.373]	1	Male,English	I don't think we could do this today or if we could do it today[+]
+[831.761,836.774]	1	Male,English	this would've co this chair would be an are dollar it would be like a six thousand five hundred dollar chair where
+[836.774,837.356]	0	U	[*]
+[837.608,840.013]	1	Male,English	you know this is what a guy did it took him a couple days[+]
+[840.362,842.738]	1	Male,English	and he could sell it earn a wage and it's like we've just
+[842.922,845.201]	1	Male,English	the economics of everything have gotten out of whack
+[845.676,848.391]	2	Male,English	yeah and like nice table here and[+]
+[848.798,849.496]	2	Male,English	this
+[849.496,849.778]	0	U	[*]
+[849.778,850.485]	2	Male,English	probably[+]
+[850.505,853.453]	1	Male,English	the new, you commented on the table right when you walked in so I know you mean it[+]
+[853.472,853.792]	2	Male,English	yeah
+[854.093,854.51]	2	Male,English	um
+[854.694,855.247]	2	Male,English	I've made a
+[855.46,860.648]	2	Male,English	two pieces of furniture in my day and that's that's pretty cool but yeah it was the visual art in particular
+[861.298,862.898]	2	Male,English	um the economics mean
+[863.596,863.916]	2	Male,English	like
+[864.498,865.962]	2	Male,English	abstract paintings just
+[866.34,869.618]	2	Male,English	is so much faster to do than representational painting
+[870.122,873.904]	2	Male,English	right if you are young inspiring artist and you one career and you want to give your
+[874.379,877.356]	2	Male,English	gallery a certain flow of work that they can sell
+[877.773,881.603]	2	Male,English	it's a lot harder to do that if you're doing representational paintings that take[+]
+[882.127,883.824]	2	Male,English	a hundred three hundred hours
+[884.338,886.985]	2	Male,English	than an abstract work that takes a tenth of that
+[887.887,889.962]	2	Male,English	so the economic pressures ah are also
+[890.728,891.727]	2	Male,English	in that direction
+[891.882,892.328]	1	Male,English	yeah
+[892.755,893.356]	2	Male,English	um
+[894.859,896.207]	2	Male,English	but people have
+[896.653,897.361]	2	Male,English	um
+[898.893,901.424]	2	Male,English	kind of voting with their feet and like the[~]they don't
+[901.453,902.064]	2	Male,English	oh like
+[902.161,902.83]	2	Male,English	elite
+[903.528,906.001]	2	Male,English	abstract art they don't like conceptual art
+[906.67,907.436]	2	Male,English	um
+[907.436,913.099]	1	Male,English	but is is like the were the right where they or they just don't they just don't know or it's conditioning or if[+]
+[913.254,916.619]	1	Male,English	that we all like to like what everybody else like
+[917.288,918.19]	1	Male,English	sort of thing
+[918.19,918.927]	2	Male,English	I think
+[919.722,923.659]	2	Male,English	everybody knows that kind of supposed to enjoy going to
+[923.882,924.241]	2	Male,English	like
+[924.425,930.35]	2	Male,English	while were visiting the city we should go to the contemporary art museum and they get there and there's a bunch of[+]
+[930.35,931.591]	2	Male,English	terrible video art
+[931.601,931.94]	0	U	[NOISE]
+[932.134,935.15]	2	Male,English	and there's a bunch of very puzzling conceptual art
+[935.635,936.876]	2	Male,English	and they read the little
+[936.944,940.939]	2	Male,English	descriptions on the walls and they and it just makes no sense cause it's written
+[942.035,944.401]	2	Male,English	by an art curator for other art curators
+[944.401,945.011]	1	Male,English	mhm
+[945.555,947.523]	2	Male,English	and it's completely alienating
+[948.173,949.637]	2	Male,English	and that's that's sad
+[949.996,950.917]	2	Male,English	cause it means
+[951.538,954.67]	2	Male,English	they're being told this is the highest expression of your culture
+[955.397,957.424]	2	Male,English	but it's completely inaccessible to you
+[958.578,959.218]	1	Male,English	so what
+[959.218,959.848]	1	Male,English	the
+[960.006,961.266]	1	Male,English	what do you look at that
+[961.907,964.495]	1	Male,English	give you some excitement or can still sort of
+[965.164,966.764]	1	Male,English	renew your spirit let's say
+[966.89,971.216]	2	Male,English	well there there is a movement of kind of neo traditionalism in art
+[971.216,978.644]	2	Male,English	where there's there's certain places like New York academy of arts that are actually teaching students how to draw and paint and sculpt and[+]
+[979.09,979.798]	2	Male,English	and
+[979.923,981.872]	2	Male,English	do the sort of traditional
+[982.473,983.114]	2	Male,English	um
+[983.221,984.073]	2	Male,English	skills
+[984.239,985.673]	2	Male,English	that people associate with
+[985.878,986.352]	2	Male,English	art
+[986.769,987.438]	2	Male,English	um
+[987.913,994.216]	2	Male,English	it's just a little hard to get a foothold in that like New York or London gallery system if that's a kind of work that you do[+]
+[994.924,995.564]	2	Male,English	um
+[996.049,997.301]	2	Male,English	but my hope is that
+[998.096,1001.461]	2	Male,English	like the bay area billionaires will start collecting that stuff
+[1001.519,1002.226]	1	Male,English	mhm
+[1002.284,1004.758]	2	Male,English	um I think the Chinese art market is
+[1004.777,1007.472]	2	Male,English	has got a real thirst for good
+[1007.667,1008.85]	2	Male,English	representational art
+[1009.324,1011.216]	2	Male,English	and I think that's gonna start
+[1011.303,1013.97]	2	Male,English	to dominate the art world pretty soon
+[1014.318,1016.423]	1	Male,English	so what's the evolutionary need
+[1016.684,1017.072]	2	Male,English	mhm
+[1017.101,1017.965]	1	Male,English	for a good art?
+[1017.965,1021.941]	1	Male,English	I mean what's the psychological I mean I know you[~]you[~]you're okay there's an expression of
+[1022.289,1026.517]	1	Male,English	something that can't quite be said but what's like the the driving force behind that[+]
+[1026.867,1027.758]	1	Male,English	[NOISE]
+[1029.107,1032.84]	2	Male,English	so yeah on the one hand there's why do we bother to make art
+[1032.84,1037.009]	2	Male,English	on the other hand why why do we like certain kinds of art
+[1037.301,1043.38]	2	Male,English	there's been a lot more research on why do we like certain kinds of patterns and colors and forms of conversations and whatever
+[1043.399,1043.914]	2	Male,English	[NOISE]
+[1043.982,1045.107]	2	Male,English	but there's no
+[1046.095,1048.685]	2	Male,English	sort of unified theory
+[1048.685,1049.101]	2	Male,English	mhm
+[1049.101,1049.965]	2	Male,English	of aesthetics
+[1050.101,1050.575]	1	Male,English	mhm
+[1050.672,1052.108]	2	Male,English	in fact I would say
+[1052.844,1056.461]	2	Male,English	there's more good stuff published on that topic between about
+[1057.14,1058.964]	2	Male,English	eighteen seventy nineteen twenty
+[1059.467,1060.302]	2	Male,English	than since
+[1060.495,1060.844]	1	Male,English	mhm
+[1060.902,1063.793]	2	Male,English	cause that's when people were sort of very inspired by Darwin[+]
+[1064.559,1066.701]	2	Male,English	evolutionary aesthetics was a field
+[1066.838,1068.98]	2	Male,English	there were dozens of books published on it
+[1069.649,1072.015]	2	Male,English	and then modernism came and everyone forgot all that
+[1073.324,1074.245]	1	Male,English	how could this
+[1074.575,1078.832]	1	Male,English	be connected to the earlier topic which is sexuality so for example my[+]
+[1078.832,1080.267]	1	Male,English	gay male friend
+[1080.267,1081.645]	1	Male,English	generally speaking[+]
+[1081.742,1082.062]	2	Male,English	mhm
+[1082.101,1085.901]	1	Male,English	have a much better eye for art or for style
+[1085.901,1087.142]	1	Male,English	or for fashion
+[1087.249,1087.541]	2	Male,English	yeah
+[1087.56,1088.112]	1	Male,English	you know
+[1088.753,1095.541]	1	Male,English	you could get away in that crew you know what I mean like you gotta nice style on you got a nice shirt like that's you know what like I mean that's a compliment like [+]
+[1095.541,1100.079]	1	Male,English	where jet again just broadly speaking its like my straight guy friend
+[1100.37,1105.363]	1	Male,English	all kind of wear big shirts and they don't know exactly how to do their hair and they're you know
+[1105.363,1108.137]	1	Male,English	so there's no connection between sexuality[+]
+[1108.273,1110.193]	1	Male,English	and artistic vision[+]
+[1111.57,1113.781]	2	Male,English	I think that's absolutely true
+[1113.994,1115.564]	2	Male,English	and its not what you would do
+[1115.787,1120.238]	2	Male,English	predict from first principles it's really weird, if you look around at other species
+[1120.559,1124.873]	2	Male,English	the males are typically much more ornamented than the females they have the[+]
+[1125.485,1125.969]	2	Male,English	the
+[1125.969,1132.66]	2	Male,English	amazing plumage and they do the incredible old songs and dances and the females are usually come and grab and and
+[1132.844,1134.085]	2	Male,English	not that aesthetic
+[1134.736,1138.478]	2	Male,English	the power birds make these incredible kind of insulation works
+[1138.662,1139.729]	2	Male,English	that's all the males
+[1140.524,1143.541]	2	Male,English	then you get to humans or at least american males
+[1143.88,1145.169]	2	Male,English	american straight males
+[1145.936,1148.244]	2	Male,English	and it's like can you even find
+[1148.524,1149.524]	2	Male,English	clothes that fit
+[1149.862,1150.571]	2	Male,English	or like
+[1150.764,1151.473]	2	Male,English	colors
+[1151.531,1152.937]	1	Male,English	is the big shirt[+]
+[1152.947,1153.363]	2	Male,English	and
+[1153.703,1155.38]	2	Male,English	like what is
+[1155.7,1156.621]	0	U	[*]
+[1156.718,1157.678]	2	Male,English	you and
+[1158.678,1159.851]	2	Male,English	when I did the um[+]
+[1159.851,1162.759]	2	Male,English	your peers and so till the copy to tell people to clean their room[+]
+[1162.896,1163.312]	2	Male,English	yeah
+[1165.097,1166.222]	2	Male,English	so I have no
+[1166.222,1169.489]	2	Male,English	ideal why gay men have better tastes than straight men
+[1169.965,1171.467]	2	Male,English	I think that's a fascinating
+[1171.729,1174.319]	1	Male,English	there's some there has to be some link there yeah[+]
+[1174.542,1175.318]	2	Male,English	on there
+[1175.318,1175.889]	2	Male,English	um
+[1176.821,1181.223]	2	Male,English	but I think men can level up obviously cause like British and European men
+[1181.223,1182.124]	2	Male,English	aren't as hopeless
+[1182.736,1184.753]	2	Male,English	if you grow up a young man in Italy
+[1185.392,1186.799]	2	Male,English	you kind of absorb
+[1187.051,1187.632]	2	Male,English	some
+[1187.855,1189.165]	2	Male,English	ideas about style
+[1189.514,1190.639]	2	Male,English	and even the British
+[1191.541,1192.559]	2	Male,English	um kind of
+[1192.559,1195.758]	2	Male,English	aristocrats land the gentry class ha[~]have a certain
+[1196.37,1197.427]	2	Male,English	look that
+[1197.998,1200.044]	2	Male,English	it's a bit traditionalist but at least
+[1201.14,1202.062]	2	Male,English	there's taste
+[1202.983,1209.518]	1	Male,English	I don't know this gonna quite makes sense but were we almost getting there say ten years ago with the rise of the metro sexual[+]
+[1209.645,1212.524]	1	Male,English	and then it sort of crashed because I guess[+]
+[1212.883,1216.335]	1	Male,English	maybe it relates back to being about where we are more pure it in[+]
+[1216.53,1222.29]	1	Male,English	so whereas this idea there were just like mocking of them like ah they're just gay we don't want to admit it or something like that[+]
+[1222.29,1223.918]	1	Male,English	and that whole thing seemed to crash
+[1224.238,1230.387]	1	Male,English	like they would this little brief window where straight guys were like dressing better have cooler haircuts there's something there[+]
+[1230.387,1235.177]	2	Male,English	or even five years ago when I lived in New York for a a little bit ah hang on
+[1235.438,1237.204]	2	Male,English	ah hang out lot in Brooklyn
+[1237.746,1238.416]	2	Male,English	there was
+[1238.503,1240.461]	2	Male,English	sort of that was peak hipster
+[1240.947,1243.312]	2	Male,English	in in Brooklyn and the guys there
+[1243.564,1246.153]	2	Male,English	the straight guys put a lot of effort into
+[1246.28,1248.947]	2	Male,English	grooming and haircuts and authentic style and
+[1249.392,1255.084]	2	Male,English	this and that is in fashion and I thought this is really cool this is like a Europeanization
+[1255.502,1256.306]	2	Male,English	of male
+[1256.432,1257.616]	2	Male,English	taste and culture
+[1258.478,1260.273]	2	Male,English	but it was also very masculine
+[1260.399,1260.912]	1	Male,English	mhm
+[1260.912,1262.358]	2	Male,English	it wasn't sort of
+[1263.084,1266.352]	2	Male,English	like late seventies disco culture or early nineties
+[1266.517,1268.176]	2	Male,English	rave culture or[+]
+[1268.302,1268.786]	2	Male,English	or
+[1268.815,1269.969]	2	Male,English	burning men culture
+[1270.085,1272.044]	1	Male,English	it was sort of more old school masculine
+[1272.044,1273.14]	2	Male,English	so old school[+]
+[1273.382,1273.684]	2	Male,English	like
+[1274.41,1277.553]	2	Male,English	I want to go to a proper barber and get proper haircut[+]
+[1277.746,1279.986]	2	Male,English	like it's all flannel and boots and whatever
+[1280.85,1281.965]	2	Male,English	and I loved that stuff
+[1282.323,1282.867]	2	Male,English	um
+[1283.245,1285.009]	2	Male,English	but I think it kinda had it's moment
+[1286.387,1287.366]	2	Male,English	ah um
+[1287.376,1288.559]	2	Male,English	evaporated I don't know
+[1288.617,1290.12]	0	U	[*]
+[1290.159,1291.535]	2	Male,English	price themselves out of the market in
+[1291.564,1293.639]	2	Male,English	right yeah yeah[+]
+[1293.94,1296.141]	2	Male,English	or they're just got all too busy on twitter
+[1297.266,1299.09]	1	Male,English	we go back wait always comes back to that
+[1299.312,1300.689]	1	Male,English	a let's talk a little bit about me
+[1300.718,1301.398]	1	Male,English	selection[+]
+[1301.514,1301.765]	2	Male,English	mhm
+[1301.804,1304.364]	1	Male,English	regardless of you of your sexuality
+[1304.393,1314.197]	1	Male,English	there seems to be this new thing right now where if you're not open to dating absolutely anyone under any circumstances no matter how they look or how they take care of themselves or whether they brush their teeth[+]
+[1314.245,1318.542]	1	Male,English	or whether they have a penis or a vagina or any combination of anything[+]
+[1318.542,1321.101]	1	Male,English	that if you aren't just open to anything
+[1321.169,1326.581]	1	Male,English	there's a pretty loud and growing voice out there that is trying to frame everyone as a as a hit[+]
+[1326.707,1328.17]	1	Male,English	which is the reverse of what[+]
+[1328.335,1330.41]	1	Male,English	choosing a mate really has been about[+]
+[1331.341,1333.398]	2	Male,English	its insane I mean for five hundred
+[1333.398,1337.005]	1	Male,English	alright I got you I got emotional Miller [+]
+[1337.363,1342.222]	2	Male,English	five hundred million years right our vertebrate ancestors have been choosing their mates
+[1342.484,1343.502]	2	Male,English	selectively
+[1343.667,1346.478]	2	Male,English	because that is the highest stakes decision
+[1346.643,1349.872]	2	Male,English	any organism makes us who do I recombine my genes with
+[1350.193,1350.581]	2	Male,English	right
+[1351.181,1355.797]	2	Male,English	and so all the way through the court dates and the vertebrates and the mammals and the primates
+[1356.37,1357.204]	2	Male,English	you get
+[1357.553,1360.044]	2	Male,English	particularly females being choosy
+[1360.044,1360.588]	2	Male,English	about
+[1360.714,1363.341]	2	Male,English	you know who they breed with who inspires kids
+[1363.953,1365.649]	2	Male,English	but then as soon as humans
+[1365.862,1367.405]	2	Male,English	start doing pair bond
+[1367.851,1369.576]	2	Male,English	million two million years ago
+[1370.091,1372.553]	2	Male,English	and the male start investing more in offspring
+[1372.815,1374.89]	2	Male,English	start forming longer term relationships
+[1375.307,1377.645]	2	Male,English	then we also have incentives to be choosy
+[1377.878,1378.439]	2	Male,English	about
+[1378.517,1379.341]	2	Male,English	or female mates
+[1380.331,1381.068]	2	Male,English	[NOISE]
+[1381.717,1383.889]	2	Male,English	and so this is the one domain
+[1383.947,1384.617]	2	Male,English	where
+[1384.656,1385.868]	2	Male,English	if you have either know
+[1385.936,1388.486]	2	Male,English	a shred a libertarian in you
+[1389.039,1392.364]	2	Male,English	or you respect freedom of association at all
+[1393.101,1395.729]	2	Male,English	or you think it's okay to care
+[1396.05,1398.124]	2	Male,English	who you spend your life with and
+[1398.222,1398.861]	2	Male,English	ah like
+[1399.249,1401.034]	2	Male,English	what kind of children you
+[1401.034,1401.489]	2	Male,English	you
+[1401.489,1402.13]	2	Male,English	create
+[1402.867,1403.506]	2	Male,English	then
+[1403.884,1406.639]	2	Male,English	make choice should be a kind of domain of freedom
+[1406.958,1412.176]	1	Male,English	right like this a good place to be prejudiced so to speak right like you should add some[+]
+[1412.36,1413.475]	0	U	[*]
+[1413.524,1415.502]	2	Male,English	be discriminating have judgment[+]
+[1416.325,1417.295]	1	Male,English	discriminating taste?[+]
+[1418.004,1419.216]	2	Male,English	and you can always
+[1419.855,1422.9]	2	Male,English	be open to the idea that maybe the current
+[1423.123,1427.914]	2	Male,English	set of criteria that I have maybe could be nudge to improve their tweak to maybe am
+[1428.244,1431.502]	2	Male,English	subject to certain stereotypes and maybe become nerves
+[1431.754,1433.198]	2	Male,English	through of course people
+[1433.713,1436.883]	2	Male,English	tend to get better at make choice in their thirties than in their teens
+[1438.61,1439.249]	2	Male,English	but
+[1439.318,1440.005]	2	Male,English	for someone
+[1440.009,1441.424]	2	Male,English	and to start lecturing you
+[1441.773,1442.772]	2	Male,English	politically
+[1443.121,1443.596]	2	Male,English	like
+[1444.042,1448.338]	2	Male,English	you shouldn't be attracted to women you should be attracted to anybody or any
+[1448.338,1452.304]	2	Male,English	any kind of being or it and what any species and age
+[1453.904,1457.521]	2	Male,English	no let please let me be attracted to who am I attracted to
+[1458.52,1460.12]	2	Male,English	cause it should be like the
+[1460.459,1462.282]	2	Male,English	the pinnacle of human freedom
+[1463.446,1463.911]	1	Male,English	yeah
+[1464.047,1466.355]	2	Male,English	if if you don't believe in freedom anywhere else
+[1466.995,1468.682]	2	Male,English	you should believe and make choice for him
+[1469.041,1470.583]	2	Male,English	it should be a fundamental human right
+[1471.504,1471.989]	2	Male,English	I think
+[1473.007,1474.539]	2	Male,English	and where you get
+[1475.024,1477.972]	2	Male,English	horrible totalitarian societies really
+[1478.447,1482.927]	2	Male,English	infringing on make choice freedom like you're not allowed to marry that person
+[1483.538,1484.081]	2	Male,English	or
+[1484.498,1485.865]	2	Male,English	you know you have to
+[1485.933,1487.921]	2	Male,English	do an arrange marriage to that person
+[1488.91,1490.607]	2	Male,English	we kind of recoil at that
+[1491.286,1494.156]	2	Male,English	until that's horrible and yet in america we have
+[1495.126,1496.28]	2	Male,English	busy bodies
+[1496.784,1497.967]	2	Male,English	virtue signal
+[1498.675,1499.344]	2	Male,English	um
+[1500.178,1501.08]	2	Male,English	telling us
+[1501.167,1503.504]	2	Male,English	your make choice criteria are too
+[1503.504,1504.047]	2	Male,English	narrow
+[1506.132,1507.305]	1	Male,English	so where are
+[1507.664,1509.71]	1	Male,English	to gay people fit in all of this
+[1509.739,1514.132]	1	Male,English	ah and out of biological or an evolutionary perspective
+[1514.132,1515.732]	1	Male,English	brought up point of passing an gene
+[1515.761,1516.818]	0	U	[NOISE]
+[1516.818,1517.836]	1	Male,English	gay couples
+[1518.04,1519.863]	1	Male,English	or gay people whether you're a couple or not[+]
+[1520.086,1522.713]	2	Male,English	don't that means biologically speaking[+]
+[1522.743,1523.189]	2	Male,English	yep
+[1523.315,1524.372]	1	Male,English	um
+[1525.361,1527.252]	1	Male,English	so what what do you make of that
+[1528.202,1529.075]	1	Male,English	condition
+[1529.075,1533.681]	1	Male,English	is that even the right word? now I'm gonna get I'm gonna get both of us in trouble probably just for me asking the question
+[1533.7,1534.65]	2	Male,English	its only a trait
+[1534.757,1535.067]	1	Male,English	trait
+[1535.067,1535.892]	2	Male,English	traits pretty neutral
+[1535.921,1537.56]	1	Male,English	OK, alright trait's pretty neutral
+[1537.744,1540.847]	2	Male,English	well here's a fascinating thing about homosexuality is
+[1541.875,1543.727]	2	Male,English	people have been developing
+[1543.727,1549.167]	2	Male,English	or trying to develop theories of male homosexuality and it's kind of evolutionary origins and functions
+[1549.584,1550.04]	2	Male,English	for
+[1550.282,1551.572]	2	Male,English	thirty forty years
+[1552.338,1553.812]	2	Male,English	and there is no good theory
+[1554.84,1556.663]	2	Male,English	of it yet. its a complete mystery.
+[1556.789,1558.709]	2	Male,English	have never seen any compelling
+[1559.213,1561.841]	2	Male,English	explanation of male homosexuality
+[1563.024,1564.585]	1	Male,English	so so what would be a compelling
+[1564.847,1566.903]	2	Male,English	I was compelling argument would be[+]
+[1567.368,1569.172]	2	Male,English	okay there's costs
+[1569.366,1570.384]	2	Male,English	of being
+[1570.452,1573.865]	2	Male,English	like exclusively attracted to your own sex and therefore not
+[1573.865,1575.601]	2	Male,English	they typically having so many kids
+[1576.183,1579.315]	2	Male,English	but there's some countervailing benefits of some sort
+[1579.926,1584.086]	2	Male,English	maybe benefits to your extended family or benefits to your group or
+[1585.007,1586.19]	2	Male,English	something else
+[1586.384,1588.469]	2	Male,English	but nobody can make the math of work
+[1588.624,1589.041]	1	Male,English	mhm
+[1589.448,1590.292]	2	Male,English	enough to
+[1590.292,1591.572]	2	Male,English	to kind of explain that
+[1592.144,1592.6]	2	Male,English	um
+[1592.658,1594.84]	2	Male,English	female bisexuality is much easier
+[1595.47,1596.663]	2	Male,English	right you can go well
+[1596.847,1600.018]	2	Male,English	as long as a woman is sometimes attracted to men
+[1600.406,1601.618]	2	Male,English	and enough to have kids
+[1602.103,1604.275]	2	Male,English	then also being attracted to women
+[1605.167,1606.36]	2	Male,English	ah might be
+[1606.447,1610.384]	2	Male,English	no cost at all might or even be a benefit in terms of social networking
+[1610.646,1611.606]	2	Male,English	making friends
+[1611.625,1612.023]	2	Male,English	mhm
+[1612.023,1613.332]	1	Male,English	sex is a great way to make friends
+[1614.224,1614.835]	2	Male,English	um
+[1616.115,1618.966]	2	Male,English	if a lot more males were bisexual
+[1619.082,1621.293]	2	Male,English	that would be equal easy to explain
+[1622.641,1626.161]	2	Male,English	um it's exclusive homosexuality it's very hard to explain
+[1626.772,1627.887]	2	Male,English	it certainly
+[1628.246,1629.807]	2	Male,English	exists that exists that ah
+[1630.098,1630.699]	2	Male,English	you know
+[1630.922,1633.802]	2	Male,English	ah percentage that's much much higher than
+[1634.607,1638.389]	2	Male,English	you can explain is just well it's just mutations where it's just maladaptive
+[1638.486,1639.766]	2	Male,English	like that won't work[+]
+[1640.561,1641.172]	2	Male,English	so
+[1642.51,1645.584]	2	Male,English	this is where all be kind of stand the hum one say
+[1645.584,1646.699]	2	Male,English	man have no idea
+[1646.728,1647.116]	1	Male,English	huh?
+[1647.407,1650.966]	2	Male,English	it's a it's a fascinating problem maybe somebody will crack it
+[1650.966,1651.567]	2	Male,English	within
+[1652.1,1652.953]	2	Male,English	ten or twenty years
+[1653.002,1657.676]	1	Male,English	right it's interesting because if you were coming at it from another perspective like a religion perspective let's say[+]
+[1657.812,1662.893]	1	Male,English	you would find that to be moral a quandary that then you could extrapolate [+]
+[1662.893,1664.561]	1	Male,English	all sorts of different judgements on
+[1664.667,1664.91]	2	Male,English	yeah
+[1664.92,1666.84]	1	Male,English	but I can see the way you answer and its like
+[1667.402,1668.663]	1	Male,English	just is a thing
+[1668.721,1670.418]	1	Male,English	maybe we'll get more data on it[+]
+[1670.427,1671.087]	1	Male,English	but if[+]
+[1671.184,1673.259]	1	Male,English	but what do you make of the fact that there are
+[1673.424,1676.275]	1	Male,English	seemingly many more bisexual women
+[1676.527,1682.481]	1	Male,English	where I don't know any gay couple that one of the guys looking out at night to bang a little bit you know what I mean I've never heard of that[+]
+[1682.481,1685.613]	1	Male,English	but you have heard about of obviously straight couples where the guy is[+]
+[1685.613,1687.126]	1	Male,English	you know I'm a D L or whatever[+]
+[1687.145,1687.513]	2	Male,English	yeah
+[1687.688,1688.183]	2	Male,English	yeah
+[1689.395,1696.503]	2	Male,English	well my girlfriend Ana flashed been as a whole theory of female bisexuality that's that's to do with the social networking benefits
+[1696.522,1696.823]	2	Male,English	mhm
+[1696.852,1697.414]	2	Male,English	um
+[1698.161,1700.682]	2	Male,English	but then the question is yeah why don't the men do that too
+[1700.915,1701.555]	2	Male,English	just like
+[1702.864,1705.841]	2	Male,English	if if you're a guy and you kind of swing both ways then
+[1705.841,1706.219]	2	Male,English	like
+[1707.315,1709.749]	2	Male,English	doing gay sex can be a great way to make male friends
+[1709.875,1710.447]	2	Male,English	also
+[1711.164,1711.843]	2	Male,English	and it's
+[1711.921,1714.035]	1	Male,English	well now I know we have our ah[+]
+[1714.035,1715.344]	1	Male,English	our promo for the show
+[1715.344,1716.11]	0	U	[NOISE]
+[1716.343,1716.905]	0	U	[NOISE]
+[1716.905,1717.584]	2	Male,English	and
+[1718.544,1721.783]	2	Male,English	and so in a way the quandary isn't why do any
+[1722.413,1723.984]	2	Male,English	male homosexuals exist
+[1723.984,1725.904]	2	Male,English	the quandary is why aren't all
+[1726.321,1727.601]	2	Male,English	males and females
+[1727.727,1728.532]	2	Male,English	bisexual
+[1728.629,1729.259]	1	Male,English	mhm
+[1730.161,1731.286]	1	Male,English	and do you think some of that
+[1731.373,1734.68]	1	Male,English	years from now we might look back and go wow that's just societal pressure
+[1735.698,1737.046]	2	Male,English	it might be I think
+[1737.24,1740.905]	2	Male,English	certainly there is a huge amount of stigma against now male bisexual
+[1740.983,1742.04]	2	Male,English	from both sexes
+[1742.166,1744.241]	2	Male,English	um but especially women [+]
+[1744.59,1749.72]	2	Male,English	ah female bisexuality used to be stigmatized maybe thirty years ago and not too much anymore
+[1750.893,1752.173]	2	Male,English	so it that could change
+[1752.949,1756.847]	1	Male,English	wha[~]what are some of the other topics that are really on your mind these days?
+[1757.099,1758.505]	1	Male,English	let[~]let's hit up
+[1758.68,1759.824]	2	Male,English	effective altruism
+[1759.853,1761.104]	1	Male,English	yeah let's talk about that
+[1761.705,1762.481]	2	Male,English	um
+[1762.481,1763.082]	1	Male,English	[NOISE]
+[1763.703,1766.166]	2	Male,English	I don't know if you've had many guest on talking about
+[1766.263,1767.795]	2	Male,English	effective altruism but it's[+]
+[1767.853,1769.172]	1	Male,English	not a time actually
+[1769.676,1772.052]	2	Male,English	it it's sort of my hot topic like of the last
+[1772.275,1775.921]	2	Male,English	few years so it's a social movement ah a moral movement
+[1776.716,1779.412]	2	Male,English	it some of the smartest young people I have ever met
+[1779.703,1781.099]	2	Male,English	and their basic
+[1781.584,1784.309]	2	Male,English	goal in life is do the most good
+[1784.328,1787.16]	2	Male,English	they can based on reason and evidence
+[1787.528,1790.263]	2	Male,English	rather than sentimentality and virtue signaling
+[1790.292,1794.684]	1	Male,English	I've done a little bit of this sort of imaginary way with some of the libertarians that I've gone[+]
+[1794.859,1795.412]	2	Male,English	yeah[+]
+[1796.207,1797.041]	2	Male,English	and so
+[1797.487,1801.036]	2	Male,English	the kind of major domains they tend to focus on are things like
+[1801.482,1807.087]	2	Male,English	how do we get charities to be more effective at reducing global poverty or promoting global public health
+[1807.64,1808.619]	2	Male,English	how do we
+[1808.784,1813.303]	2	Male,English	overcome factory farming and be nice to animals and promote animal welfare and
+[1813.623,1815.853]	2	Male,English	so a lot of the effective altruist are vegan
+[1816.493,1817.996]	2	Male,English	um for ethical reasons
+[1818.927,1820.847]	2	Male,English	then a lot of them are focused on
+[1821.545,1822.166]	2	Male,English	just
+[1822.486,1826.452]	2	Male,English	survival of the species how do we reduce existential risks
+[1826.51,1827.984]	2	Male,English	to humanity like
+[1828.372,1829.458]	2	Male,English	nuclear war
+[1830.001,1831.252]	2	Male,English	bio weapons
+[1831.863,1832.658]	2	Male,English	um
+[1833.686,1835.247]	2	Male,English	and artificial intelligence
+[1835.509,1836.265]	2	Male,English	risks
+[1837.012,1837.681]	2	Male,English	so
+[1838.515,1843.024]	2	Male,English	maybe the most distinctive thing they have is this kind of ultra long term perspective
+[1843.732,1844.44]	2	Male,English	that's like
+[1844.944,1849.492]	2	Male,English	we are just these transient little beings the thing that really matters is
+[1850.607,1854.088]	2	Male,English	what is humanity turn into how long do we last
+[1854.088,1855.184]	2	Male,English	do we
+[1855.698,1857.88]	2	Male,English	colonize the universe or do we fail?
+[1859.305,1862.001]	2	Male,English	and folks who think most seriously about that
+[1862.641,1863.087]	2	Male,English	think
+[1863.475,1871.155]	2	Male,English	it's actually that lasting minimizing existential risk that is absolutely crucial and everything else is just kind of flatten bullshit
+[1871.155,1873.24]	1	Male,English	so this where is like the trends humanist
+[1873.395,1875.276]	1	Male,English	through with sort of fit within the [+]
+[1875.276,1881.104]	1	Male,English	is there a risk oh I love this stuff because ah I'm a sci-fi guy I've mentioned K dick before mean every one of his[+]
+[1881.104,1882.258]	1	Male,English	stories or books
+[1882.481,1883.247]	1	Male,English	are about
+[1883.305,1885.264]	1	Male,English	the inevitability of all of these things
+[1885.526,1889.424]	1	Male,English	is there a risk though of always looking at what's beyond the horizon instead of
+[1889.715,1890.859]	1	Male,English	going on right now
+[1892.585,1897.618]	2	Male,English	I don't really think there's a risk and less like the vast majority of humans became effective altruists
+[1897.996,1900.983]	2	Male,English	there's already so many people who are obsessed with
+[1901.807,1902.515]	2	Male,English	um
+[1903.058,1903.756]	2	Male,English	you know
+[1903.756,1908.556]	2	Male,English	diversity and equity inclusion and economic growth and
+[1909.206,1912.842]	2	Male,English	all the ordinary problems that politicians talk about
+[1913.036,1914.52]	2	Male,English	that that's covered
+[1914.869,1917.778]	2	Male,English	there's already a lot of smart people working on that
+[1918.486,1920.008]	2	Male,English	the the big neglected top
+[1920.012,1920.632]	2	Male,English	topics
+[1920.787,1923.066]	2	Male,English	tend to be the kind of science fiction in topics
+[1924.346,1925.49]	2	Male,English	where you need a sort of
+[1926.353,1927.323]	2	Male,English	contrary of
+[1927.41,1928.147]	2	Male,English	genius
+[1928.593,1929.582]	2	Male,English	ask these
+[1929.582,1931.066]	2	Male,English	right? to work on it[+]
+[1931.512,1933.645]	2	Male,English	when nobody else's taking it seriously
+[1934.169,1934.712]	1	Male,English	yeah
+[1934.77,1938.484]	1	Male,English	well speaking of the actually that is that that's an interesting one if we wanted to get into one of the little[+]
+[1938.707,1940.249]	1	Male,English	a little controversial as well
+[1940.53,1941.141]	1	Male,English	um
+[1941.965,1943.41]	1	Male,English	what what is that
+[1943.672,1949.403]	1	Male,English	all about that so many of the creators now or the people that are coming out of the tech world even though[+]
+[1949.907,1955.599]	1	Male,English	can obviously make plenty of our world is now in sort of inclusion and certainly not the creative plays it was[+]
+[1955.638,1956.026]	2	Male,English	yeah
+[1956.055,1957.015]	1	Male,English	say ten years ago
+[1957.17,1962.804]	1	Male,English	but that so much creativity came out of a world that had so many people that were seemingly uncreative
+[1963.124,1963.609]	2	Male,English	mhm
+[1964.501,1965.742]	0	U	[NOISE]
+[1965.975,1967.827]	2	Male,English	I think it's fascinating um
+[1968.467,1970.29]	2	Male,English	I sort of identify as
+[1970.387,1971.958]	2	Male,English	moderately as be
+[1972.084,1976.244]	2	Male,English	myself kind of high functioning as burgers and I've written some stuff about
+[1976.341,1977.844]	2	Male,English	how um
+[1978.329,1982.838]	2	Male,English	nor a diversity issues like being asked the kind of rub up against free speeches
+[1983.313,1983.895]	2	Male,English	cause like
+[1983.924,1984.564]	1	Male,English	can you explain that all
+[1984.622,1985.256]	2	Male,English	people who are
+[1985.256,1985.69]	0	U	[*]
+[1985.69,1987.57]	2	Male,English	don't always do a good job of
+[1987.706,1992.089]	2	Male,English	understanding the beliefs and desires of other people and particularly what they might find defensive
+[1992.273,1994.319]	1	Male,English	mhm right so they might just say something
+[1994.329,1995.415]	2	Male,English	so they might just say shh
+[1995.667,1999.895]	1	Male,English	jet and then be really surprised that it was distressing to someone[+]
+[2001.165,2001.941]	2	Male,English	and so
+[2002.804,2005.131]	2	Male,English	if you have a model of speech that says
+[2005.432,2007.216]	2	Male,English	you must never cause offense
+[2008.564,2011.25]	2	Male,English	that assumes you can anticipate what will cause offense
+[2012.142,2013.558]	2	Male,English	and a lot of people can't
+[2014.072,2015.672]	2	Male,English	anticipate that because[+]
+[2015.759,2017.146]	2	Male,English	their brains don't work that way
+[2017.931,2018.523]	2	Male,English	so
+[2018.775,2019.987]	2	Male,English	you either need
+[2021.267,2024.69]	2	Male,English	to say OK ask these you can never say anything
+[2026.542,2027.095]	2	Male,English	or
+[2027.735,2029.228]	2	Male,English	cut them some slack and say
+[2029.364,2032.079]	2	Male,English	oh we understand you'll offend people once in a while
+[2032.535,2034.552]	2	Male,English	but that's okay cause that's you just
+[2034.746,2035.861]	2	Male,English	that's part of your deal
+[2035.958,2044.055]	1	Male,English	man I've never thought about this but does this somehow explain about what's going on in silicon valley right now you have a bunch of people who are somewhat socially awkward let's say[+]
+[2044.055,2044.375]	2	Male,English	yeah
+[2044.443,2046.644]	1	Male,English	created incredible technology
+[2046.77,2048.273]	1	Male,English	that allowed us to all connect
+[2049.068,2056.312]	1	Male,English	but then when voices that aren't supposed aren't supposed is a hard way for me when voices that are a little out there or a little contrarian or whatever[+]
+[2056.341,2057.747]	2	Male,English	that might include us actually
+[2057.786,2058.232]	2	Male,English	mhm
+[2058.329,2063.284]	1	Male,English	get out there the only way they can deal with it is to shut that voice off or something like that
+[2063.284,2066.096]	1	Male,English	which is why we're seeing so much the deplatforming and silence[+]
+[2066.135,2067.405]	2	Male,English	right they have to be[+]
+[2067.541,2071.769]	2	Male,English	overly systematizing about it that they have to be like oh man I can't
+[2072.215,2074.329]	2	Male,English	I can't navigate these gray areas [+]
+[2074.358,2074.833]	1	Male,English	hmm
+[2074.93,2076.084]	2	Male,English	if I am
+[2076.501,2078.867]	2	Male,English	running a social media platform or
+[2079.769,2081.01]	2	Male,English	patron or whatever
+[2081.049,2081.407]	1	Male,English	right
+[2081.485,2084.724]	2	Male,English	so I'm gonna just have a hard and fast rule that says
+[2086.004,2087.895]	2	Male,English	if I get enough complaints I
+[2088.021,2090.135]	2	Male,English	the platform that person or
+[2090.319,2091.095]	2	Male,English	um[+]
+[2093.325,2096.748]	2	Male,English	I don't know the difference between porn and erotica and just
+[2096.855,2100.084]	2	Male,English	slightly sexy art so I'm gonna say no nipples
+[2100.084,2101.451]	2	Male,English	or whatever[+]
+[2102.062,2105.233]	2	Male,English	that's a kinda as be response to getting blow back

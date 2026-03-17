@@ -1,0 +1,494 @@
+[0.001,1.581]	1	Female,English	well, what's our next topic?
+[1.581,2.793]	0	U	[NOISE]
+[2.793,3.695]	2	Female,English	ah
+[3.695,4.49]	0	U	[NOISE]
+[4.49,6.497]	2	Female,English	I think we we're talking about um,
+[6.497,7.215]	0	U	[NOISE]
+[7.215,8.039]	2	Female,English	ah
+[8.039,9.261]	0	U	[NOISE]
+[9.261,11.656]	2	Female,English	we have a like twenty minute topic, right like
+[11.656,13.324]	1	Female,English	but we just finish a twenty minute topic[+]
+[13.324,16.417]	2	Female,English	okay, yeah so we had some about
+[16.417,19.53]	2	Female,English	education, and then about, one more that was about[+]
+[19.53,20.519]	0	U	[NOISE]
+[20.519,22.032]	2	Female,English	ah working at work it was about[+]
+[22.032,23.942]	1	Female,English	work? yeah, work work sorry,[+]
+[23.942,24.33]	0	U	[*]
+[24.33,25.93]	2	Female,English	um OK, [+]
+[25.93,26.318]	1	Female,English	yeah okay[+]
+[26.318,27.084]	2	Female,English	alright cool[+]
+[27.113,27.52]	0	U	[NOISE]
+[27.52,28.587]	2	Female,English	so
+[28.587,31.496]	1	Female,English	both of us actually, we work at the same company
+[31.496,31.884]	2	Female,English	mhm
+[31.913,34.114]	1	Female,English	and you have experienced in the Chinese work world,
+[34.114,34.599]	2	Female,English	yeah
+[34.599,36.868]	1	Female,English	were as for me, I guess last year
+[36.907,37.411]	0	U	[NOISE]
+[37.411,38.41]	2	Female,English	oh
+[38.41,41.998]	1	Female,English	yeah it was last year, that I forced two out of seventeen, my first enter in this company [+]
+[41.998,42.512]	2	Female,English	okay
+[42.512,45.392]	1	Female,English	and it was so new for me, because number one[+]
+[45.392,49.484]	1	Female,English	corporate culture corporate etiquette was like something that was different but then also[+]
+[49.484,55.554]	1	Female,English	the whole Chinese culture and Chinese etiquette that's something different that was a completely different[+]
+[55.564,57.639]	1	Female,English	wasn't say a complete different part of me
+[57.639,58.57]	0	U	[NOISE]
+[58.599,59.52]	0	U	[*]
+[59.52,61.77]	1	Female,English	great, I don't remember um [+]
+[61.77,66.977]	2	Female,English	anyway, yeah and um you sit at the company for about a months now, I guess,[+]
+[67.016,71.438]	2	Female,English	yeah, so I I I was so happy to have you come because[+]
+[71.438,71.913]	1	Female,English	good
+[71.913,76.034]	2	Female,English	oh it really change everything because before it's like I'm the only[+]
+[76.034,80.97]	2	Female,English	foreigner there, and so one thing is, people just like, they just don't know how to treat me and they just[+]
+[81.038,83.821]	2	Female,English	so they feel awkward and they like ignore me[+]
+[83.821,85.033]	1	Female,English	too yeah so
+[85.033,85.45]	2	Female,English	yeah[+]
+[85.45,86.274]	1	Female,English	see what you mean[+]
+[86.284,89.416]	2	Female,English	it's like, immediate this get this support where they stop thinking about [+]
+[89.416,94.565]	2	Female,English	me at work cause like they have a work expectations of me like ethic of the Chinese but um[+]
+[94.565,95.341]	1	Female,English	yeah
+[95.341,98.667]	2	Female,English	but I thought, that they maybe got use to be around foreigners, but no, they just
+[98.725,102.061]	2	Female,English	turned me into a Chinese, a new foreigner and her like[+]
+[102.061,104.912]	1	Female,English	just like the same thing again,[+]
+[104.912,106.279]	2	Female,English	kind of
+[106.376,109.741]	1	Female,English	but um, so it's kind like for now it's a sort of OK with me because like
+[109.741,114.512]	1	Female,English	my Chinese is not that good, so, I was like I prey there will like dump a lot of responsibility
+[114.512,116.858]	1	Female,English	for me all at once they treat me like a Chinese I was really
+[116.858,119.913]	1	U	[*]
+[119.913,121.455]	0	U	[*]
+[121.455,122.89]	2	Female,English	feel like, yeah I feel you
+[122.89,124.897]	1	Female,English	I think for you it's been a month right?
+[124.907,125.537]	2	Female,English	yeah yeah
+[125.537,128.427]	0	U	[*]
+[128.427,132.102]	1	Female,English	and you have high experience working in the in in the U S? like
+[132.102,136.359]	2	Female,English	um, no not really, because, well, I work like as part time in U S, but actually,
+[136.359,140.238]	2	Female,English	like citizens, I graduate at college and I just came straight to China start working for that other company
+[140.267,146.667]	2	Female,English	and so, my first, like really corporate experience  was in China, and um, yeah, it was like very different than what I expected
+[146.667,149.227]	2	Female,English	um, I remember at the first, when i came out
+[149.227,150.119]	0	U	[*]
+[150.119,154.89]	2	Female,English	entitled out to you like I couldn't imagine that will have to like work overtime and stuff,
+[154.89,160.32]	2	Female,English	and will have business trips and I thought that like, um we'll be on the clock for all the time that we
+[160.359,164.713]	2	Female,English	travel back on the plains and stuff, and I and I can't believe that, I survive that but like
+[164.713,167.302]	2	Female,English	take a course no? And so um,
+[167.312,167.787]	0	U	[NOISE]
+[167.787,173.799]	2	Female,English	cause yeah, like I don't know whenever I will start time it was like every minute you're on the clock and stuff and so and then people leave
+[173.799,174.371]	0	U	[*]
+[174.41,179.084]	2	Female,English	like time you know, but then, um, one thing I like about Chinese culture they're like
+[179.084,183.273]	2	Female,English	work cultures they work really hard and they they're like willing to put in the extra time
+[183.273,186.667]	2	Female,English	really like if they're part in a sort of make the work like,
+[186.793,191.37]	2	Female,English	I don't know, it just feels like everybody's on the team you know, fucking like that feeling, um[+]
+[191.37,191.981]	0	U	[NOISE]
+[192.01,195.782]	2	Female,English	but it is like a, it's  definitely a lots of pressure at the time and
+[195.811,200.194]	2	Female,English	I feel like you have to really commit like um, when I first move to China I was like
+[200.194,204.49]	2	Female,English	trying to got involved so many things outside of work like different activities and stuff
+[204.558,209.93]	2	Female,English	and ah, got to a point where like, I have no time to eat dinner, and then I was always like rushing.
+[209.959,214.284]	2	Female,English	um from work, and I felt like um, and I feel like bad cause' my co-workers is still
+[214.284,216.688]	2	Female,English	working there but I'm like, leaving first you know
+[216.718,217.29]	1	Female,English	yeah[+]
+[217.29,221.139]	2	Female,English	co-workers were always so surprised that like I was have something to work after work.
+[221.139,225.096]	2	Female,English	And so this time around and I'm like ah, yeah don't have much going on
+[225.096,228.907]	2	Female,English	ah just so I can really like commit to work at least for now and like get used to it 
+[228.907,230.061]	1	Female,English	oh yeah um,[+]
+[230.061,233.552]	2	Female,English	um add some stuff later, if I want to.
+[233.552,235.278]	1	Female,English	yeah I think I did notice that[+]
+[235.278,241.096]	1	Female,English	most that you're mostly like focus on work where is I I do like feels tries a lot of stuff outside of the work.
+[241.096,242.124]	2	Female,English	side of work
+[242.124,245.421]	1	Female,English	because I don't think I will survive otherwise, I think I'm gonna really really bored like,[+]
+[245.45,249.581]	1	Female,English	I probably won't survive like to get to the point we're mentally this feel really not happy and[+]
+[249.581,252.771]	1	Female,English	not satisfied and then realized oh, I must do cause I'm lacking in my
+[252.771,255.758]	1	Female,English	social life or because I'm not doing any other extra thing[+]
+[255.816,259.859]	2	Female,English	actually no, I do feel like you do have stuff going on
+[259.859,264.427]	2	Female,English	like remember the first thing in the week like you will always have some other activities like meeting people
+[264.427,269.518]	2	Female,English	or ah going to the light festival or having like like a all of kind of thing[+]
+[269.518,273.581]	1	Female,English	well definitely like on the weekends I will like have other things to do but um,
+[273.581,279.913]	1	Female,English	yeah and I guess yeah you are right, I guess what's going on but not like the first year the first year was like everything and I have something to do
+[279.913,284.112]	1	Female,English	I'll be home like one night and two weeks something like that, and now is too much[+]
+[284.112,288.495]	1	Female,English	and so, I learn through now like i am just starting and coming there like wanna give my best shot and stuff and then
+[288.495,292.451]	1	Female,English	after am like cure for a while then like ah can add more things and stuff
+[292.461,296.815]	1	Female,English	but I think in the beginning I really want to try hard this year i am probably disappear you know
+[296.815,301.799]	2	Female,English	But I feel like it's a great proof of, it's a great proof of all the kind of networking events[+]
+[301.808,305.93]	2	Female,English	that are available in GuangZhou, also the people you could meet because they're a lot of to do like[+]
+[305.93,312.301]	2	Female,English	I think it it is kind of hard to fear from like the tip of the ice berg but there's actually a lot going on if you know the right people.[+]
+[312.301,314.221]	1	Female,English	yeah yeah yeah, definitely is.
+[314.25,317.925]	2	Female,English	but I feel like now that you've been in the company for a month and when we're talking[+]
+[317.925,322.919]	2	Female,English	most of the time we, there is one thing that we never really talked about, but I'm kinda curious, yeah which is
+[322.919,325.217]	2	Female,English	what is the things that you don't like?
+[325.217,326.352]	0	U	[NOISE]
+[326.352,327.176]	1	Female,English	about the company?
+[327.176,331.656]	2	Female,English	yeah cause we never talked about that, although, I'm sure I have a lot to say on that topic|[+]
+[331.656,332.393]	1	Female,English	alright[+]
+[332.393,334.73]	2	Female,English	we start work with there, so you can go ahead and share
+[334.73,336.747]	0	Female,English	oh man.
+[336.747,339.181]	0	U	[NOISE]
+[339.181,342.701]	1	Female,English	no no no, um, I loved everything about the company
+[342.701,344.204]	2	Female,English	oh yeah[+]
+[344.204,344.97]	1	Female,English	um
+[344.97,346.434]	2	Female,English	that's your dream company
+[346.434,349.993]	1	Female,English	actually I really do like this company, or I really like working here because
+[350.032,352.33]	1	Female,English	I really thought that I was gonna have to be an English teacher
+[352.33,357.44]	1	Female,English	and I really don't want to be English teacher, and so when I found this job I was like it's so perfect I gonna do it this stuff.
+[357.44,360.65]	1	Female,English	um I guess the only thing I don't like is
+[360.65,361.988]	0	U	[*]
+[361.988,364.044]	1	Female,English	with the tour sometimes because
+[364.073,371.21]	1	Female,English	I like to give the people tourism stuff, but the kind of people that come in here I think are kind of crazy they're kind of rich people[+]
+[371.21,372.044]	2	Female,English	they are
+[372.044,375.525]	1	Female,English	then I feel like um like in this zoo like I'm the animal[+]
+[375.525,377.833]	2	Female,English	oh men that's exactly the feeling I had before[+]
+[377.833,382.284]	1	Female,English	couldn't believe the other day like I was talking to them in Chinese and then in front of my face
+[382.313,384.592]	0	U	[*]
+[384.592,386.57]	0	U	[NOISE]
+[386.57,388.655]	1	Female,English	and I was learning, just talking to me
+[388.655,391.719]	1	Female,English	and they're starting pulling out you with their phone and show it in your face[+]
+[391.719,398.439]	2	Female,English	like um, because, I didn't want to take my picture at the moment later will be OK with me but right now it's not, and so
+[398.478,400.902]	2	Female,English	um, my assist my ah
+[400.902,406.536]	2	Female,English	co-workers she was like, she was like telling them to please don't take pictures of me, and still people were and it's so rude, I think.
+[406.536,409.164]	2	Female,English	um, yeah, and I don't understand and then
+[409.193,416.524]	2	Female,English	I feel like those people they were very disrespectful to our company, like yesterday, one lady she was like going over to um,
+[416.679,421.227]	2	Female,English	an area where co-workers are working and she was like checking on their computer and stuff, and I[+]
+[421.236,425.552]	2	Female,English	couldn't believe it, and then like, someone brought a kid, and a kid is like running around stuff and
+[425.552,428.015]	2	Female,English	they're just thing, yeah, they're like going behind
+[428.015,429.033]	0	U	[*]
+[429.062,430.633]	2	Female,English	just like that, I feel like they were talking
+[430.633,431.467]	0	U	[*]
+[431.467,432.398]	1	Female,English	Wow[+]
+[432.398,437.324]	2	Female,English	yeah and still like we have to be nice at them, like if it's me, actually I wanna like call security[+]
+[437.324,439.913]	0	U	[NOISE]
+[439.913,443.297]	2	Female,English	and so I feel so awkward because of course I need to like smile and
+[443.297,446.381]	2	Female,English	stuff but then sometimes I cannot control my face
+[446.381,448.679]	0	U	[NOISE]
+[448.679,449.736]	2	Female,English	so I need to like
+[449.736,450.444]	0	U	[NOISE]
+[450.444,451.695]	1	Female,English	Oh my God.[+]
+[451.695,452.616]	2	Female,English	smile so that.
+[452.616,456.291]	1	Female,English	I'm really good at like having a very natural rest in bitch
+[456.301,457.794]	0	U	[NOISE]
+[457.794,460.616]	2	Female,English	I think I used to be a really nice person
+[460.616,464.175]	0	U	[NOISE]
+[464.175,465.891]	1	Female,English	oh men[+]
+[465.891,469.062]	2	Female,English	I have to change that, I'm worried that people they were gonna tell me like
+[469.072,470.216]	2	Female,English	Oh I need to be more really
+[470.216,472.999]	0	U	[*]
+[473.038,475.336]	2	Female,English	kind a hard to control my face[+]
+[475.336,477.13]	2	Female,English	that's the only complain I have[+]
+[477.13,477.935]	1	Female,English	you
+[477.935,480.0]	2	Female,English	yeah it's Suki, like always to nice and[+]
+[480.178,481.516]	1	Female,English	oh she's such a cutie [+]
+[481.516,485.23]	2	Female,English	yeah and Suki, is the one like doing the work cause' she's like really talking about the stuff but
+[485.23,488.401]	2	Female,English	like, just wanna lodge the the people and like
+[488.401,492.163]	0	U	[NOISE]
+[492.173,495.984]	2	Female,English	my face will be bad, and it's not good,
+[495.984,498.379]	1	Female,English	OK, you know the company has to do like
+[498.379,499.155]	0	U	[*]
+[499.155,503.344]	1	Female,English	like they arrive in the door before anybody say OK, no doing this and no doing this, I mean[+]
+[503.344,504.139]	0	U	[*]
+[504.139,507.688]	1	Female,English	they need that they need that, i mean i mean that's what they need[+]
+[507.756,509.744]	2	Female,English	I guess so yeah, but it's like
+[509.744,510.665]	0	U	[*]
+[510.665,514.476]	1	Female,English	just like, it's they're actually like, decent people they wouldn't do those things,
+[514.485,517.86]	1	Female,English	so then to like, tell them not to do that, after that they're gonna be embarrassed
+[517.86,519.78]	1	Female,English	some people don't know[+]
+[519.78,521.745]	1	Female,English	just like you are going anywhere they will have a.
+[521.745,522.612]	0	U	[*]
+[522.612,528.944]	1	Female,English	Don't spilt on the floor, Don't be a you know violent stuff like that, so i just think it's that weird you have to tell them.
+[528.944,529.739]	0	U	[NOISE]
+[529.739,533.715]	1	Female,English	I don't understand like, yeah, I don't understand, really I don't
+[533.715,537.613]	1	Female,English	and so, I guess that's just one thing about China I'm never gonna get but
+[537.613,540.842]	1	Female,English	anyway, it's OK, that's the only complain I have,
+[540.842,542.704]	0	U	[*]
+[542.704,543.916]	1	Female,English	how about you?
+[543.916,547.533]	2	Female,English	um, well, OK, I won't say in this company particular[+]
+[547.533,552.401]	2	Female,English	although, like all company has a lot of problems, but one thing about Chinese company is that I don't like is[+]
+[552.459,557.676]	2	Female,English	well, I'm not sure maybe it's different other places but I think it is quite the same wherever you go
+[557.676,561.351]	2	Female,English	is, they really like to stuff like they talk about like, they really talk about[+]
+[561.351,564.493]	2	Female,English	they love to say like, talk about weights like
+[564.493,568.178]	2	Female,English	Oh my God, I'm so fat, I have to lose weight or they say oh you're fat, oh you're[+]
+[568.178,570.864]	2	Female,English	thin, and they're constantly like talking about[+]
+[570.893,573.521]	2	Female,English	who's fat, who's thin and and calling themselves fat[+]
+[573.521,574.442]	1	Female,English	yeah
+[574.51,579.727]	2	Female,English	and I think it's gonna like a waste of time why why people love that so much? Or they will like [+]
+[579.882,580.522]	0	U	[*]
+[580.522,581.618]	2	Female,English	people's bodies, like
+[581.647,582.442]	1	Female,English	in the company?
+[582.442,585.603]	2	Female,English	yeah, like my boyfriend has had people say to him [+]
+[585.603,588.716]	2	Female,English	that he's something like, oh your boobs are so big
+[588.716,590.258]	0	U	[NOISE]
+[590.277,591.247]	1	Female,English	Oh no![+]
+[591.247,595.533]	2	Female,English	mean like his packs, but I don't know how they say that your boob is bursting out of your shirt,[+]
+[595.533,599.567]	2	Female,English	because your packs is so big, and I was like, excuse me ladies[+]
+[599.567,603.407]	2	Female,English	um who who says that you can go comment on his body, you know[+]
+[603.436,606.733]	1	Female,English	I know it's so different cause in U S that can be considered like
+[606.762,609.894]	1	Female,English	harassment and someone can get in a lot of trouble for saying that, you know.
+[609.894,614.956]	2	Female,English	and this one girl and she was like saying to him she was like oh you're twice the size of me and then she was like I bet[+]
+[615.179,619.213]	2	Female,English	everything of yours is like they are bigger than mine and it was just like what?!
+[619.3,621.453]	0	U	[NOISE]
+[621.453,622.762]	1	Female,English	that's the way too far
+[622.83,624.876]	2	Female,English	I know, and I and I just stand there like[+]
+[624.876,628.425]	0	U	[*]
+[628.425,631.218]	2	Female,English	how old are you? You're so stupid![+]
+[631.218,632.304]	1	Female,English	so stupid yeah![+]
+[632.304,634.699]	2	Female,English	ah! And so there like talk about people bodies or like
+[634.767,635.281]	1	Female,English	mhm [+]
+[635.281,640.653]	2	Female,English	another male co worker he will comment on, he will be like, he will be like um[+]
+[640.653,644.367]	2	Female,English	oh your hairstyle like this makes your face as much as smaller it's good
+[644.464,647.237]	2	Female,English	or do you like making a weird observations about[+]
+[647.237,650.922]	2	Female,English	my appearance that day, or like there something about your clothes or something about like
+[651.087,655.14]	2	Female,English	I I'm walking off this one girl and she's like oh your face is so red today and I'm just like
+[655.402,657.933]	2	Female,English	I don't think they talk about that so much in the West
+[658.02,662.956]	1	Female,English	no they don't they don't talk about peop[~], but I feel it's not only like a a cold comandy thing
+[662.956,666.243]	1	Female,English	it's like this is Chinese culture thing cause yeah kind like many friends say like
+[666.243,669.104]	1	Female,English	weird comments like that, and I remember like in the U S,
+[669.133,673.768]	1	Female,English	had a friend from China, and yeah, everyday he would like come to my school, and I like
+[673.768,678.413]	1	Female,English	everyday, he have some comments about my clothes or about my hair, like there was like not a day they went
+[678.413,679.053]	0	U	[*]
+[679.082,681.254]	1	Female,English	commenting on some random things about the way I look
+[681.254,682.224]	0	U	[NOISE]
+[682.224,685.831]	1	Female,English	tired of you, I was like, I don't want to hear anymore from you
+[685.86,688.847]	2	Female,English	he probably just thought that you were like so adorable[+]
+[688.847,689.933]	1	Female,English	tries like get attention
+[689.933,692.173]	1	Female,English	something that my boyfriend did as well is[+]
+[692.27,695.79]	1	Female,English	he would like, I notice he was very observant, and like which is something that
+[695.79,701.86]	1	Female,English	I wasn't used to from the guys that I knew of what you guys, he always notice something about my appearance or about the changes and he'd be like[+]
+[701.899,705.739]	1	Female,English	he be like, oh what's that or maybe like, oh your skin is peeling from getting
+[705.739,710.578]	1	Female,English	from the sunburn you know, cause' like i am really summer one time, I went to the beach and I came back and I was just
+[710.578,712.139]	1	Female,English	like and then just start[+]
+[712.139,712.711]	0	U	[*]
+[712.711,714.001]	1	Female,English	peeling off[+]
+[714.001,714.883]	2	Female,English	oh no[+]
+[714.883,719.916]	1	Female,English	like, making always comment like on different parts of stuff that I was carrying or stuff[+]
+[719.916,723.019]	1	Female,English	of me or like my hair or something[+]
+[723.019,726.539]	1	Female,English	and so I thought that was like I realized, oh he pays a lot of attention
+[726.578,728.207]	1	Female,English	to me[+]
+[728.207,729.603]	0	U	[NOISE]
+[729.613,730.136]	2	Female,English	yeah[+]
+[730.136,733.579]	1	Female,English	could be, a a kind of a good thing in a way but,[+]
+[733.579,737.584]	1	Female,English	their also like, you don't need that I don't need that all the time[+]
+[737.584,740.687]	1	Female,English	and I remember one thing that was weird too, it would be like
+[740.716,743.848]	1	Female,English	I guess around this time of year, and like if I didn't
+[743.955,746.602]	1	Female,English	like wear enough coat they'll be like
+[746.602,747.756]	0	U	[*]
+[747.756,751.014]	1	Female,English	like why you didn't wear more clothes, and then if I did they'll will be like
+[751.014,752.304]	0	U	[*]
+[752.304,752.915]	2	Female,English	exactly[+]
+[752.915,756.425]	1	Female,English	I was like there's always like those never a middle grounds it was like
+[756.435,759.799]	1	Female,English	like no matter what I do, there's gonna have some of negative to say so[+]
+[759.799,764.396]	2	Female,English	exactly,yeah and another thing is they like talk about what you're eating,[+]
+[764.464,768.042]	2	Female,English	what you're eating or not eating, ah is is so weird they will always[+]
+[768.042,773.579]	2	Female,English	comment what you're eating, and they come no how much you eat[+]
+[773.579,774.287]	0	U	[*]
+[774.287,777.031]	2	Female,English	he's like tall, bigger than you and with muscles [+]
+[777.031,780.493]	2	Female,English	and he works out, of course he can eat a lot and then they like oh my[+]
+[780.493,782.927]	2	Female,English	God, you eat so much, you're like a pig
+[782.927,784.081]	1	Female,English	like a pig
+[784.081,785.419]	0	U	[NOISE]
+[785.419,788.018]	2	Female,English	it's so weird, I don't know why, something like that
+[788.018,791.693]	0	U	[*]
+[791.693,795.116]	2	Female,English	yeah, um, about their work culture
+[795.116,795.756]	1	Female,English	yeah
+[795.795,796.396]	0	U	[NOISE]
+[796.396,797.356]	2	Female,English	um
+[797.385,799.664]	0	U	[NOISE]
+[799.664,803.727]	1	Female,English	so here's a few thing, so I think we didn't talk about that before, yeah it's how[+]
+[803.727,807.596]	1	Female,English	they will offer like to order Wai Mai together or or Shawata together[+]
+[807.596,808.013]	2	Female,English	yeah
+[808.013,808.653]	0	U	[*]
+[808.653,811.339]	1	Female,English	to get their Wai Mai, and yours arrive so they will get yours
+[811.339,816.653]	1	Female,English	for you, or like a Kuaidi cage, oh how do you get your Kuaidi so that's a cute thing[+]
+[816.682,818.602]	2	Female,English	yeah there a lot of cute things like that too[+]
+[818.631,821.23]	1	Female,English	i don't I don't know but i do think it's really cute for them to like
+[821.298,825.225]	1	Female,English	all orders together like go around, hey do you want to order like you order from their phone
+[825.225,826.001]	2	Female,English	right
+[826.001,829.773]	2	Female,English	ask the whole office and I think it's really cute how they always like[+]
+[829.773,830.636]	0	U	[*]
+[830.636,835.019]	2	Female,English	I feel about that because yeah you guys like real, do that too much
+[835.019,838.733]	1	Female,English	I got used to it though, it's my brother or my sister[+]
+[838.762,842.922]	1	Female,English	and if I go with my brother and his girlfriend and then I pay for his stuff
+[842.922,843.271]	2	Female,English	yeah
+[843.271,847.596]	1	Female,English	and i just I think that's that's normal but then, like Lisa, you have to pay back in room rates[+]
+[847.635,848.876]	2	Female,English	wow so aggressive
+[848.876,850.544]	0	U	[NOISE]
+[850.573,851.882]	1	Female,English	yeah
+[851.882,854.258]	1	Female,English	well I I don't know I was feel like kind of bad
+[854.277,855.247]	0	U	[*]
+[855.247,858.35]	1	Female,English	stuff and so, yeah I don't know[+]
+[858.35,860.58]	0	U	[*]
+[860.58,862.258]	1	Female,English	that's good yeah
+[862.277,865.419]	2	Female,English	but if if someone is is waiting for me to pay them back and then like
+[865.428,868.328]	2	Female,English	I forgot I would appreciate if they do remind me because
+[868.328,869.676]	1	Female,English	oh yeah[+]
+[869.676,872.595]	2	Female,English	actually it makes me feel really bad if I just forgot to[+]
+[872.595,874.66]	2	Female,English	kinda throw who just doesn't pay back.
+[874.767,875.698]	1	Female,English	oh no!
+[875.698,877.87]	2	Female,English	I think I would appreciate they just like hey by the way[+]
+[877.87,878.83]	0	U	[*]
+[878.859,879.79]	2	Female,English	business much
+[879.79,882.059]	1	Female,English	yeah yeah yeah that's true
+[882.059,886.539]	2	Female,English	I know that's one thing about Chinese it was like kind a hard of Guanxi culture
+[886.539,892.202]	2	Female,English	um, now I think, now like it's OK for me but, I remember at first I was like sort like annoyed with their own looks because like,
+[892.367,896.042]	2	Female,English	um, yeah maybe I like go with friends and they like insist to pay
+[896.042,899.019]	2	Female,English	and then like I know the next time and I need to pay for them but like
+[899.242,904.197]	2	Female,English	have money or something like that, it don't feel really awkward and so, I thought it feel like I was so like ah
+[904.236,904.847]	0	U	[NOISE]
+[904.847,909.23]	2	Female,English	just I will give to you so that you can give back to me almost like [+]
+[909.424,911.363]	2	Female,English	doing with ah ulterior motive
+[911.363,912.042]	1	Female,English	yeah[+]
+[912.042,915.281]	2	Female,English	in the west if we like take someone out we like do it cause'
+[915.281,915.601]	0	U	[*]
+[915.63,916.677]	2	Female,English	like really want to
+[916.677,919.567]	1	Female,English	yeah yeah yeah exactly[+]
+[919.567,921.545]	1	Female,English	and it hard remember like who owe to?
+[921.545,924.231]	2	Female,English	right and now like I know I owe a lot of people
+[924.231,926.403]	0	U	[NOISE]
+[926.403,928.973]	2	Female,English	but sometimes there's nowhere to pay it back
+[928.973,929.516]	0	U	[NOISE]
+[929.516,931.203]	0	U	[*]
+[931.203,934.636]	0	U	[NOISE]
+[934.636,935.247]	1	Female,English	um
+[935.247,935.722]	2	Female,English	yeah
+[935.722,936.323]	0	U	[NOISE]
+[936.323,938.864]	1	Female,English	yeah and another thing about but I don't like is that
+[938.864,943.305]	1	Female,English	is the one thing you mention is how you feel really guilty for getting off work on time
+[943.305,943.916]	2	Female,English	mhm
+[943.916,945.768]	1	Female,English	it's like your suck to stay later
+[945.768,946.767]	2	Female,English	yeah
+[946.767,949.162]	1	Female,English	leaving this company you don't really feel like that?
+[949.162,950.316]	2	Female,English	yeah you don't
+[950.316,951.916]	1	Female,English	especially in in the office
+[951.916,952.915]	2	Female,English	yeah in the office[+]
+[952.915,955.601]	1	Female,English	office everyone is pretty on the time getting off work
+[955.601,960.003]	2	Female,English	yeah because I found out that um, if your job on it doesn't count until you
+[960.006,964.078]	1	Female,English	hour, so like if you stay for forty five minutes, you're not getting anything back[+]
+[964.078,967.54]	1	Female,English	and then if i show up like a minute late tomorrow they're gonna like code ten
+[967.559,969.364]	1	Female,English	and so, I was like hey those
+[969.364,970.159]	0	U	[*]
+[970.159,971.158]	1	Female,English	right but,
+[971.158,972.884]	0	U	[*]
+[972.884,974.832]	2	Female,English	definitely pay for the activity[+]
+[974.832,979.913]	1	Female,English	so now I'm like myself must have thirty minutes on but then I don't want to stay thirty minutes you know just a ten
+[979.913,983.114]	2	Female,English	they changed it to thirty minutes for a time but then they changed it back[+]
+[983.114,984.239]	1	Female,English	oh really? ah[+]
+[984.239,989.543]	2	Female,English	they think that people can be late and then to those like hang on the officer for thirty minutes and leave and then it's like nobody's care but[+]
+[989.543,993.78]	2	Female,English	I think they should have kept thirty minute rules I do work until like six O clock[+]
+[993.78,994.769]	2	Female,English	yeah
+[994.769,996.01]	0	U	[NOISE]
+[996.039,1001.673]	2	Female,English	and then it was like if you're here in hour than an hour and a half you can also get pay for the hour and a half so it's like why
+[1001.673,1004.176]	1	Female,English	can you get then, but you can't get for the first half
+[1004.176,1006.832]	2	Female,English	yeah yeah yeah it starts after an hour[+]
+[1006.9,1009.965]	1	Female,English	yeah so now, I'm like fuck i am on the time
+[1009.965,1012.117]	1	Female,English	waste time to make it hour
+[1012.117,1013.261]	0	U	[*]
+[1013.29,1013.999]	1	Female,English	but
+[1014.038,1014.61]	0	U	[NOISE]
+[1014.61,1017.577]	1	Female,English	yeah but, Easter like gotta this company like definitely love[+]
+[1017.577,1018.702]	0	U	[*]
+[1018.702,1020.621]	1	Female,English	some other companies, something like that
+[1020.621,1021.582]	2	Female,English	yeah
+[1021.582,1023.986]	2	Female,English	but this is like just make sure you get your stuff down and then
+[1023.986,1024.364]	1	Female,English	mhm [+]
+[1024.364,1025.878]	2	Female,English	responsible for your action
+[1025.878,1031.696]	1	Female,English	yeah and one thing I like was of my superiors that they're really clear with their expectations like right the beginning they like
+[1031.696,1037.872]	1	Female,English	yeah they just made it clear look, you have come on time you have to like do this, this, this and so, I like that better than like
+[1037.872,1040.112]	1	Female,English	when they start out really fake and then
+[1040.112,1040.617]	0	U	[NOISE]
+[1040.617,1044.718]	1	Female,English	and then after I'm committed, then they tell me all these things I didn't know before[+]
+[1044.718,1048.656]	2	Female,English	well, I feel like that, because I didn't always clear knowing that we have work on Saturday[+]
+[1048.656,1050.033]	1	Female,English	oh man! Yeah!
+[1050.101,1053.91]	1	Female,English	yeah and like yeah like if I wasn't clear and then had to
+[1053.93,1057.169]	1	Female,English	work out I would be pretty upset but like since i knew at the beginning
+[1057.169,1060.37]	1	Female,English	and still chose then I'm like fine look it's OK you know
+[1060.37,1060.883]	2	Female,English	yeah
+[1060.883,1061.291]	1	Female,English	yeah
+[1061.301,1061.775]	2	Female,English	yeah
+[1061.775,1063.957]	0	U	[NOISE]
+[1063.957,1064.937]	1	Female,English	um
+[1064.937,1066.101]	0	U	[NOISE]
+[1066.101,1067.855]	1	Female,English	but I'm still a little upset they didn't
+[1067.855,1068.66]	0	U	[*]
+[1068.66,1069.359]	1	Female,English	today
+[1069.359,1069.775]	0	U	[NOISE]
+[1069.775,1072.015]	2	Female,English	yeah it's kind of weird just like[+]
+[1072.015,1075.525]	2	Female,English	if if if it dose spark on a work day that they[+]
+[1075.535,1077.427]	0	U	[*]
+[1077.427,1079.113]	2	Female,English	actually this is a work day[+]
+[1079.113,1083.312]	2	Female,English	that we work in the morning and then everyone else is like working for the whole day so they might[+]
+[1083.312,1084.05]	0	U	[*]
+[1084.05,1085.901]	2	Female,English	for a few hours and send us a money
+[1085.901,1088.277]	2	Female,English	or they cut us in the morning right?  [+]
+[1088.277,1088.937]	1	Female,English	yeah[+]
+[1088.937,1090.838]	2	Female,English	so, but um, whatever.
+[1090.838,1094.193]	1	Female,English	yeah whatever, it's OK, but
+[1094.222,1094.793]	2	Female,English	yup
+[1094.803,1096.879]	0	U	[NOISE]
+[1096.879,1097.684]	1	Female,English	alright
+[1097.684,1100.815]	0	U	[NOISE]
+[1100.815,1104.015]	2	Female,English	well, going to work is in whole another story[+]
+[1104.015,1104.724]	1	Female,English	oh yeah
+[1104.724,1105.616]	0	U	[*]
+[1105.616,1106.77]	1	Female,English	talking about that
+[1106.77,1112.267]	2	Female,English	and we both have a similar going work experience because we both live on the same metro line and almost the same stops
+[1112.267,1116.65]	2	Female,English	yeah and um, but I think you've experienced some more wild things than I have
+[1116.66,1117.456]	1	Female,English	really?
+[1117.485,1120.102]	0	U	[*]
+[1120.102,1124.718]	2	Female,English	I really saw people faint but I didn't faint myself there is somethin' about that day[+]
+[1124.718,1126.542]	1	Female,English	oh it was a bad day
+[1126.61,1132.844]	1	Female,English	um, yeah, so I was like cought a fever the night before and stuff and like, obviously I was really sick but then I was like
+[1132.844,1140.176]	1	Female,English	oh I can't get work, have to go so the next morning I like thought I was getting better so alright I'm going um got ready everything in Winter
+[1140.176,1144.073]	1	Female,English	and then um, something happen where a creeper was like getting way
+[1144.073,1149.165]	1	Female,English	to close to me and it made me like kind freak out and that happened first and then um
+[1149.223,1153.237]	1	Female,English	I think I had I got two new insulin and that was next one
+[1153.237,1153.878]	0	U	[*]
+[1153.878,1157.485]	1	Female,English	which is like I was like kind of down, I wasn't like, can't feel myself like
+[1157.543,1161.616]	1	Female,English	feeling dizzy a little bit, so I decide to like get off and take a rest,
+[1161.616,1166.513]	1	Female,English	um and so, then I like go off and like sat down for a couple of minutes i think I'll be late
+[1166.513,1172.118]	1	Female,English	and quickly I like got back at my Metro and then um I was just like hanging out to the rail and I like 
+[1172.118,1175.696]	1	Female,English	felt horrible and like my heart was beating and stuff and I like, like being 
+[1175.696,1176.102]	0	U	[*]
+[1176.102,1180.883]	1	Female,English	I felt like I was gonna pass out but I was like it's OK just one more stop, so I was like holding on
+[1180.883,1183.667]	1	Female,English	and I'll like to close my eyes and then um,
+[1183.725,1188.844]	1	Female,English	and then I like coated I like open my eyes so it was like all black I can't see anything
+[1188.844,1193.868]	1	Female,English	and then I don't know I just like kind of feel like that a little like feel i'm falling
+[1193.868,1195.632]	2	Female,English	and everyone made a way for you[+]
+[1195.632,1197.524]	0	U	[NOISE]
+[1197.524,1201.557]	1	Female,English	because then like suddenly um, cause I was like feeling so horrible like
+[1201.557,1204.524]	1	Female,English	I'm about to die and then suddenly I felt like a lot better
+[1204.524,1210.643]	1	Female,English	and also like wait, how I did feel better that fast and then I like open my eyes am like sittin' like this on the floor
+[1210.643,1212.563]	1	Female,English	and then all the people who like ride
+[1212.563,1214.474]	0	U	[*]
+[1214.484,1216.714]	1	Female,English	so I don't know how the people made this safe
+[1216.821,1221.359]	1	Female,English	and then it was like going to do a new town so like pass like a station I didn't know
+[1221.359,1227.982]	1	Female,English	and so then I was like oh man, this is really bad and their like, are you OK? And i'm like I don't think so
+[1228.021,1228.883]	0	U	[NOISE]
+[1228.883,1230.416]	1	Female,English	so then I like got off
+[1230.416,1232.52]	2	Female,English	did they call like the subway [+]
+[1232.53,1233.616]	0	U	[*]
+[1233.616,1236.079]	2	Female,English	and did they they were like speak English with you?[+]
+[1236.108,1240.325]	1	Female,English	no, like, they're just say, oh are you OK? and I was like oh
+[1240.393,1246.095]	1	Female,English	no and then they said oh they said like, that foreigner has a problem or something like that
+[1246.095,1246.61]	0	U	[NOISE]
+[1246.61,1248.432]	0	U	[*]
+[1248.432,1250.023]	1	Female,English	and then they're like wasn't lying
+[1250.023,1252.263]	0	U	[*]
+[1252.263,1255.152]	1	Female,English	I don't know like and so,
+[1255.152,1255.599]	0	U	[NOISE]
+[1255.599,1256.083]	1	Female,English	then
+[1256.083,1256.646]	0	U	[*]
+[1256.646,1258.896]	1	Female,English	called you and call my fiance and then
+[1258.896,1259.729]	0	U	[*]
+[1259.729,1263.055]	1	Female,English	because I was like I think I cannot go to work and
+[1263.055,1264.335]	0	U	[*]
+[1264.335,1267.284]	2	Female,English	very funny because when you called me you were kind of like
+[1267.312,1271.725]	2	Female,English	you're kind of like very uncertain if you could not come to us over of course you shouldn't come
+[1271.725,1273.674]	0	U	[NOISE]
+[1273.674,1276.341]	2	Female,English	you were like really apologizing then I was like oh my God[+]
+[1276.36,1277.009]	1	Female,English	yeah
+[1277.009,1279.957]	2	Female,English	and then I told Irish and she was like said oh my God
+[1279.957,1281.101]	1	Female,English	really?
+[1281.101,1283.022]	0	U	[*]
+[1283.022,1283.729]	1	Female,English	oh my God
+[1283.729,1284.912]	0	U	[NOISE]
+[1284.912,1286.222]	2	Female,English	oh well, yeah[+]
+[1286.222,1286.639]	0	U	[NOISE]
+[1286.639,1287.026]	1	Female,English	yeah
+[1287.026,1290.226]	2	Female,English	anyway pretty freaky story, so you definitely have less
+[1290.264,1292.912]	2	Female,English	more horrific Guangzhou Metro stories than me
+[1292.912,1293.775]	1	Female,English	yeah
+[1293.775,1296.403]	0	U	[*]

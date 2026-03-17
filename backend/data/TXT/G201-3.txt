@@ -1,0 +1,480 @@
+[1.222,2.977]	1	Female,English	plan for my birthday party,
+[3.055,4.713]	1	Female,English	um well,
+[5.217,7.37]	1	Female,English	I think I do wanna go to V C play
+[7.748,9.135]	1	Female,English	and whoever comes, come[+]
+[9.61,13.731]	1	Female,English	so if it's just me and one other quo[~] person, then whatever. me and that one other person[+]
+[13.876,15.137]	1	Female,English	we're gonna have to have fun together.
+[16.01,18.153]	2	Female,English	mhm I want to go clubbing after.
+[18.25,18.764]	1	Female,English	yeah
+[19.2,21.217]	1	Female,English	so whoever wants to come, come.
+[21.857,22.691]	1	Female,English	whoever doesn't come[+]
+[22.895,23.428]	1	Female,English	don't come
+[23.457,24.039]	2	Female,English	mhm[+]
+[24.359,25.164]	0	U	[NOISE]
+[25.484,25.93]	1	Female,English	that's it.
+[25.988,26.793]	0	U	[NOISE]
+[26.89,27.462]	1	Female,English	you know me I
+[27.462,28.975]	2	Female,English	well that's quite cheap[+]
+[28.975,31.69]	2	Female,English	it's really cheap. it's only one hundred and fifty kuai
+[31.719,35.055]	1	Female,English	it's one fifty kuai. that's for food and for all the interaction.
+[35.142,36.742]	2	Female,English	yeah, how can it be so cheap[+]
+[36.81,39.748]	1	Female,English	right. it's really, and it's fun. I've been there before.
+[39.913,40.999]	1	Female,English	it's a really fun place.
+[41.862,43.316]	2	Female,English	do you know like the owner?
+[43.617,46.022]	1	Female,English	not the owner but I met um
+[46.953,47.68]	1	Female,English	ah
+[48.116,49.028]	1	Female,English	one of the organize
+[49.222,49.571]	1	Female,English	ah oh
+[50.036,53.217]	1	Female,English	oh is he the organizer or the V P.
+[53.585,55.331]	1	Female,English	I don't know exactly who he was[+]
+[55.68,59.636]	1	Female,English	but I went with my friend, the girl that you met at the pizza festival, Terrane[+]
+[60.276,60.916]	2	Female,English	mhm[+]
+[60.936,61.411]	1	Female,English	Terrane
+[62.284,62.691]	2	Female,English	mhm[+]
+[62.953,64.262]	1	Female,English	ah she does like
+[64.737,66.182]	1	Female,English	activity organization
+[66.56,68.16]	1	Female,English	and she had a meeting with someone there[+]
+[68.596,72.0]	1	Female,English	so I went there and as I was there I sa[~] I met the guy and[+]
+[72.65,73.193]	1	Female,English	um
+[73.745,76.897]	1	Female,English	I think he's like the director of
+[77.731,78.313]	1	Female,English	game
+[78.497,79.137]	1	Female,English	or something.
+[79.185,79.796]	2	Female,English	mhm
+[80.068,81.833]	1	Female,English	and while she was meeting with the[+]
+[82.017,85.353]	1	Female,English	while having her meeting, me and him went to go play some game. so it's cool.
+[86.051,87.777]	1	Female,English	so like yeah, you know, I
+[87.971,88.931]	1	Female,English	got his WeChat,
+[89.319,90.628]	1	Female,English	we took a picture together
+[90.977,92.199]	1	Female,English	and then um
+[92.81,93.556]	0	U	[NOISE]
+[94.09,96.388]	1	Female,English	when I told Terrane what I wanted to do,
+[96.844,98.764]	1	Female,English	she put me in a group chat with them
+[99.171,104.65]	1	Female,English	and then another guy named Ben, I think he's gonna oversee everything for Saturday.
+[105.076,109.993]	1	Female,English	he got in touch with me and he's like yeah, we can definitely make it happen. I'm like yah. so I'm excited[+]
+[110.895,112.33]	2	Female,English	at a reasonable price.
+[112.553,113.93]	2	Female,English	it's really reasonable[+]
+[114.56,115.171]	2	Female,English	mhm
+[116.49,121.319]	1	Female,English	so I hope, I told them maybe like ah twenty people will come.
+[121.988,122.444]	2	Female,English	mhm[+]
+[122.473,122.851]	1	Female,English	know
+[123.695,126.41]	1	Female,English	that, like I invited a lot of people.
+[127.215,133.45]	1	Female,English	but ah usually, whatever you invite, you have to cut it in half and that's how many people who's gonna come. it's usually half of what you invite[+]
+[134.604,135.37]	2	Female,English	oh
+[135.428,135.719]	1	Female,English	yeah
+[136.436,136.844]	1	Female,English	so I am
+[136.873,138.638]	2	Female,English	Gaga, she is like, she was just[+]
+[138.676,139.956]	2	Female,English	she's coming for sure.
+[140.044,144.175]	1	Female,English	yay Gaga. I haven't seen her since ah the, your birthday.
+[145.251,149.537]	2	Female,English	oh yeah and she have a new boyfriend just in two days.
+[149.615,150.817]	1	Female,English	is she gonna bring him[+]
+[151.777,154.735]	2	Female,English	I don't know. probably? I don't know.
+[155.501,158.119]	1	Female,English	if she does, that's fine. you know, the more people, the merrier.
+[158.924,164.975]	2	Female,English	yeah, that's OK. she won't be the only person I met then it's just fine cause I was going to see her on Saturday,
+[165.159,165.585]	1	Female,English	mhm
+[165.615,169.668]	2	Female,English	but she asked me, can sh[~] can she bring her boyfriend
+[169.678,170.279]	0	U	[*]
+[170.308,173.479]	2	Female,English	weird, I said, oh it's three of us and drinking together.
+[174.196,174.497]	1	Female,English	so
+[174.497,175.05]	0	U	[NOISE]
+[175.438,176.039]	1	Female,English	I mean,
+[176.417,177.891]	1	Female,English	you don't like being the third wheel.
+[178.512,182.953]	2	Female,English	yeah, right. if the guy's paying, I'm OK. I think I'll be there but[+]
+[182.953,183.981]	0	U	[NOISE]
+[184.611,186.793]	1	Female,English	oh my God, girl. you're so cruel.
+[187.491,188.422]	0	U	[NOISE]
+[188.451,193.096]	2	Female,English	it's just so weird I, and she just become a new couple. you know, as a new couple, they just
+[193.164,193.775]	0	U	[NOISE]
+[194.211,196.975]	2	Female,English	like want to fuck ea[~] each other all the time.
+[197.702,201.164]	2	Female,English	but she, she was going to se[~] like she was, actually it was
+[201.455,208.592]	2	Female,English	kin[~] kinda want to see us at Playhouse yesterday night but then her boyfriend told her not to[+]
+[209.038,213.585]	2	Female,English	because she have to bring her boyfriend, her boyfriend not willing to go to Playhouse.
+[214.158,214.953]	2	Female,English	and then she
+[215.37,215.913]	2	Female,English	ending up
+[216.776,218.182]	2	Female,English	fucking her boyfriend at home
+[218.182,218.599]	0	U	[NOISE]
+[218.628,219.695]	1	Female,English	oh my God
+[220.364,222.953]	1	Female,English	no, that's annoying. I don't like boys literally like
+[223.971,227.53]	1	Female,English	don't go here, don't go there, you can't go there, whatever like
+[228.112,228.975]	1	Female,English	that's annoying.
+[229.508,232.999]	1	Female,English	I think that's why like, I'm better off being single as well because
+[233.552,237.421]	1	Female,English	if my boyfriend ever told me don't go here or there, I'd
+[237.799,239.564]	1	Female,English	be complete bitch about it.
+[240.611,241.639]	0	U	[NOISE]
+[241.707,242.977]	1	Female,English	like I don't, I don't
+[243.53,247.661]	1	Female,English	like I don't know who you think you are but you're not gonna tell me where I can and cannot go.
+[248.039,248.65]	1	Female,English	like I'm gonna go
+[248.65,250.124]	2	Female,English	now, you have a free spirit[+]
+[250.473,251.617]	1	Female,English	exactly
+[252.073,253.799]	1	Female,English	cannot try to tame a free spirit.
+[254.953,256.233]	0	U	[NOISE]
+[256.465,256.776]	1	Female,English	I just
+[256.785,260.48]	2	Female,English	a free spirit who, who likes to dance all the time and[+]
+[260.49,261.45]	1	Female,English	all the time
+[261.702,262.953]	0	U	[NOISE]
+[263.564,265.542]	2	Female,English	who is always on pair of boots or[+]
+[265.571,266.861]	0	U	[NOISE]
+[266.89,268.625]	2	Female,English	broken leg or whatever[+]
+[268.655,269.644]	1	Female,English	broken or not
+[269.731,271.816]	0	U	[NOISE]
+[272.01,276.839]	1	Female,English	oh my gosh so oh, when I went to, I went to the arcade today with two my athletes[+]
+[277.411,280.65]	1	Female,English	and they had the Dance Dance Revolution game there[+]
+[281.038,285.799]	1	Female,English	and of course I played it and I danced it with this random girl. she was really good[+]
+[286.468,288.65]	1	Female,English	but I was doing it with my boot on[+]
+[289.057,291.055]	1	Female,English	so so many people were looking at me
+[291.084,292.839]	0	U	[NOISE]
+[292.916,298.638]	1	Female,English	and then, after, of course my foot started hurting because I was doing so much moving on my foot and like
+[299.278,300.393]	1	Female,English	stomping my foot down.
+[301.256,301.576]	1	Female,English	so
+[301.585,302.196]	0	U	[NOISE]
+[302.284,302.865]	1	Female,English	I was another
+[302.865,303.215]	0	U	[*]
+[303.215,304.33]	1	Female,English	like I just
+[305.067,307.753]	1	Female,English	didn't wanna go anywhere because my foot just hurts.
+[308.916,310.759]	0	U	[NOISE]
+[310.798,312.503]	2	Female,English	if you have a good rest give you dance
+[312.503,313.198]	0	U	[*]
+[313.198,314.017]	2	Female,English	as well.
+[314.056,320.078]	1	Female,English	I know. I did a lot on my foot when I think about it. I danced last night and now, I did it again today so my foot was[+]
+[320.582,322.095]	1	Female,English	it was a little uncomfortable.
+[323.627,329.29]	2	Female,English	yeah, it should be. oh my God. I can't even imagine me doing that with my, oh, but you know what?
+[329.6,336.815]	2	Female,English	when I, when I go to the music festival we went out with in U K, and I've seen many people who has a boot like yours
+[337.232,338.25]	2	Female,English	they, they[+]
+[338.279,339.055]	0	U	[NOISE]
+[339.084,341.712]	2	Female,English	right, I even saw many people in wheelchairs.
+[342.633,342.856]	1	Female,English	I
+[342.865,343.777]	2	Female,English	and they want to[+]
+[344.116,347.433]	1	Female,English	just because you're hurt, doesn't mean you wanna sit inside and be
+[347.908,349.576]	1	Female,English	depressed all the time like
+[349.799,351.399]	1	Female,English	especially when you're hurt[+]
+[351.942,352.524]	0	U	[NOISE]
+[352.553,355.908]	1	Female,English	you wanna go out and enjoy life even more when you're hurt, you know?
+[356.684,357.76]	2	Female,English	that's true.
+[358.022,359.215]	2	Female,English	so and so many
+[359.215,359.719]	0	U	[*]
+[359.758,360.359]	2	Female,English	people are just
+[360.65,367.215]	2	Female,English	in their wheelchairs, in their boots but go to E D M Music Festival
+[367.244,367.981]	1	Female,English	nice.
+[368.524,372.015]	1	Female,English	that's crazy though. the E D M Music Fest? I've never been to one.
+[372.257,374.759]	1	Female,English	I always wanted to go to one. they have one that happens in
+[375.176,378.318]	1	Female,English	Orlando every year and when it happens in Miami,
+[378.851,380.577]	1	Female,English	Miami is way expensive[+]
+[381.198,385.61]	1	Female,English	and it doesn't seem much fun but at least the one in Orlando, they have a couple rides and
+[386.027,387.782]	1	Female,English	cool music fest um
+[388.17,389.76]	1	Female,English	artist and D Js who are there.
+[390.507,390.953]	2	Female,English	mhm[+]
+[390.982,392.611]	1	Female,English	my brothers and my, my like
+[393.425,394.25]	0	U	[NOISE]
+[394.25,397.033]	1	Female,English	OK so I used to be in a dance crew when I was in
+[397.033,397.421]	2	Female,English	mhm
+[397.45,398.119]	1	Female,English	undergrad
+[398.177,400.553]	1	Female,English	and my dance crew was like all Asian people.
+[400.747,402.502]	1	Female,English	so I have a lot of Asian friends back in Florida.
+[403.404,407.68]	1	Female,English	and my Asian friends and my brothers would always go and I would always miss it because I would always[+]
+[408.039,409.348]	1	Female,English	be somewhere else like
+[409.736,412.8]	1	Female,English	I moved away from home and whatnot, you know? so I never got to go.
+[413.547,416.495]	2	Female,English	mhm. there's even music festival in, in Beijing.
+[416.815,418.958]	2	Female,English	like Ultra, do you know Ultra?
+[418.958,421.13]	1	Female,English	yeah, Ultra is so expensive.
+[422.09,429.964]	2	Female,English	no, actually it's not. you know, some of my friends, only pay like one hundred for the entrance. they got some[+]
+[430.827,434.025]	2	Female,English	some cheap tickets because the price just throw
+[434.025,434.76]	0	U	[*]
+[434.76,436.548]	2	Female,English	drop a lot when
+[436.577,437.615]	0	U	[NOISE]
+[437.77,438.342]	1	Female,English	wow
+[438.73,444.131]	1	Female,English	well, maybe, I know they do Ultra in Miami and Ultra in Miami is super expensive. so[+]
+[444.655,446.507]	1	Female,English	it's crazy how expensive it is.
+[448.96,449.775]	2	Female,English	how expensive?
+[450.192,450.444]	1	Female,English	like
+[451.142,452.839]	1	Female,English	five hundred dollars for three days.
+[453.615,454.158]	2	Female,English	oh wow
+[454.284,457.988]	1	Female,English	and that's only to go to the m[~] the festival and that's not V I P. that's like[+]
+[458.57,459.617]	1	Female,English	normal
+[460.238,460.596]	1	Female,English	ticket.
+[462.051,464.32]	2	Female,English	so they make more money in Miami.
+[464.456,467.016]	1	Female,English	yeah, they make more money but not[+]
+[468.015,469.13]	1	Female,English	it's like when you
+[469.585,471.651]	1	Female,English	think about the rate exchange, it's
+[471.748,472.175]	2	Female,English	mhm
+[472.456,474.356]	1	Female,English	extremely expensive compared to
+[474.764,475.113]	1	Female,English	here.
+[475.491,477.062]	1	Female,English	like you don't really make
+[477.188,480.0]	1	Female,English	all that much more money when you're living in Miami and
+[480.004,481.545]	1	Female,English	when you're the kind of person that goes there[+]
+[481.836,484.202]	1	Female,English	oh yeah, they might have some famous people that go there too.
+[484.842,490.185]	1	Female,English	but a lot of people who live in Miami don't make a lot of money, you still make crap money depending on the kind of job you have[+]
+[490.602,494.199]	1	Female,English	and you still have a crappy living situation, unless if you're rich, somehow[+]
+[495.111,496.74]	2	Female,English	mhm I see.
+[497.875,501.55]	2	Female,English	oh, one more question. do you go to snowboarding?
+[501.773,503.188]	2	Female,English	do you, do you know, do you[+]
+[503.247,507.436]	1	Female,English	I'll do snow skiing. I've never done snowboarding but I want to[+]
+[508.58,512.915]	2	Female,English	mhm I was thinking maybe I should go snowboarding on Saturday or Sunday. I don't know.
+[513.428,514.66]	1	Female,English	how far is it?
+[515.533,516.784]	2	Female,English	because there was a very
+[517.705,518.665]	0	U	[*]
+[518.665,524.813]	2	Female,English	ah there's, there was a, that's, was for skiing place, skiing resort which is close to
+[525.395,528.585]	2	Female,English	close to us, which, that was only, spend like
+[529.739,531.698]	2	Female,English	thirty minutes or forty minutes
+[532.134,535.344]	2	Female,English	by car. if it's not far compared to the other[+]
+[535.722,539.087]	2	Female,English	resort but that, just the snow there wasn't
+[539.475,541.55]	2	Female,English	nice but[+]
+[541.879,544.788]	2	Female,English	it's like OK, OK. you can still
+[545.584,548.018]	2	Female,English	skiing or snowboarding but
+[549.482,554.835]	2	Female,English	um I mean just snow wasn't very nice but I think it's OK for me because I only,
+[554.951,555.853]	2	Female,English	I've never been
+[556.115,558.83]	2	Female,English	I never ski or snowboard
+[559.121,560.275]	2	Female,English	anywhere else.
+[560.498,561.002]	0	U	[NOISE]
+[561.399,564.018]	1	Female,English	well, let me know. send me pictures[+]
+[564.231,567.916]	1	Female,English	because if you go on Sunday, I'd love to go. I wanna, I love going skiing
+[568.556,570.476]	1	Female,English	and I always wanted to try snowboarding.
+[571.639,578.185]	2	Female,English	OK, sure. I will let you know. I, I want to find someone who can teach me how to know, how to snowboard.
+[578.573,581.705]	2	Female,English	maybe I could join a group or something. I don't know[+]
+[581.705,585.06]	1	Female,English	go to the like resorts, they have a class that'll teach you
+[585.351,588.163]	1	Female,English	and it takes maybe like an hour long just that you can[+]
+[588.493,591.538]	1	Female,English	understand how to get up, how to stop, how to turn, how to go.
+[592.362,594.098]	2	Female,English	yeah, but that is so expensive[+]
+[595.348,599.431]	2	Female,English	I la[~] I hi[~] I hired a coach, like trainer before
+[599.819,605.036]	2	Female,English	and they cost like four hundred or maybe m[~] more than four hundred kuai[+]
+[605.065,607.567]	1	Female,English	you don't have to do a coach, you should be able to just
+[608.498,610.02]	1	Female,English	do a open class.
+[610.864,612.144]	2	Female,English	they don't have open class.
+[612.561,619.504]	2	Female,English	it's only a one to one private trainer or coach to, to teach you how to snowboard
+[619.533,621.676]	1	Female,English	horrible. if we go, I'll teach you how to do it.
+[623.043,623.538]	2	Female,English	ski?
+[623.761,624.304]	1	Female,English	yes,
+[624.74,626.098]	1	Female,English	because that's ridiculous.
+[628.531,631.091]	2	Female,English	um yeah, OK. I'll go send you location
+[631.402,633.681]	2	Female,English	and the fee at entrance,
+[633.933,637.239]	2	Female,English	the time. oh you can actually can go there at night but
+[637.86,639.373]	2	Female,English	it will ch[~] much cheaper at night.
+[640.178,645.967]	1	Female,English	yeah, night skiing is cool. I did night skiing before. that was fun. I did that with my nephew and my cousin[+]
+[647.635,651.096]	2	Female,English	I think there'll be less people and, and much cheaper.
+[651.562,653.171]	2	Female,English	like I think, like half price.
+[653.647,656.1]	1	Female,English	mhm. night skiing is usually way cheaper.
+[657.904,661.424]	2	Female,English	um will that be a little bit dangerous? I think it will OK? it's not like you
+[661.453,663.945]	1	Female,English	no, there's a lot of lights. the lights are really bright[+]
+[664.856,665.264]	2	Female,English	um
+[665.642,666.03]	2	Female,English	OK.
+[666.35,667.368]	2	Female,English	yeah, we could do that.
+[668.367,669.075]	1	Female,English	very cool.
+[669.075,669.385]	0	U	[*]
+[671.15,673.331]	2	Female,English	oh Jesus Christ
+[673.836,677.094]	2	Female,English	oh ah maybe I can find a guy who can teach me snowboard as well
+[677.239,678.442]	0	U	[LAUGHTER]
+[678.442,681.322]	1	Female,English	you are on a hunt for a man. I
+[681.642,683.407]	0	U	[NOISE]
+[683.639,690.447]	1	Female,English	it's so draining to me, I'm like I can't deal with it no more. like even, like the guy last night, the, the snow boarder guy?
+[690.708,690.98]	1	Female,English	the
+[690.999,691.562]	2	Female,English	mhm[+]
+[692.454,692.803]	2	Female,English	mhm[+]
+[692.813,694.548]	1	Female,English	seemed like, OK, so last night
+[695.538,699.213]	1	Female,English	I wanted up seeing two people for the first time in person
+[699.562,701.453]	1	Female,English	that I was talking to on Tinder
+[701.831,703.479]	1	Female,English	but we never got to meet each other in person.
+[703.799,706.253]	1	Female,English	and then I stopped using Tinder, I deleted it.
+[706.631,709.802]	1	Female,English	like we, we stopped talking for whatever reason[+]
+[710.636,711.014]	2	Female,English	mhm
+[711.043,712.876]	1	Female,English	and I was just like whatever, I'm over it.
+[713.322,714.631]	1	Female,English	so I saw two people yesterday
+[715.028,716.716]	1	Female,English	and one of the people that I saw
+[717.414,721.167]	1	Female,English	he worked in the same company as me. he works with wrestling
+[721.516,722.505]	1	Female,English	as his team
+[722.854,724.774]	1	Female,English	and I met his girlfriend[+]
+[725.191,727.218]	1	Female,English	at our company party the other night
+[727.654,728.333]	1	Female,English	and she was
+[728.333,729.167]	2	Female,English	wow[+]
+[729.196,730.098]	1	Female,English	I know, right?
+[730.447,735.276]	1	Female,English	she was the one who invited me to the show I went to last night because she's a dancer in the show.
+[735.693,736.711]	1	Female,English	so I go there,
+[737.079,738.854]	1	Female,English	and then I'm at the bathroom
+[739.591,740.658]	1	Female,English	I'm in the bathroom
+[740.978,744.527]	1	Female,English	and his name was Justin, and he walks out and he was like, hey, and I was like,
+[745.428,746.214]	1	Female,English	oh my gosh
+[746.66,747.242]	1	Female,English	hi
+[747.242,748.367]	0	U	[NOISE]
+[748.396,750.199]	1	Female,English	and it was just so weird because
+[751.46,752.905]	1	Female,English	like me and him matched
+[753.719,755.058]	1	Female,English	three times[+]
+[755.853,759.305]	1	Female,English	two times on Twitter, ah on, on Tinder and one time on Bumble.
+[759.751,761.613]	1	Female,English	we matched three times and then
+[761.865,762.418]	1	Female,English	we
+[762.631,765.618]	1	Female,English	never got to meet each other in person because he was always travelling.
+[766.122,769.322]	1	Female,English	so now it's weird because we actually got to meet each other in person and
+[769.458,771.058]	1	Female,English	I met his girlfriend first.
+[771.533,773.239]	1	Female,English	so I was just like, this is awkward.
+[773.879,782.083]	1	Female,English	it's weird and like, we hugged and I was like, oh he's so cute and I was just so mad. it made me a little salty like really,
+[782.548,786.767]	1	Female,English	really? now, I get to see you and you're taken? like really? it's so annoying.
+[787.824,789.453]	2	Female,English	oh is he cute? like is he
+[789.841,792.178]	2	Female,English	where, where ah where he is from?
+[792.75,795.824]	1	Female,English	he's from the United States. no, he's from the United States[+]
+[796.134,796.619]	1	Female,English	um
+[796.658,797.142]	2	Female,English	mhm
+[797.22,802.641]	1	Female,English	he has a very nice face. very like mature look but he's not old. he's like[+]
+[802.825,803.436]	1	Female,English	maybe
+[804.425,805.734]	1	Female,English	twenty nine or something.
+[806.151,807.373]	1	Female,English	he's around my age[+]
+[807.654,811.436]	1	Female,English	and he's just, he was really cute and he is a good height for me and
+[811.698,815.974]	1	Female,English	I was wearing high heels last night too, so he was still taller than me and I was like, wow.
+[816.788,821.123]	1	Female,English	he's nice looking in person but he's taken. I'm like, this is annoying[+]
+[822.151,822.868]	1	Female,English	and then
+[823.373,827.271]	1	Female,English	um it's just kinda like annoyed me a little bit. I was just like, you know what? whatever, like
+[827.911,831.567]	1	Female,English	I really don't, and he offered me, he said, oh you should stick around a little later
+[832.003,835.562]	1	Female,English	the dance is gonna change and then like, you know, we can have some drinks and stuff together. I'm like
+[835.911,836.716]	1	Female,English	mhm, yeah,
+[837.162,838.413]	1	Female,English	I don't really wanna do that
+[838.733,843.882]	1	Female,English	anymore with you because now I know your girlfriend and your girlfriend's here and you're here and[+]
+[844.367,845.831]	1	Female,English	awkward, so no.
+[846.122,846.5]	1	Female,English	and then
+[846.519,847.111]	0	U	[NOISE]
+[847.159,850.796]	1	Female,English	I went to Playhouse, in Playhouse, I saw, I saw the Australian guy
+[851.116,852.919]	1	Female,English	and it was like, he was standing there and he wanted like
+[853.734,856.362]	1	Female,English	talk more, do more, something. I'm just like
+[856.75,862.723]	1	Female,English	I'm not even for it, dude. like we stopped talking for a reason. most likely, you, stopped talking to me for whatever reason. so
+[863.179,864.119]	1	Female,English	I'm not even interested.
+[865.283,870.083]	1	Female,English	so like, he, I don't know why he was still standing there in the bathroom like trying to talk to me.
+[870.384,872.818]	1	Female,English	and I was just like, OK, I'm leaving now and he's like, oh.
+[873.71,875.407]	2	Female,English	he recognized you as well?
+[876.202,877.647]	1	Female,English	he walked up to me.
+[879.508,888.071]	2	Female,English	oh so interesting. I mean, I mean I can't even remember like who I match on Tinder. I match up with a lot of people, I, I don't really remember them[+]
+[888.207,896.236]	2	Female,English	I, I don't know how they look like and I don't think they actually like their picture. no, nobody like actually look exactly like the, how they[+]
+[896.556,900.696]	2	Female,English	look in the picture. so I don't really remember who I, I matched or[+]
+[900.881,901.579]	0	U	[NOISE]
+[901.588,902.413]	1	Female,English	oh my God.
+[902.733,906.505]	1	Female,English	no, like, he looks like his photo and I guess I look like mine too.
+[906.679,909.239]	1	Female,English	honestly, I was surprised that he was able to
+[909.54,911.916]	1	Female,English	spot me out because I change my hair so much
+[912.468,916.871]	1	Female,English	but I guess my face is the same. maybe I'm on[~] like the only black girl he'd matched with. I don't know[+]
+[918.345,921.894]	2	Female,English	interesting cause I saw many black girls there as well, like in the Playhouse.
+[922.902,924.134]	2	Female,English	same a lot looking, I
+[924.241,929.351]	1	Female,English	no, no, no but maybe, I'm saying maybe he didn't match with them though and he matched with me[+]
+[929.7,930.34]	1	Female,English	I mean like
+[930.418,931.145]	2	Female,English	oh hey[+]
+[931.155,931.717]	1	Female,English	tinder[+]
+[932.813,933.55]	2	Female,English	ah really?
+[933.618,934.384]	0	U	[NOISE]
+[934.413,937.07]	1	Female,English	yeah, like I don't, it's, it's surprising that
+[937.487,938.001]	1	Female,English	he
+[939.087,941.414]	1	Female,English	recognized me, is what I'm saying.
+[942.054,942.665]	2	Female,English	mhm[+]
+[942.665,948.842]	1	Female,English	maybe it's because he only matched with one black girl. me, being the only black girl he matched with.
+[949.996,950.888]	2	Female,English	um
+[951.043,956.978]	2	Female,English	that's so interesting. there are some Chinese guys who are into black girls. like they think you are
+[957.259,958.161]	2	Female,English	exotic
+[958.316,959.848]	1	Female,English	exotic, yeah[+]
+[960.006,960.297]	0	U	[NOISE]
+[961.227,962.479]	1	Female,English	I mean, I guess, I guess
+[962.856,964.02]	1	Female,English	exotic means
+[964.263,967.831]	1	Female,English	very different or unique. so I guess, me being black in China[+]
+[967.918,970.342]	1	Female,English	does make me exotic. so I'll take that.
+[971.177,971.622]	2	Female,English	mhm
+[971.923,977.49]	2	Female,English	just like me when I was in some white people's country and they'd see me as exotic.
+[977.702,978.042]	1	Female,English	yeah.
+[978.062,979.119]	2	Female,English	the same.
+[979.38,981.97]	2	Female,English	they just want to try something new, try something different.
+[982.61,983.045]	2	Female,English	ah
+[983.783,986.479]	1	Female,English	yeah, that's very true, very true.
+[987.001,989.261]	2	Female,English	they won't, they won't, they won't even love me or
+[989.717,993.227]	2	Female,English	like me. they just want to try me because it looks different[+]
+[993.227,995.312]	1	Female,English	yeah, yeah. like you're some kind of animal.
+[996.136,996.582]	2	Female,English	mhm
+[996.689,997.135]	1	Female,English	it's[+]
+[997.222,998.639]	1	Female,English	yeah, it's annoying.
+[999.501,1000.336]	0	U	[NOISE]
+[1000.365,1000.782]	2	Female,English	even some
+[1000.821,1001.519]	0	U	[*]
+[1001.519,1004.428]	2	Female,English	them, they make fun of Chinese Asian eye like
+[1004.913,1006.473]	2	Female,English	she was, she was a
+[1006.473,1006.736]	0	U	[*]
+[1006.736,1008.684]	2	Female,English	girl, we just got drunk
+[1008.85,1015.114]	2	Female,English	she'd make fun of the Chinese people eyes because normally, Chinese people have small eyes and something like that.
+[1015.143,1017.644]	1	Female,English	oh my God. that's so mean. what the heck,
+[1018.953,1024.947]	2	Female,English	I mean, I mean like is it, in the, I feel like in the bottom of your heart, in her of her heart,
+[1025.111,1029.107]	2	Female,English	do you like discriminate us. like she doesn't really respect us
+[1029.649,1030.222]	2	Female,English	but
+[1030.832,1034.662]	2	Female,English	when she's sober, she'd just behave like to
+[1035.322,1037.136]	2	Female,English	ah to me how I say
+[1037.136,1038.193]	2	Female,English	with good manner
+[1038.348,1038.87]	2	Female,English	and[+]
+[1039.861,1040.501]	2	Female,English	but
+[1041.198,1043.855]	2	Female,English	deeply in her heart, like she's like mhm.
+[1043.884,1044.553]	0	U	[NOISE]
+[1044.718,1045.736]	1	Female,English	oh wow
+[1046.551,1047.055]	0	U	[NOISE]
+[1047.152,1048.559]	1	Female,English	that's so mean[+]
+[1049.324,1052.205]	2	Female,English	and, and all the foreign guys always have like
+[1053.33,1054.164]	2	Female,English	ah
+[1054.522,1055.889]	2	Female,English	they're always being like
+[1056.85,1058.245]	2	Female,English	how, how can I describe
+[1059.09,1063.793]	2	Female,English	like they have a stereotype with Chinese girls and Chinese guys as well.
+[1064.821,1065.363]	0	U	[NOISE]
+[1065.616,1066.071]	1	Female,English	well,
+[1066.633,1070.929]	1	Female,English	I think we know the stereotypes from Chinese guys, what's the stereotypes of Chinese girls?
+[1072.966,1074.361]	2	Female,English	stereotype of Chinese girl?
+[1074.799,1075.312]	1	Female,English	yeah
+[1076.776,1078.348]	2	Female,English	um
+[1080.238,1082.896]	2	Female,English	oh it's hard to describe but
+[1085.765,1089.586]	2	Female,English	and sometimes they just like, they always make fun of Chinese guy
+[1089.81,1091.303]	2	Female,English	you know, what I mean like
+[1091.816,1092.176]	2	Female,English	of
+[1092.601,1093.746]	2	Female,English	their body.
+[1094.348,1095.161]	2	Female,English	and[+]
+[1095.976,1099.187]	2	Female,English	the Chinese girl, probably like the
+[1099.351,1102.027]	2	Female,English	ah like pretty much the same
+[1102.348,1103.463]	2	Female,English	topic ah
+[1105.839,1107.148]	2	Female,English	how can I say
+[1107.506,1108.912]	1	Female,English	pretty much the same topic
+[1109.417,1109.746]	1	Female,English	got
+[1109.775,1110.348]	2	Female,English	yeah[+]
+[1110.822,1111.831]	1	Female,English	oh my gosh
+[1112.403,1113.742]	0	U	[NOISE]
+[1113.936,1116.37]	2	Female,English	oh I was like they just can see us as[+]
+[1116.466,1120.432]	2	Female,English	as animals. like something different. just something interesting different.
+[1120.821,1121.965]	2	Female,English	and they don't really[+]
+[1122.197,1123.477]	2	Female,English	respect me
+[1123.797,1125.271]	2	Female,English	as a person
+[1125.271,1126.997]	1	Female,English	yeah, as a human being.
+[1127.541,1127.986]	2	Female,English	yeah
+[1128.015,1128.724]	0	U	[NOISE]
+[1129.295,1130.42]	1	Female,English	yeah, that's annoying.
+[1130.896,1131.09]	1	Female,English	it's
+[1131.119,1134.066]	2	Female,English	and they're just ignorant. ignorant people
+[1134.445,1135.249]	2	Female,English	do that.
+[1135.376,1136.656]	1	Female,English	you can't think much about it.
+[1138.255,1140.592]	2	Female,English	because some people who
+[1140.805,1145.781]	2	Female,English	live in London, or they live in U K and live in some large city but they'd never been
+[1146.71,1149.271]	2	Female,English	actually out of their country or their city.
+[1149.678,1150.153]	1	Female,English	mhm
+[1150.182,1150.997]	2	Female,English	or it's
+[1152.073,1156.873]	2	Female,English	I mean like they've never been to China, never actually see Beijing or
+[1157.359,1160.422]	2	Female,English	the cities in China themselves and they[+]
+[1160.646,1163.603]	2	Female,English	and it feel like Beijing is horrible and
+[1163.855,1166.639]	2	Female,English	like people there are uneducated
+[1166.697,1169.295]	2	Female,English	but actually we are not. we are like a modern city and
+[1169.645,1170.13]	2	Female,English	with the
+[1170.352,1170.867]	2	Female,English	stuff.
+[1171.312,1172.747]	1	Female,English	right, right. exactly.
+[1173.775,1175.055]	1	Female,English	well, oh my gosh
+[1176.083,1176.85]	1	Female,English	very interesting.
+[1178.101,1178.643]	1	Female,English	mhm,
+[1179.438,1181.359]	1	Female,English	my brother is actually dating a[+]
+[1182.503,1185.101]	1	Female,English	well, I don't know if he's dating her for sure or not
+[1185.645,1192.559]	1	Female,English	but I hope he is, but from what he told me is my brother is dating an Asian and I think that'd be so cute when they have babies.
+[1193.324,1195.061]	1	Female,English	when they'll make babies
+[1195.982,1197.398]	0	U	[NOISE]
+[1197.775,1198.929]	0	U	[NOISE]
+[1198.929,1202.77]	2	Female,English	oh why he's just begin dating her and you think of the baby
+[1203.119,1208.753]	1	Female,English	I know. that's the first thing I think of. they're not even like in love but I just think about it. I'm like oh my God.
+[1209.256,1212.438]	1	Female,English	you guys would have cute little blasian babies.
+[1212.457,1213.136]	0	U	[NOISE]
+[1214.261,1216.559]	2	Female,English	because I used to date a black guy before.
+[1216.85,1217.421]	1	Female,English	mhm[+]
+[1217.46,1220.234]	2	Female,English	he even told me like using like the
+[1220.553,1221.068]	2	Female,English	blasian?
+[1221.33,1226.255]	2	Female,English	did you call it blasian babies are cute? oh my, I don't even think I will have a baby with your[+]
+[1226.361,1227.061]	2	Female,English	you are
+[1227.09,1227.438]	0	U	[NOISE]
+[1227.438,1228.486]	1	Female,English	oh my God
+[1228.66,1231.957]	1	Female,English	it's just something to think about. I don't think I'll have a baby with you
+[1231.957,1232.441]	0	U	[NOISE]
+[1233.421,1233.994]	0	U	[*]
+[1234.139,1234.565]	0	U	[*]

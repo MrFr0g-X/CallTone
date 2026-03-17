@@ -1,0 +1,611 @@
+[0.001,1.93]	0	U	[LAUGHTER]
+[1.93,6.536]	1	Female,English	Yeah, I just woke up from a nap that I didn't even realize I was taking
+[8.01,10.221]	2	Female,English	wait so
+[11.685,13.644]	2	Female,English	what have you done today like?
+[14.061,15.905]	1	Female,English	what did I do today? 
+[15.905,16.679]	2	Female,English	um
+[17.513,18.541]	1	Female,English	um
+[19.404,20.461]	1	Female,English	I
+[21.392,23.69]	1	Female,English	Well, I didn't wake up until like
+[24.592,25.61]	1	Female,English	twelve o'clock
+[26.861,28.044]	2	Female,English	mhm
+[28.044,29.382]	1	Female,English	I went
+[30.032,31.312]	1	Female,English	oh my phone quiet
+[31.428,32.65]	1	Female,English	and then I went
+[33.154,37.479]	1	Female,English	ah oh to my athletes invited me to go to the arcade with them play some game.
+[37.993,40.068]	1	Female,English	so I went to the arcade[+]
+[40.194,41.61]	1	Female,English	and we played some
+[42.444,44.839]	1	Female,English	we played some games that was fun but um
+[44.839,45.295]	0	U	[NOISE]
+[45.295,47.399]	1	Female,English	I did the dance dance revolution game
+[47.884,49.833]	0	U	[LAUGHTER]
+[50.473,52.17]	0	U	[LAUGHTER]
+[52.17,55.438]	1	Female,English	I definitely should not have been doing that with my boot on
+[56.485,57.61]	1	Female,English	and I did it like
+[57.901,59.821]	1	Female,English	I did a couple rounds of it too
+[60.015,60.713]	1	Female,English	and
+[61.004,65.222]	1	Female,English	I wanna doing with this random girl because she was really good at it in my my athletes
+[65.222,69.547]	1	Female,English	they were like not too scared like I'm not good at dancing you know like could you please dance with me.
+[69.867,73.707]	1	Female,English	but the other girl would have to come in like stayed there whenever its like a really hard one[+]
+[74.444,74.89]	1	Femalle,English	so
+[74.948,76.141]	1	Female,English	but at the end like
+[76.684,79.496]	1	Female,English	my foot kinda actually started hurting again like
+[79.554,81.038]	2	Female,English	oops[+]
+[81.193,82.473]	1	Female,English	I know I know right[+]
+[82.502,84.015]	2	Female,English	you're so energetic
+[84.112,87.632]	1	Female,English	I can't help it like staying still is just so boring
+[88.301,89.736]	0	U	[LAUGHTER]
+[90.056,94.08]	1	Female,English	I wanna go dance again I miss dancing I wanna go take a dance class
+[94.08,96.815]	1	Female,English	stupid broken foot makes it impossible
+[97.639,100.781]	2	Female,English	ah have a place you go to dance I was like in
+[100.839,102.992]	2	Female,English	Wang Jing which is super far
+[103.661,104.679]	1	Female,English	where?
+[105.29,108.548]	2	Female,English	No, no I mean I mean you went to Wang Jing, I mean
+[108.616,109.832]	0	U	[*]
+[109.832,110.575]	2	Femle,English	the seven
+[110.575,112.01]	1	Female,English	no that was only one time
+[112.65,116.112]	2	Female,English	ah so where do you run your dance then[+]
+[116.112,117.838]	1	Female,English	Usually I go
+[118.672,120.747]	1	Female,English	I can never remember the name it
+[120.844,121.61]	1	Female,English	tian
+[122.153,122.948]	1	Female,English	an
+[123.811,124.141]	2	Female,English	it's
+[124.141,125.13]	1	Female,English	awful
+[125.353,126.658]	1	Female,English	ah what's the name
+[126.658,127.341]	0	U	[*]
+[128.679,131.85]	1	Female,English	also the six line extreme
+[132.267,133.004]	0	U	[*]
+[133.188,133.799]	1	Female,English	um
+[133.993,134.4]	0	U	[*]
+[134.41,134.895]	1	Female,English	um
+[135.011,136.427]	0	U	[*]
+[136.427,138.541]	1	Female,English	no no no not Liang Chiao
+[138.764,140.393]	1	Female,English	I'm looking at it right now
+[140.519,141.993]	1	Female,English	hold on I'm gonna find it
+[143.399,144.912]	1	Female,English	it is
+[145.416,149.13]	1	Female,English	oh my gosh I think I'm hungry again and I just miss dinner, ah
+[150.09,152.359]	0	U	[NOISE]
+[152.815,153.358]	0	U	[NOISE]
+[153.484,154.822]	1	Female,English	where is it where is it?
+[155.171,157.993]	0	U	[*]
+[158.507,160.359]	0	U	[NOISE]
+[161.61,162.628]	0	U	[*]
+[163.627,164.519]	0	U	[*]
+[165.76,167.079]	0	U	[*]
+[167.467,168.999]	0	U	[*]
+[169.193,170.124]	0	U	[*]
+[170.541,173.101]	1	Female,English	That's over by Joy city that big mall right?[+]
+[173.227,174.216]	1	Female,English	in Chaoyang
+[175.37,176.291]	2	Female,English	oh
+[176.514,177.678]	2	Female,English	yeah there
+[177.901,179.918]	2	Female,English	oh in Chaoyang I I I know
+[180.228,182.691]	1	Female,English	yeah so I I dance down there
+[183.428,185.125]	2	Female,English	this's still far for me
+[185.125,189.159]	1	Female,English	yeah this it is farther for you everything is far from your if not on that side[+]
+[189.324,191.273]	1	Female,English	I don't know anything on the side where you live[+]
+[192.01,192.999]	0	U	[NOISE]
+[192.999,196.975]	2	Female,English	I I I know right oh there's a light house much too close to me
+[196.975,197.518]	0	U	[NOISE]
+[197.518,201.193]	2	Female,English	but, I don't I don't think you are interesting that kind of
+[201.193,203.472]	2	Female,English	light house it's like drug
+[203.472,204.073]	2	Female,English	music
+[205.062,206.788]	1	Female,English	ah I like alternative music
+[206.924,209.135]	1	Female,English	if it's alternative rock music I like it
+[209.998,210.977]	2	Female,English	um[+]
+[211.113,211.908]	0	U	[*]
+[212.713,214.604]	2	Female,English	oh wait my second
+[214.604,218.056]	2	Female,English	have you have you have you heard the wreck forge
+[218.153,218.735]	2	Female,English	on
+[219.016,220.364]	1	Female,English	yeah I have it on
+[220.558,223.312]	1	Female,English	I'm not waste a no time I'm so tired[+]
+[223.467,224.815]	1	Female,English	I was supposed to go out[+]
+[225.135,228.587]	1	Female,English	to um this like secret Santa kinda thing as well
+[228.936,233.377]	1	Female,English	just like I should but at the same time I really just don't wanna move[+]
+[234.25,234.667]	1	Female,English	I'm just
+[234.696,236.354]	2	Female,English	where do you wanna move?
+[236.839,241.358]	1	Female,English	not move move sorry, like I don't wanna move my body I just wanna be lazy
+[242.124,246.313]	2	Female,English	oh so I I just stay in my bed like entire day
+[246.439,248.912]	1	Female,English	yeah that's I wanna do I'm tired
+[249.998,251.239]	1	Female,English	mhm
+[251.433,253.702]	1	Female,English	I feel like since I only have
+[254.313,256.912]	1	Female,English	technically one day for rest like
+[258.221,260.17]	2	Female,English	mhm oh yeah[+]
+[260.17,266.085]	1	Female,English	I need to do everything in one day and by the end of the day of my rest day I'm tired and it's like
+[266.696,267.724]	0	U	[NOISE]
+[268.393,271.777]	1	Female,English	I have any to choose to do something or choose like stay put
+[271.787,273.707]	1	Female,English	because I only have one day re[~]really
+[274.405,277.033]	2	Female,English	mhm oh some of my friends they went to[+]
+[277.13,279.719]	2	Female,English	sunny twin cause there's a p[~]place
+[279.719,280.175]	0	U	[NOISE]
+[280.204,281.096]	2	Female,English	for
+[281.096,283.879]	2	Female,English	yeah I think it's called sky dance
+[283.947,286.507]	2	Female,English	ah for pole dancing class
+[286.604,287.622]	0	U	[NOISE]
+[287.622,288.32]	0	U	[NOISE]
+[288.32,288.834]	0	U	[*]
+[288.834,292.49]	2	Female,English	is so expensive like forty five minutes and it's like ah
+[292.548,293.838]	2	Female,English	a coop course
+[293.896,298.958]	2	Female,English	which is or candy ball I guess and
+[300.267,302.982]	2	Female,English	It's like one hundred fifty
+[303.079,303.467]	0	U	[NOISE]
+[303.554,306.056]	2	Female,English	fifty quai per course
+[306.25,309.547]	1	Female,English	yeah many classes are expensive that's what I've noticed [+]
+[309.547,313.668]	1	Female,English	honestly a hundred and fifty is the cheapest class that I've heard of since I've been here
+[313.93,314.337]	0	U	[*]
+[315.336,319.816]	2	Female,English	like even in the coursing back in U K or much cheaper than
+[319.952,320.873]	2	Female,English	in Beijing
+[320.97,321.6]	1	Female,English	no[+]
+[321.775,322.919]	1	Female,English	it's about the same
+[323.113,325.227]	1	Female,English	because well classes in
+[325.896,327.244]	1	Female,English	U K would be
+[327.399,328.301]	1	Female,English	how much um
+[328.427,329.387]	1	Female,English	how many pounds
+[330.153,330.725]	0	U	[NOISE]
+[330.725,332.199]	2	Female,English	ah seven pound
+[333.353,334.604]	1	Female,English	seven pounds?
+[334.914,336.456]	2	Female,English	per course yeah
+[336.456,337.639]	1	Female,English	that's a lie.
+[338.735,340.044]	2	Female,English	It's not a lie
+[340.044,340.903]	2	Female,English	I took the
+[340.903,341.312]	0	U	[*]
+[341.312,341.828]	2	Female,English	course
+[341.828,342.158]	0	U	[NOISE]
+[342.187,347.947]	2	Female,English	and ah per dancing course as well, both only cost like seven pound
+[348.558,352.33]	1	Female,English	well maybe seven pounds how much was the the rate exchange at that time
+[352.844,354.017]	1	Female,English	was that one the
+[354.279,354.781]	1	Female,English	the pond
+[354.781,355.53]	2	Female,English	eight
+[355.53,358.4]	2	Female,English	eight and nine nine nine or ten nine or ten
+[358.468,359.37]	1	Female,English	nine or ten
+[359.564,361.697]	1	Female,English	okay so this is like nine or ten[+]
+[361.988,363.53]	1	Female,English	to one R M B[+]
+[363.714,365.576]	1	Female,English	then seven times
+[366.798,372.49]	2	Female,English	seventy as make it seventy yeah like half is less than half the price here[+]
+[372.49,373.954]	1	Female,English	wow[+]
+[374.284,376.107]	1	Female,English	that's crazy that's cheap
+[376.301,378.948]	1	Female,English	dance classes aren't even that cheap in the United States
+[379.879,385.164]	2	Female,English	um so I think expensive like I was heard a bit I heard people told me that ah[+]
+[385.164,388.907]	2	Female,English	if you want to study in in the State you have to like pay more
+[389.004,392.524]	2	Female,English	cause its very expensive for the course for the program[+]
+[392.553,395.695]	2	Female,English	and you have to pay for your leader how?
+[395.792,396.49]	0	U	[*]
+[396.49,397.731]	2	Female,English	well I don't know[+]
+[398.148,398.992]	2	Female,English	I mean the the
+[398.992,399.816]	2	Female,English	hard thing
+[399.913,402.57]	2	Female,English	the the course cost more than
+[403.142,404.015]	2	Female,English	ah
+[404.112,408.33]	2	Female,English	The program cost more money than the pro[~] the program in U K
+[408.33,410.114]	2	Female,English	and you have to like spend two years
+[410.25,410.832]	2	Female,English	in
+[411.21,411.627]	2	Female,English	state
+[411.627,413.198]	2	Female,English	for finish the masterdegree
+[413.256,413.741]	1	Female,English	yeah
+[414.177,416.611]	1	Female,English	well schools in the United States are just
+[417.164,418.444]	1	Female,English	great anyways
+[419.239,420.771]	1	Female,English	no shit because
+[421.382,422.953]	1	Female,English	no matter what you want to study 
+[423.137,425.416]	1	Female,English	really expensive unless you have a
+[425.571,428.257]	1	Female,English	full aid scholarship or some scholarship to help you out
+[429.033,432.495]	1	Female,English	This is education system in in the United States that's messed up|[+]
+[434.337,435.472]	1	Female,English	overprice[+]
+[436.878,437.935]	2	Female,English	overprice?
+[437.935,438.759]	1	Female,English	oh yeah.
+[440.844,444.519]	2	Female,English	but isn't it's United States center of the world
+[444.519,445.76]	0	U	[LAUGHTER]
+[445.76,449.581]	1	Female,English	yeah but it doesn't mean that it's like has everything that actually the best like
+[449.581,450.919]	0	U	[NOISE]
+[450.919,452.267]	1	Female,English	education system is
+[452.519,453.45]	1	Female,English	it's shit
+[454.255,458.192]	1	Female,English	over that we're not even like the top ten when it comes to[+]
+[458.512,460.587]	1	Female,English	Math or Science or English
+[461.12,461.634]	2	Female,English	mhm
+[461.673,462.41]	1	Female,English	like we're like
+[462.604,464.301]	1	Female,English	way down on the forties
+[465.581,467.239]	1	Female,English	when it comes to global ah
+[467.491,470.478]	1	Female,English	education and we're out in the list it's so bad[+]
+[472.679,475.045]	2	Female,English uni	mhm please, oh! Well which which uni
+[475.045,475.53]	2	Female,English	did you went
+[475.976,476.936]	2	Female,English	ah did you
+[478.148,478.672]	1	Female,English	what?
+[478.672,479.302]	2	Female,English	did you go?
+[479.341,482.059]	2	Female,English	which University did you go like?
+[482.059,484.338]	1	Female,English	I went to a university called
+[485.036,487.79]	1	Female,English	well for my undergrad I want to um
+[489.351,493.007]	1	Female,English	Florida Atlantic University which is down in Boca town
+[493.007,493.938]	1	Female,English	close to Miami
+[494.277,496.682]	1	Female,English	I went to three years and then my last[+]
+[497.487,498.447]	1	Female,English	three years
+[499.281,500.813]	1	Female,English	I want up going to
+[500.91,504.75]	1	Female,English	Tampa I transferred and I went to University of South Florida
+[505.71,506.835]	1	Female,English	and then[+]
+[507.077,508.144]	1	Female,English	yeah
+[508.241,509.637]	1	Female,English	and then for my um
+[511.334,511.858]	0	U	[*]
+[511.887,513.487]	1	Female,English	for my Masters
+[513.904,515.533]	1	Female,English	I went to school called
+[516.144,518.83]	1	Female,English	California University of Pennsylvania
+[520.42,521.401]	0	U	[NOISE]
+[521.401,522.447]	0	U	[LAUGHTER]
+[522.447,523.058]	2	Female,English	oh
+[523.058,523.339]	1	Female,English	yeah
+[523.339,524.464]	2	Female,English	pretend
+[524.551,525.453]	2	Female,English	you'll move
+[525.773,527.179]	1	Female,English	yeah I move a lot
+[527.373,529.642]	1	Female,English	like that, I I move a lot
+[529.739,530.796]	1	Female,English	and I lived in
+[531.591,532.784]	1	Female,English	a lot of different cities
+[534.316,535.373]	2	Female,English	then just stay.
+[535.984,540.59]	2	Female,English	I got wish I can do that same, I just stay in Shanghai all the time
+[541.007,541.86]	0	U	[*]
+[542.054,542.471]	0	U	[*]
+[542.471,542.859]	2	Female,English	doing my
+[542.859,543.15]	0	U	[*]
+[543.15,544.876]	2	Female,English	undergrad, undergraduate
+[545.293,545.807]	2	Female,English	degree
+[545.807,546.35]	0	U	[NOISE]
+[546.408,547.63]	2	Female,English	bachelor degree
+[547.698,553.254]	2	Female,English	and when I I'm just so glad that I finally move to U K[+]
+[553.516,557.259]	1	Female,English	I mean you you didn't stay still you moved, you know and specially
+[557.453,560.721]	1	Female,English	you move to whole other country to get your masters which is awesome
+[561.39,562.311]	0	U	[*]
+[564.047,565.104]	2	Female,English	yeah I hope[+]
+[565.104,566.19]	1	Female,English	able to do that
+[567.276,568.207]	0	U	[NOISE]
+[568.818,571.155]	2	Female,English	yeah mhm
+[571.756,573.162]	0	U	[*]
+[573.298,574.316]	1	Female,English	what?
+[574.607,576.837]	2	Female,English	oh oh now I remember another thing
+[576.847,578.282]	0	U	[*]
+[578.321,580.619]	2	Female,English	do still you remember the twerking course
+[580.716,581.637]	2	Female,English	I mention?
+[582.345,584.071]	1	Female,English	the one that you mention[+]
+[584.75,585.642]	2	Female,English	twerking
+[585.7,587.213]	1	Female,English	the one that you mention[+]
+[587.795,588.59]	2	Female,English	mhm
+[588.619,593.768]	2	Female,English	like just remember ah you went when I told you to go to play house and to
+[593.807,595.407]	1	Female,English	oh yeah that one[+]
+[595.407,599.567]	1	Female,English	yeah so i met a girl who does the classes but her classes are
+[599.984,601.38]	1	Female,English	way expensive
+[601.458,603.281]	2	Female,English	yeah two hundred[+]
+[603.436,605.938]	1	Female,English	no she raise she raise the price[+]
+[606.607,608.139]	2	Female,English	ah again? Oh my God
+[608.139,609.768]	1	Female,English	more like three hundred and thirty
+[610.738,612.144]	2	Female,English	its so expensive
+[612.173,613.54]	1	Female,English	that's too expensive
+[614.093,617.71]	1	Female,English	I'm not paying that money to go twerk I already know how to twerk at the club[+]
+[617.933,621.967]	1	Female,English	and I like her like I would support her but that's too expensive for a class[+]
+[622.956,627.921]	2	Female,English	yeah I don't know why ah how who will pay for those money like, super rich
+[627.921,628.299]	0	U	[*]
+[628.299,630.665]	2	Female,English	girl who will pay for twerking course like that? Go
+[630.665,632.721]	1	Female,English	I mean she will pay for it
+[632.876,633.7]	1	Female,English	is that
+[634.573,639.499]	1	Female,English	I mean she's got to make her money and she has to pay for the renting space and all of that you know
+[639.79,641.797]	1	Female,English	I understand the business still[+]
+[642.098,644.813]	1	Female,English	but is that is too much money for me
+[645.841,648.11]	2	Female,English	and I agree same same
+[648.265,651.184]	1	Female,English	and it's not right shes ah[+]
+[651.921,655.761]	1	Female,English	professional dancer that toured around the world or anything like that you know it's just
+[656.275,656.973]	1	Female,English	right right right
+[657.283,658.825]	1	Female,English	dance twerk class so
+[659.95,663.46]	2	Female,English	it's actually I don't even think like I don't think she's[+]
+[663.625,667.785]	2	Female,English	she's very super good at twerking or something just normal
+[667.979,668.464]	0	U	[*]
+[669.094,670.568]	2	Female,English	basic twerking
+[671.024,672.682]	2	Female,English	class I mean how could be
+[672.682,673.487]	0	U	[NOISE]
+[673.516,674.728]	0	U	[*]
+[675.184,679.334]	1	Female,English	I thought about 'em like men I I ah there're so many people there like
+[680.527,683.3]	1	Female,English	like taking dance classes in China I could
+[683.3,686.859]	1	Female,English	just have some free time I would love to teach dance classes[+]
+[687.024,688.498]	1	Female,English	I think I do good
+[688.847,690.253]	1	Female,English	but I don't have time[+]
+[690.253,691.077]	2	Female,English	you should
+[691.213,692.396]	2	Female,English	oh yeah you have that
+[692.396,693.87]	1	Female,English	I don't have time
+[694.762,696.624]	2	Female,English	yeah and I um?[+]
+[696.75,697.123]	0	U	[*]
+[697.123,700.871]	1	Female,English	maybe if I stay in Beijing after this this kind of work
+[701.133,702.762]	1	Female,English	and then I do a different kind a job[+]
+[703.053,705.613]	1	Female,English	and then I I have more free time maybe I could do it then[+]
+[707.116,708.163]	2	Female,English	yeah you should
+[708.619,713.235]	2	Female,English	I mean because you are a foreigner a foreigner always can make more money compare
+[713.642,714.321]	2	Female,English	to our
+[714.515,715.271]	2	Female,English	like
+[715.281,715.921]	0	U	[NOISE]
+[715.95,720.808]	2	Female,English	Chinese are really cheap in China oh ah maybe Chinese ah just cheap everywhere but
+[720.808,722.156]	0	U	[NOISE]
+[722.214,723.853]	1	Female,English	I don't think so
+[725.23,729.39]	2	Female,English	I don't it just don't pay us well like even
+[729.71,730.253]	2	Female,English	even the
+[730.253,731.979]	0	U	[*]
+[732.464,735.596]	2	Female,English	in some other country like it says or
+[735.848,739.436]	2	Female,English	or in UK that they get more money than me
+[739.436,741.967]	2	Female,English	like the waitress got more make more money than me
+[741.996,745.07]	1	Female,English	oh where does he make more money than the job you have now?[+]
+[745.39,746.437]	2	Female,English	yeah[+]
+[747.824,749.317]	0	U	[NOISE]
+[749.967,754.67]	2	Female,English	and you have to pay a lot of money for housing in Beijing as well
+[754.767,758.083]	1	Female,English	yeah I've heard housing ah rent just really expensive
+[760.207,760.973]	0	U	[NOISE]
+[761.167,764.658]	1	Female,English	how much is rent again? But you don't pay rent where you at now though, right?
+[764.813,768.527]	2	Female,English	but my m[~] I hate I don't really want to live in
+[768.585,772.047]	2	Female,English	with my parents like I don't have other option cause
+[772.047,774.51]	2	Female,English	I make very little money and I spend it all.
+[774.704,777.196]	0	U	[NOISE]
+[777.7,781.327]	2	Female,English	but I have live a life I have to right
+[781.385,783.499]	1	Female,English	no you gotta make choose your pick[+]
+[783.596,786.922]	1	Female,English	but that's the thing like even if you do wanna moving out
+[787.31,789.579]	1	Female,English	and you go somewhere and live on your own[+]
+[790.161,794.282]	1	Female,English	the quality of life is not gonna be as exciting because you're gonna be living paychecks[+]
+[794.35,796.241]	1	Female,English	paycheck kind of pay for your rent
+[797.104,798.636]	2	Female,English	exactly yeah
+[799.208,800.985]	2	Female,English	that's why I stay with my parents 
+[800.985,801.335]	0	U	[*]
+[801.335,803.533]	2	Female,English	I thought if I can make more money
+[803.95,804.687]	2	Female,English	like
+[804.755,805.065]	0	U	[NOISE]
+[805.171,806.519]	2	Female,English	if I might If my
+[806.519,807.053]	0	U	[NOISE]
+[807.053,812.241]	2	Female,English	my salary can be like double or triple I think I will definitely move out
+[812.939,815.654]	2	Female,English	cause move out to like Guomao
+[815.683,817.235]	2	Female,English	or Sanlitun
+[817.836,818.893]	2	Female,English	and
+[819.659,823.373]	2	Female,English	maybe Guomao or Shuangjing but areas just at jus
+[823.411,828.774]	2	Female,English	near that area cause areas is in that area like you have wonder[+]
+[828.774,831.596]	2	Female,English	dancing course if I want like
+[832.003,834.098]	2	Female,English	go to the restaurant or a bars
+[834.311,835.727]	2	Female,English	or clubbing[+]
+[835.727,836.687]	1	Female,English	to right
+[837.773,838.927]	2	Female,English	ah yes
+[839.179,843.31]	2	Female,English	mhm she live in that area but she kind of live in an
+[843.339,844.939]	2	Female,English	historical building
+[845.268,847.402]	2	Female,English	and that's to be honest
+[847.402,848.236]	0	U	[*]
+[848.236,850.35]	2	Female,English	is like really really old
+[850.447,851.62]	2	Female,English	and
+[851.62,853.007]	2	Female,English	she got inn have like
+[853.23,855.024]	2	Female,English	mhm proper floor
+[855.363,859.174]	2	Female,English	her floor is like stone ah like no no no I ah
+[859.339,860.202]	2	Female,English	steel
+[860.202,860.502]	0	U	[NOISE]
+[860.561,861.734]	2	Female,English	what is the name like
+[861.996,862.859]	2	Female,English	ah!
+[864.847,866.127]	2	Female,English	no no um
+[866.379,868.357]	2	Female,English	oh yeah but she didn't have like 
+[868.435,871.955]	2	Female,English	like I didn't think I'll have floor I just basically like ah
+[872.236,872.876]	2	Female,English	an
+[873.448,874.117]	2	Female,English	as
+[874.243,876.008]	2	Female,English	decorate it an
+[876.076,878.607]	1	Female,English	so its unfinished just like unfinished floor
+[879.043,880.042]	2	Female,English	yeah
+[880.527,881.39]	2	Female,English	it's just
+[882.738,885.259]	2	Female,English	and the doing she live like
+[885.395,886.675]	2	Female,English	how do I
+[886.927,888.75]	0	U	[*]
+[888.818,890.573]	2	Female,English	of years of history
+[890.825,893.327]	1	Female,English	oh that's cool, that's interesting though[+]
+[893.86,895.111]	2	Female,English	yeah that's cool but[+]
+[895.111,897.322]	1	Female,English	so for she lives with her parents or what?
+[898.321,901.23]	2	Female,English	mhm she live she live by herself
+[901.453,906.515]	2	Female,English	but she she used to live she used to like to live there with her ex boyfriend
+[906.893,910.917]	2	Female,English	and now she finally found another boyfriend so they live together
+[911.344,912.003]	0	U	[NOISE]
+[912.013,914.767]	1	Female,English	well how much does she pay for that place that she have?[+]
+[915.63,918.568]	2	Female,English	it's so stupid Kate like three thousand
+[919.402,921.293]	1	Female,English	so find a cheap place like that
+[921.613,924.037]	1	Female,English	and then you can decorate it as best as you can
+[924.26,927.538]	1	Female,English	because they're different way that you can decorate a place that
+[927.887,929.681]	1	Female,English	is it already fancy
+[929.933,931.921]	1	Female,English	and if you good decorating skills
+[932.134,934.122]	1	Female,English	you can make your place look like it's
+[934.723,937.225]	1	Female,English	super chic and high end fashionable.
+[937.904,942.762]	1	Female,English	It's all about your decorating skills and you can get um like get the floor is that properly
+[943.208,945.671]	1	Female,English	ah like finish with wood or whatever
+[946.098,948.435]	1	Female,English	you can always put um what do you call it
+[949.133,949.734]	1	Female,English	rug
+[950.19,952.721]	1	Female,English	get rugs on it or get a carpet and put it over
+[953.39,954.35]	2	Female,English	oh yeah
+[954.379,954.98]	0	U	[*]
+[955.116,955.591]	1	Female,English	just get
+[955.591,956.046]	0	U	[*]
+[956.046,960.003]	1	Female,English	just get a cheap place like you don't have to get an expensive place that has
+[960.006,962.381]	1	Female,English	every single possible thing you can think of
+[962.895,967.016]	1	Female,English	its like you gotta choose and pick, what is it that you absolutely need
+[967.472,968.5]	2	Female,English	mhm [+]
+[968.529,969.364]	1	Female,English	absolutely want
+[970.479,971.564]	2	Female,English	and then
+[972.176,976.102]	2	Female,English	but her places may hard to find because she she has to live
+[976.102,980.816]	2	Female,English	in that area for really really long time like couple, many years like three years?
+[980.845,981.222]	0	U	[NOISE]
+[981.222,981.97]	2	Female,English	so
+[982.125,983.25]	2	Female,English	hers
+[983.793,987.477]	2	Female,English	a tenancy? Haven't actually writes about like
+[987.506,987.981]	0	U	[NOISE]
+[988.942,989.649]	2	Female,English	like
+[989.649,992.278]	2	Female,English	it was it was three hun[~] three thousand
+[992.462,997.077]	2	Female,English	quite very beginning and three years later it's just three thousand it
+[997.301,1000.044]	2	Female,English	so it's where we keep compare to the price now
+[1000.239,1001.393]	1	Female,English	well yeah
+[1002.226,1002.798]	2	Female,English	um
+[1003.409,1005.33]	2	Female,English	so you I've want to find ah
+[1005.649,1010.255]	2	Female,English	I find a place to live like only a room a single room will cost like three hundred.
+[1010.255,1011.506]	2	Female,English	ah th[~]three thousand sorry
+[1013.33,1016.84]	2	Female,English	in a like one room one room in a share
+[1016.908,1021.804]	2	Female,English	you share the apartment with someone else and one room cost more than three thousand
+[1021.833,1022.707]	0	U	[NOISE]
+[1023.153,1023.889]	1	Female,English	but she has
+[1024.627,1026.896]	1	Female,English	she has one bedroom a kitchen
+[1027.148,1028.524]	1	Female,English	what how's her setup
+[1029.456,1029.872]	0	U	[*]
+[1029.93,1035.7]	2	Female,English	no but her place is quite kind a weird like she have, she want use the bathroom she have to go outside.
+[1036.147,1040.559]	2	Female,English	like she doesn't really have a bathroom inside her studio[+]
+[1040.656,1045.204]	2	Female,English	and even if she want to cook she have to go outside as well
+[1045.33,1048.306]	2	Female,English	it is like leaving her her kitchen
+[1048.306,1050.954]	2	Female,English	and bathroom looks like public
+[1051.022,1054.571]	2	Female,English	I don't know it's super weird like she had to go outside to use the bathroom
+[1054.678,1055.88]	1	Female,English	yeah that is kinda weird
+[1056.753,1058.004]	0	U	[NOISE]
+[1058.004,1058.828]	1	Female,English	pretty weird
+[1059.603,1060.912]	2	Female,English	because it's old building
+[1061.039,1064.015]	2	Female,English	like few many many many many years ago
+[1064.335,1066.73]	2	Female,English	so it it's not fully function
+[1066.73,1067.312]	0	U	[NOISE]
+[1067.341,1067.884]	1	Female,English	yeah
+[1067.982,1070.542]	1	Female,English	that sounds very old and very weird
+[1070.542,1070.958]	0	U	[NOISE]
+[1071.249,1074.73]	1	Female,English	I would hate to walk outside in order to use my bathroom[+]
+[1074.954,1076.36]	1	Female,English	specially if I had to walk like
+[1076.941,1080.685]	1	Female,English	wake up in the middle of the night and use the toilet that suck[+]
+[1081.324,1081.771]	0	U	[NOISE]
+[1081.771,1083.341]	2	Female,English	yeah and she has like
+[1083.341,1084.079]	0	U	[*]
+[1084.079,1087.918]	2	Female,English	it was really dark in the hall the hall right
+[1088.015,1092.65]	2	Female,English	the the hall and she have walk through the hall which is a super old
+[1092.679,1093.717]	0	U	[NOISE]
+[1093.775,1094.485]	2	Female,English	building[+]
+[1094.485,1095.239]	1	Female,English	sounds scary
+[1096.083,1098.478]	2	Female,English	yeah like ghosts there might be ghost
+[1098.478,1101.233]	1	Female,English	ghost really that's what you thinking about?
+[1101.649,1102.513]	0	U	[NOISE]
+[1102.513,1103.113]	1	Female,English	ghost
+[1103.434,1104.141]	1	Female,English	your funny
+[1104.141,1104.656]	2	Female,English	don't
+[1104.85,1105.169]	0	U	[NOISE]
+[1105.295,1108.079]	2	Female,English	um I just I don't know
+[1108.399,1111.016]	2	Female,English	I don't know why it's so expensive in Beijing
+[1111.142,1113.266]	2	Female,English	buy the house and flat
+[1113.81,1116.815]	1	Female,English	I guess because there are so many people in Beijing[+]
+[1117.553,1118.861]	1	Female,English	and make sense[+]
+[1120.918,1121.353]	2	Female,English	yeah
+[1121.489,1122.033]	2	Female,English	okay
+[1122.226,1122.964]	2	Female,English	fine
+[1123.206,1126.348]	1	Female,English	yeah I know you can't fight it much sorry[+]
+[1126.348,1127.026]	0	U	[NOISE]
+[1128.112,1129.645]	2	Female,English	anyway have fun
+[1129.703,1131.924]	2	Female,English	find a job that pay more
+[1132.36,1133.775]	2	Female,English	to support me too
+[1133.959,1134.958]	1	Female,English	yeah[+]
+[1136.325,1137.101]	0	U	[NOISE]
+[1137.169,1138.633]	2	Female,English	mhm
+[1138.633,1141.097]	2	Female,English	maybe or I should find boyfriend who can share
+[1141.427,1142.919]	1	Female,English	oh my gosh
+[1143.376,1148.815]	1	Female,English	find a boyfriend just find a room mate don't you have to find a boyfriend the boyfriend thing ah
+[1149.291,1151.502]	1	Female,English	I can't stand boyfriends at this moment
+[1153.072,1153.771]	2	Female,English	you know
+[1153.771,1154.701]	0	U	[*]
+[1154.701,1155.982]	2	Female,English	always I have a match up
+[1156.021,1160.821]	2	Female,English	I have another friend other Chinese girl and she's like very tall and
+[1160.918,1165.872]	2	Female,English	and she's pretty, OK she's pretty and she can always find a place to live like kind of
+[1166.193,1168.112]	2	Female,English	boyfriend place to live
+[1168.209,1170.77]	2	Female,English	so many guys will offer their place for her
+[1171.177,1172.621]	1	Female,English	so weird
+[1172.844,1176.782]	1	Female,English	that's so weird I don't understand how that even happen
+[1177.557,1180.04]	2	Female,English	I feel uncomfortable living with some
+[1180.176,1182.222]	2	Female,English	like living in someone else place[+]
+[1182.222,1182.958]	1	Female,English	yeah
+[1183.754,1184.685]	1	Female,English	I would too
+[1185.382,1187.632]	1	Female,English	living with so many different kinda guys
+[1188.176,1189.194]	1	Female,English	you never know
+[1189.843,1190.542]	2	Female,English	yeah
+[1190.697,1194.954]	2	Female,English	and she just live with she always stay with her boyfriends
+[1195.09,1196.999]	1	Female,English	just so many boyfriends
+[1197.039,1198.89]	2	Female,English	um she never[+]
+[1199.026,1202.896]	2	Female,English	she never actually stay in her places just always stay in her boyfriend place
+[1203.438,1206.037]	2	Female,English	and and her boyfriend will pay for everything
+[1207.152,1209.295]	2	Female,English	and she only likes foreigner
+[1209.839,1210.604]	1	Female,English	I wish
+[1211.826,1212.844]	1	Female,English	I wish
+[1212.98,1215.366]	1	Female,English	finding a guy like that is a so freaking hard
+[1216.753,1217.421]	2	Female,English	mhm [+]
+[1217.421,1221.678]	1	Female,English	maybe is not that hard but I want the guy like if I find a guy like that I want him to be
+[1221.94,1222.726]	1	Female,English	attractive
+[1223.123,1226.604]	1	Female,English	finding an attractive guy he will do that for you in with heart[+]
+[1227.409,1228.399]	2	Female,English	yeah agree
+[1228.399,1230.095]	1	Female,English	ugly guys who'll do it for you but
+[1230.358,1233.005]	1	Female,English	you don't want an ugly guy you know you want someone attractive
+[1233.713,1234.342]	2	Female,English	mhm
+[1235.187,1235.914]	1	Female,English	um
+[1236.757,1237.485]	0	U	[*]
+[1237.485,1240.598]	1	Female,English	you know sometimes attractive guy can be really boring
+[1240.598,1241.14]	1	Female,English	wow
+[1242.507,1247.181]	2	Female,English	you have one find interesting person who share you who you shares
+[1247.347,1248.501]	2	Female,English	like share things
+[1248.821,1249.965]	2	Female,English	interest
+[1250.197,1251.09]	2	Female,English	and
+[1251.312,1253.165]	2	Female,English	and he have to be not ugly
+[1253.582,1254.037]	2	Female,English	and
+[1254.037,1255.444]	1	Female,English	not too quirk[+]
+[1255.57,1256.432]	0	U	[*]
+[1256.461,1257.295]	1	Female,English	oh you
+[1257.295,1257.8]	0	U	[NOISE]
+[1257.936,1261.775]	1	Female,English	all your standards all the highest standard that we create the man[+]
+[1262.387,1263.152]	2	Female,English	yeah
+[1263.405,1264.724]	2	Female,English	this is hard
+[1265.363,1268.495]	1	Female,English	yeah I totally that's that's a fantasy
+[1269.165,1270.736]	1	Female,English	I don't even tried it[+]
+[1271.57,1272.947]	1	Female,English	reach that in real life
+[1274.381,1275.632]	2	Female,English	how gonna[+]
+[1275.855,1276.302]	0	U	[NOISE]
+[1276.495,1279.376]	1	Female,English	ah I don't know
+[1280.432,1283.953]	2	Female,English	we're funny I think I'll find a ni[~]nice guy like Bruce[+]
+[1284.079,1287.541]	2	Female,English	um um I mean and kind of he's
+[1287.599,1290.964]	2	Female,English	becomes super busy he won't even have time to see me
+[1291.525,1292.592]	2	Female,English	on weekend[+]
+[1293.009,1295.152]	1	Female,English	I wish me feeling me so lost
+[1295.336,1296.325]	1	Female,English	you know[+]
+[1296.782,1298.838]	2	Female,English	should I stop keep seeing him?[+]
+[1298.993,1299.506]	0	U	[NOISE]
+[1300.021,1301.262]	2	Female,English	I thought he was
+[1302.377,1304.85]	2	Female,English	very into me and now I don't know
+[1305.101,1305.965]	0	U	[NOISE]
+[1305.965,1308.524]	1	Female,English	can you just ask him if he's into you or not?
+[1309.804,1310.503]	0	U	[NOISE]
+[1311.696,1313.586]	2	Female,English	I don't know he's he's[+]
+[1313.742,1318.222]	2	Female,English	he feels like super depressed for this moment because his new job
+[1318.348,1321.907]	2	Female,English	he's super busy and he's so an[~]anxiety
+[1322.062,1323.177]	2	Female,English	and depressed
+[1323.177,1323.729]	1	Female,English	mhm
+[1323.855,1327.026]	2	Female,English	ah and super tired all the time
+[1327.57,1331.953]	2	Female,English	so I don't think the good time to actually asking about it because he's feeling himself
+[1332.05,1333.107]	1	Female,English	yeah yeah
+[1334.445,1337.645]	2	Female,English	but makes me not feeling myself as well
+[1337.713,1340.079]	0	U	[*]
+[1341.097,1342.124]	1	Female,English	oh my gosh
+[1343.181,1344.141]	2	Female,English	life is hard[+]
+[1344.461,1345.266]	1	Female,English	you guys talk?
+[1346.41,1347.7]	1	Female,English	like on the phone?[+]
+[1348.079,1349.833]	1	Female,English	or you guys like text each other?[+]
+[1350.445,1351.405]	2	Female,English	text each other
+[1351.473,1352.083]	1	Female,English	mhm
+[1353.421,1354.604]	2	Female,English	WeChat[+]
+[1354.741,1355.438]	1	Female,English	yeah
+[1355.477,1355.884]	0	U	[NOISE]
+[1356.786,1359.181]	1	Female,English	like no one else you talk on the phone anymore[+]
+[1359.541,1362.062]	1	Female,English	oh come on internet
+[1362.255,1365.746]	1	Female,English	so annoyed of it, internet I can't get anything John
+[1367.084,1369.005]	2	Female,English	why what is it mean oh yes
+[1369.043,1371.022]	2	Female,English	too much ditraction distraction
+[1371.177,1374.124]	1	Female,English	no its not even distraction nothing load
+[1374.581,1378.759]	1	Female,English	the WiFi is horrible nothing ever loads every time I get to
+[1378.993,1382.9]	1	Female,English	like this spot that I need to be at, it just doesn't load
+[1383.444,1386.226]	1	Female,English	and then my computer freezes so annoying.
+[1386.925,1388.428]	2	Female,English	I mean it's department
+[1388.679,1389.301]	0	U	[NOISE]
+[1389.678,1390.261]	1	Female,English	mhm?
+[1390.9,1394.575]	2	Female,English	you mean you in your apartment the WiFi in your apartment, ah[+]
+[1395.158,1396.66]	2	Female,English	can you just use you like data?
+[1396.776,1398.095]	1	Female,English	mobile data?
+[1400.335,1401.936]	1	Female,English	oh yeah I could try that now
+[1401.936,1406.736]	1	Female,English	I would try that on my old phone and it wou[~] and it wouldn't let me connect for some reason which is weird
+[1406.997,1410.159]	1	Female,English	but I could try it on my phone that I have now cause I have a new phone
+[1410.604,1411.603]	2	Female,English	mhm
+[1411.603,1417.382]	1	Female,English	yeah should try that but then I'm gonna on my data and if I use on my data when I go out in in public
+[1417.742,1419.884]	1	Female,English	my phone is gonna run so slow
+[1420.495,1421.039]	2	Female,English	mhm
+[1421.862,1424.335]	1	Female,English	I Can't I can't do it[+]
+[1424.461,1425.072]	1	Female,English	bothers me
+[1425.14,1425.616]	2	Female,English	Ok
+[1425.616,1427.409]	0	U	[*]
+[1427.409,1428.747]	2	Female,English	to over twenty minutes
+[1429.233,1431.686]	2	Female,English	like can you start a new record
+[1431.986,1432.821]	2	Female,English	recording?

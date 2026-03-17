@@ -11,38 +11,79 @@ import { useAuth } from "@/contexts/AuthContext";
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already logged in
-  if (isAuthenticated && user) {
-    const dest = user.role === "admin" ? "/admin/dashboard" : user.role === "qa" ? "/qa/dashboard" : "/agent/dashboard";
+  if (!authLoading && isAuthenticated && user) {
+    const dest =
+      user.role === "admin" || user.role === "super_admin" || user.role === "manager" || user.role === "viewer"
+        ? "/admin/dashboard"
+        : user.role === "qa"
+        ? "/qa/dashboard"
+        : "/agent/dashboard";
+
     return <Navigate to={dest} replace />;
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!email || !password) {
-      toast({ title: "Missing credentials", description: "Please enter both email and password.", variant: "destructive" });
+      toast({
+        title: "Missing credentials",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
       return;
     }
-    setIsLoading(true);
-    setTimeout(() => {
-      login(email);
-      toast({ title: "Welcome back", description: "You've been signed in successfully." });
-      if (email.includes("admin")) {
+
+    try {
+      setIsLoading(true);
+
+      const loggedInUser = await login(email, password);
+
+      toast({
+        title: "Welcome back",
+        description: "You've been signed in successfully.",
+      });
+
+      if (
+        loggedInUser.role === "admin" ||
+        loggedInUser.role === "super_admin" ||
+        loggedInUser.role === "manager" ||
+        loggedInUser.role === "viewer"
+      ) {
         navigate("/admin/dashboard");
-      } else if (email.includes("qa")) {
+      } else if (loggedInUser.role === "qa") {
         navigate("/qa/dashboard");
       } else {
         navigate("/agent/dashboard");
       }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.detail || "Login failed. Please check your email and password.";
+
+      toast({
+        title: "Sign in failed",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <PageTransition>
@@ -55,30 +96,34 @@ const Login = () => {
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="glass-strong rounded-3xl p-8 sm:p-10 w-full max-w-[420px] glow-primary"
         >
-          {/* Logo */}
           <div className="text-center mb-10">
             <div className="flex items-center justify-center mb-3">
               <img src={calltoneLogo} alt="CallTone" className="h-56 -my-16" />
             </div>
-            <p className="text-muted-foreground text-sm font-light">AI-Powered Call Quality Assurance</p>
+            <p className="text-muted-foreground text-sm font-light">
+              AI-Powered Call Quality Assurance
+            </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Email</label>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@calltone.tech"
+                placeholder="you@calltone.ai"
                 className="w-full h-12 px-4 rounded-xl glass-input text-sm"
                 required
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Password</label>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -106,18 +151,6 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="relative w-full h-12 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm transition-all duration-300 hover:brightness-110 disabled:opacity-50 shadow-lg shadow-primary/30 overflow-hidden"
-              onClick={(e) => {
-                const btn = e.currentTarget;
-                const rect = btn.getBoundingClientRect();
-                const ripple = document.createElement("span");
-                const size = Math.max(rect.width, rect.height);
-                ripple.style.width = ripple.style.height = `${size}px`;
-                ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
-                ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-                ripple.className = "absolute rounded-full bg-white/30 animate-[ripple_0.6s_ease-out] pointer-events-none";
-                btn.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
-              }}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -131,7 +164,7 @@ const Login = () => {
           </form>
 
           <p className="text-center text-[11px] text-muted-foreground mt-8 font-light">
-            Demo: use "admin" for Admin, "qa" for QA, otherwise Agent view
+            Use the seeded backend accounts to sign in
           </p>
         </motion.div>
       </div>

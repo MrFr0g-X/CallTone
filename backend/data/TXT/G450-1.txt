@@ -1,0 +1,483 @@
+[0.001,2.696]	1	Male,English	we just got kind of follow ahead and um
+[3.656,8.078]	1	Male,English	and I think it's gonna big success story in in the science as long as thirty years
+[8.272,10.279]	2	Male,English	so what were the things that were
+[10.57,13.12]	2	Male,English	intriguing to you that had sort of bored you
+[13.295,13.954]	2	Male,English	from the other
+[13.993,14.604]	0	U	[*]
+[14.633,15.457]	2	Male,English	before that
+[16.107,17.067]	0	U	[NOISE]
+[17.319,19.055]	1	Male,English	I think the the fact that
+[19.598,22.255]	1	Male,English	the sexuality is central to
+[22.507,28.897]	1	Male,English	evolutionary biology and evolutionary psychology you know it's how how we got our genes in the next generation is
+[29.227,32.524]	1	Male,English	choosing mates and having babies and raising raising kids
+[33.038,34.638]	1	Male,English	and if you ignore that
+[34.764,39.05]	1	Male,English	you ignore I think one of the core driving force in human nature 
+[39.273,40.592]	1	Male,English	and human culture
+[41.794,44.897]	1	Male,English	now most of psychology kind of ignores
+[44.994,48.233]	1	Male,English	ah make choice and sexuality and reproduction
+[48.708,49.484]	1	Male,English	um
+[49.61,52.432]	1	Male,English	acceptance so far is it's kind of like
+[52.8,54.691]	1	Male,English	seen as politically relevant
+[54.827,56.97]	1	Male,English	so like you'll get a little bit on
+[57.164,62.09]	1	Male,English	while there's sexual discrimination against certain kind of groups which is important to address like
+[62.119,62.604]	2	Male,English	mhm
+[62.633,64.679]	1	Male,English	like gay and lesbian rights and
+[64.97,66.89]	1	Male,English	and so forth um
+[67.016,69.896]	1	Male,English	but they don't really see it as central to
+[70.245,72.941]	1	Male,English	um who we are and to what motivates us
+[73.387,76.199]	2	Male,English	so do you see it as as the real pillar
+[76.587,81.096]	2	Male,English	of what's motivating us we are like we were sort of looking at this in in concentric circles
+[81.872,82.56]	1	Male,English	I think
+[83.084,86.798]	1	Male,English	it depends where you're at in life I think for young single people
+[87.176,92.199]	1	Male,English	what we call mating effort like the attempt to attract other people whatever your sexual orientation
+[92.48,94.41]	1	Male,English	that drives an awful lot of behavior
+[94.759,101.993]	1	Male,English	how you address what id[~]ideas you adopt um why you bother to learn things why bother to get credentials
+[102.09,104.553]	1	Male,English	I think a lot of that is driven by mating effort
+[104.941,106.919]	1	Male,English	but then if you settle down
+[107.074,109.644]	1	Male,English	and you're in a long term monogamous relationship
+[109.702,111.758]	1	Male,English	you don't kinda need to do that stuff
+[112.524,114.696]	1	Male,English	but that's exactly when people gets lazy[+]
+[114.725,114.977]	2	Male,English	ah
+[115.084,117.479]	1	Male,English	that's where people let themselves go right?
+[117.673,118.604]	1	Male,English	um
+[119.05,123.433]	1	Male,English	they don't send shape they dress more sloppily they kind of don't bother reading
+[123.85,125.77]	1	Male,English	like serious nonfiction anymore
+[125.799,126.342]	1	Male,English	mhm
+[126.4,126.827]	1	Male,English	um
+[127.554,128.97]	1	Male,English	why because
+[129.697,130.735]	1	Male,English	a lot of that
+[130.958,133.673]	1	Male,English	self creative display is already accomplished it's
+[133.799,134.856]	1	Male,English	its purpose
+[135.37,144.926]	2	Male,English	so in that way that's not in real conflict with evolutionary biology right because you wanna look your best to get the best mate all that so in that way you guys are on the same
+[144.926,145.135]	0	U	[*]
+[145.135,145.804]	2	Male,English	so where does that
+[146.056,146.604]	2	Male,English	where does do you have a
+[146.604,147.142]	0	U	[*]
+[147.278,148.112]	1	Male,English	well
+[148.49,157.576]	1	Male,English	so when biologists talk about courtship displays and here's the power bird building its power and we talk about like ideological displaced and here's people
+[157.741,160.97]	1	Male,English	showing off like their virtues are virtue signaling
+[161.028,163.85]	1	Male,English	the biologists know exactly what we're talking about
+[164.364,167.147]	1	Male,English	and we know exactly what they're talking about it's just
+[168.398,170.318]	1	Male,English	often they don't wanna get into trouble
+[170.512,173.964]	1	Male,English	that that follows if they kind of make these analogies
+[174.187,175.215]	1	Male,English	too clearly
+[175.273,178.027]	2	Male,English	have you had any conversations with Brit Einstien?
+[178.279,179.152]	1	Male,English	not directly
+[179.2,179.375]	2	Male,English	yeah
+[179.394,179.559]	1	Male,English	no
+[179.598,180.577]	2	Male,English	alright I think I'm gonna have[+]
+[180.587,182.119]	2	Male,English	to facilitate that one probably
+[182.119,183.399]	1	Male,English	that was that'll be a lot of fun[+]
+[183.457,184.999]	2	Male,English	yeah we will do that for sure[+]
+[185.164,186.279]	2	Male,English	so
+[186.279,190.158]	2	Male,English	it's interesting okay so let's let's focus on the sexuality part and it's relevant because
+[190.41,195.152]	2	Male,English	it seems like so many things that we used to be able to talk about
+[195.239,195.695]	1	Male,English	mhm
+[195.753,197.702]	2	Male,English	suddenly can't talk about that
+[197.838,198.914]	2	Male,English	academics
+[199.021,201.959]	2	Male,English	our self selecting elder and things with that nature now
+[201.998,203.239]	2	Male,English	I set you at before we started
+[203.821,209.348]	2	Male,English	you're one of few people I see on Twitter I'm like oh you kinda gets what Twitter is 'cause you out some smart stuff you're[+]
+[209.416,214.187]	2	Male,English	kind of funny out there at the right time you know when to go with snark and all of those things
+[214.284,217.319]	2	Male,English	and that's when you see that the only way that you would be able to
+[217.455,219.753]	2	Male,English	have any of these conversations online
+[219.879,223.36]	1	Male,English	I think social media is actually really good for addressing some of these
+[223.399,228.238]	1	Male,English	very tricky issues like human sexuality and how it's playing out in the modern world
+[229.285,231.215]	1	Male,English	as long as you do with humor
+[231.273,233.416]	1	Male,English	and soft application and
+[233.552,235.559]	1	Male,English	a little bit of absurdity which is
+[235.695,237.702]	1	Male,English	and what I try to do in my twitter game
+[237.741,238.187]	2	Male,English	yeah[+]
+[238.439,239.496]	1	Male,English	because a few
+[239.632,240.582]	1	Male,English	approach it like
+[240.708,245.964]	1	Male,English	well here's the next paper on like sex differences or the next paper on how courtship works
+[246.032,246.633]	1	Male,English	or[+]
+[246.798,249.164]	1	Male,English	oh awesome a new virtue signaling paper
+[249.988,253.576]	1	Male,English	people will quickly tune out and they'll often ask
+[253.867,256.524]	1	Male,English	often think well you just kind of being doctor in hair
+[256.65,257.416]	1	Male,English	here
+[257.775,265.61]	1	Male,English	but the thing you quickly realize if you study evolution at all is evolution is a very weird process that often produces
+[265.736,267.918]	1	Male,English	completely absurd results
+[268.238,268.781]	1	Male,English	right
+[268.936,271.69]	1	Male,English	you watch any David Autenburn actual history
+[272.107,274.182]	1	Male,English	you know documentary and it's like
+[274.279,279.05]	1	Male,English	these animals are insane what they're doing is crazy and humans are no different
+[279.118,279.68]	2	Male,English	yes
+[279.758,282.599]	1	Male,English	and if you don't have a sense of that absurdity
+[282.725,286.381]	1	Male,English	then it's very easy to get terribly terribly serious and
+[286.72,288.873]	1	Male,English	censorious and ideological
+[289.387,290.056]	1	Male,English	and
+[290.153,293.217]	2	Male,English	that really happens a lot of what's going on right?[+]
+[293.295,293.76]	1	Male,English	help
+[293.867,294.575]	1	Male,English	anybody
+[294.691,296.844]	2	Male,English	yeah alright so let's let's pause on
+[297.028,300.16]	2	Male,English	sexuality per second and I don't want to get off that topic so to speak but
+[300.354,302.245]	2	Male,English	um let's just do the two minute
+[302.352,304.272]	2	Male,English	uh Twitter portion of the show
+[304.359,304.873]	2	Male,English	which is[+]
+[304.941,306.153]	2	Male,English	is there a
+[307.21,309.45]	2	Male,English	evolutionary
+[309.896,313.29]	2	Male,English	explanation to the way we're behaving with each other
+[313.513,320.834]	2	Male,English	is there a psychological explanation to the way we act one way on this medium and another way on another medium
+[320.97,321.552]	2	Male,English	and
+[321.639,323.239]	2	Male,English	and how that has evolved
+[323.433,325.44]	2	Male,English	because of the edge of communication[+]
+[325.867,328.524]	1	Male,English	it's a great question and I think honestly
+[328.747,333.605]	1	Male,English	social media blind sided everybody I don't know anybody in the nineties
+[333.731,335.981]	1	Male,English	in psychology or any behavioral science
+[336.165,336.902]	1	Male,English	who's going
+[336.999,339.074]	1	Male,English	here's what the internet is gonna turn into
+[339.152,339.53]	2	Male,English	mhm
+[339.617,340.965]	1	Male,English	right it'll become
+[341.033,341.741]	1	Male,English	this
+[342.051,344.65]	1	Male,English	massive global system of
+[345.067,349.295]	1	Male,English	very rapid fire interactive snarky virtue signaling
+[349.634,352.485]	1	Male,English	that drives everyone nuts and yet we can't give it up
+[352.524,352.873]	2	Male,English	yeah
+[352.941,353.736]	1	Male,English	and nobody[+]
+[353.765,355.21]	2	Male,English	they'd probably would have thought that[+]
+[355.21,356.141]	2	Male,English	but maybe nobody else
+[356.17,356.587]	1	Male,English	yeah
+[356.713,358.701]	1	Male,English	so could the maybe William Gibson
+[358.759,360.107]	1	Male,English	ah a few other folks
+[360.485,362.376]	1	Male,English	kind of the happy inside but
+[363.21,368.912]	1	Male,English	honestly nobody was derive in kind of from first principles well we are a social primates
+[369.154,371.908]	1	Male,English	and we love to gossip and we love to
+[372.141,372.907]	1	Male,English	show off
+[373.13,374.313]	1	Male,English	ah you know our
+[374.41,378.25]	1	Male,English	our virtues and our intelligence to each other and therefore obviously
+[378.473,381.77]	1	Male,English	there will be this thing called Facebook and Twitter and whatever
+[382.216,383.37]	1	Male,English	and it would
+[384.747,386.415]	1	Male,English	play out in this way
+[386.657,390.09]	1	Male,English	and moreover it will revolutionize politics
+[390.439,391.952]	1	Male,English	or culture in some way
+[392.078,393.804]	1	Male,English	no nobody thought that
+[394.124,396.141]	1	Male,English	so we can come up with post talk
+[396.296,397.644]	1	Male,English	reasons why that
+[397.954,399.438]	1	Male,English	might have played out that way
+[400.039,400.718]	1	Male,English	um
+[400.941,403.724]	1	Male,English	but I wanna know only do that with a very high degree of
+[404.839,405.828]	1	Male,English	humility
+[406.158,406.672]	1	Male,English	like
+[406.992,407.913]	1	Male,English	I don't know
+[408.107,408.747]	2	Male,English	yeah[+]
+[409.707,410.124]	1	Male,English	it
+[410.667,413.033]	1	Male,English	now that we're here you can kind of
+[413.324,415.108]	1	Male,English	a little bit makes sense of it
+[416.0,416.747]	1	Male,English	that
+[416.873,419.375]	2	Male,English	well it's almost like you can see the evolution
+[419.792,420.393]	2	Male,English	um
+[420.49,421.13]	2	Male,English	twitter
+[421.159,422.352]	2	Male,English	in a dream where
+[422.41,427.656]	2	Male,English	you now see people I'd like to include myself of that where they're trying to clean it up a little bit
+[427.84,433.455]	2	Male,English	it's like we all did this unknown thing of snark and everyone was trying to destroy each other and
+[433.678,437.353]	2	Male,English	one of each other in virtue signal about the things we care about and all that
+[437.353,442.124]	2	Male,English	and it's like now I'm seeing a growing group of people that are like oh how do we feel
+[442.279,444.674]	2	Male,English	with reality and
+[444.771,446.604]	2	Male,English	we can't find in social media
+[446.924,450.735]	2	Male,English	but maturely and honestly and without wrecking everything[+]
+[450.793,453.227]	2	Male,English	and that almost strikes me as uh evolutionary
+[453.324,454.187]	2	Male,English	function[+]
+[454.594,457.125]	1	Male,English	in it's evolution it's happening so fast
+[457.358,459.113]	1	Male,English	and on such a huge scale
+[459.307,461.198]	1	Male,English	I mean who could have predicted that like
+[462.255,464.427]	1	Male,English	the more amateurish looking
+[464.524,467.821]	1	Male,English	a visual mean is the better it would spread
+[467.879,468.432]	2	Male,English	aha
+[468.48,470.051]	1	Male,English	that's completely bizarre
+[470.381,471.244]	1	Male,English	um
+[471.496,477.13]	1	Male,English	for the fact that I can get more engagement if I do a really surreal poll on Twitter about
+[477.227,480.0]	1	Male,English	something where all four categories are just completely
+[480.004,480.75]	1	Male,English	I'm saying
+[480.905,482.699]	1	Male,English	like people are more into that
+[482.699,483.019]	2	Male,English	right
+[483.523,484.803]	1	Male,English	than they are
+[485.191,485.841]	1	Male,English	like
+[485.967,487.78]	1	Male,English	even my starkly comment about
+[487.877,488.74]	0	U	[NOISE]
+[488.779,489.962]	1	Male,English	political issue X and Y
+[490.03,495.887]	2	Male,English	so what does that tell you about the psychological state of how we interact with these things l[~]like the mean one's really interesting it's not
+[495.984,497.361]	2	Male,English	that slightly produced[+]
+[497.613,502.316]	2	Male,English	quick thing you know really sharp looking images that go viral it's[+]
+[502.481,506.699]	2	Male,English	you know a frog and a black and white idiotic thing or crudely drawn
+[506.738,506.922]	1	Male,English	yeah
+[506.961,508.522]	1	Male,English	yes or that tree or whatever
+[508.648,510.665]	1	Male,English	like th[~]there's something really there to that
+[510.956,512.682]	2	Male,English	about how we react to images
+[512.963,513.584]	1	Male,English	to s[~]
+[513.778,519.693]	1	Male,English	there's also something kind of charming about the artlessness and amateurish quality it's almost like if
+[520.207,520.779]	0	U	[*]
+[520.818,524.881]	1	Male,English	I'm kinda fascinated by stand up comedy and that stand up comedians who
+[525.618,527.276]	1	Male,English	are overly slick
+[527.499,528.459]	1	Male,English	are never that funny
+[528.488,529.836]	1	Male,English	and the ones who are a little bit[+]
+[530.35,532.774]	1	Male,English	sham poet like Steven Wright back in the eighties
+[532.784,533.104]	2	Male,English	mhm
+[533.899,536.003]	1	Male,English	hilarious and he looks
+[536.013,536.653]	0	U	[NOISE]
+[536.74,539.378]	1	Male,English	he looks like he's always on the edge of complete
+[539.475,541.104]	1	Male,English	failure or a psychotic brain
+[541.123,542.093]	0	U	[NOISE]
+[542.131,543.441]	1	Male,English	and you have that's what makes it
+[543.722,547.155]	1	Male,English	work or I guess sign fields you know in the nineties
+[547.31,549.356]	1	Male,English	um to show is also kind of
+[549.395,550.995]	1	Male,English	had this artless quality
+[551.179,552.43]	2	Male,English	yeah alright so let's
+[552.459,554.505]	2	Male,English	chill that so that's Saturday now okay[+]
+[555.019,563.378]	2	Male,English	it's getting harder and harder to talk about these these set of people that think we're all exactly the same and that at same time they're obsessed with all of our differences I mean this is 
+[563.436,563.921]	1	Male,English	yeah[+]
+[563.979,567.15]	2	Male,English	seemingly is the most potent idea of the day right now
+[567.237,567.499]	1	Male,English	mhm
+[567.538,568.168]	2	Male,English	um
+[568.265,573.424]	2	Male,English	what are what are the things that you're thinking about in in the realm of sexuality right now that are intriguing?
+[573.453,573.676]	1	Male,English	mhm
+[573.996,574.51]	0	U	[NOISE]
+[574.539,575.373]	1	Male,English	I'm thinking
+[576.11,583.218]	1	Male,English	I'm especially concerned about the fact that nobody seems to know what a successful long term relationship is seriously gonna look like
+[583.625,586.098]	1	Male,English	in the early to mid twenty first century
+[586.195,588.367]	1	Male,English	that we don't really have a script
+[588.493,589.259]	1	Male,English	for that
+[589.647,591.47]	1	Male,English	we've kind of inherited
+[591.751,595.116]	1	Male,English	you know descriptive monogamous lifelong marriage
+[595.436,598.258]	1	Male,English	but nobody really believe that that is gonna
+[598.859,600.74]	1	Male,English	kind of solve all of our problems
+[600.944,603.116]	1	Male,English	people don't ent[~]enter into that
+[603.281,607.441]	1	Male,English	very early in life they spend their teens and twenties doing casual dating
+[607.819,608.973]	1	Male,English	what is that
+[609.516,610.185]	1	Male,English	like
+[610.35,612.493]	1	Male,English	nobody quite understand what the
+[612.803,614.917]	1	Male,English	the rules or the ethics of that are
+[615.053,623.14]	1	Male,English	and then at a certain point you kinda get tired of that you find a partner and you kind of settle down go okay we're gonna buy into the wedding industry now and do the wedding thing and
+[623.46,624.75]	1	Male,English	the ring bubble
+[625.196,625.991]	1	Male,English	but
+[626.864,628.677]	1	Male,English	there all these subcultures
+[628.813,634.253]	1	Male,English	in America and around the world that are exploring all different aspect of sexuality and kind of how to
+[634.447,636.299]	1	Male,English	incorporate new insights
+[636.522,637.86]	1	Male,English	into relationships
+[638.5,639.247]	1	Male,English	things like
+[639.664,644.231]	1	Male,English	um pedia Sam or kink or polyamory and open relationships
+[644.357,648.013]	1	Male,English	or the whole red pill madness fear subculture
+[648.527,649.167]	1	Male,English	um
+[649.39,650.679]	1	Male,English	and then on the other side of
+[650.738,652.173]	2	Male,English	what does that have to do with sexuality?
+[652.202,653.22]	0	U	[NOISE]
+[653.239,655.247]	1	Male,English	well it's a certain way of of
+[656.042,657.642]	1	Male,English	men and women interacting
+[658.001,658.534]	1	Male,English	right?
+[658.573,661.676]	1	Male,English	the sort of red pill vision of male female dynamics
+[662.005,664.691]	1	Male,English	is that there's a really deep sexual polarity
+[664.721,665.176]	2	Male,English	mhm
+[665.293,668.522]	1	Male,English	masculine and feminine and if you don't understand
+[668.91,670.151]	1	Male,English	that polarity
+[670.345,673.477]	1	Male,English	your relationships it's it's heterosexual or gonna
+[673.991,676.037]	1	Male,English	fail and burn out and not be
+[676.454,678.18]	1	Male,English	satisfying the either person
+[678.956,681.71]	1	Male,English	so this much subcultures they're all
+[682.127,687.053]	1	Male,English	ah exploring different parts of human nature human sexuality different
+[687.14,689.642]	1	Male,English	possible ways to run a relationship
+[689.991,694.258]	1	Male,English	and I think they all have valuable lessons we can kind of learn and incorporate
+[694.665,695.848]	1	Male,English	like even if you're
+[696.139,698.893]	1	Male,English	vanilla uh monogamous and straight and
+[699.31,701.55]	1	Male,English	you you don't believe how will the
+[702.19,703.567]	1	Male,English	crazy manosphere stuff
+[703.858,707.95]	1	Male,English	there's still important lessons there and that's kind of my interest now is
+[708.58,710.51]	1	Male,English	sort of going around and and
+[710.83,713.477]	1	Male,English	being eclectic and gathering those up
+[713.584,714.282]	1	Male,English	and
+[714.67,717.298]	1	Male,English	figuring out wh[~]which of those might be useful
+[717.928,719.247]	2	Male,English	the people
+[720.168,722.253]	2	Male,English	stay on those scenes
+[722.631,722.99]	1	Male,English	mhm
+[723.019,724.338]	2	Male,English	for for a lifetime
+[724.522,726.995]	2	Male,English	so I you know I could see worse where somebody
+[727.121,728.905]	2	Male,English	you'd be in it whatever your thing is
+[728.982,730.476]	2	Male,English	and the map heads[*]navy[+]
+[730.505,732.464]	2	Male,English	whatever you're thinking is you do it for a while[+]
+[732.813,739.698]	2	Male,English	and then eventually I guess it sort of it the then you sort to get tired of it so you move on to something more traditional 'cause that just
+[739.95,740.241]	1	Male,English	mhm
+[740.27,743.47]	2	Male,English	part of our psychology right? nothing kinda lasts forever
+[743.819,746.699]	1	Male,English	some people do that certainly there's a
+[747.242,754.99]	1	Male,English	there's a life profile of kinda openness and experimentation where you'd you try a bunch of stuff in your teens and twenties and a lot of it deviates
+[755.31,759.46]	1	Male,English	markedly from the traditional culture you you grow up in
+[760.013,760.527]	0	U	[NOISE]
+[760.556,761.778]	1	Male,English	and a lot of that
+[762.03,762.67]	1	Male,English	um
+[763.145,764.202]	1	Male,English	hurts
+[764.241,769.7]	1	Male,English	and it doesn't work and it's heartbreaking and then you a lot of people kind of drift back into the mainstream
+[769.875,772.076]	1	Male,English	on the other hand you get people who
+[772.658,779.95]	1	Male,English	marry young and may try the the standard vanilla monogamy thing into their thirties forties fifties and then go
+[780.328,781.763]	1	Male,English	this is not working
+[782.035,783.528]	1	Male,English	I need something different
+[783.635,784.333]	1	Male,English	better
+[784.43,785.962]	1	Male,English	more open whatever
+[787.087,788.105]	1	Male,English	and I think
+[788.202,789.007]	1	Male,English	um
+[789.191,790.636]	1	Male,English	it can go either way
+[790.645,791.179]	0	U	[NOISE]
+[791.441,793.477]	1	Male,English	you know the psychological research
+[793.739,796.018]	1	Male,English	on all these subcultures is lacking
+[796.076,796.396]	2	Male,English	mhm
+[796.435,797.647]	1	Male,English	we don't know
+[797.938,800.207]	1	Male,English	even which lasts longer
+[800.847,803.475]	1	Male,English	a monogamous relationship or an open relationship
+[803.824,805.676]	1	Male,English	I really we don't know[+]
+[805.734,807.111]	1	Male,English	there's not a good day to own that
+[807.47,807.887]	2	Male,English	aha
+[808.042,809.516]	1	Male,English	those lots of anecdotes
+[809.739,811.591]	1	Male,English	there's examples on both sides
+[812.367,813.298]	1	Male,English	but I think it's
+[814.917,820.619]	1	Male,English	almost scientific misconduct not to ask those questions and instead ask like
+[820.997,826.476]	1	Male,English	let's do you know study on which alcoholism treatment works let's do
+[826.699,830.413]	1	Male,English	the five thousand study on that before we do the first study
+[830.927,832.682]	1	Male,English	on what kind of relationships
+[833.39,834.224]	1	Male,English	last longest
+[834.311,838.025]	2	Male,English	so basically because you think if we can address some of those issues first perhaps
+[838.122,840.236]	2	Male,English	the study that we're focusing on relate it out there as[*]
+[840.275,840.915]	2	Male,English	alcoholism and[+]
+[840.944,841.39]	1	Male,English	yeah[+]
+[841.739,844.648]	1	Male,English	relationship satisfaction is really really important to people
+[845.259,847.848]	1	Male,English	um but it's one of the the things that's
+[847.858,848.362]	0	U	[NOISE]
+[848.401,850.224]	1	Male,English	it's not entirely taboo
+[850.35,853.676]	1	Male,English	to study it but it's pretty hard to get federal research funding
+[854.161,856.585]	1	Male,English	to work at something that's kind of a cornerstone of
+[857.293,858.757]	1	Male,English	american well being
+[859.31,865.351]	2	Male,English	so when that New York times article came out about Jordan Peterson and they said he was for enforced monogamy
+[865.39,865.768]	1	Male,English	mhm
+[866.03,870.859]	2	Male,English	which in effect just means marriage and it should be use a couple times in the times before just to mean marriage
+[870.927,871.499]	1	Male,English	yeah[+]
+[871.635,874.03]	2	Male,English	everyone thought that mad he wanted women in chains
+[874.195,876.396]	2	Male,English	to be you know dragged around by their husband
+[876.59,878.19]	2	Male,English	the the argument that[+]
+[878.355,879.625]	2	Male,English	people that are for
+[879.78,881.196]	2	Male,English	enforced monogamy or marry
+[881.39,886.927]	2	Male,English	basically make it that this is the best way to build a sort of functioning healthy society and that you can reproduce
+[887.111,889.283]	2	Male,English	and have other generation bill of those things
+[889.38,893.453]	2	Male,English	you think we don't have enough information basically were enough um
+[893.705,893.899]	1	Male,English	right
+[893.967,895.373]	2	Male,English	well enough study of the information
+[895.567,898.951]	2	Male,English	so to know if that really is the best way to build a
+[899.019,899.882]	2	Male,English	human society
+[899.95,903.557]	1	Male,English	right we don't know there's there's good reasons to think that
+[903.887,904.653]	1	Male,English	um
+[905.041,908.755]	1	Male,English	monogamous marriage has been important in every major civilization
+[909.065,912.362]	1	Male,English	like it's kind of the most common way to arrange
+[912.527,913.38]	1	Male,English	pair bonding
+[913.419,913.991]	2	Male,English	mhm
+[914.243,915.087]	1	Male,English	um
+[915.436,919.567]	1	Male,English	and I'm sure Jordan Peterson has read the same articles
+[919.78,922.66]	1	Male,English	I've assigned even in my Polyamory class
+[922.98,927.47]	1	Male,English	that's about here are the benefits of monogamous marriage and there are many benefits of it
+[928.168,930.67]	1	Male,English	the question is once you have
+[931.281,932.561]	1	Male,English	contraception
+[932.881,935.761]	1	Male,English	once you have safer sex and S T I testing
+[935.974,937.933]	1	Male,English	once you have paternity testing
+[938.253,939.853]	1	Male,English	once you have a lot of other
+[940.241,941.938]	1	Male,English	um technologies
+[942.064,945.933]	1	Male,English	right that can solve some of the same issues that monogamy used to solve
+[946.321,947.339]	1	Male,English	then what?
+[947.475,949.453]	1	Male,English	is monogamy still optimal?
+[949.511,949.967]	2	Male,English	mhm
+[950.025,951.596]	1	Male,English	probably is for a lot of people
+[951.955,953.002]	1	Male,English	probably is for a lot of people
+[953.041,955.213]	2	Male,English	how much of it do you think just come down to how have you wired?
+[955.853,957.094]	1	Male,English	I think there's a lot of that
+[957.327,959.373]	1	Male,English	some people just wired to go
+[960.336,962.837]	1	Male,English	and I just want a pair bond I want my mate
+[962.963,967.153]	1	Male,English	and I want to keep it simple and that's good enough for me and
+[967.443,967.986]	0	U	[NOISE]
+[968.015,969.393]	1	Male,English	I will get a lot of
+[970.352,973.775]	1	Male,English	a companion that love and attachment and that it last a long time
+[973.931,975.976]	1	Male,English	a lot of people are very happy with that
+[976.21,977.324]	1	Male,English	and that's great
+[977.558,981.736]	1	Male,English	but a lot of people either want more sexual novelty and variety
+[981.999,985.49]	1	Male,English	or they have a higher tolerance for sexual jealousy
+[986.255,987.09]	1	Male,English	um
+[987.158,987.759]	0	U	[NOISE]
+[987.885,988.428]	0	U	[NOISE]
+[988.524,990.096]	1	Male,English	or they just kinda get bored
+[990.318,992.073]	1	Male,English	in long term relationships
+[992.297,992.723]	2	Male,English	mhm
+[992.879,996.205]	1	Male,English	and I think those people should not be prescribing
+[996.524,997.33]	1	Male,English	like
+[997.941,1000.423]	1	Male,English	rampant polyamory for the monogamous
+[1000.655,1003.284]	1	Male,English	but the monogamous shouldn't necessarily be prescribing
+[1003.535,1005.872]	1	Male,English	like our way is the only way for everybody else
+[1006.067,1006.444]	2	Male,English	mhm
+[1006.764,1016.083]	2	Male,English	so I wonder how this is all related to a gay community because I don't know dare I mention the name Milo but when I have Milo on my show years ago really before he was
+[1016.181,1017.285]	2	Male,English	Milo so to speak[+]
+[1017.741,1023.375]	2	Male,English	ah we got in we have about a half hour chat on this where me as a married gay liberal and him
+[1023.501,1027.158]	1	Male,English	as the unmarried gay conservative which is already sort of a flip on thing
+[1027.187,1027.438]	1	Male,English	yeah
+[1027.496,1030.406]	2	Male,English	his argument was that he wasn't really for
+[1030.639,1034.828]	2	Male,English	gay marriage because he felt that by being the outsider the gays has
+[1034.993,1039.764]	2	Male,English	yeah come up with art and creativity and music and comedy and
+[1039.861,1041.926]	2	Male,English	all of that th[~]that incredible
+[1042.197,1045.485]	2	Male,English	that just get started it all of that made this incredible community
+[1045.553,1047.764]	2	Male,English	like a diverse community in the right sense of diversity
+[1047.793,1048.044]	1	Male,English	yeah
+[1048.102,1052.011]	2	Male,English	and my argument was well you got to at least give people opportunity
+[1052.04,1052.37]	1	Male,English	mhm
+[1052.399,1058.799]	2	Male,English	to be equal under the law so that they at least have a choice I'm not denying that the gay community has come up with all sorts of incredible stuff
+[1058.799,1059.022]	1	Male,English	yeah
+[1059.119,1062.581]	2	Male,English	but you gotta make them equal and then let them go either way on that okay
+[1062.639,1063.016]	1	Male,English	yeah
+[1063.123,1072.112]	2	Male,English	do do you think there's legitimacy to that and do you have you done or have you seen any studies on what the effects of the of marriage on the gay community have been?
+[1072.724,1073.605]	0	U	[NOISE]
+[1073.742,1075.719]	1	Male,English	I haven't seen a whole lot but I
+[1075.729,1077.204]	2	Male,English	I guess it's flying too soon right?[+]
+[1077.485,1084.592]	1	Male,English	my understanding on some of this comes from down dance habits right is that a lot of gay couples have a kind of monogamish
+[1085.068,1088.52]	1	Male,English	relationship where it's like we're pair bonded we love each other
+[1088.656,1089.878]	1	Male,English	but there's also
+[1090.004,1095.638]	1	Male,English	and negotiated agreement that we can have outside lovers once in a while under certain conditions
+[1095.861,1096.821]	1	Male,English	that we
+[1097.005,1098.672]	1	Male,English	um kind of mutually agree to
+[1098.77,1104.976]	2	Male,English	it's funny I hear that all the time it's I don't know as the gay couple that I know that are that are married or you know really
+[1105.072,1105.489]	1	Male,English	yeah
+[1105.616,1110.416]	2	Male,English	together I don't know one that are like or at least I know that they are like that let's put it that way
+[1110.484,1110.726]	1	Male,English	okay
+[1110.736,1111.473]	2	Male,English	but but I I know that
+[1111.667,1112.656]	2	Male,English	this is a
+[1112.753,1114.033]	2	Male,English	something that's pause out there
+[1114.033,1114.381]	1	Male,English	yeah[+]
+[1114.449,1115.593]	2	Male,English	so we can go with this for
+[1116.302,1117.009]	1	Male,English	so
+[1117.194,1117.485]	1	Male,English	I
+[1117.717,1121.994]	1	Male,English	but I'm sure this variety[+]and I'm sure that there's also kind of social
+[1122.13,1123.022]	1	Male,English	assortment
+[1123.148,1123.603]	1	Male,English	alright
+[1123.632,1124.234]	1	Male,English	so that
+[1124.302,1125.746]	1	Male,English	the more monogamous
+[1125.969,1129.159]	1	Male,English	gay or lesbian couples will kind of be more comfortable
+[1129.295,1130.662]	1	Male,English	with each other and
+[1130.77,1131.943]	1	Male,English	they might know
+[1132.108,1135.142]	1	Male,English	those crazy monogamish folks down the road
+[1135.152,1135.473]	1	Male,English	but[+]
+[1136.015,1136.85]	1	Male,English	um
+[1136.976,1138.983]	2	Male,English	or you just go to your friends that well I mean that
+[1139.119,1140.621]	2	Male,English	let's get anything puzzle yeah[+]
+[1140.718,1141.446]	1	Male,English	yeah and
+[1141.582,1144.685]	1	Male,English	honestly it's not that different from like the way um
+[1145.771,1148.621]	1	Male,English	even heterosexual relationships are working lot of Europe
+[1148.815,1149.33]	2	Male,English	mhm
+[1149.359,1151.822]	1	Male,English	where a lot of those were tacitly monogamish
+[1152.112,1154.449]	1	Male,English	and there's a sort of understanding that
+[1154.925,1155.797]	1	Male,English	um
+[1156.244,1161.005]	1	Male,English	monogamy doesn't necessarily mean sexual exclusivity for either partner
+[1161.421,1165.717]	1	Male,English	um America is extremely puritanical and kind of rigid about that
+[1165.901,1167.123]	1	Male,English	and we think
+[1167.57,1168.501]	1	Male,English	um
+[1169.266,1172.844]	1	Male,English	anything that happens outside the pair bond is
+[1173.359,1175.88]	1	Male,English	almost by definition unethical
+[1177.005,1179.593]	1	Male,English	um and there is research on
+[1180.079,1182.484]	1	Male,English	sort of anti polyamory stigma
+[1182.542,1183.113]	2	Male,English	mhm
+[1183.181,1184.811]	1	Male,English	where people actually
+[1184.976,1190.736]	1	Male,English	are more prejudice against people in open relationships than they are against almost any other group
+[1191.084,1191.861]	1	Male,English	um
+[1191.957,1195.409]	1	Male,English	in terms of orientation, or race, or religion, or anything
+[1196.05,1196.815]	1	Male,English	um
+[1196.912,1200.491]	1	Male,English	that might be gradually changing but I think it's a it's a huge
+[1201.684,1203.245]	1	Male,English	social problem especially among
+[1203.312,1204.04]	1	Male,English	John Z
+[1204.176,1205.039]	1	Male,English	and younger one you

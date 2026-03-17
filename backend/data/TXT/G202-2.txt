@@ -1,0 +1,495 @@
+[0.01,0.592]	1	Female,English	Yeah um
+[0.592,1.057]	2	Female,English	OK
+[1.057,1.668]	0	U	[NOISE]
+[1.678,2.153]	2	Female,English	um
+[2.153,5.217]	0	U	[NOISE]
+[5.217,5.896]	2	Female,English	Yeah
+[5.896,11.404]	2	Female,English	OK so both of us went to Chinese University so we're actually like really close to each other surprisingly.
+[11.559,17.125]	2`	Female,English	Um but you study there for a year whole degree. me at some different one year study Chinese and stuff
+[17.29,19.084]	2	Female,English	but um I think that
+[19.084,22.759]	2	Female,English	Chinese University cultures are also quite different and so
+[22.895,24.078]	2	Female,English	maybe yeah
+[24.078,24.747]	2	Female,English	Yeah
+[24.747,29.673]	2	Female,English	Yeah well I don't think because you actually have the benefit of study get ah
+[29.673,31.564]	2	Female,English	Ah American University[+]
+[31.564,32.039]	1	Female,English	mhm
+[32.039,34.347]	2	Female,English	Did you stay at the at the dorm?
+[34.473,37.993]	1	Female,English	Yeah yeah so like I went to University for four years and stuff and um
+[37.993,40.815]	1	Female,English	it was like three hours away from my home so I like live there.
+[40.815,42.027]	1	Female,English	um and then
+[42.027,48.524]	1	Female,English	The thing about that place of it's in Dallas it's such a big city both for I like outside and so it was like the university is sort of isolated
+[48.524,53.314]	1	Female,English	and like um here in China the Universities are just like I'm make serious the study you know but there was like
+[53.314,57.998]	1	Female,English	This is a school and there's like a fence around there and like there's nothing else. I don't know.[+]
+[57.998,62.885]	1	Female,English	So for a while I was like a sort of a hard for me so then have like any car so through really suck in the school
+[62.885,66.696]	1	Female,English	but then it was like kinda good cause I made like a lot of friends that way you know[+]
+[66.793,68.16]	2	Female,English	all second pool together[+]
+[68.17,71.69]	1	Female,English	Yeah like also sucks together so I really feel like a family in that place.
+[71.69,74.376]	1	Female,English	and then also like I think American University cultures like
+[74.376,75.055]	0	U	[NOISE]
+[75.084,78.255]	1	Female,English	I don't know I just think Chinese are like Mart's duties like
+[78.255,80.65]	1	Female,English	Um in American College like
+[80.65,83.588]	1	Female,English	school is part of your life. You know but it's not your whole life and so
+[83.714,87.69]	1	Female,English	Um most of the great memories were like the things that we get off by the school
+[87.69,89.93]	2	Female,English	Yeah the way the people you know at school[+]
+[89.93,95.05]	1	Female,English	right yeah cause we like live there and stuff and we really felt like our home, like our school, like our home of like that
+[95.05,96.165]	1	Female,English	um or us
+[96.175,96.873]	1	Female,English	the
+[96.873,97.862]	1	Female,English	place I wherein
+[97.862,98.531]	1	Female,English	um
+[98.531,104.495]	1	Female,English	Yeah that's going to China was just like I go to school there to learn Chinese and like go to class and like go home and stuff so[+]
+[104.495,105.775]	1	Female,English	wasn't the same feeling
+[105.775,108.461]	1	Female,English	and also the surprise when I got there cause um
+[108.461,115.695]	1	Female,English	I want to go there because I'm dislike my university life cause there was like so many friends and I just it felt like really fun more fun of worthy.
+[115.695,116.897]	0	U	[NOISE]
+[116.907,118.497]	1	Female,English	and then I also want to learn Chinese
+[118.497,125.13]	1	Female,English	and then when I got there I was like wow there's like smell so so live in and stuff. I was like what is this we just go to clapping at home.
+[125.13,126.061]	2	Female,English	Yeah[+]
+[126.061,131.113]	1	Female,English	sort of like this is coming in the first but then my then my Chinese got a lot better something like that I can feel.
+[131.113,131.685]	0	U	[NOISE]
+[131.695,132.461]	0	U	[*]
+[132.461,133.508]	0	U	[NOISE]
+[133.508,133.925]	2	Female,English	Yeah
+[133.925,135.312]	2	Female,English	What did you study though?
+[135.312,136.0]	0	U	[NOISE]
+[136.048,137.067]	0	U	[*]
+[137.096,138.832]	1	Female,English	no in your American University[+]
+[138.832,140.141]	2	Female,English	Yeah so the communication
+[140.228,141.13]	2	Female,English	and so[+]
+[141.13,143.176]	2	Female,English	Oh very cool[+]
+[143.176,147.908]	1	Female,English	right so it was really interesting like actually at first I was studying like elementary and[+]
+[147.947,150.245]	1	Female,English	and I thought I wanna be a Kim Hyun's staff but then
+[150.255,156.267]	1	Female,English	actually I came to China like for a month like teaching English and I was and I also like work in summercamp kids
+[156.267,159.467]	1	Female,English	and I was just like, Oh my gosh I won't do this and so
+[159.651,162.919]	1	Female,English	then I like change my major like calculate through the communication and stuff
+[162.919,164.199]	1	Female,English	Um but I really like them
+[164.228,165.353]	0	U	[*]
+[165.634,168.301]	1	Female,English	and I think it relates to like the work that we're doing now
+[168.301,169.261]	0	U	[*]
+[169.319,169.988]	1	Female,English	so
+[169.988,170.57]	0	U	[NOISE]
+[170.57,173.799]	1	Female,English	It was good and then I also had minor East Asian study it is not look like
+[173.828,180.451]	2	Female,English	Oh that's that's what my Australian friend also studied East Asian studies to knowledeg and um like other[+]
+[180.451,182.895]	2	Female,English	like Japanese and South Africa[+]
+[182.895,187.375]	1	Female,English	Well like the problems I don't remember that much and oh like I was kind of just like[+]
+[187.375,194.211]	1	Female,English	Aha doing the minimum and the classes it's still like it's doing fine and so I was just like learn from the test
+[194.221,194.977]	0	U	[*]
+[194.987,195.307]	1	Female,English	so
+[195.307,195.879]	0	U	[*]
+[195.879,197.576]	1	Female,English	I wish I remember more what the
+[197.576,198.255]	0	U	[*]
+[198.255,199.147]	1	Female,English	this time
+[199.428,204.655]	2	Female,English	So I'm really curious what is study communication is like like what kind of classes do you have or[+]
+[204.655,209.348]	1	Female,English	Yeah like there is a classes to be and there's like a lot classes Republic speaking and stuff like that
+[209.445,212.752]	1	Female,English	Um and then a love has to do was like a a real communication
+[212.771,215.215]	1	Female,English	to and so we have write many papers
+[215.234,215.719]	0	U	[*]
+[215.719,217.358]	1	Female,English	a lot of feature things like that
+[217.387,221.935]	1	Female,English	and then also like studying about um people like almost like Psychology and like how people think
+[221.935,226.027]	1	Female,English	then different like personality type and how to relate of those and stuff[+]
+[226.192,226.919]	1	Female,English	um
+[227.142,229.479]	1	Female,English	and so I think those are like really useful cause
+[229.479,232.718]	1	Female,English	and no matter what kind of job you have like this always you always make communication[+]
+[232.718,234.211]	2	Female,English	totally agree with that[+]
+[234.347,237.479]	2	Female,English	I've I should I've always in studying my communication but
+[237.479,240.233]	2	Female,English	I should've study communication why does I train if I was in culture
+[240.233,241.232]	1	Female,English	Well that's good too
+[241.232,241.775]	0	U	[NOISE]
+[241.775,244.199]	2	Female,English	cause communication is something that you will need anytime
+[244.199,244.839]	1	Female,English	mhm
+[245.004,252.8]	1	Female,English	Yeah like it was good and bad because like yeah from one you know that all the time then it was like, what do I do and I felt like I don't really have like a specialty you know
+[252.81,257.542]	1	Female,English	because it was like kind of really general but then it is it is for like changing[+]
+[257.542,259.375]	1	Female,English	careers and stuff I guess like
+[259.491,261.576]	1	Female,English	or just like the experience and so[+]
+[261.615,262.565]	0	U	[NOISE]
+[262.565,264.388]	1	Female,English	Yeah so and I was gonna buy
+[264.388,265.001]	0	U	[*]
+[265.001,265.988]	1	Female,English	pretty much yah
+[265.988,266.919]	0	U	[NOISE]
+[266.919,268.519]	1	Female,English	but I think it um
+[268.713,273.387]	1	Female,English	like the skills I learn that they also help me like communicating I like with Chinese cause
+[273.387,276.393]	1	Female,English	like people are all the same even though we're different and so[+]
+[276.393,276.936]	0	U	[NOISE]
+[276.936,278.633]	2	Female,English	that's really cool[+]
+[278.672,279.205]	1	Female,English	Yeah
+[279.205,279.942]	2	Female,English	I feel like
+[279.942,285.935]	2	Female,English	I I I'm a bit lacking in my communication in English like if it I have to write something like[+]
+[285.935,291.656]	2	Female,English	something's formal or like or like an essay. I feel like I'm kinda bad at some because my communication[+]
+[291.656,294.274]	2	Female,English	My writing skills I feel like[+]
+[294.274,297.096]	2	Female,English	My University where's is University is really of most of your like[+]
+[297.125,300.296]	2	Female,English	a lot of your essay's and writings but but mine was all in Chinese[+]
+[300.325,302.274]	2	Female,English	to my thesis it was in Chinese as well
+[302.284,303.816]	1	Female,English	Wow it's amazing[+]
+[303.816,304.32]	0	U	[NOISE]
+[304.33,306.638]	2	Female,English	it was a whole thing written in Chinese so I feel like that me
+[306.657,309.518]	2	Female,English	My English writing is not really my strong field.
+[309.518,311.147]	2	Female,English	and my English speaking[+]
+[311.244,312.01]	2	Female,English	I mean
+[312.01,314.211]	2	Female,English	You know that feel like I say some weird thing
+[314.347,315.297]	1	Female,English	Well it's OK[+]
+[315.297,316.897]	0	U	[NOISE]
+[316.897,321.775]	1	Female,English	I haven't meet too like before I went back to the U S this time my English is really bad
+[321.775,324.907]	1	Female,English	but then like after went there for a while then I like remember this
+[324.907,326.119]	0	U	[*]
+[326.216,329.164]	1	Female,English	but yeah I really love writing I feel like an English um
+[329.164,332.49]	1	Female,English	I could write papers really fast just like two pages in thirty minutes
+[332.49,333.324]	1	Female,English	just like that
+[333.324,334.798]	1	Female,English	and just a write articles
+[334.798,335.622]	2	Female,English	What kind is like[+]
+[335.632,340.335]	2	Female,English	topic do you like to write about or what was writing did you outside of work or school[+]
+[340.335,343.632]	1	Female,English	Oh like I don't now well like back then you know just like your school like
+[343.632,344.776]	1	Female,English	whatever topic they would give we
+[344.776,345.833]	2	Female,English	OK[+]
+[345.833,346.667]	1	Female,English	find me missing about it 
+[346.667,347.84]	0	U	[*]
+[347.84,348.616]	1	Female,English	I like that
+[348.655,352.582]	1	Female,English	and then um it was funny cause a lot of like my sisters and my friends they were like
+[352.592,353.581]	0	U	[*]
+[353.581,354.376]	1	Female,English	papers
+[354.444,359.787]	1	Female,English	and like maybe my sister can only think of one sense to say but I can like blow it up into a per graph
+[359.787,367.496]	1	Female,English	about saying and any directly of that and stuff but when it's better like too bad because now like ah everything's in Chinese well like my Chinese writing is terrible[+]
+[367.564,371.656]	1	Female,English	and I don't know like a fancy where is in so like that and so it's like oh no like um
+[371.724,375.593]	1	Female,English	I feel like I sound really stupid at Chinese but actually in English it was so like
+[375.593,376.456]	2	Female,English	I know right[+]
+[376.456,380.141]	1	Female,English	that's when I already did my best and applied well only in how smart I was in English[+]
+[380.141,381.799]	0	U	[NOISE]
+[381.799,384.078]	1	Female,English	that's so cool if I have to need write anything for English[+]
+[384.097,385.862]	0	U	[*]
+[385.862,391.273]	1	Female,English	Yeah and none of like calm down they were lessons I haven't use that still on wild but
+[391.312,391.971]	2	Female,English	Yeah
+[391.981,393.723]	1	Female,English	Yeah maybe
+[393.723,395.113]	2	Female,English	hope they don't think I am
+[395.113,398.284]	1	Female,English	gonna keep it up you might make a blog or something by about the crazy[+]
+[398.284,398.953]	0	U	[*]
+[398.953,400.679]	1	Female,English	few in Chinese i[~]in China[+]
+[400.912,401.61]	2	Female,English	Yeah
+[401.61,403.016]	0	U	[*]
+[403.016,403.792]	0	U	[NOISE]
+[403.792,404.461]	1	Female,English	Yeah[+]
+[404.461,405.353]	0	U	[*]
+[405.353,406.255]	0	U	[NOISE]
+[406.284,406.992]	0	U	[*]
+[406.992,408.068]	2	Female,English	on the subway
+[408.068,411.501]	2	Female,English	crazy I use think that's respectful[+]
+[411.501,416.941]	1	Female,English	that why parade is really poll if you think Chinese let's poll our phones or feelings this creature[+]
+[416.999,417.707]	2	Female,English	No
+[417.707,423.428]	1	Female,English	it's so weird like why would you talk about someone right in front of them just talking you it was the same like[+]
+[423.748,424.582]	1	Female,English	Yeah[+]
+[424.582,425.125]	0	U	[NOISE]
+[425.154,425.93]	1	Female,English	Oh no
+[425.93,426.822]	0	U	[NOISE]
+[426.832,428.354]	1	Female,English	Oh well and
+[428.616,430.313]	2	Female,English	Well my major was
+[430.313,434.376]	2	Female,English	Chinese language and culture but I feel like my University experience what it brought me
+[434.376,435.394]	2	Female,English	was something 
+[435.394,440.514]	2	Female,English	more than just what I study because I'm I managed to meet interesting 
+[440.514,442.628]	2	Female,English	people from so many different countries[+]
+[442.832,447.69]	2	Female,English	but ah offered me other opportunities and I really learned[+]
+[447.816,453.964]	2	Female,English	to a lot more about the world and I guess I traveled to I did travel to Lebanon because of that[+]
+[454.09,454.953]	2	Female,English	and[+]
+[455.05,460.49]	2	Female,English	that was really cool because I I got really really close with more of those people and I got to learn a lot about how
+[460.49,463.554]	2	Female,English	actually people there are all the same you know and how[+]
+[463.564,464.301]	1	Female,English	but I guess
+[464.33,465.377]	1	Female,English	it's the same with
+[465.377,466.832]	1	Female,English	in a relationships
+[466.861,468.141]	1	Female,English	will and um[+]
+[468.16,468.713]	0	U	[NOISE]
+[468.713,473.096]	1	Female,English	and also friendships with people we just to make sure that we're trying to look for the
+[473.096,476.684]	1	Female,English	similarities which are the rather than focusing on the difference[+]
+[476.684,477.324]	2	Female,English	all the different[+]
+[477.353,479.981]	1	Female,English	which allow the people think they got caught up and they will like I well[+]
+[480.004,482.001]	1	Female,English	We do it like this oh we do it like that
+[482.001,482.893]	2	Female,English	Yeah
+[482.893,483.63]	0	U	[NOISE]
+[483.63,487.315]	2	Female,English	and I think they think just like being open-minded like a lot of people think that
+[487.315,487.848]	0	U	[NOISE]
+[487.848,492.939]	2	Female,English	the way that they grew up or whatever it's like the right way is the only way but like especially[+]
+[493.036,497.361]	2	Female,English	like cause just for me like since I came here I chose to come here like obviously I'm the one that used to change
+[497.361,498.001]	0	U	[*]
+[498.001,498.544]	2	Female,English	so there's
+[498.544,500.018]	0	U	[*]
+[500.018,500.619]	2	Female,English	the same
+[500.91,501.763]	2	Female,English	um
+[501.763,503.974]	2	Female,English	but I guess there is a bounce to like a
+[503.974,504.459]	0	U	[NOISE]
+[504.459,510.442]	2	Female,English	Ah for a while I can like struggle with that like oh how much did I change to Chinese how much should I say American
+[510.597,511.14]	1	Female,English	Yeah
+[511.15,513.584]	2	Female,English	but so sort of like hard to know but
+[513.71,515.048]	2	Female,English	I guess that's just try to like
+[515.436,517.288]	2	Female,English	of what the negative suppose and
+[517.618,518.733]	2	Female,English	try to adopt the
+[518.733,519.79]	2	Female,English	positivity or so
+[519.79,520.527]	0	U	[*]
+[520.527,522.195]	0	U	[NOISE]
+[522.195,523.756]	1	Female,English	Yeah yeah I guess[+]
+[523.756,528.362]	1	Female,English	tha[~] that you like I could mix of both world like I wouldn't want to give up u[~] um I don't[+]
+[528.459,534.122]	1	Female,English	I appreciate when I see people who they can kind of adapt into a new culture well so maintaining their root.[+]
+[534.151,537.419]	1	Female,English	Am I not letting go who they are and I make the best of both worlds.[+]
+[537.71,538.67]	2	Female,English	Yeah yeah
+[538.67,539.659]	0	U	[*]
+[539.659,541.841]	1	Female,English	but one thing I think I don't to accept is
+[541.928,543.053]	1	Female,English	other Chinese
+[543.053,544.517]	1	Female,English	like has them similar
+[544.527,546.059]	1	Female,English	vision and view see the version
+[546.088,546.835]	2	Female,English	Yeah[+]
+[546.854,548.008]	1	Female,English	question me Biao zhun[+]
+[548.018,548.59]	2	Female,English	right
+[548.619,550.122]	1	Female,English	like something is it's you I just
+[550.18,553.128]	1	Female,English	it's so stupid like I was on this Chinese app[+]
+[553.196,554.864]	1	Female,English	it is called xiao hong shu and
+[554.893,556.493]	1	Female,English	kind of like a Pinterest basically[+]
+[556.522,556.968]	2	Female,English	Oh
+[556.978,560.653]	1	Female,English	and ther[~] there is one group post how to get chopstick leg first like called it[+]
+[560.653,561.584]	2	Female,English	Yeah[+]
+[561.807,562.641]	0	U	[*]
+[562.641,563.853]	2	Female,English	cause they don't have have a
+[563.853,564.454]	0	U	[*]
+[564.454,565.15]	2	Female,English	Yeah! for something like that[+]
+[565.15,565.558]	0	U	[*]
+[565.558,567.635]	1	Female,English	have another picture of a girl with a thigh gap 
+[567.635,569.962]	1	Female,English	and like a curve and like
+[569.962,572.968]	1	Female,English	and like you could see of her muscle and like and like really nice[+]
+[573.007,574.481]	1	Female,English	feminine leg and then the
+[574.481,575.47]	0	U	[*]
+[575.499,577.516]	1	Female,English	straight up and down legs like it's so boring[+]
+[577.768,580.842]	1	Female,English	and I was like oh my gosh they wanna get rid of their nice feminine curve[+]
+[580.978,582.539]	1	Female,English	that's so sad[+]
+[582.83,585.603]	2	Female,English	that's true I know I really that
+[585.603,589.356]	2	Female,English	they like they have one center view of beauty and like expect everyone to conforms it
+[589.55,591.557]	1	Female,English	and especially cause a lot of Chinese like
+[591.567,595.921]	1	Female,English	Um like different from each other like especially north and south
+[595.921,599.053]	1	Female,English	and they will kind of like just take one and I think it's pretty
+[599.082,601.487]	1	Female,English	but actually like all of them can get really pretty
+[601.487,603.019]	1	Female,English	I just impressed they are
+[603.019,604.881]	0	U	[*]
+[604.91,605.86]	1	Female,English	and so
+[606.025,608.43]	1	Female,English	Yeah I don't like that all which that they would be
+[608.43,609.778]	1	Female,English	accepting it was everybody right
+[610.03,610.757]	2	Female,English	Yeah
+[610.767,612.037]	0	U	[NOISE]
+[612.047,612.619]	1	Female,English	Yeah
+[612.716,613.773]	0	U	[*]
+[613.773,614.859]	1	Female,English	body shape if you could
+[614.956,619.756]	1	Female,English	like in America right now just like a big movement so like except like plus size and
+[619.795,622.083]	1	Female,English	curves and like somewhere that I think it's
+[622.161,627.3]	1	Female,English	a little too far cause it's good to like be healthy but at the same time like yeah of course like
+[627.3,627.843]	1	Female,English	everyone's
+[627.843,628.677]	0	U	[*]
+[628.687,630.51]	1	Female,English	it is their beauty and every shape and
+[630.51,631.179]	0	U	[*]
+[631.179,634.563]	1	Female,English	Yeah there's three in the in the differences world it's like[+]
+[634.563,635.058]	2	Female,English	Oh yeah
+[635.058,636.425]	1	Female,English	I mean we can't stand everyone.[+]
+[636.435,637.133]	0	U	[NOISE]
+[637.133,638.762]	1	Female,English	instead of like all getting the
+[638.762,640.178]	1	Female,English	double eyelids[+]
+[640.178,640.653]	2	Female,English	Yeah[+]
+[640.653,641.196]	0	U	[*]
+[641.38,646.898]	1	Female,English	otherwise so they have these weird challenges like the coin challenge you put coin on your on your collarbone
+[646.898,649.739]	1	Female,English	and you see how many coins you can fit on your like this[+]
+[649.739,651.795]	2	Female,English	Oh in that whole[+]
+[651.795,652.59]	1	Female,English	Yeah yeah[+]
+[652.59,654.956]	1	Female,English	another we'll to call the A four waist[+]
+[654.985,657.768]	1	Female,English	cause it's A four piece of paper and you put it on your
+[657.894,661.162]	1	Female,English	Ah i[~] it's your waist back small as a A four piece of paper[+]
+[661.191,662.413]	1	Female,English	I really want to[+]
+[662.481,665.099]	1	Female,English	where you have to stick your hand from behind and like
+[665.099,666.059]	2	Female,English	Oh yeah[+]
+[666.059,666.67]	0	U	[*]
+[666.67,667.339]	1	Female,English	Oh!
+[667.368,668.978]	0	U	[NOISE]
+[668.997,671.47]	1	Female,English	All different kinds of challenges like these[+]
+[671.499,673.516]	2	Female,English	Oh that's really damn
+[673.516,674.282]	2	Female,English	Yeah
+[674.282,675.203]	0	U	[*]
+[675.203,676.008]	0	U	[NOISE]
+[676.018,677.55]	2	Female,English	I don't know yeah
+[678.083,681.099]	1	Female,English	Um one think don't like I don't like was um
+[681.099,682.408]	2	Female,English	like my hair just
+[682.408,683.019]	0	U	[NOISE]
+[683.019,687.79]	2	Female,English	sometimes ah if I don't straighten it, it will be like nothing like a little bit more puffy and stuff
+[687.79,688.915]	0	U	[*]
+[688.934,695.053]	2	Female,English	being like oh your hair is so messy like why don't you brush it and even like a guy like told me that my hair was a mess
+[695.053,695.722]	1	Female,English	what?[+]
+[695.722,698.922]	2	Female,English	because I chose to have that style that day if not straightening it
+[698.922,699.727]	1	Female,English	people from work?
+[699.727,701.298]	2	Female,English	um um no it was a friend
+[701.317,701.938]	1	Female,English	oh
+[701.957,704.905]	2	Female,English	but yeah from China so I was still like what like
+[704.915,708.173]	2	Female,English	my hair is in this league cause you guys was not in that way you know
+[708.173,708.687]	2	Female,English	Yeah
+[708.687,710.83]	1	Female,English	Ah my hair is messy all the time persevere[+]
+[710.83,715.203]	2	Female,English	but it's like really pretty in like in U S like two it will be like envying your hair and stuff and like[+]
+[715.281,718.607]	2	Female,English	and then yeah like I know U S like was the big like kinda curly hair[+]
+[718.636,720.682]	1	Female,English	I love their hair. I always wanna get my hair like[+]
+[720.682,721.681]	0	U	[*]
+[721.681,724.396]	2	Female,English	especially that was like big hairs like famous there[+]
+[724.425,724.997]	0	U	[NOISE]
+[724.997,726.161]	2	Female,English	and it so it's like[+]
+[726.161,731.184]	2	Female,English	kind of stuff the hero like after like I always I didn't make it straight or whatever and like
+[731.203,733.86]	2	Female,English	mostly you can stalk then they'll think it mess you
+[733.87,735.344]	1	Female,English	So do you always straighten your hair?[+]
+[735.344,737.962]	2	Female,English	Yeah usually if seems like a curlier a little bit but[+]
+[737.962,739.504]	1	Female,English	I thought that was an actually like this[+]
+[739.504,743.79]	2	Female,English	No but it was still like for the messy but like I can't this is can be like that.
+[743.79,745.807]	1	Female,English	So you wake up early like straightening everyday?
+[745.836,746.67]	2	Female,English	Yeah yeah
+[746.699,747.824]	1	Female,English	Oh my god[+]
+[747.824,748.939]	0	U	[*]
+[748.939,750.248]	2	Female,English	maybe ah like
+[750.248,751.179]	2	Female,English	five two minutes
+[751.179,752.236]	0	U	[*]
+[752.236,753.768]	1	Female,English	and you'd do all your hair
+[754.059,755.184]	1	Female,English	and it's pretty long
+[755.504,757.356]	2	Female,English	Yeah but like I've gotten pretty fast.
+[757.356,759.024]	1	Female,English	Oh wow OK[+]
+[759.024,759.625]	2	Female,English	Yeah
+[759.625,760.013]	0	U	[*]
+[760.013,761.351]	1	Female,English	I didn't know like there're some[+]
+[761.361,764.493]	1	Female,English	I[~] I just came used to idea that there's some girls who wake up and like
+[764.522,767.363]	1	Female,English	take the time to straighten or curl their hair everyday[+]
+[767.373,771.087]	2	Female,English	of like every girls like usually girls can do that yeah I'm not like to make us[+]
+[771.087,771.756]	0	U	[*]
+[771.921,775.111]	1	Female,English	Yeah I guess put me like take thirty minutes to get ready[+]
+[775.208,775.916]	2	Female,English	Yeah
+[775.916,779.339]	1	Female,English	would everything without straightening or curling so it's like[+]
+[779.436,780.561]	2	Female,English	is that a long time?
+[780.561,781.424]	0	U	[NOISE]
+[781.443,784.236]	1	Female,English	I can I think I can do everything about forty minutes it's like[+]
+[784.236,785.264]	1	Female,English	OK[+]
+[785.264,786.059]	1	Female,English	but like
+[786.088,786.893]	0	U	[NOISE]
+[786.893,788.008]	1	Female,English	it doesn't like that great
+[788.018,788.677]	0	U	[*]
+[788.677,788.978]	0	U	[NOISE]
+[788.978,789.87]	2	Female,English	faster more time
+[789.87,790.636]	0	U	[*]
+[790.636,791.14]	0	U	[NOISE]
+[791.15,791.693]	0	U	[*]
+[791.693,792.207]	0	U	[NOISE]
+[792.207,793.041]	2	Female,English	Yeah
+[793.06,794.156]	0	U	[NOISE]
+[794.156,797.511]	2	Female,English	I guess it's one mean that get Chinese sort like ah they can just
+[797.511,798.122]	2	Female,English	it's like
+[798.122,800.472]	2	Female,English	They don't care so much about the make up and stuff like 
+[800.472,801.207]	0	U	[*]
+[801.207,802.34]	2	Female,English	they really care about time
+[802.641,803.368]	2	Female,English	um
+[803.756,805.967]	2	Female,English	Yeah so I feel like in China I wear a lot of make up
+[805.967,806.636]	0	U	[*]
+[806.636,807.916]	2	Female,English	U S some like oh no
+[807.916,808.294]	0	U	[NOISE]
+[808.294,809.06]	2	Female,English	not enough
+[809.07,809.613]	0	U	[NOISE]
+[809.613,810.951]	2	Female,English	My sister is look like an hour
+[810.951,811.523]	0	U	[*]
+[811.523,812.202]	2	Female,English	like everyday and
+[812.202,816.207]	1	Female,English	really? Are they like professional like[+]
+[816.207,820.464]	2	Female,English	compared to me in like there's so many tools that you need and so many little things
+[820.464,823.373]	2	Female,English	like they have like do like put brooms like[+]
+[823.373,826.883]	2	Female,English	learn to get the check bones and then blush and highlighter[+]
+[826.893,827.378]	0	U	[NOISE]
+[827.378,829.327]	2	Female,English	and there's so so many things
+[829.356,830.704]	1	Female,English	I don't know any of them when[+]
+[830.704,831.276]	0	U	[NOISE]
+[831.276,835.756]	2	Female,English	It's like I know but I'm just like I don't really wanna take so much time so
+[835.756,836.677]	2	Female,English	I just like to my
+[836.687,837.521]	0	U	[*]
+[837.521,840.43]	1	Female,English	Yeah I like everything doing I used to fall short like
+[840.43,845.899]	1	Female,English	this stuff on my slick just like it's a basic so it's like powders to put in my face you know I don't even do that anyone just like[+]
+[845.899,849.642]	1	Female,English	just eye from eyebrows or maybe a little bit something on cheek and then that's enough[+]
+[849.642,851.048]	2	Female,English	Yes it's enough yeah[+]
+[851.058,852.454]	0	U	[NOISE]
+[852.493,853.443]	1	Female,English	ya
+[853.744,855.761]	2	Female,English	astray though,like Chinese say
+[855.916,860.648]	2	Female,English	have one center but an American's like sometimes like always to over force in other way
+[860.658,861.298]	1	Female,English	Yeah[+]
+[861.298,862.248]	0	U	[*]
+[862.258,863.877]	0	U	[NOISE]
+[863.877,864.595]	2	Female,English	I don't know
+[864.595,865.39]	0	U	[NOISE]
+[865.39,867.853]	0	U	[NOISE]
+[867.853,869.414]	1	Female,English	Ah well actually like
+[869.521,870.762]	1	Female,English	I feel like
+[870.762,871.538]	0	U	[NOISE]
+[871.557,872.653]	1	Female,English	I feel like
+[872.653,873.836]	1	Female,English	as a Chinese
+[873.836,876.551]	1	Female,English	as a girlfriend of a Chinese person[+]
+[876.551,879.082]	1	Female,English	I feel like it's bit different like I see these other girls
+[879.441,881.138]	1	Female,English	what was it that I did
+[881.196,883.533]	1	Female,English	I was like hanging out with some
+[883.533,884.328]	0	U	[NOISE]
+[884.328,885.705]	1	Female,English	foreigners or something
+[885.802,886.985]	0	U	[*]
+[887.218,888.042]	1	Female,English	Oh yeah!
+[888.595,890.156]	1	Female,English	it was when I was in the U S
+[890.156,892.231]	0	U	[NOISE]
+[892.231,892.871]	0	U	[*]
+[892.871,899.727]	1	Female,English	OK I wish the U S and I noticed how the a how the girls that OK well at that time I was in a New Jersey it's a maybe a[+]
+[899.727,900.968]	1	Female,English	different somehow
+[901.191,901.967]	1	Female,English	um
+[902.093,906.515]	1	Female,English	I was in France then and they are around they're on notice how all the girls they were very[+]
+[906.515,908.939]	1	Female,English	casual they weren't like wearing kinds of make up[+]
+[908.978,914.447]	1	Female,English	and how they were dressed like very casual only walking and their boyfriends and their boyfriends would be like all crazy about them[+]
+[914.447,920.042]	1	Female,English	whereas in China I see a lot of girls they will be like really put the effort into how they look and the high heels and move dresses[+]
+[920.042,921.904]	2	Female,English	right let's go to[+]
+[921.904,923.795]	1	Female,English	Yeah whereas in the U S always wild[+]
+[923.853,926.093]	1	Female,English	Who these girls really like not really wearing make up
+[926.093,927.121]	0	U	[*]
+[927.15,929.865]	1	Female,English	and like relate to the casual but their boyfriends are like[+]
+[929.865,931.979]	1	Female,English	super like all over the movie sound[+]
+[932.008,932.871]	0	U	[*]
+[932.91,934.898]	1	Female,English	interesting! They cool[+]
+[934.898,935.78]	2	Female,English	that yeah
+[936.304,937.07]	0	U	[*]
+[937.07,939.048]	2	Female,English	Yeah like it's actually in the university like
+[939.048,940.047]	2	Female,English	super casual like
+[940.047,941.521]	0	U	[*]
+[941.521,942.733]	2	Female,English	to I everything they
+[942.733,944.43]	2	Female,English	and like could this all the time and
+[944.43,953.487]	2	Female,English	Yeah I still love people like that and even some girls will put like a lot of makeup and into their hair and still like weird of that's kinda close and in China that would be like sleeping or something[+]
+[953.487,957.802]	2	Female,English	and so it was kinda funny like when I'm lose here I like bra like kind of stuff and then I'm like
+[957.802,959.402]	0	U	[*]
+[959.402,960.333]	2	Female,English	like oh crap
+[960.333,961.613]	0	U	[NOISE]
+[961.613,962.835]	2	Female,English	and then now like ah
+[962.835,967.46]	2	Female,English	Um like looking at my clothes like to go back to U S and I'm packing and I'm like I can't take this[+]
+[967.46,968.362]	2	Female,English	I can't take this[+]
+[968.362,968.818]	0	U	[NOISE]
+[968.837,971.184]	2	Female,English	So I feel like I have like too very distinct[+]
+[971.203,973.036]	2	Female,English	set like one for U S[+]
+[973.036,973.54]	0	U	[*]
+[973.55,974.093]	2	Female,English	first time
+[974.122,975.499]	1	Female,English	very interesting[+]
+[975.916,978.127]	2	Female,English	I know I forgot stuff all that but
+[978.408,979.843]	2	Female,English	it's yeah very true
+[979.843,980.315]	1	Female,English	So I guess like
+[980.315,981.727]	0	U	[*]
+[981.727,983.082]	1	Female,English	seems to be very different but
+[983.082,985.448]	1	Female,English	this is based all that same thing about the clothes, right?
+[985.458,986.573]	2	Female,English	Yeah I guess[+]
+[986.602,988.91]	1	Female,English	So I guess maybe the whole U S cause maybe like that maybe[+]
+[988.91,994.059]	2	Female,English	I think L A is not like our special like in California cause I have a friend there um she went in school in L A and to[+]
+[994.098,997.967]	2	Female,English	for she living awesome before and she told me like oh they care so much about fashion that
+[997.967,1001.962]	2	Female,English	that I can never wear this kind of clothes but then an awesome like she can whatever
+[1002.088,1002.796]	2	Female,English	so I think like
+[1002.796,1004.483]	0	U	[*]
+[1004.522,1006.025]	2	Female,English	I think in general like
+[1006.025,1009.38]	2	Female,English	Yeah I really do things in general. U S is a lot more casual than China
+[1009.38,1011.921]	2	Female,English	and not only in clothes but also in like a
+[1011.921,1013.162]	2	Female,English	and work cultures too
+[1013.162,1013.86]	0	U	[*]
+[1013.86,1014.927]	2	Female,English	the way that they treat
+[1014.956,1020.977]	1	Female,English	Oh! that's one thing that I like it's how it it is feel great accepting and like really like yeah. 
+[1020.977,1021.514]	0	U	[*]
+[1021.514,1023.208]	1	Female,English	see some people they're really like[+]
+[1023.208,1024.517]	2	Female,English	tried so hard[+]
+[1024.517,1025.584]	1	Female,English	really trying hard[+]
+[1025.584,1026.379]	2	Female,English	Yeah
+[1026.379,1027.019]	0	U	[NOISE]
+[1027.019,1027.921]	1	Female,English	anyway
+[1027.921,1028.396]	0	U	[NOISE]
+[1028.396,1028.677]	2	Female,English	Yeah
+[1028.677,1029.259]	1	Female,English	two minutes[+]
+[1029.482,1030.093]	2	Female,English	with the
+[1030.093,1031.46]	0	U	[NOISE]
+[1031.46,1032.1]	0	U	[*]

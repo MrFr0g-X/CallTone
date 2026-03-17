@@ -1,0 +1,594 @@
+[0.204,2.25]	0	U	[NOISE]
+[5.857,6.342]	0	U	[NOISE]
+[6.507,9.61]	1	Female,English	For today, my list of three items, I've chosen ovens
+[9.707,13.712]	1	Female,English	One of the things that I really miss when I'm outside of America is ovens.
+[13.799,18.832]	1	Female,English	ah the ovens of my family has always had in our house. They're very very big. You can cook turkeys. You can cook
+[18.919,19.368]	1	Female,English	[*]
+[19.368,22.216]	1	Female,English	rolls. You can cook pretty much anything you could ever imagine in this oven.
+[22.371,26.473]	1	Female,English	When I'm outside of America, um I often find that oven sizes are
+[26.57,31.079]	1	Female,English	noticeably smaller or ovens themselves are just harder to combine than they are in America.
+[31.215,33.038]	1	Female,English	So that's one thing that I really really miss.
+[33.096,34.124]	1	Female,English	when I am outside the state
+[34.958,36.49]	0	U	[*]
+[36.558,38.895]	1	Female,English	part of your life but for me it's a big thing.
+[38.953,40.262]	2	Male,English	mhm honestly, I didn't noticed this
+[40.301,41.135]	2	Male,English	til you said that
+[41.251,44.975]	2	Male,English	because I don't cook. I'm lazy. I just go to the convenient store. I go to
+[45.198,49.135]	2	Male,English	like whatever street diner something like that which I know is more expensive but
+[49.232,49.804]	2	Male,English	you know[+]
+[49.92,52.141]	2	Male,English	true American, I I just want convenience.
+[52.713,55.215]	2	Male,English	um yeah but I think most things like you said
+[55.312,57.93]	2	Male,English	I I think that's gonna be a general theme for most of us
+[58.095,59.821]	2	Male,English	is everything's bigger
+[59.947,61.13]	2	Male,English	in America so[+]
+[61.605,61.964]	2	Male,English	um
+[62.119,63.593]	2	Male,English	Well actually that leaves me to one.
+[63.68,65.736]	2	Male,English	ah it's good transition. Let me pick the one
+[65.765,67.404]	0	U	[*]
+[67.598,69.256]	2	Male,English	um this one
+[69.382,69.896]	2	Male,English	okay
+[69.993,70.633]	2	Male,English	so
+[70.827,71.816]	0	U	[*]
+[72.291,74.512]	2	Male,English	speaking of everything being bigger
+[75.055,75.724]	2	Male,English	space
+[75.85,76.907]	2	Male,English	I miss space
+[76.965,77.634]	2	Male,English	um
+[77.799,82.153]	2	Male,English	You take it for granted. You don't realize that especially if you go to some more crowded countries,
+[82.279,85.091]	2	Male,English	like in Asia ah and that's where I've been for as
+[85.256,85.896]	2	Male,English	as well
+[86.187,87.302]	2	Male,English	and ah
+[87.467,89.959]	2	Male,English	yeah most people you'd you have no idea
+[90.095,95.215]	2	Male,English	ah in America, it's pretty common. I'd say it's starting to change but it's typical for
+[95.37,96.33]	2	Male,English	eighteen year olds
+[96.456,96.747]	1	Female,English	mhm
+[96.776,97.833]	2	Male,English	to move out and live
+[98.027,103.176]	2	Male,English	by themselves. And that's not true to a lot of countries. A lot of countries, they live with their parents until they get married.
+[103.399,105.988]	2	Male,English	um and so I grew up going to house party
+[106.095,107.152]	2	Male,English	you don't go to the bar
+[107.2,107.656]	1	Female,English	ah
+[107.792,110.73]	2	Male,English	You you don't turn you can't drink legally until you're twenty-one.[+]
+[110.856,115.404]	2	Male,English	so you you go to people's houses it's cheaper when you are of age as you should wait[+]
+[115.85,116.781]	2	Male,English	but
+[116.965,120.427]	2	Male,English	you know there's always house party there's it's it's never an issue to have space
+[120.524,121.028]	2	Male,English	um
+[121.125,124.199]	2	Male,English	Also driving, there's tons of space, tons of room.
+[124.393,125.004]	2	Male,English	um
+[125.217,126.856]	2	Male,English	yeah just in general, I miss space
+[126.953,128.553]	2	Male,English	So that that's probably why
+[128.718,129.872]	2	Male,English	they don't have other insurance.
+[129.959,130.308]	2	Male,English	some other
+[130.347,134.992]	1	Female,English	Right, right. Yeah and your point about space is so true especially that point you made about [+]
+[135.05,138.124]	1	Female,English	the difference that you have in house party, the party's in a bar and the restaurant
+[138.25,140.519]	1	Female,English	when I've been in countries in Asia as well
+[140.616,143.661]	1	Female,English	Nope. I I rarely get invited to people's palaces
+[143.748,147.404]	1	Female,English	You only get invited to someone's house if you've known them for a long time and you're pretty close
+[147.52,151.079]	1	Female,English	friends and with my case maybe my friends are different from your friends. I don't know.
+[151.215,155.016]	1	Female,English	But yeah, having a house party is very very rare. I find
+[155.084,157.741]	1	Female,English	And if you do have a house party there are very few people and sound like
+[158.022,159.748]	1	Female,English	in college parties in the States.
+[159.787,160.165]	2	Male,English	mhm
+[160.204,161.261]	2	Male,English	it's not a rager
+[161.358,165.13]	2	Male,English	it just ah it's like a dinner party. It's the equivalent of an American dinner party where
+[165.295,168.078]	2	Male,English	It's adult having wine, eating food. Okay.
+[168.107,168.611]	2	Male,English	clean
+[168.65,168.941]	2	Male,English	you know
+[169.261,175.176]	2	Male,English	But in in the States, I think it is just so common. You arrange from a friend.doesn't matter if the carpet gets dirty or whatever else. [+]
+[175.632,178.764]	2	Male,English	there's another there's another house over there's a plenty of space to go around [+]
+[178.822,179.074]	1	Female,English	Yup.
+[179.21,181.159]	1	Female,English	Yup. That's a good point. Okay. Great.
+[181.295,186.192]	1	Female,English	um well I guess I'll go on to my next one. You're probably going as ah a team going on with my
+[186.279,188.907]	1	Female,English	um but my next one, I've chosen cheese.
+[189.004,189.867]	1	Female,English	um
+[189.964,193.154]	1	Female,English	I really like to use and I find it
+[193.416,194.124]	1	Female,English	it
+[194.735,198.924]	1	Female,English	more expensive, I should say. It's more expensive maybe options are somewhat limited.
+[199.011,201.416]	1	Female,English	um well depending on where you travel in the world
+[201.455,204.325]	1	Female,English	um we've been talking all about Asia where we have experience
+[204.432,206.313]	1	Female,English	and in Asia, there's you know
+[206.352,208.233]	1	Female,English	I mean cheese is available but
+[208.33,210.958]	1	Female,English	ah it's often much much more expensive than it is.
+[211.016,211.559]	1	Female,English	ah
+[211.627,212.354]	1	Female,English	in the States
+[212.432,215.37]	1	Female,English	so that's something that I really miss. I like it from time to time.
+[215.496,219.113]	1	Female,English	You know going to the the supermarket or treat a department joined in Asia and see
+[219.268,220.684]	1	Female,English	you know something that would cost
+[220.81,223.496]	1	Female,English	I don't know three dollars or four dollars in the in the States.
+[223.564,225.707]	1	Female,English	seem you know twenty or twenty-five.
+[225.775,225.959]	0	U	[*]
+[226.056,226.473]	1	Female,English	ah
+[226.57,226.89]	2	Male,English	Yeah.
+[226.987,230.187]	1	Female,English	That's one of those things that you kind of miss about home. It's small convenient
+[230.216,231.787]	0	U	[*]
+[232.175,232.553]	2	Male,English	mhm
+[232.776,233.513]	2	Male,English	Yeah. I agree.
+[233.61,234.89]	2	Male,English	I love cheese. People talk
+[235.016,235.394]	2	Male,English	about
+[235.53,237.867]	2	Male,English	oh if I eat too much cheese my stomach go hurts no way 
+[237.993,240.427]	2	Male,English	I can eat cheese until I die. I love cheese.
+[240.524,241.552]	2	Male,English	And I miss it.
+[241.61,242.095]	2	Male,English	um but it
+[242.124,242.376]	0	U	[*]
+[242.444,243.627]	2	Male,English	sometimes it's hard to really
+[243.724,248.912]	2	Male,English	convince yourself to spend that extra. You know you can get pretty much anything. It's the twenty-first century. You can go to like
+[249.096,251.879]	2	Male,English	Asko or whatever. Get peanut butter, whatever you miss.
+[252.073,255.341]	2	Male,English	But you know, just bring yourself to spend that ridiculous amount of money
+[255.399,255.952]	1	Female,English	Yeah.[+]
+[256.039,256.33]	2	Male,English	so
+[256.359,257.232]	1	Female,English	Yeah. Yeah. Yeah. [+]
+[257.387,258.512]	2	Male,English	um speaking of
+[258.725,259.433]	2	Male,English	food
+[260.616,260.907]	0	U	[NOISE]
+[260.994,262.536]	2	Male,English	speaking of food, um
+[262.856,265.038]	2	Male,English	I miss this one. I'm from Colorado.
+[265.571,267.53]	2	Male,English	And this is the best
+[267.83,268.238]	2	Male,English	food
+[268.354,269.828]	2	Male,English	you'll ever have in your life.
+[269.896,274.541]	2	Male,English	It's called Chipotle and it's from Colorado and it's ah we have a lot of Mexicans in Colorado.
+[274.696,276.81]	2	Male,English	So we have a lot of Mexican influence. This is
+[276.878,279.273]	2	Male,English	definitely not authentic Mexican food.[+]
+[279.37,280.873]	2	Male,English	This is definitely Americanized.
+[280.941,282.027]	2	Male,English	It's huge.
+[282.221,284.781]	2	Male,English	You know beef burritos with lots of cheese.
+[284.819,285.44]	1	Female,English	Yeah.[+]
+[285.488,286.352]	2	Male,English	so filling
+[286.536,287.147]	2	Male,English	I love it.
+[287.234,289.29]	2	Male,English	And it's hard to find that kind of stuff. You know,you
+[289.358,289.678]	1	Female,English	Yeah.
+[289.736,291.404]	2	Male,English	just food in general, it's so real hard to
+[291.472,291.985]	1	Female,English	Yeah.
+[292.16,292.819]	0	U	[NOISE]
+[292.936,294.575]	2	Male,English	ah artery clogging
+[294.691,295.147]	0	U	[*]
+[295.496,298.89]	2	Male,English	Artery clogging, disgusting stuff, it just ah hits the spot you know.
+[298.948,299.792]	1	Female,English	For sure.
+[299.879,301.993]	1	Female,English	For sure yeah. I totally agree and I get that
+[302.032,303.011]	0	U	[*]
+[303.079,307.559]	0	U	[*]
+[307.685,311.496]	1	Female,English	True burritos maybe, I don't know. Maybe, work hard from the fifth month on this point.
+[311.593,312.912]	2	Male,English	Where are you from in Beshty?[+]
+[312.97,320.941]	1	Female,English	born in California but we moved to Orion while my family is in California again and one of things I was recently back in the States and I ate a lot of burritos.
+[321.038,326.72]	1	Female,English	I had the thing called like an extra super burrito off the site just the just the feelings we're gonna be you know
+[326.856,329.154]	1	Female,English	I thought they're gonna be a lot of feelings or it's gonna be spicy
+[329.251,331.53]	1	Female,English	but it turned out literally be like this one.
+[331.956,333.159]	0	U	[NOISE]
+[333.256,339.084]	1	Female,English	I'm not exaggerating. I took a picture of it. They had to use two two massive like tortillas to wrap the whole thing.
+[339.21,342.439]	1	Female,English	and I couldn't actually pick it up. I had to like lay it down on the table
+[342.507,343.37]	0	U	[NOISE]
+[343.438,345.358]	1	Female,English	part of me and the bit eat it
+[345.513,347.617]	1	Female,English	Yes. Yeah. It's just
+[347.976,349.712]	1	Female,English	I think but I don't know if this is unique
+[349.76,352.456]	1	Female,English	so at our generation or unique to people who are from
+[352.592,354.415]	1	Female,English	like the West Coast of America but
+[354.638,356.994]	1	Female,English	wet west-ish side of America but just
+[357.033,358.177]	1	Female,English	man, burritos
+[358.216,359.399]	1	Female,English	this is not like um
+[359.554,359.884]	2	Male,English	mhm
+[360.0,362.434]	2	Male,English	Yeah. I missed it. It's total it's it's part of my
+[362.444,362.851]	0	U	[*]
+[363.045,365.547]	2	Male,English	ah not to go on too long but Mexican
+[365.644,366.788]	2	Male,English	influence is
+[367.021,368.805]	2	Male,English	growing in America so
+[368.873,370.415]	2	Male,English	you don't say you know do you want to have
+[370.473,372.616]	2	Male,English	Mexicans and I you say let's have burritos.
+[372.713,373.576]	2	Male,English	It's taco night.
+[373.644,374.662]	2	Male,English	Thursday taco night.
+[374.759,378.017]	2	Male,English	It's just a part of my culture. So I would say, it's part of American culture.[+]
+[378.114,378.444]	1	Female,English	Yeah.
+[378.56,378.851]	2	Male,English	um[+]
+[378.89,379.404]	0	U	[*]
+[379.598,380.587]	1	Female,English	burritos,
+[380.684,381.547]	1	Female,English	tacos,
+[381.644,384.931]	1	Female,English	patatas, chimichangas, and enchiladas, anything
+[385.067,386.017]	1	Female,English	anything with
+[386.153,389.382]	1	Female,English	meat totilla cheese, something spicy. Yeah.
+[389.556,389.973]	1	Female,English	Yes.
+[390.119,391.147]	1	Female,English	always I always [+]
+[391.215,391.855]	0	U	[*]
+[391.913,394.114]	2	Male,English	True Americans just say like I everything [+]
+[394.25,395.52]	0	U	[NOISE]
+[395.539,396.053]	1	Female,English	No.
+[396.131,397.479]	2	Male,English	Okay, so um
+[397.876,398.313]	0	U	[NOISE]
+[398.565,398.933]	0	U	[NOISE]
+[399.205,400.233]	2	Male,English	Yeah. Let's do this one.
+[400.33,401.959]	2	Male,English	eh another one I was thinking of
+[402.279,404.432]	2	Male,English	is twenty-four hour cafes
+[405.324,406.216]	2	Male,English	so[+]
+[406.313,407.496]	2	Male,English	mainly for the wifi
+[407.748,411.598]	2	Male,English	but this is pretty common I think especially for high school students going back to like parties
+[411.724,412.936]	2	Male,English	when you can't drink
+[413.479,414.856]	2	Male,English	you can't do anything
+[415.215,418.337]	2	Male,English	too exciting so you usually go to your friends and you loiter at
+[418.405,421.896]	2	Male,English	get in to something like that. It's open twenty-four hours. You just get some coffee. [+]
+[421.964,424.941]	2	Male,English	And then you just sit and talk and then you annoy the waiters in ways just that's like it.
+[424.999,427.268]	2	Male,English	pretty I'd say normal American experience.
+[427.375,428.267]	1	Female,English	Yeah.
+[428.335,432.272]	2	Male,English	And I miss it. You know some towns I've been into lately just shut down
+[432.398,435.695]	2	Male,English	surprising especially that's not the weekend. So it's like nothing's going on.
+[436.16,436.965]	2	Male,English	um[+]
+[437.004,439.021]	2	Male,English	again this isn't like just America but
+[439.079,440.815]	2	Male,English	it's it's different part of my job[+]
+[440.873,446.516]	1	Female,English	Right, yeah. When you said twenty-four hour cafe, I was oh there are twenty-four hours cafe you know another another countries, another place
+[446.633,448.398]	1	Female,English	but I see what you mean like there's a certain
+[448.718,452.451]	1	Female,English	This is like a diner I think like you can see it's I we can see maybe example that
+[452.49,454.09]	0	U	[*]
+[454.313,457.736]	1	Female,English	but you can just go in there like two in the morning and get a coffee and a piece of pie
+[457.959,458.987]	1	Female,English	there's nothing
+[459.045,460.354]	1	Female,English	there's nothing like you know
+[460.432,461.311]	1	Female,English	mysterious that is
+[461.311,461.847]	0	U	[*]
+[461.847,463.312]	1	Female,English	about it all it's just sort of
+[463.399,463.952]	1	Female,English	nights
+[464.039,465.067]	1	Female,English	usually quiet
+[465.154,469.004]	1	Female,English	maybe they'll be some strange people in there but you might look stranger for going to coffee shop
+[469.091,469.712]	1	Female,English	just morning
+[469.76,470.274]	1	Female,English	that
+[470.439,476.975]	1	Female,English	It's just yeah. I know exactly what you mean. It's that atmosphere of like going there with your friends, you know after the football game or something like that.
+[477.042,477.867]	0	U	[*]
+[477.964,478.604]	0	U	[*]
+[479.205,479.952]	0	U	[*]
+[480.556,481.962]	1	Female,English	oh that's a nice one
+[482.001,484.338]	1	Female,English	I like that one a lot. Yeah. That's good idea.
+[484.435,484.939]	0	U	[NOISE]
+[484.978,485.395]	1	Female,English	mhm
+[485.453,486.762]	2	Male,English	Now, we're homesick man. [+]
+[486.83,488.197]	0	U	[NOISE]
+[488.275,488.75]	1	Female,English	Great. [+]
+[489.099,490.854]	1	Female,English	Great. Well those are those as [+]
+[494.607,495.024]	0	U	[*]
+[495.111,497.807]	1	Female,English	about America and when we're not at home in the States.
+[500.018,502.723]	0	U	[*]
+[503.121,504.013]	1	Female,English	ah
+[529.836,530.961]	1	Female,English	Let's get ready for this.
+[531.281,534.675]	1	Female,English	ah I'm gonna start with this one.
+[534.83,536.75]	1	Female,English	Okay. My first one is
+[536.847,540.076]	1	Female,English	opening an umbrella in Thai is bad luck.
+[540.202,541.036]	1	Female,English	ah this
+[541.133,542.471]	1	Female,English	It's a superstition.
+[543.014,544.43]	1	Female,English	um I guess it's just
+[544.624,549.23]	1	Female,English	it is what it is what I've just said. If you open an umbrella inside, you'll have bad luck.
+[549.55,554.544]	1	Female,English	um but I kind of just think that this superstition is is is is good advice.
+[554.699,558.413]	1	Female,English	Don't open an umbrella inside because you will knock something over you know.
+[558.694,561.235]	1	Female,English	ah I've and or you'll get your things all wet
+[561.487,563.339]	1	Female,English	like that if you if you've been outside the rain
+[563.562,564.396]	1	Female,English	ah
+[564.687,566.19]	1	Female,English	so I I I think it's just it's
+[566.219,567.916]	0	U	[*]
+[568.294,568.779]	2	Male,English	mhm
+[568.934,570.059]	2	Male,English	yeah I'm sure about it
+[570.156,571.174]	2	Male,English	start that way like
+[571.504,574.316]	0	U	[*]
+[574.927,577.875]	2	Male,English	the easiest way is ah the boogie monsters gonna get you if you don't do it.
+[578.001,580.658]	0	U	[*]
+[580.813,581.201]	2	Male,English	whatever
+[581.356,582.413]	0	U	[*]
+[582.801,584.081]	0	U	[NOISE]
+[584.168,586.447]	0	U	[*]
+[586.505,588.173]	0	U	[NOISE]
+[588.357,589.453]	0	U	[*]
+[589.55,590.093]	2	Male,English	Yeah.
+[590.219,590.956]	0	U	[NOISE]
+[591.053,591.596]	2	Male,English	um
+[591.664,592.527]	2	Male,English	They know how many
+[592.973,593.875]	2	Male,English	the bad luck is
+[593.933,595.659]	2	Male,English	cause I know like if you break a beer
+[595.727,597.007]	2	Male,English	seven years bad luck.
+[597.201,598.122]	0	U	[*]
+[599.14,600.821]	1	Female,English	I don't know. It's I don't know its time 
+[600.821,601.196]	0	U	[*]
+[601.603,601.962]	2	Male,English	Yeah.
+[602.03,604.299]	1	Female,English	I just this is I just assumed at instant
+[604.367,605.734]	0	U	[*]
+[605.87,608.236]	0	U	[NOISE]
+[608.42,610.99]	1	Female,English	It's it's like me for for the duration time [+]
+[611.058,612.115]	1	Female,English	the umbrella's open
+[612.299,614.578]	0	U	[*]
+[615.47,615.955]	1	Female,English	There we go.
+[616.013,616.498]	0	U	[*]
+[617.681,619.31]	1	Female,English	Alright. What do you got? What do you got?
+[619.339,620.454]	0	U	[NOISE]
+[620.493,621.298]	2	Male,English	no with nowhere
+[621.327,622.287]	0	U	[NOISE]
+[622.413,623.179]	2	Male,English	the older one's like
+[623.247,626.088]	0	U	[*]
+[626.214,626.728]	2	Male,English	anyway,
+[626.951,627.727]	2	Male,English	um
+[628.561,631.237]	2	Male,English	So another one to like prevent bad luck
+[631.315,633.962]	2	Male,English	did I think it's kind stupid and I think it's the reason why
+[634.059,635.562]	2	Male,English	there has to be reason is
+[635.756,636.231]	0	U	[NOISE]
+[636.522,638.607]	2	Male,English	having the roof of your car
+[638.733,642.641]	2	Male,English	um when there's two two times this is happen. Yeah, maybe this is new to you.
+[642.67,643.339]	1	Female,English	I never heard this
+[643.475,647.916]	2	Male,English	Okay. So there's two times. The the most common one is when you go through a yellow light
+[648.071,650.311]	2	Male,English	just about to turn red or maybe did turn red
+[650.67,652.396]	2	Male,English	you tapped the roof of your car
+[652.522,653.356]	2	Male,English	and you're safe.
+[653.443,654.277]	2	Male,English	I don't know.
+[654.374,655.945]	2	Male,English	And then the second one is
+[656.042,659.601]	2	Male,English	if you're speeding or you're just being a bad person and you see a cop,
+[659.756,662.219]	2	Male,English	and for whatever reason the cop is a bad thing for you,
+[662.316,665.875]	2	Male,English	you tapped the roof of your car and everybody in the car has to tap the roof of the car.
+[666.505,669.967]	2	Male,English	Yeah. It doesn't make any sense. I think it's stupid um maybe that's
+[670.093,672.721]	1	Female,English	I have never heard that before. Ever.[+]
+[672.905,673.904]	1	Female,English	Never.[+]
+[673.933,675.533]	1	Female,English	this is something that you or your friends
+[675.601,676.881]	1	Female,English	would do or did or do?
+[677.007,678.481]	2	Male,English	I don't do it cause I think
+[678.578,679.15]	2	Male,English	stupid
+[679.247,679.887]	2	Male,English	but
+[680.013,683.31]	2	Male,English	my friends have done it and maybe it's just a Colorado thing or something what
+[683.378,685.86]	1	Female,English	I don't know. It could just be me. I just haven't done it.
+[686.18,689.642]	2	Male,English	Well, leave leave a comment below if you've ever heard this one before.
+[689.962,690.922]	0	U	[NOISE]
+[691.058,692.745]	2	Male,English	It's dropping on the floor Mike. What d'you do?
+[692.803,693.579]	0	U	[NOISE]
+[693.705,694.219]	1	Female,English	Okay.
+[694.258,695.305]	2	Male,English	Okay so yeah what
+[695.334,696.333]	1	Female,English	onward [+]
+[696.362,705.361]	1	Female,English	Yeah. You already mentioned this one um but this this one is another one. If you break a mirror, you'll have bad luck for seven years. Seven years. I also have a theory about this one.
+[705.545,708.202]	1	Female,English	The theory about the theory about this one is the is the
+[708.299,711.916]	1	Female,English	the time frame. The seven year time frame is the sign just breaking a mirror
+[712.081,712.944]	1	Female,English	because
+[713.167,714.728]	1	Female,English	and I could be totally wrong in this,
+[714.835,717.928]	1	Female,English	but my theory is that if you break a mirror, a mirror's glass, a mirror
+[718.064,720.139]	1	Female,English	ah eh you know, it's gonna shatter into ah
+[720.333,721.836]	1	Female,English	you know millions of pieces
+[722.447,726.917]	1	Female,English	and maybe it's hard to find all of the pieces. Maybe clean them up is gonna be difficult so there's
+[727.043,732.26]	1	Female,English	potential maybe you could step on pieces of glass for up to seven years because you know your
+[732.299,733.424]	1	Female,English	stupid kid broke
+[733.482,736.43]	1	Female,English	a mirror in your bathroom one time but he was like three.
+[737.167,738.573]	2	Male,English	And then when he's
+[738.825,743.082]	1	Female,English	and then when he's ten, he's still stepping on glass and you're like, see? I told you so. [+]
+[743.208,743.722]	0	U	[*]
+[743.79,744.013]	2	Male,English	mhm
+[744.042,746.418]	1	Female,English	So I don't know. That's my that's my theory on that one but
+[746.447,747.979]	1	Female,English	ah again, I think this is another
+[748.115,749.123]	1	Female,English	another you know
+[749.23,752.236]	1	Female,English	instant an instant bad luck one as soon as you break the mirror
+[752.401,754.767]	1	Female,English	Just clean it up. Somebody might get cut.
+[754.893,755.533]	1	Female,English	whatever
+[756.202,759.596]	0	U	[*]
+[759.625,760.013]	2	Male,English	Yeah.
+[760.11,760.556]	0	U	[*]
+[760.595,762.253]	1	Female,English	Did you always hear that this one is seven years?
+[762.35,767.499]	2	Male,English	Absolutely. But that's why I ah yeah I've no idea and also I I think you're serious that on[+]
+[767.567,767.819]	0	U	[*]
+[767.955,768.42]	2	Male,English	it could be
+[768.527,770.253]	2	Male,English	three years, it could be four years or [+]
+[770.321,770.728]	2	Male,English	Yeah.
+[770.796,771.184]	2	Male,English	but
+[771.242,774.762]	2	Male,English	that's interesting that you said that. I've never thought about a lot of these superstitions.
+[775.373,776.294]	2	Male,English	like like
+[776.362,778.001]	2	Male,English	the other one is going under a ladder.
+[778.001,778.253]	1	Female,English	Yeah.
+[778.437,779.339]	2	Male,English	That's dangerous.
+[779.465,781.22]	2	Male,English	Opening umbrella is dangerous. [+]
+[781.579,783.053]	2	Male,English	Breaking a mirror is dangerous.
+[783.082,783.315]	1	Female,English	Yeah.
+[783.344,784.275]	2	Male,English	I never thought about that.
+[784.401,786.515]	1	Female,English	Yeah. I think those are just common sense sort of things.
+[786.573,789.424]	1	Female,English	Tell your kid like be careful not to do that because you could get hurt.
+[789.482,790.035]	2	Male,English	mhm
+[790.122,791.305]	0	U	[*]
+[792.139,792.527]	2	Male,English	ah
+[792.653,793.128]	1	Female,English	Okay.
+[793.361,794.418]	1	Female,English	What's your next one?
+[794.476,796.619]	2	Male,English	ah I don't know yet. That's look I forgot.
+[796.745,798.995]	2	Male,English	oh this one. I like this one. I think this one's cute.
+[799.053,802.195]	2	Male,English	um even if it I don't really believe it. I think it's fun thing to do.
+[802.379,803.436]	2	Male,English	is
+[803.533,804.551]	2	Male,English	blowing an eyelash
+[804.842,808.333]	2	Male,English	that you make a wish so like if an eyelash falls right? And people 
+[808.362,810.321]	2	Male,English	you know the point it out it's an eyelash on your nose
+[810.476,811.116]	2	Male,English	oh really
+[811.475,812.173]	2	Male,English	take it up
+[812.338,813.54]	2	Male,English	and you make a wish and you
+[813.676,814.248]	0	U	[NOISE]
+[814.83,816.11]	2	Male,English	and your wish comes true.
+[816.207,820.173]	2	Male,English	And actually, I've talked to some other people, I'm not sure I think what country they are from
+[820.435,820.968]	2	Male,English	but
+[821.133,824.178]	2	Male,English	what they do is kind of like how Americans do the chicken wing
+[824.333,827.184]	2	Male,English	and you break it, whoever has the bigger piece, their wish comes true.[+]
+[827.213,827.465]	1	Female,English	Yeah.
+[827.659,828.338]	2	Male,English	you you
+[828.435,829.773]	2	Male,English	take the eyelash and you
+[829.86,830.898]	2	Male,English	put it to the thumb
+[830.927,831.276]	1	Female,English	mhm [+]
+[831.334,832.013]	2	Male,English	whoever's
+[832.207,834.35]	2	Male,English	whoever's thumb the eyelash sticks to
+[834.447,836.018]	2	Male,English	is the person whose dream comes true.
+[836.105,837.007]	2	Male,English	I've never heard that.
+[837.036,838.258]	2	Male,English	For me and I think just
+[838.316,839.499]	2	Male,English	in most of America,
+[839.635,840.362]	2	Male,English	you just
+[840.779,842.602]	1	Female,English	I've heard of the eyelash but I think
+[842.66,843.659]	0	U	[*]
+[843.756,845.327]	1	Female,English	junior high school student.
+[845.443,846.151]	0	U	[NOISE]
+[846.287,850.99]	1	Female,English	I don't yes. It's been a long time since I've heard that one but I'm I yeah I never[+]
+[851.3,854.093]	2	Male,English	the ah yeah. That that was the first. I I've never [+]
+[854.248,856.401]	2	Male,English	heard that before but you never did those blowing eyelash [+]
+[856.43,858.602]	1	Female,English	I did. I did. When I when I were yeah[+]
+[858.67,859.659]	0	U	[*]
+[859.756,860.968]	1	Female,English	a long time yeah
+[861.007,862.704]	1	Female,English	I wonder why where that was come from
+[863.557,864.653]	2	Male,English	cause it's dangerous
+[864.721,866.098]	0	U	[NOISE]
+[866.156,866.835]	1	Female,English	I don't know.
+[866.922,867.31]	2	Male,English	Yeah.
+[867.397,868.881]	1	Female,English	But that's a happy one on the list.ok.
+[868.91,869.734]	1	Female,English	Good example.
+[869.841,871.596]	1	Female,English	ah go to my last one I guess
+[871.751,876.241]	1	Female,English	my last one is a simple good luck one that maybe many people know. If you find a four-leaf clover, it's
+[876.367,877.327]	1	Female,English	good luck.
+[877.414,880.207]	1	Female,English	ah I don't know the origin of this one. Actually, I've
+[880.275,881.448]	1	Female,English	feel like I should
+[881.933,883.019]	1	Female,English	um but just
+[883.087,886.607]	1	Female,English	this is something that I would do occasionally with my little brother. We'd be sitting in the yard
+[886.665,887.858]	1	Female,English	there gonna be, you know, like patch of
+[887.916,893.938]	1	Female,English	clover in the yard and we just kind of keep playing and look for one that had four leaves on it but it's just three. And if we did, we'd be happy because
+[894.064,895.567]	1	Female,English	cause it means you'd have good luck
+[895.683,896.498]	1	Female,English	for
+[896.934,897.7]	1	Female,English	a time.
+[898.127,898.602]	0	U	[NOISE]
+[898.66,899.213]	1	Female,English	for six
+[899.31,900.27]	2	Male,English	six years [+]
+[900.328,907.3]	1	Female,English	Six years or four, I don't even know. But it that was the fun thing to do as a kid, to look for look for four-leaf clover. [+]
+[907.436,909.676]	1	Female,English	Maybe, it kept us out of our parents' care for a while.
+[910.539,910.995]	2	Male,English	Yeah.
+[911.121,912.333]	1	Female,English	Did you do that when you're a kid?
+[912.527,913.71]	2	Male,English	No. I didn't but
+[913.836,915.378]	2	Male,English	I did it as an adult
+[915.475,916.047]	2	Male,English	um
+[916.202,916.755]	2	Male,English	someone was
+[916.881,918.801]	2	Male,English	said it was a fun thing to do so we did it
+[918.898,921.002]	2	Male,English	just just for fun as adults um
+[921.322,923.281]	2	Male,English	and I didn't know it was actually possible
+[923.339,928.711]	2	Male,English	like I just thought this was like ah mythical creature like it didn't actually exist. And that's why it's lucky. Yeah. Yeah. [+]
+[928.75,930.185]	2	Male,English	And then we found a couple. ah those my
+[930.253,931.213]	0	U	[*]
+[931.717,932.871]	2	Male,English	oh Mary just came back.
+[933.007,933.715]	2	Male,English	anyways,
+[933.802,937.254]	2	Male,English	you just kind of zone out. You look at the big field of it and then you can spot it.
+[937.351,938.767]	2	Male,English	Much easier than going one by one.
+[938.825,939.31]	1	Female,English	No.
+[939.378,941.443]	2	Male,English	um but that I think again, this kind of makes sense
+[941.608,942.995]	2	Male,English	rare so therefore
+[943.121,945.545]	2	Male,English	maybe lucky, yeah exactly [+]
+[945.613,945.991]	1	Female,English	Yeah.
+[946.117,946.922]	0	U	[*]
+[947.019,948.803]	2	Male,English	um I think my
+[948.9,949.715]	2	Male,English	third one drops
+[950.219,951.053]	0	U	[NOISE]
+[951.47,952.973]	0	U	[*]
+[953.516,955.979]	2	Male,English	ah under my butt. Okay. There we go.
+[956.202,957.327]	2	Male,English	Yeah. Alright.
+[957.414,957.967]	0	U	[*]
+[958.161,958.733]	2	Male,English	um
+[958.762,959.702]	1	Female,English	if you sit on the
+[959.77,959.984]	0	U	[*]
+[960.006,960.21]	0	U	[*]
+[960.239,962.159]	1	Female,English	you'll have good luck for three minute.
+[962.381,963.09]	0	U	[NOISE]
+[963.438,964.621]	0	U	[NOISE]
+[964.758,965.388]	2	Male,English	Okay.
+[965.843,966.958]	2	Male,English	So this one,
+[967.153,967.861]	2	Male,English	ah
+[968.015,969.364]	2	Male,English	another positive one
+[969.422,970.634]	2	Male,English	and another one about
+[970.74,971.477]	2	Male,English	tiny things
+[971.604,972.457]	2	Male,English	is
+[972.524,973.301]	0	U	[NOISE]
+[973.775,976.181]	2	Male,English	giving a heads up penny to another person.
+[976.365,979.148]	2	Male,English	So this one a[~] another one I I'm just trying to do unique one
+[979.284,979.846]	2	Male,English	um
+[979.885,981.649]	2	Male,English	cause I can remember I think oh that's kind of cool
+[981.649,981.931]	1	Female,English	mhm
+[982.086,984.073]	2	Male,English	um because in America
+[984.141,986.381]	2	Male,English	if you find ah a penny that's heads up
+[986.439,986.731]	1	Female,English	mhm
+[986.731,987.952]	2	Male,English	if the president on
+[988.117,988.806]	2	Male,English	you know on the
+[988.845,989.33]	2	Male,English	the front
+[989.427,990.067]	2	Male,English	facing you
+[990.125,990.958]	2	Male,English	that's good luck.
+[991.279,991.686]	1	Female,English	ah[+]
+[991.696,997.01]	2	Male,English	not as rare as the four-leaf clover. It's kind of silly, right? instead I think maybe that's why they add it to the superstition that if you
+[997.164,1000.394]	2	Male,English	tail side so it's the other you know it's like a building or something on the other side,
+[1000.462,1001.237]	2	Male,English	don't pick it up.
+[1001.324,1002.323]	2	Male,English	It's bad luck. [+]
+[1002.576,1003.798]	1	Female,English	oh. I've never heard [+]
+[1003.827,1007.696]	1	Female,English	No I mean I've heard the penny thing. We have a chant even when I was a little which was [+]
+[1007.889,1008.587]	1	Female,English	for this
+[1008.684,1011.312]	1	Female,English	Find the penny, pick it up. All day long, you'll have good luck.
+[1011.409,1018.537]	1	Female,English	It's just any penny. There was no there was no heads or tails discrimination. It was just if you find the penny, congratulations. Your day is about to get awesome.
+[1018.663,1023.153]	1	Female,English	like so you just you just pick it up and then you're overjoyed in the small town you found money for free
+[1023.462,1024.015]	1	Female,English	oh the
+[1024.112,1026.226]	1	Female,English	I've never heard the the head or tails before [+]
+[1026.255,1026.77]	1	Female,English	Yeah.
+[1027.022,1028.912]	2	Male,English	I thought, okay it is well thing
+[1029.009,1033.81]	2	Male,English	This would be interesting. Good to to find out why if it's just different cause we're not that far apart from each other.
+[1033.965,1037.582]	2	Male,English	You said I'm yeah in a kind of a long history but it's basically California and Colorado[+]
+[1037.746,1038.89]	1	Female,English	California and Oregon
+[1038.929,1040.656]	2	Male,English	California and Oregon and worth [+]
+[1040.821,1043.914]	2	Male,English	West Coast Hybrid and Colorado. Pretty close.
+[1043.943,1044.621]	1	Female,English	It's pretty close.
+[1044.621,1047.434]	2	Male,English	similar so I wonder what that I mean it could just be a personal experience.
+[1047.667,1048.335]	1	Female,English	Probably. [+]
+[1048.364,1050.197]	0	U	[*]
+[1050.381,1054.261]	1	Female,English	Alright. Well, those are some very interesting stories, a very interesting series.
+[1054.28,1054.822]	0	U	[*]
+[1096.821,1099.158]	1	Female,English	hard to explain so let's get ride into it.
+[1099.245,1099.924]	1	Female,English	Michael.
+[1100.021,1101.417]	1	Female,English	What is your first tongue-twister?
+[1101.611,1103.473]	2	Male,English	My first tongue twister is
+[1103.764,1105.034]	2	Male,English	how much would
+[1105.062,1106.381]	2	Male,English	would a woodchuck chuck
+[1106.439,1108.399]	2	Male,English	if a woodchuck could chuck wood?
+[1108.883,1110.484]	2	Male,English	One more time, a little bit faster.
+[1110.542,1113.169]	2	Male,English	How much wood would a woodchuck chuck if a woodchuck could chuck wood?
+[1113.285,1114.033]	1	Female,English	Excellent.
+[1114.101,1116.563]	1	Female,English	and there is a traditional response to this one.
+[1116.689,1118.027]	1	Female,English	Are you familiar with the response?
+[1118.416,1119.764]	2	Male,English	Why don't you tell me? I don't know. [+]
+[1119.793,1121.353]	1	Female,English	question, right? This this is
+[1121.489,1123.158]	1	Female,English	It ended in question there is question mark in that
+[1123.274,1124.844]	1	Female,English	part the traditional response is
+[1124.912,1127.686]	1	Female,English	It would chuck all the wood that a woodchuck could if a woodchuck
+[1127.793,1128.627]	1	Female,English	could chuck wood.
+[1128.782,1129.616]	2	Male,English	ah
+[1129.684,1132.486]	1	Female,English	Yeah. I have it on one of my cards actually I think.[+]
+[1132.582,1132.912]	1	Female,English	too.
+[1133.223,1136.238]	1	Female,English	This is totally unplanned. I would like to point out. Yeah. Here it is.[+]
+[1136.364,1139.477]	1	Female,English	It would chuck all the wood that a woodchuck could if a woodchuck could chuck wood.
+[1139.884,1142.736]	1	Female,English	So you can you can use this with your friend if you want.
+[1142.822,1143.88]	2	Male,English	Right. That's good. Real quick. Ready?
+[1143.918,1144.277]	1	Female,English	Okay?
+[1144.422,1145.421]	2	Male,English	How much wood
+[1145.489,1146.546]	2	Male,English	would a woodchuck chuck
+[1146.633,1147.564]	2	Male,English	if a woodchuck
+[1147.661,1148.495]	2	Male,English	could chuck wood?
+[1148.592,1151.307]	1	Female,English	So it chuck all the wood that the woodchuck could if a woodchuck would chuck wood.
+[1151.473,1152.335]	2	Male,English	aha
+[1152.364,1153.324]	1	Female,English	yeah
+[1153.392,1155.632]	1	Female,English	Alright. There's one down. Okay.
+[1155.758,1160.015]	1	Female,English	ah let's see. We've talked about that one already so I guess I'll go with another classic one
+[1160.18,1162.033]	1	Female,English	um that I've known since I was little.
+[1162.13,1166.61]	1	Female,English	This one used the P sound a lot. Peter Piper picked a pack of pickled peppers.
+[1166.668,1168.306]	1	Female,English	Lots of P sound in this one.
+[1168.432,1169.742]	1	Female,English	Can you speed it up for us?
+[1169.839,1173.009]	2	Male,English	Well I don't know if I could say the first way. Peter Piper picked a
+[1173.388,1174.027]	2	Male,English	ah
+[1174.182,1175.181]	0	U	[*]
+[1175.22,1175.725]	0	U	[NOISE]
+[1175.793,1177.605]	0	U	[*]
+[1177.645,1178.964]	1	Female,English	Have you not heard this one before?
+[1179.061,1180.776]	2	Male,English	I haven't. Okay, Peter Piper
+[1180.815,1181.262]	2	Male,English	picked a
+[1181.33,1186.159]	2	Male,English	pack of pickled peppers. Hold on, one more time. Peter Piper picked a pack of pickled peppers.
+[1186.245,1187.855]	2	Male,English	For me, it helps if you snap. Okay.
+[1188.147,1190.987]	2	Male,English	Peter Piper picked a pack of pickled peppers. Peter Piper picked a pe[~]
+[1191.045,1192.646]	2	Male,English	oh my God. I can't do it. Okay.[+]
+[1192.685,1193.576]	1	Female,English	better if you don't read it.
+[1193.605,1194.042]	0	U	[*]
+[1194.478,1194.799]	0	U	[*]
+[1194.993,1196.495]	2	Male,English	No. No, Jude. I can't do it.
+[1196.582,1197.901]	1	Female,English	Peter Piper picked a pack of pickled peppers.
+[1198.803,1200.141]	1	Female,English	That wasn't very good. That was 
+[1200.209,1201.295]	2	Male,English	One more time. One more time. [+]
+[1201.295,1203.245]	1	Female,English	Peter Piper picked a pack of pickled peppers.
+[1203.622,1204.553]	2	Male,English	one one more
+[1204.621,1205.33]	2	Male,English	one more time.[+]
+[1205.359,1208.015]	1	Female,English	Peter Piper picked a pack of pickled peppers.
+[1208.267,1209.14]	2	Male,English	Peter Piper
+[1209.198,1211.38]	2	Male,English	picked a ah I I can't do it.
+[1211.409,1212.331]	0	U	[NOISE]
+[1212.883,1218.004]	2	Male,English	Peter Piper picked a pack of pickled peppers. There we go. Peter Piper picked a pack of pickled pepper. Peter Piper picked a pack of p[~]
+[1218.101,1219.341]	2	Male,English	oh man, that's
+[1219.409,1219.884]	2	Male,English	tough.
+[1220.147,1221.804]	2	Male,English	the p's man I can't do the p's
+[1221.94,1222.678]	0	U	[NOISE]
+[1222.707,1223.754]	2	Male,English	oh wow
+[1223.822,1224.432]	1	Female,English	can't do
+[1229.33,1230.095]	0	U	[NOISE]

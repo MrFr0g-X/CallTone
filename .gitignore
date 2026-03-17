@@ -80,3 +80,54 @@ node_modules/
 **/reproducible_research/
 LAYER_1/models/sensevoice/**/example/
 LAYER_1/models/sensevoice/**/fig/
+
+
+########
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large local data
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.ogg
+*.aac
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.rar
+*.7z
+
+# Transcripts / datasets / generated outputs
+uploads/
+Test_audio/
+*.srt
+*.tsv
+*.csv
+*.jsonl
+
+# Logs
+*.log

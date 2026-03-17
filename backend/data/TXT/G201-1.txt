@@ -1,0 +1,367 @@
+[0.001,0.873]	1	Female,English	record now
+[1.358,1.93]	2	Female,English	ah
+[3.598,5.353]	1	Female,English	We can talk about
+[5.508,8.291]	1	Female,English	but what are you doing for the holidays for like Christmas
+[8.291,9.377]	1	Female,English	New Year
+[9.484,10.279]	1	Female,English	they do
+[10.279,10.958]	2	Female,English	Ah[+]
+[11.365,12.402]	2	Female,English	I'm going to go to
+[12.432,13.101]	0	U	[*]
+[13.168,13.77]	2	Female,English	um
+[13.838,14.759]	2	Female,English	for New Year
+[14.827,16.999]	2	Female,English	cause I don't wanna stay in Beijing for my New Year.
+[17.29,18.89]	2	Female,English	cause every time I
+[18.89,23.108]	2	Female,English	spend my New Year in Beijing it's kinda like aw[~] awful people everywhere I can
+[23.234,24.514]	2	Female,English	I can't find Di Di.
+[24.514,26.851]	2	Female,English	I can't find any I can't find a
+[26.851,28.364]	2	Female,English	good place to party
+[28.364,28.848]	2	Female,English	like
+[29.353,29.76]	2	Female,English	My
+[29.77,30.536]	2	Female,English	New year's
+[30.575,32.97]	2	Female,English	in Beijing is completely break
+[32.97,33.775]	2	Female,English	every year
+[33.775,34.89]	1	Female,English	Oh my Gosh.[+]
+[35.278,36.238]	1	Female,English	Well thanks for
+[36.238,37.993]	1	Female,English	giving me something to look forward to
+[37.993,38.962]	0	U	[NOISE]
+[38.992,40.844]	2	Female,English	We can just go to rundown with me.
+[40.873,42.221]	0	U	[NOISE]
+[42.24,43.336]	0	U	[*]
+[43.821,44.461]	1	Female,English	is it like
+[44.461,45.13]	0	U	[*]
+[45.324,46.381]	2	Female,English	go to the mu[~][+]
+[46.381,48.175]	2	Female,English	We are going to a music festival.
+[49.125,50.764]	1	Female,English	Ah where but
+[51.307,53.547]	1	Female,English	I can't do all that because I don't have like
+[53.547,55.079]	1	Female,English	I don't have time off from work.
+[55.922,56.756]	2	Female,English	ah
+[56.815,57.29]	1	Female,English	Even
+[57.29,57.707]	2	Female,English	OK
+[57.707,58.861]	1	Female,English	They really don't
+[58.958,62.439]	1	Female,English	like my job really does not believe and
+[62.827,66.57]	1	Female,English	National holidays or any kind of holidays they just have off
+[66.958,70.022]	1	Female,English	for a week when they come back from their own competition
+[70.371,71.176]	2	Female,English	Aha
+[71.981,72.582]	2	Female,English	I see
+[73.299,73.833]	1	Female,English	Yeah
+[73.833,75.365]	1	Female,English	so I feel it annoying
+[75.792,77.935]	1	Female,English	and they're getting ready to believe
+[78.274,79.593]	1	Female,English	get like um
+[80.136,83.152]	1	Female,English	to work a whole lot harder on training it's like[+]
+[83.152,85.188]	1	Female,English	They'll have competition in February[+]
+[85.324,87.215]	1	Female,English	That means they have one week
+[87.215,87.952]	1	Female,English	one month
+[88.165,90.056]	1	Female,English	to really like prepare
+[90.415,92.364]	1	Female,English	their bodies and do a lot of
+[92.713,93.44]	1	Female,English	like
+[93.44,95.399]	1	Female,English	physical therapy and whatnot
+[95.855,96.592]	2	Female,English	Aha
+[97.328,97.891]	2	Female,English	ah
+[98.056,98.705]	2	Female,English	yeah
+[99.171,100.053]	1	Female,English	boo
+[100.267,103.079]	2	Female,English	Do you work to nine o'clock or ten o'clock?
+[103.845,105.6]	1	Female,English	I work until nine.
+[106.628,110.158]	1	Female,English	and so sometimes depend on who I'm dealing with[+]
+[110.158,112.204]	1	Female,English	and might take a little bit longer
+[112.33,114.987]	1	Female,English	and I might stay longer and then I won't get home.[+]
+[115.404,116.102]	1	Female,English	until like
+[116.49,117.101]	1	Female,English	maybe like
+[117.12,117.964]	1	Female,English	Nine thir[~]
+[118.09,119.438]	1	Female,English	nine thirty or so
+[121.067,124.238]	2	Female,English	Oh my God and you begin to work at
+[124.655,127.438]	1	Female,English	Um it depends so sometimes
+[128.136,128.97]	1	Female,English	Ah
+[128.97,129.736]	1	Female,English	every week
+[130.085,132.558]	1	Female,English	We work everyday but sometimes
+[132.684,136.524]	1	Female,English	on my Monday, Wednesday, Friday we do not work in the morning.
+[136.912,139.976]	1	Female,English	but I will do treatment sessions in the morning
+[140.015,140.839]	1	Female,English	So hours
+[141.353,142.284]	1	Female,English	maybe like
+[143.525,146.512]	1	Female,English	Um ten thirty to twelve
+[146.88,148.577]	1	Female,English	and then I have a lunch
+[148.684,149.644]	1	Female,English	and then have
+[149.644,150.119]	1	Female,English	this
+[150.856,153.164]	1	Female,English	midday afternoon
+[153.707,154.628]	1	Female,English	nap[+]
+[155.016,158.148]	1	Female,English	and then I go back and we go for practice[+]
+[158.439,161.348]	1	Female,English	and then I go to dinner and then I go to night time treatment.
+[161.61,164.073]	1	Female,English	and then on Tuesday, Thursday, Saturday
+[164.354,164.878]	2	Female,English	mhm
+[164.878,166.953]	1	Female,English	They have training two times a day.
+[167.176,168.01]	1	Female,English	so
+[168.204,170.347]	1	Female,English	We'll say on Tuesday's and Saturday's.
+[170.347,173.101]	1	Female,English	train early in the morning from eight until like
+[173.353,174.41]	1	Female,English	eleven
+[174.536,175.68]	1	Female,English	go to lunch[+]
+[175.68,176.514]	1	Female,English	take a nap
+[176.514,178.415]	1	Female,English	go back in the evening
+[178.444,179.53]	1	Female,English	go to dinner[+]
+[179.53,180.548]	1	Female,English	go to night treatment
+[180.907,184.553]	1	Female,English	luckily on Thursday they have Thursday afternoon training.
+[184.553,185.067]	1	Female,English	mhm[+]
+[185.164,186.599]	1	Female,English	They have rest on Thursday.
+[186.735,188.364]	1	Female,English	So like tomorrow
+[188.674,190.691]	1	Female,English	I'll go in the morning
+[190.73,192.611]	1	Female,English	like eight until ten[+]
+[192.873,194.667]	1	Female,English	and then I have the day[+]
+[194.793,196.975]	1	Female,English	and then I come back at nine[+]
+[197.072,198.895]	1	Female,English	like seven thirty to do treatments
+[200.175,201.29]	2	Female,English	Ah
+[201.377,202.415]	2	Female,English	Seven thirty
+[202.57,203.491]	1	Female,English	Yeah
+[204.102,207.205]	1	Female,English	So I mean at least I get my daytime on Thursday.
+[207.467,208.33]	2	Female,English	mhm
+[208.514,209.959]	2	Female,English	yeah that is pretty cool[+]
+[209.959,212.616]	1	Female,English	Oh yeah but I would rather like to have
+[212.616,214.119]	1	Female,English	a full Saturday
+[214.187,216.611]	1	Female,English	so that we'll have two days back to back and I can like
+[216.621,219.152]	1	Female,English	do a little bit traveling around China you know
+[219.598,220.422]	2	Female,English	um[+]
+[220.684,222.274]	1	Female,English	I can't go anywhere.
+[222.817,227.21]	1	Female,English	I can't go so far was the only day I have completely off in Sunday.
+[227.433,229.896]	1	Female,English	cause I have to be back in time Monday.
+[230.061,232.999]	1	Female,English	and we finish Saturday at like
+[234.473,235.588]	1	Female,English	Um
+[235.724,236.839]	1	Female,English	like maybe
+[237.314,238.313]	1	Female,English	five o'clock
+[239.69,240.533]	2	Female,English	five o'clock
+[240.902,244.684]	2	Female,English	So you can't take both weekend off to somewhere.[+]
+[244.684,245.673]	1	Female,English	exactly
+[247.059,247.632]	2	Female,English	Um
+[247.632,249.154]	1	Female,English	Yeah but little[+]
+[249.154,250.056]	1	Female,English	that's a little
+[250.347,251.559]	1	Female,English	bit of down there
+[251.792,255.981]	2	Female,English	but at least you can have one week off when they are doing the
+[256.272,257.678]	1	Female,English	their competition[+]
+[257.678,259.016]	2	Female,English	Their competition yeah[+]
+[259.695,260.267]	1	Female,English	Yeah
+[260.587,261.004]	1	Female,English	That's
+[261.004,261.232]	2	Female,English	goo[~]
+[261.232,263.758]	2	Female,English	are you free like next Thursday[+]
+[263.942,264.65]	2	Female,English	night?
+[264.912,267.016]	2	Female,English	If you want to enjoy the hot
+[267.016,267.627]	2	Female,English	spring
+[268.267,270.09]	1	Female,English	next Thursday
+[270.798,271.981]	1	Female,English	Um
+[273.513,274.57]	1	Female,English	it's next Thursday
+[274.57,275.152]	1	Female,English	Christmas
+[275.219,276.073]	0	U	[LAUGHTER]
+[276.082,276.461]	1	Female,English	No
+[276.519,277.362]	0	U	[LAUGHTER]
+[277.682,278.41]	0	U	[NOISE]
+[278.41,279.913]	2	Female,English	Ah I don't think so but
+[279.913,284.558]	2	Female,English	Alright are you free like any of the weekday like a night.
+[284.587,287.176]	1	Female,English	No I'll have to take up the time.[+]
+[287.244,288.553]	1	Female,English	or if
+[288.941,291.559]	1	Female,English	There are athletes that don't wanna do
+[291.656,293.091]	1	Female,English	treatments with me
+[293.421,297.552]	1	Female,English	Then I can have that off but I don't know that until last minute you know.
+[298.036,298.473]	1	Female,English	so[+]
+[298.473,299.501]	2	Female,English	Um the
+[299.501,300.005]	1	Female,English	Yeah
+[300.713,303.147]	0	U	[*]
+[303.147,303.425]	0	U	[*]
+[303.425,303.942]	0	U	[LAUGHTER]
+[303.942,304.815]	0	U	[*]
+[304.97,306.764]	1	Female,English	like even athlete call[+]
+[306.861,311.108]	1	Female,English	reach about me and say hey can you help me with something then I have to be there[+]
+[311.312,316.965]	1	Female,English	but if they don't reach out to me then I have a night free but I wouldn't know until later.
+[318.342,319.244]	2	Female,English	as the
+[319.787,322.725]	2	Female,English	cause I was going to invite you for the hot spring
+[322.725,328.359]	2	Female,English	and it's better to go there doing weekdays cause they don't be like people there if you go there on weekend 
+[328.359,329.707]	2	Female,English	there will be hundreds
+[329.813,331.181]	2	Female,English	kids and
+[331.297,332.422]	2	Female,English	family
+[332.49,333.198]	2	Female,English	You know
+[333.198,334.158]	1	Female,English	Yeah[+]
+[334.536,335.496]	2	Female,English	cause you know like
+[335.496,335.971]	0	U	[*]
+[335.981,336.912]	2	Female,English	it's China
+[336.97,338.036]	2	Female,English	where people
+[338.085,338.793]	2	Female,English	everywhere
+[338.802,340.897]	0	U	[LAUGHTER]
+[340.897,342.313]	1	Female,English	You're right about that.
+[342.371,344.582]	0	U	[LAUGHTER]
+[344.582,344.97]	2	Female,English	I know
+[344.979,345.804]	0	U	[LAUGHTER]
+[345.804,347.559]	1	Female,English	China's people everywhere.
+[348.296,349.033]	1	Female,English	Well
+[349.411,350.187]	1	Female,English	maybe
+[351.816,353.067]	1	Female,English	let's say next week
+[353.067,354.124]	1	Female,English	Oh! wait[+]
+[354.192,355.656]	1	Female,English	Let me look at my calendar.
+[355.85,358.672]	1	Female,English	because there is a group that's leaving for a competition[+]
+[358.672,359.147]	0	U	[*]
+[359.147,360.553]	1	Female,English	they leave for competition
+[360.553,361.707]	1	Female,English	then I know that I[+]
+[361.707,362.444]	1	Female,English	would have
+[362.444,363.152]	1	Female,English	less
+[363.433,365.198]	1	Female,English	people to do treatments on
+[365.77,367.438]	1	Female,English	but I think they leave on Sunday
+[367.438,368.204]	1	Female,English	so I think
+[368.204,369.416]	1	Female,English	next Thursday
+[370.512,371.433]	1	Female,English	is
+[372.296,373.072]	1	Female,English	safe
+[375.331,376.427]	2	Female,English	OK[+]
+[377.348,380.558]	1	Female,English	Yeah! I think next Thursday I can go to the hot spring at night.
+[380.558,381.101]	2	Female,English	Um
+[381.324,381.867]	2	Female,English	cool
+[382.856,385.707]	1	Female,English	because that will only be two people I do treatment with[+]
+[385.707,388.393]	1	Female,English	and I can do treatment with them on Wednesday and Friday
+[388.771,389.547]	1	Female,English	cause they don't
+[389.547,391.273]	1	Female,English	They don't have anything to choose going on
+[391.273,392.068]	1	Female,English	Yeah
+[392.068,392.65]	1	Female,English	I think
+[392.747,394.085]	1	Female,English	next Thursday is good
+[394.987,395.656]	2	Female,English	and cool
+[395.908,398.148]	2	Female,English	So I should make it next Thursday then
+[398.148,399.564]	1	Female,English	Do you have to make an appointment?
+[400.097,402.124]	2	Female,English	No! No! we don't have to I just
+[402.153,405.508]	2	Female,English	Um buy tickets and you en[~] enter the
+[405.615,406.759]	2	Female,English	You know the
+[406.827,407.758]	2	Female,English	the building and
+[408.136,411.685]	2	Female,English	like they have indoor, hot spring and outdoor hot spring as well
+[411.695,411.986]	2	Female,English	say
+[411.986,412.496]	2	Female,English	um
+[412.895,413.493]	0	U	[NOISE]
+[413.493,415.079]	2	Female,English	you can even have dinner there
+[415.215,422.09]	2	Female,English	The food is not very expensive. The food is not expensive so we can have dinner there, enjoy hot spring, grab some drinks.[+]
+[422.09,422.933]	2	Female,English	and
+[423.37,424.01]	2	Female,English	go home
+[424.01,424.456]	0	U	[LAUGHTER]
+[424.456,425.29]	1	Female,English	and go home[+]
+[425.29,427.53]	1	Female,English	Well is what kind of food do they serve there?
+[427.918,428.811]	1	Female,English	is the food good[+]
+[428.811,429.576]	0	U	[*]
+[430.09,434.667]	2	Female,English	Ah I had it before like Korean food like the you know the[~] the[~] the
+[434.667,435.268]	2	Female,English	rice
+[435.268,436.499]	2	Female,English	in a
+[436.577,437.479]	2	Female,English	stone pot
+[437.925,438.953]	2	Female,English	or
+[439.331,443.21]	2	Female,English	some you know Korean food, have you ever tried Korean food before?
+[443.21,444.015]	1	Female,English	I have
+[444.073,445.896]	1	Female,English	I have like Korean barbecue.
+[446.507,448.01]	2	Female,English	Yes it's something like
+[448.039,449.552]	2	Female,English	Ah Korean rice
+[449.552,450.24]	2	Female,English	Korean
+[450.512,451.404]	2	Female,English	ah
+[452.296,454.313]	2	Female,English	Um pancake something like that
+[454.827,456.97]	2	Female,English	I think you will be fine like it's[+]
+[456.999,458.958]	2	Female,English	i[~] it's like Chinese food but
+[459.413,460.16]	0	U	[LAUGHTER]
+[460.16,462.759]	1	Female,English	It's like Chinese food but it's not Chinese.
+[463.079,464.718]	2	Female,English	Yeah it's Korean food.
+[465.571,466.735]	2	Female,English	a little bit different
+[466.89,469.004]	0	U	[LAUGHTER]
+[469.004,470.255]	1	Female,English	what does like
+[470.4,472.805]	1	Female,English	I understand I get it I get it I get it.
+[472.815,473.251]	2	Female,English	um
+[473.678,475.879]	1	Female,English	Yeah I know that sounds cool what time tough?
+[476.625,479.476]	2	Female,English	Ah after after I finish work like
+[480.004,480.585]	2	Female,English	seven
+[480.915,481.681]	1	Female,English	OK[+]
+[482.379,482.854]	1	Female,English	OK[+]
+[482.854,483.533]	0	U	[*]
+[483.727,485.356]	2	Female,English	about six half past six.
+[485.385,485.967]	2	Female,English	I can
+[485.996,487.344]	2	Female,English	I would try to make up
+[487.363,487.848]	0	U	[LAUGHTER]
+[487.848,488.333]	2	Female,English	then
+[488.362,489.254]	1	Female,English	Yeah
+[489.254,490.602]	2	Female,English	How about six or seven?
+[490.602,491.378]	2	Female,English	when I gEt
+[491.378,492.59]	2	Female,English	back after work
+[492.774,494.762]	2	Female,English	and we can go there together I guess
+[494.801,496.081]	1	Female,English	Yeah that sounds good
+[496.081,496.915]	2	Female,English	have dinner
+[496.915,500.59]	2	Female,English	We can have dinner there and hot spring you know you you can't actually
+[500.59,504.517]	2	Female,English	stay in the hot spring for a really long time cause it's really hot like one hour[+]
+[504.595,505.516]	2	Female,English	and finish
+[506.03,506.515]	2	Female,English	Yeah
+[506.641,508.464]	1	Female,English	oh that sounds amazing though
+[508.784,509.453]	0	U	[*]
+[509.453,511.79]	1	Female,English	how cold it is outside. Oh my gosh I love it.
+[511.79,512.837]	1	Female,English	Oh I'm excited.
+[513.361,514.243]	0	U	[*]
+[514.999,516.58]	0	U	[LAUGHTER]
+[516.58,520.43]	2	Female,English	I actually tried it in in in Japan the hot spring in Japan
+[520.43,520.847]	0	U	[NOISE]
+[520.847,521.613]	2	Female,English	and it is pretty
+[522.059,524.454]	2	Female,English	It was pretty weird like you have to get naked.
+[524.464,526.384]	1	Female,English	Yeah! and that was my next question.
+[526.597,529.38]	1	Female,English	at this hot spring, are you naked or no?
+[529.807,533.938]	2	Female,English	Ah well for the outdoor you don't have to be naked. You can wear bikini.
+[533.938,536.643]	2	Female,English	inside or any swimsuit
+[536.75,538.059]	2	Female,English	whatever you wanna wear
+[538.127,538.776]	1	Female,English	um,um,um
+[538.776,541.55]	2	Female,English	right outside outside because this is like public
+[541.55,542.898]	2	Female,English	like you can get your[+]
+[542.985,545.487]	2	Female,English	You share the cool with the with the guy as well.
+[545.613,548.27]	2	Female,English	but if for the indoor you have to be naked.
+[548.619,550.083]	1	Female,English	OK and we go
+[550.093,550.636]	0	U	[LAUGHTER]
+[550.762,551.722]	0	U	[LAUGHTER]
+[551.722,555.533]	1	Female,English	I guess when one of my friends well I I you met her when we went to the.
+[555.824,556.205]	1	Female,English	the pizza 
+[556.205,556.59]	0	U	[*]
+[557.23,557.957]	2	Female,English	mhm[+]
+[558.316,560.779]	1	Female,English	She was telling me that we should go to hot spring.[+]
+[560.915,561.778]	1	Female,English	um
+[561.778,562.864]	1	Female,English	for a bath house
+[562.864,563.659]	1	Female,English	just like she called it
+[563.795,566.791]	1	Female,English	but everyone is naked and I was like, I don't know if I can do that.[+]
+[566.888,567.79]	1	Female,English	because like
+[568.275,572.396]	1	Female,English	well people already stare at me because I'm black another gonna say a black
+[572.435,574.374]	1	Female,English	naked girl and how many
+[574.384,575.702]	2	Female,English	Oh I see[+]
+[575.722,576.265]	0	U	[LAUGHTER]
+[576.265,577.322]	1	Female,English	sounds like[+]
+[577.642,579.339]	1	Female,English	that's gonna be so weird
+[579.348,580.58]	0	U	[LAUGHTER]
+[581.928,583.053]	2	Female,English	that's true
+[583.179,583.576]	2	Female,English	so
+[583.596,584.653]	2	Female,English	we are bikini then
+[584.662,585.002]	1	Female,English	yeah
+[585.002,585.555]	0	U	[LAUGHTER]
+[586.068,586.699]	1	Female,English	cause I'm like
+[586.699,590.316]	2	Female,English	You you might be the first black girl whoever been to a hot spring
+[590.316,592.43]	2	Female,English	I swear you might be actually.[+]
+[592.682,597.395]	2	Female,English	It's on a local say I I di[~] haven't seen any foreigner there you might be the first
+[597.87,599.441]	2	Female,English	foreigner and first
+[599.47,599.887]	2	Female,English	right
+[599.887,600.294]	0	U	[LAUGHTER]
+[600.294,601.205]	2	Female,English	go there[+]
+[601.235,602.068]	0	U	[LAUGHTER]
+[602.185,605.133]	1	Female,English	I am totally going to record how this is
+[605.133,606.985]	0	U	[LAUGHTER]
+[607.276,611.116]	2	Female,English	I wish there were less people there when we when we get there because
+[611.116,612.134]	2	Female,English	Thursday right so
+[612.144,612.997]	2	Female,English	and I hope
+[612.997,614.898]	2	Female,English	I wish there will be less people
+[614.898,616.11]	2	Female,English	if it's on weekend
+[616.139,618.224]	2	Female,English	then no the seven nearly[+]
+[618.408,618.922]	1	Female,English	Yeah
+[618.922,619.63]	2	Female,English	this like
+[620.008,623.887]	2	Female,English	then every in in each pool there were be like ten ten thousand.
+[623.887,624.459]	0	U	[NOISE]
+[624.468,624.973]	0	U	[*]
+[624.973,629.453]	2	Female,English	and too many people like people were staring at you and the kids are running[+]
+[629.453,630.733]	2	Female,English	back and forth
+[630.762,632.527]	2	Female,English	then making splash
+[632.614,633.361]	1	Female,English	OK[+]
+[633.38,634.476]	2	Female,English	so annoying
+[634.505,635.979]	0	U	[LAUGHTER]
+[635.979,638.801]	1	Female,English	OK fine so yeah definitely we'll go on Thursday.
+[638.83,640.498]	1	Female,English	We'll definitely try on Thursday.[+]
+[641.39,642.224]	2	Female,English	OK cool
+[642.728,644.658]	1	Female,English	and it's so funny[+]
+[645.123,646.694]	1	Female,English	that's gonna be fun
+[646.733,648.207]	1	Female,English	OK so it's ten
+[648.265,650.282]	1	Female,English	ten minute almost eleven minute[+]
+[650.931,651.533]	1	Female,English	good job
+[651.562,652.076]	2	Female,English	um
+[652.076,652.531]	2	Female,English	cool
+[654.035,656.178]	2	Female,English	OK see it's a try[+]
+[656.653,658.447]	1	Female,English	OK so I'm gonna save this
+[658.796,660.27]	1	Female,English	and then um[+]
+[660.803,662.51]	1	Female,English	Do I try to upload it tonight?

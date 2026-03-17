@@ -1,0 +1,604 @@
+[0.039,1.038]	1	Female,English	alright
+[1.067,4.267]	1	Female,English	so we were ta[~] we were talking about as we were walking over here.
+[4.325,6.827]	2	Female,English	oh yeah, we were talking about relationships
+[7.05,12.364]	2	Female,English	it turns out we have a really cool thing in common because both of us are American girls dating Chinese boys.
+[12.393,12.81]	0	U	[NOISE]
+[12.839,15.816]	2	Female,English	so this is something that you don't see that often.[+]
+[16.068,22.924]	2	Female,English	um in China we are, yeah just in Asia we see a lot of white people like guys dating Asian girls but the opposite we don't see that often. [+]
+[22.953,26.182]	2	Female,English	so that was one thing that we're pretty excited, that we had in common.
+[26.192,26.696]	1	Female,English	yeah [+]
+[26.764,28.48]	0	U	[NOISE]
+[28.49,33.61]	1	Female,English	and it what was funny I remember what's funny was that cause we're actually we're your coworkers but um [+]
+[33.833,37.295]	1	Female,English	ah they they asked me to go in and talk to you when you were being interviewed.
+[37.353,38.051]	1	Female,English	yeah [+]
+[38.061,44.015]	1	Female,English	so at that time like I was like in a professional position but I think you said that, I was like oh oh that's so cool me too! [+]
+[44.044,47.787]	2	Female,English	oh it's sort of like change the from like ah interview to like oh cool we can [+]
+[47.816,48.233]	1	Female,English	pause. [+]
+[48.262,49.736]	0	U	[NOISE]
+[49.775,50.793]	2	Female,English	it's pretty funny.
+[50.822,51.937]	1	Female,English	yeah yes. [+]
+[52.393,55.079]	1	Female,English	and um but our boyfriends are from different parts of
+[55.176,56.844]	1	Female,English	Guang[~] of China but [+]
+[57.067,58.541]	1	Female,English	is is Shantou Guangdong? [+]
+[58.541,59.53]	2	Female,English	yes a Guangdong. [+]
+[59.53,61.324]	1	Female,English	okay so our boyfriends are both from Guangdong. [+]
+[61.353,64.068]	2	Female,English	Guangdong boys they think they're really different from each other. [+]
+[64.078,64.621]	0	U	[NOISE]
+[64.64,66.599]	1	Female,English	they're really not, maybe their hometown [+]
+[66.638,67.375]	0	U	[*]
+[67.404,71.302]	1	Female,English	have you told, have you told your boyf[~] your fiance about me and my and my [+]
+[71.312,73.096]	2	Female,English	ah yeah I have yeah yeah yeah [+]
+[73.125,75.918]	1	Female,English	have you said anything to him that makes him think, oh I'm so different from him.
+[76.238,80.417]	2	Female,English	um, ah yeah I don't know really maybe not but I just remember when I met
+[80.427,87.884]	2	Female,English	and your boyfriend like he was asking me like, oh well you guys have talked because your boyfriends are so different because he's from Shantou and I'm from
+[87.913,88.999]	0	U	[*]
+[89.038,93.295]	2	Female,English	I'm like, really? I think you're like got more in common than you think.
+[93.353,96.776]	1	Female,English	yeah I think that if we have to try to get them to have a double date. [+]
+[97.038,100.548]	1	Female,English	um and have them to meet each other ah which hasn't worked out just yet but it will [+]
+[100.684,103.079]	2	Female,English	this month he's always gone but anyway [+]
+[103.37,103.777]	0	U	[*]
+[103.777,111.05]	1	Female,English	will be really good so that they will realize that maybe my boyfriend has some frustrations with me and then he he will meet yours and he'll be like, oh okay this is just normal. [+]
+[111.118,111.787]	1	Female,English	white girls
+[111.816,112.553]	0	U	[NOISE]
+[112.582,113.697]	2	Female,English	that's true and
+[113.707,115.084]	0	U	[NOISE]
+[115.113,116.907]	2	Female,English	yes, and um [+]
+[117.033,118.4]	1	Female,English	I was just talking about
+[119.535,121.6]	1	Female,English	like different cultures and ah like [+]
+[121.678,126.924]	1	Female,English	how is how late is too late to stay out and how we get used to the Chinese standards of being treated [+]
+[126.953,129.29]	1	Female,English	and having our boy like text us all the time. [+]
+[129.319,130.095]	2	Female,English	yeah [+]
+[130.095,130.444]	1	Female,English	and then[+]
+[130.667,131.879]	1	Female,English	when he's like out and not
+[131.918,133.993]	1	Female,English	texting us and we're like, excuse me?
+[134.032,136.524]	2	Female,English	yeah, like sister that her boyfriend [+]
+[136.553,137.387]	0	U	[*]
+[137.416,139.501]	0	U	[NOISE]
+[139.559,143.273]	2	Female,English	ah he was out for ah interview and then he didn't ask her
+[143.312,145.358]	2	Female,English	he did he didn't ask you to follow my
+[145.455,146.221]	0	U	[NOISE]
+[146.25,149.993]	2	Female,English	in Chinese culture like most girlfriends will be kind of upset about that.
+[150.032,152.941]	2	Female,English	well like in America, it would be really normal um
+[153.067,153.358]	2	Female,English	other
+[153.387,153.6]	0	U	[*]
+[153.639,157.159]	2	Female,English	ah American guys I dated before like when we were first getting to know each other.
+[157.314,162.793]	2	Female,English	they will like always protecting me but then maybe after a month or so that's gonna stop and maybe we're just
+[162.89,164.907]	2	Female,English	like I remember sometimes that one boyfriend
+[164.907,165.256]	0	U	[*]
+[165.256,166.953]	2	Female,English	wouldn't text for two or three days.
+[167.215,170.88]	2	Female,English	but like in China that would be so weird like so I really like that
+[170.919,171.278]	0	U	[*]
+[171.472,172.49]	2	Female,English	I feel like they care more.
+[172.713,173.547]	1	Female,English	yeah
+[173.576,173.867]	2	Female,English	yeah
+[173.896,176.175]	1	Female,English	yeah, I got used to it but the thing is I feel like
+[176.417,182.575]	1	Female,English	I keep my Chinese girl stuff as well as my American girl stuff so then, I'm like ah[+]
+[182.856,183.215]	1	Female,English	so I
+[183.215,184.107]	0	U	[*]
+[184.107,185.29]	1	Female,English	but then when he comes home
+[185.358,187.365]	1	Female,English	like where when we say good bye I've
+[187.365,187.947]	0	U	[*]
+[187.947,189.101]	1	Female,English	like custom too.
+[189.198,192.291]	1	Female,English	hug or kiss or something ah like when he comes home it's like hi you [+]
+[192.359,192.747]	2	Female,English	yeah [+]
+[192.776,195.501]	1	Female,English	for him he can be totally cool which is walking in, like putting on stuff down like
+[195.918,199.176]	1	Female,English	I wanna take a shower like oh so I wanna clean up or something like that [+]
+[199.215,200.495]	2	Female,English	ah that's true [+]
+[201.125,201.988]	2	Female,English	um
+[202.473,206.468]	2	Female,English	like always when I see him we're like give each other a hug but I guess [+]
+[206.914,209.901]	2	Female,English	yeah, I remember on our first few days like we
+[210.085,212.199]	2	Female,English	like we weren't together obviously.
+[212.238,218.735]	2	Female,English	and when he was leaving he would like leave so casually like oh like walk each other to the metro or something and he'll just be like okay
+[218.764,219.239]	0	U	[*]
+[219.307,219.947]	2	Female,English	bye bye.
+[219.976,224.301]	2	Female,English	okay like he hates me like he can't wait to leave and so [+]
+[224.33,224.805]	0	U	[*]
+[224.844,228.81]	2	Female,English	for a while I thought like this guy doesn't like me cause he's just leaving so quickly.
+[228.839,229.673]	1	Female,English	ah [+]
+[229.702,235.714]	2	Female,English	then um it turns out he does like me but it's just our culture is different cause in U S of course, yeah you would like to give someone a hug and
+[235.724,236.17]	0	U	[*]
+[236.17,237.964]	2	Female,English	if you want a date with someone, you will probably like
+[237.993,239.244]	1	Female,English	ah have a kiss on the cheek.
+[239.273,240.359]	2	Female,English	maybe or at least [+]
+[240.388,242.124]	2	Female,English	like oh I have some friends and I
+[242.153,244.112]	1	Female,English	your like into the eye
+[244.131,245.033]	2	Female,English	yeah exactly
+[245.062,245.873]	2	Female,English	you are gonna find
+[245.873,246.142]	0	U	[UNKNOWN]
+[246.142,247.176]	2	Female,English	slowing stuff
+[247.273,247.855]	2	Female,English	yeah ah really
+[247.874,248.204]	2	Female,English	none
+[248.233,248.718]	2	Female,English	so
+[248.747,250.25]	2	Female,English	so I don't know why [+]
+[250.337,251.171]	0	U	[*]
+[251.181,251.627]	1	Female,English	yeah
+[251.656,252.335]	0	U	[NOISE]
+[252.364,253.217]	2	Female,English	yeah
+[253.615,255.273]	2	Female,English	but I think now like um
+[255.661,256.175]	2	Female,English	I got some
+[256.204,256.65]	2	Female,English	we'll get married
+[256.679,261.77]	2	Female,English	we will see what happens but for now like we're usually what happens to each other cause we don't see each other like that often.[+]
+[262.187,262.672]	1	Female,English	yeah
+[262.73,264.204]	1	Female,English	I I guess also like because
+[264.33,270.061]	1	Female,English	one thing that is quite different and has a quite an impact on our relationship compared to you guys is that we've lived together [+]
+[270.09,273.804]	1	Female,English	after then maybe he will maybe take me a little more for granted. [+]
+[273.862,274.347]	2	Female,English	yeah
+[274.376,281.261]	1	Female,English	everywhere he's always there anyway, so it's like if I come home and like I don't I'm not ah like oh hey baby like hugs and kisses and
+[281.29,281.639]	2	Female,English	mhm
+[281.668,282.415]	1	Female,English	yes so that is a
+[282.444,282.793]	0	U	[*]
+[282.822,283.918]	1	Female,English	quite a different factor.
+[283.947,284.936]	2	Female,English	yeah I think that is
+[284.975,286.565]	1	Female,English	but um I'm still training him [+]
+[286.594,287.04]	0	U	[NOISE]
+[287.05,288.039]	2	Female,English	I mean yeah
+[288.107,288.747]	0	U	[NOISE]
+[288.776,293.353]	1	Female,English	I'm like, you forgot something? you forgot something? And he said oh I have my keys, I have my earphones and I'm like [+]
+[293.508,296.068]	1	Female,English	okay, bye, shut the door. [+]
+[296.078,296.456]	2	Female,English	no
+[296.456,296.873]	1	Female,English	and then he [+]
+[296.873,297.261]	0	U	[*]
+[297.29,298.696]	1	Female,English	text him like, excuse me?
+[299.055,300.393]	1	Female,English	how can you still forget?
+[300.432,300.878]	0	U	[NOISE]
+[300.878,301.615]	2	Female,English	oh no [+]
+[301.615,303.108]	0	U	[NOISE]
+[303.118,304.107]	1	Female,English	yeah [+]
+[304.262,305.552]	1	Female,English	but yeah, I think it's like [+]
+[306.027,309.712]	1	Female,English	I think there are some things that are really good to communicate across maybe you're like, oh I'll just [+]
+[309.712,310.352]	1	Female,English	accept
+[310.41,317.799]	1	Female,English	them as they are but there are some things which like are not that hard for them to adjust to and since it will make a difference on making you feel really happy so
+[317.838,318.177]	2	Female,English	yeah
+[318.216,318.575]	1	Female,English	I still
+[318.594,319.021]	1	Female,English	persist
+[319.05,319.622]	0	U	[NOISE]
+[319.632,320.834]	2	Female,English	yeah, that's really good.
+[321.29,328.65]	2	Female,English	and I think like ah besides that, like even within the same culture like people communicate their love language differently.
+[328.747,330.056]	1	Female,English	yeah, definitely. [+]
+[330.095,330.599]	2	Female,English	like me
+[330.628,331.055]	0	U	[*]
+[331.084,340.994]	2	Female,English	quality time, so like if I still like my fiance isn't spending enough time with me like, I'm really get kind of upset about him or something, and so oh and like he knows that so he'll like try to make time for me.
+[341.004,341.741]	0	U	[*]
+[341.77,342.284]	2	Female,English	but like
+[342.342,342.633]	0	U	[*]
+[342.662,349.799]	2	Female,English	um if he's at a different love language then I'll have to like, try to do these things for him too, otherwise, he may not feel love like the same that I would so
+[349.964,350.284]	2	Female,English	yeah
+[350.313,351.428]	1	Female,English	yeah yeah yeah yeah [+]
+[351.496,354.25]	1	Female,English	it is really important to learn our partner's love languages.
+[354.279,354.861]	1	Female,English	yeah
+[354.89,361.222]	1	Female,English	I I noticed like I know how I express mine and I know how he expresses his, but how both of us receive it. [+]
+[361.455,362.764]	1	Female,English	it might be a bit different [+]
+[362.764,363.181]	0	U	[*]
+[363.181,363.84]	2	Female,English	true yeah [+]
+[363.85,367.564]	1	Female,English	like the way that we receive love may be different from how we give love.
+[368.01,368.524]	1	Female,English	possibly
+[368.524,369.959]	2	Female,English	yeah yeah I think that's true. [+]
+[369.998,370.473]	1	Female,English	yeah
+[370.512,370.764]	2	Female,English	mhm
+[370.793,373.004]	1	Female,English	like for example, I do know that his way of of
+[373.198,376.592]	1	Female,English	his love language is in doing things for me like for example, [+]
+[376.776,377.455]	1	Female,English	um
+[377.61,379.879]	1	Female,English	taking good care of the home or like [+]
+[379.908,380.81]	2	Female,English	acts of service.
+[380.81,381.799]	1	Female,English	yeah acts of service. [+]
+[381.799,382.439]	1	Female,English	definitely [+]
+[382.439,382.817]	2	Female,English	okay [+]
+[382.817,384.301]	1	Female,English	of service like how [+]
+[384.359,384.941]	1	Female,English	there was like
+[384.999,389.45]	1	Female,English	three days in a row just all this week actually like there was one day where he polished my shoes for me.[+]
+[389.479,389.76]	2	Female,English	wow [+]
+[389.76,391.147]	1	Female,English	there was one day [+]
+[391.205,391.651]	0	U	[NOISE]
+[391.69,392.301]	1	Female,English	he was like so [+]
+[392.32,392.834]	0	U	[*]
+[392.844,393.29]	2	Female,English	oh
+[393.29,394.318]	0	U	[*]
+[394.318,398.594]	1	Female,English	I had like this injury it was like really bad blister on my foot and he first [+]
+[398.798,404.16]	1	Female,English	disinfected it with two different types of alcohol and then he put on the medicine then he put on band aid on it. [+]
+[404.238,404.558]	2	Female,English	mhm
+[404.558,407.176]	1	Female,English	and then there was another time which is just so random and like [+]
+[407.36,409.639]	1	Female,English	I know that an American guy would never do this, but like
+[409.794,410.667]	1	Female,English	I do find like
+[410.987,412.965]	1	Female,English	Chinese guys, they will do things for you
+[413.004,413.479]	0	U	[*]
+[413.547,416.039]	0	U	[*]
+[416.039,416.805]	0	U	[*]
+[416.815,417.639]	2	Female,English	kinda weird yeah
+[417.678,418.657]	1	Female,English	like what he did [+]
+[418.793,420.674]	1	Female,English	to me is is he would um
+[420.936,425.93]	1	Female,English	like maybe I would have like a pimple or something and then he would like try to tell me take care of it. [+]
+[425.959,426.832]	0	U	[NOISE]
+[426.851,428.868]	1	Female,English	or like, oh there's something in your nose and like [+]
+[428.907,430.342]	0	U	[NOISE]
+[430.381,433.193]	1	Female,English	so those are something that I think that an American guy would never do [+]
+[433.222,433.639]	2	Female,English	no no
+[433.668,433.901]	1	Female,English	but
+[433.93,435.035]	0	U	[*]
+[435.035,435.782]	1	Female,English	that's love
+[435.782,436.383]	2	Female,English	oh no[+]
+[436.383,436.558]	0	U	[*]
+[436.558,437.779]	1	Female,English	off your face, that's love
+[438.051,442.919]	1	Female,English	and so he did was he was he was using that little machine that you stick in your nose to like trim. [+]
+[443.084,443.947]	0	U	[UNKNOWN]
+[443.947,445.091]	1	Female,English	stuck it in my nose and he's like  [+]
+[445.101,446.41]	0	U	[*]
+[446.41,446.953]	0	U	[NOISE]
+[447.215,448.708]	1	Female,English	his face was so funny, he was like [+]
+[448.747,451.404]	1	Female,English	um and then I was just like
+[451.462,452.422]	0	U	[NOISE]
+[452.451,456.815]	1	Female,English	laughing cause his expression was hilarious, so I just never imagined that we would both be in that position. [+]
+[456.815,458.347]	0	U	[NOISE]
+[458.415,464.747]	1	Female,English	but I'm so free for three different days, three different acts of service and as well as the normal like mopping and like stuff like that but [+]
+[465.319,465.93]	2	Female,English	yeah
+[466.027,468.141]	1	Female,English	the kind of acts of service that I really appreciate.
+[468.17,468.781]	2	Female,English	mhm
+[468.81,473.988]	1	Female,English	I mean the the way that I like to receive it is through affection and also as you said quality time [+]
+[473.998,474.987]	2	Female,English	time yeah
+[475.055,479.496]	2	Female,English	so like maybe for him it is isn't quality time he might not realize it like that's important[+]
+[479.661,480.0]	2	Female,English	like ah
+[480.013,480.178]	0	U	[*]
+[480.207,481.603]	2	Female,English	my mom as acts of service.
+[481.71,483.562]	2	Female,English	and for a while I kind of like
+[484.105,487.722]	2	Female,English	feel a little ignored by her 'cause like if I will come home from college and
+[487.79,496.944]	2	Female,English	she would be like cleaning the whole time and I hadn't seen her in a while and I just wanna like to talk with her and she's like I have to do this I have to do this and I was kinda like, what? [+]
+[497.002,501.841]	2	Female,English	and then she would get so angry at me like if I didn't do the dishes and like left something in the living room.
+[501.957,506.03]	2	Female,English	and I like couldn't understand why is this such a big deal I'm gonna take it up later whatever.
+[506.117,512.75]	2	Female,English	but then later I realized like oh it cause she's acts of service and so she feels like I'm making a mess it's like feeling like I don't love her.
+[512.847,515.213]	2	Female,English	and then for me it was like oh ah she's not
+[515.213,515.475]	0	U	[*]
+[515.504,517.007]	2	Female,English	time with me so I feel like she
+[517.162,522.321]	2	Female,English	doesn't care you know, but so I kinda had to learn ah like communicate that differently with her and so
+[522.35,523.203]	1	Female,English	yeah [+]
+[523.242,523.921]	2	Female,English	yeah
+[523.95,525.162]	1	Female,English	that's really good.
+[525.201,525.579]	2	Female,English	yeah
+[525.579,528.643]	1	Female,English	I I don't think that I figured it out how he [+]
+[529.138,533.133]	1	Female,English	well I guess I do express acts of service for him so much sure he receives it. [+]
+[533.356,534.51]	1	Female,English	I know that for me [+]
+[534.539,534.995]	2	Female,English	yes
+[535.043,539.087]	1	Female,English	yeah the way that I give for him would be number one affection but also um [+]
+[539.242,543.315]	1	Female,English	I like to give gifts I guess, so I would like to surprise him with something or [+]
+[543.538,547.698]	1	Female,English	um but I also do do the acts of service like I like to cook for him or like
+[547.853,551.363]	1	Female,English	if he's out late working then I will do the mopping which normally he does.
+[551.441,552.944]	0	U	[NOISE]
+[552.973,553.487]	1	Female,English	but um
+[553.516,553.962]	2	Female,English	yeah
+[554.34,556.842]	1	Female,English	yeah I still hope that that's me doing my part.
+[556.91,557.996]	2	Female,English	I think so.
+[558.704,566.859]	2	Female,English	yeah, my fiance he really I think kisses like words of affirmation cause like if I say something nice to him, he'll be like so happy and excited. [+]
+[566.917,570.544]	2	Female,English	and then a lot of times he'll like post some Wechat about me, and like [+]
+[570.641,575.722]	2	Female,English	for a while like he posts way too much, and everyone's gonna hate us, like your friends don't wanna listen [+]
+[575.751,576.614]	1	Female,English	and I
+[576.624,578.738]	2	Female,English	yeah so much ah totally ah [+]
+[578.835,580.076]	2	Female,English	um but then
+[580.202,581.162]	2	Female,English	I know that's like
+[581.201,581.676]	0	U	[*]
+[581.676,585.264]	2	Female,English	he loves me and then like if I post something about him he'll be like over the moon
+[585.293,585.933]	0	U	[*]
+[585.962,586.893]	1	Female,English	over the moon
+[586.922,587.504]	0	U	[*]
+[587.523,588.202]	0	U	[*]
+[588.231,589.162]	2	Female,English	that big of a deal
+[589.162,589.763]	1	Female,English	what
+[589.773,590.161]	0	U	[NOISE]
+[590.161,594.757]	2	Female,English	well there's been a couple of times where I even posted about him on Instagram and like sent him a screenshot.
+[594.835,596.813]	2	Female,English	and he went and posted the screenshot [+]
+[596.813,598.636]	0	U	[NOISE]
+[598.694,601.157]	1	Female,English	wow he's really showing off. [+]
+[601.167,602.437]	0	U	[*]
+[602.534,604.008]	2	Female,English	kisses like words so I
+[604.018,606.219]	2	Female,English	if I just like say good things to him and then
+[606.219,607.47]	0	U	[*]
+[607.47,608.624]	2	Female,English	we're all good so
+[608.624,609.099]	1	Female,English	oh
+[609.099,609.584]	2	Female,English	okay [+]
+[609.584,610.35]	2	Female,English	ah yeah
+[610.35,611.048]	1	Female,English	oh
+[611.058,612.047]	2	Female,English	mhm
+[612.299,615.596]	1	Female,English	I also really appreciate words of affirmation, yeah
+[615.693,616.178]	1	Female,English	I feel like
+[616.178,616.498]	0	U	[*]
+[616.498,617.138]	1	Female,English	I like all the
+[617.167,617.555]	0	U	[*]
+[617.584,619.087]	1	Female,English	but isn't acts of service. [+]
+[619.378,624.721]	1	Female,English	and also I think although I like to give gifts sometimes I don't really expect or appreciate gifts so much from my partner, like
+[624.75,625.235]	2	Female,English	oh
+[625.264,625.904]	1	Female,English	if they give me a gift [+]
+[625.904,626.379]	0	U	[*]
+[626.418,632.042]	1	Female,English	ah cool, nice but much I prefer like could be affection, the affirmation, and quality time. [+]
+[632.081,634.117]	2	Female,English	yeah that's good, like I think everyone
+[634.34,634.796]	2	Female,English	has
+[634.825,635.378]	2	Female,English	'cause there's like
+[635.436,636.037]	2	Female,English	five or
+[636.037,637.075]	2	Female,English	whatever what everybody has
+[637.191,642.922]	2	Female,English	a little bit but like somewhere definitely more prominent than others like for me, acts of service give kind of love like sometimes with someone.
+[643.087,646.733]	2	Female,English	like does something from me I'm like, what? Do you think I can't do it myself? Like
+[646.83,650.447]	2	Female,English	kinda have this attitude but actually I should be like little thankful to them and
+[650.796,651.533]	2	Female,English	stuff so
+[651.562,651.94]	1	Female,English	yeah
+[651.95,652.367]	2	Female,English	yeah
+[652.396,652.813]	0	U	[NOISE]
+[652.842,659.058]	1	Female,English	acts of service if all if the if all of the different love languages, it's hardest to see how this is related to you.
+[659.213,660.396]	2	Female,English	sometimes yeah. [+]
+[660.396,660.997]	1	Female,English	yeah
+[661.036,665.419]	1	Female,English	it's only very direct and it's like they're focuses on doing this act thing instead of like [+]
+[665.448,666.437]	0	U	[*]
+[666.476,667.184]	2	Female,English	yeah
+[667.242,667.911]	1	Female,English	yeah [+]
+[668.018,668.745]	0	U	[NOISE]
+[669.521,670.355]	2	Female,English	ah
+[671.722,675.116]	1	Female,English	ah one thing that I was talking with a friend about yesterday was
+[675.533,676.522]	1	Female,English	about um
+[676.658,679.218]	1	Female,English	family's reaction upon discovering that
+[679.237,679.955]	1	Female,English	your with
+[679.984,681.39]	1	Female,English	ah ah like a Chinese
+[681.419,682.67]	2	Female,English	Okay
+[683.242,687.363]	1	Female,English	there was yours anything unusual I think that you said they were just
+[687.402,692.357]	2	Female,English	yeah, they were fine with it, like um I remember when I the day I met him actually like [+]
+[692.454,696.527]	2	Female,English	I was talking to my mom on the phone and we have been like talking for a while like maybe an hour
+[696.653,701.22]	2	Female,English	and then finally it was like almost time to hang up and she's like, oh well anything else going on?
+[701.23,703.819]	2	Female,English	and I was like thinking, um, is there anything else?
+[703.887,705.962]	0	U	[UNKNOWN]
+[706.001,707.853]	0	U	[UNKNOWN]
+[707.921,712.042]	2	Female,English	and Chinese and then she was like excited to about that and stuff
+[712.081,713.293]	0	U	[UNKNOWN]
+[713.39,716.658]	2	Female,English	keep her posted and then like about the first time and
+[716.716,718.093]	1	Female,English	well[+]
+[718.093,718.723]	2	Female,English	but he probably
+[718.723,720.973]	2	Female,English	he doesn't like me like we have we just texted a little bit
+[721.002,721.681]	0	U	[*]
+[721.71,724.687]	2	Female,English	texted and stuff and then she's like I bet he likes you.
+[724.687,725.385]	0	U	[NOISE]
+[725.395,728.139]	1	Female,English	so when you first met you already told your mom about him? [+]
+[728.197,730.418]	2	Female,English	yeah, ah like that day it's pretty funny yeah. [+]
+[730.67,731.979]	2	Female,English	um but um
+[732.27,734.481]	2	Female,English	like we were kinda
+[734.665,737.642]	2	Female,English	I don't know like, hanging out for a while and texting before we like made a
+[737.681,738.253]	0	U	[*]
+[738.282,738.67]	1	Female,English	yeah
+[738.67,748.396]	2	Female,English	but I remember like when we were getting together my mom was telling me like just make sure that if you if you wanna be his girlfriend you're like ah more serious about it cause like you're not that
+[748.425,749.763]	2	Female,English	young anymore to just play around.
+[749.831,751.121]	0	U	[NOISE]
+[751.15,751.916]	2	Female,English	like on this day
+[751.916,752.265]	0	U	[*]
+[752.294,756.357]	2	Female,English	be his girlfriend and break up, you know it's only that and I was kinda like okay.
+[756.396,757.036]	0	U	[NOISE]
+[757.075,759.276]	2	Female,English	I wasn't sure what was gonna happen but on your real life
+[759.315,760.1]	2	Female,English	[UNKNOWN]
+[760.1,760.643]	0	U	[NOISE]
+[760.643,762.66]	2	Female,English	so then yeah it worked out so
+[762.67,765.259]	1	Female,English	did you ever imagine that you would be with a Chinese guy before? [+]
+[765.317,768.139]	2	Female,English	mhm yeah like ah cause I really like China
+[768.178,768.973]	0	U	[*]
+[769.031,770.602]	2	Female,English	like I um and then like
+[770.631,771.203]	0	U	[*]
+[771.271,772.464]	2	Female,English	and I was like wow there's a lot of
+[772.483,773.637]	0	U	[*]
+[773.705,774.83]	1	Female,English	really? [+]
+[774.859,775.848]	0	U	[NOISE]
+[775.916,781.036]	2	Female,English	um and so like I don't know like how it'd go cause I hadn't, they don't want to be with a foreigner but
+[781.133,783.567]	2	Female,English	I thought like give it a try but actually I think
+[783.596,784.333]	2	Female,English	when it comes down to it
+[784.362,787.921]	2	Female,English	more about like me and him not too much about America and China.
+[787.95,788.803]	1	Female,English	yeah exactly
+[788.813,789.23]	2	Female,English	yeah [+]
+[789.23,790.122]	1	Female,English	exactly [+]
+[790.384,792.139]	1	Female,English	I totally agree about that like
+[792.779,798.258]	1	Female,English	you you realize that you're just two people and and I remember that's the reason why I they're checking me to my boyfriend is that
+[798.316,804.997]	1	Female,English	he he treated me as just a human, he didn't treat me as like, oh an American or a foreign[~] a foreigner girl or something he just treated me very very humanly. [+]
+[805.007,805.647]	0	U	[*]
+[805.647,806.762]	1	Female,English	that I really appreciated.
+[806.762,807.567]	2	Female,English	yeah
+[807.819,810.864]	1	Female,English	but um, one funny thing about meeting him is that
+[810.893,813.831]	1	Female,English	because we m[~] we met at our workplace and so
+[814.413,817.07]	1	Female,English	for the beginning of the time like when I was getting to the most
+[817.07,817.448]	1	Female,English	start
+[817.458,819.882]	1	Female,English	to get a bit I think if I did mention him to my family
+[819.911,820.241]	2	Female,English	mhm
+[820.26,821.938]	1	Female,English	but I but the thing is that I called him
+[822.035,822.704]	1	Female,English	coworker.
+[822.733,823.538]	2	Female,English	a coworker.
+[823.567,823.916]	0	U	[NOISE]
+[823.916,824.75]	1	Female,English	so I was just like
+[824.837,826.059]	1	Female,English	I wish that there was no would
+[826.088,828.91]	1	Female,English	a coworker or the coworker it's just coworker and I was like
+[828.978,830.859]	1	Female,English	as if that was his name, you know. [+]
+[830.956,831.858]	2	Female,English	yeah that's why I called
+[831.887,832.236]	0	U	[*]
+[832.595,833.099]	2	Female,English	fiance
+[833.128,833.962]	0	U	[*]
+[833.962,835.145]	2	Female,English	and that must be a really really [+]
+[835.155,836.881]	2	Female,English	ah his name is Michael.
+[836.939,838.607]	0	U	[NOISE]
+[838.607,842.379]	2	Female,English	and to this day like my family doesn't speak Chinese but they can say
+[842.418,843.145]	0	U	[*]
+[843.174,845.395]	1	Female,English	oh my god it's so cute.
+[845.414,846.403]	2	Female,English	really funny yeah.
+[846.413,848.595]	1	Female,English	but that's weird because when I was in
+[848.653,850.67]	1	Female,English	I didn't really feel like there was so many
+[850.699,851.407]	0	U	[*]
+[851.436,854.258]	1	Female,English	like I thought like you rarely see you like cute guys. [+]
+[854.316,857.574]	2	Female,English	there wouldn't be that many but there would be some but then like I
+[857.613,857.797]	0	U	[*]
+[857.807,859.019]	2	Female,English	my fiance was the most
+[859.019,860.047]	0	U	[*]
+[860.076,860.716]	2	Female,English	I thought
+[860.755,861.608]	0	U	[NOISE]
+[861.647,864.915]	1	Female,English	there was two guys actually, I one I met when I was seventeen.
+[865.07,869.104]	1	Female,English	I was in Ikea and it was so random I was in Ikea with my dad and my sister
+[869.104,870.733]	0	U	[NOISE]
+[870.733,877.162]	1	Female,English	and my dad was like doing this English class in my in the Ikea, yeah he will bring them in like a tour and they will learn English together. [+]
+[877.201,877.676]	2	Female,English	so funny.
+[877.734,882.98]	1	Female,English	and then we met these three people, they were so tall and turns out this guy I met he was a basketball coach.
+[882.98,883.31]	2	Female,English	oh
+[883.31,884.59]	1	Female,English	and the other two were like [+]
+[884.716,885.482]	1	Female,English	hi[~] his
+[886.122,888.614]	1	Female,English	although he is a basketball player and then he was with his coach and then
+[888.624,888.944]	2	Female,English	okay
+[888.973,889.807]	1	Female,English	his coach is white.
+[889.904,890.224]	2	Female,English	wow
+[890.253,893.22]	1	Female,English	and they were all really tall for like the Dongguan Panthers or something.
+[893.23,893.86]	2	Female,English	oh wow
+[893.87,899.281]	1	Female,English	um I thou[~] I thought he was really cute and he was into me and we did end up like exchanging Q Q or something I don't remember what are
+[899.3,899.717]	2	Female,English	Q
+[899.727,900.881]	1	Female,English	although it was phone number yeah
+[900.9,901.482]	2	Female,English	okay [+]
+[901.511,902.093]	1	Female,English	for Q Q
+[902.122,902.539]	2	Female,English	yeah
+[902.568,904.973]	1	Female,English	um and then he asked me out to a book fair
+[905.099,905.807]	1	Female,English	with him.
+[905.807,906.214]	0	U	[*]
+[906.224,907.31]	1	Female,English	and which is cool.
+[907.378,910.219]	1	Female,English	but then I told my dad then and my dad was like um [+]
+[910.287,910.995]	1	Female,English	I don't think so.
+[911.043,911.567]	0	U	[NOISE]
+[911.596,912.527]	1	Female,English	oh really?
+[912.556,913.836]	1	Female,English	and then I didn't go because
+[914.02,916.881]	1	Female,English	tur[~] and then later turns out that he was ten years older than me.
+[916.9,917.579]	2	Female,English	oh
+[917.579,919.46]	1	Female,English	so I was seventeen and he was like twenty seven. [+]
+[919.47,920.401]	2	Female,English	oh no.
+[920.43,921.477]	2	Female,English	is that why your don't
+[921.477,922.951]	1	Female,English	yeah I think so I think my dad he
+[922.98,923.882]	1	Female,English	he could kind of tell that
+[923.921,926.607]	1	Female,English	he wasn't that young it's my dad he was like um I don't know about that. [+]
+[926.607,927.082]	2	Female,English	yeah
+[927.082,927.567]	1	Female,English	um
+[927.567,928.653]	0	U	[*]
+[928.653,929.293]	1	Female,English	yeah
+[929.293,929.778]	2	Female,English	yeah
+[929.807,933.23]	1	Female,English	and the second guy, who I was who I was kinda into, it was really
+[933.259,933.773]	0	U	[*]
+[933.831,936.459]	1	Female,English	this is actually after uh I started working at that place.
+[936.682,939.087]	1	Female,English	and I was going home on the bus then I met him. [+]
+[939.145,942.898]	1	Female,English	on the bus, and he was like, he had studied university in Canada
+[942.917,943.363]	2	Female,English	oh wow [+]
+[943.402,945.584]	1	Female,English	he was really cute and then ah we have this like
+[945.71,946.854]	1	Female,English	the bus took an hour long
+[946.864,947.95]	2	Female,English	oh wow [+]
+[948.047,949.715]	2	Female,English	and he was so cute and like
+[949.86,950.859]	2	Female,English	ah really like
+[950.956,953.933]	2	Female,English	he also treated me like a human which I really appreciated it and [+]
+[953.991,955.155]	2	Female,English	he was in Canada before [+]
+[955.184,959.218]	1	Female,English	ah yeah yeah and he was very warm and like chatting with him felt really good and then we're about to [+]
+[959.276,959.974]	1	Female,English	we realize that
+[960.49,963.506]	1	Female,English	He lived the street behind my street and I was like, what? [+]
+[963.856,967.598]	1	Female,English	that's so weird that we never met before and turns out that he had seen my my family before. [+]
+[967.696,968.015]	2	Female,English	oh
+[968.141,970.992]	1	Female,English	because my dad has like a huge beard and would drive a motorcycle[+]
+[971.021,971.691]	0	U	[*]
+[971.72,972.273]	0	U	[*]
+[972.302,972.758]	1	Female,English	he would notice [+]
+[972.777,973.232]	1	Female,English	my dad or
+[973.29,973.97]	2	Female,English	yeah [+]
+[973.999,974.639]	1	Female,English	and then
+[974.764,976.821]	1	Female,English	he was like, I can drive you back 'cause it was like
+[976.879,980.078]	1	Female,English	night, and he said, I could drive you back on my motorcycle and I was like [+]
+[980.176,981.611]	1	Female,English	um, okay. [+]
+[981.62,982.26]	0	U	[NOISE]
+[982.26,984.753]	1	Female,English	so, we were about to get off the bus and I was thinking
+[985.198,990.803]	1	Female,English	oh he's probably gonna be really short and then he he stood up and then it was like, aw really tall, and I was like, oh cute. [+]
+[990.89,991.182]	2	Female,English	oh
+[991.221,994.352]	1	Female,English	but um things didn't work out with that guy because he never just like ask me out.
+[994.381,994.798]	0	U	[NOISE]
+[994.798,995.662]	1	Female,English	okay
+[995.691,996.689]	0	U	[NOISE]
+[996.718,1000.199]	1	Female,English	and um, I think he was just like too young and and might not really
+[1000.239,1002.255]	1	Female,English	yeah don't really know how to ask me out or
+[1002.255,1002.673]	0	U	[*]
+[1002.702,1003.564]	1	Female,English	but anyway [+]
+[1004.039,1004.689]	1	Female,English	um
+[1004.816,1007.861]	1	Female,English	and then, it was my boyfriend that I have now
+[1008.083,1008.558]	1	Female,English	and
+[1009.237,1010.769]	1	Female,English	what was I gonna where's I'm going with this?
+[1011.245,1011.885]	2	Female,English	about him?
+[1011.913,1013.193]	1	Female,English	oh yeah, I had told my [+]
+[1013.456,1020.302]	1	Female,English	I had told my mom when I was little but I don't wanna marry a Chinese guy because my vision of a Chinese guy was like ah icy [+]
+[1020.399,1023.279]	1	Female,English	guy with glasses and he was kind of overweight and [+]
+[1023.472,1024.53]	1	Female,English	I don't know that's [+]
+[1024.947,1025.878]	0	U	[*]
+[1025.878,1027.564]	1	Female,English	when I was a kid and I thought that that [+]
+[1027.729,1031.444]	1	Female,English	okay I'm not gonna marry a Chinese guy but then I end up with a guy who is like [+]
+[1031.725,1035.38]	1	Female,English	super fit and attractive and like charming and like [+]
+[1035.884,1039.434]	1	Female,English	but and still would like if I don't see him for a while and I see him I get I still get like
+[1039.463,1040.141]	1	Female,English	butterflies.
+[1040.209,1041.13]	2	Female,English	oh so cute. [+]
+[1041.159,1042.284]	1	Female,English	it's pretty cool.[+]
+[1042.449,1045.301]	1	Female,English	probably get like nervous if I don't see him for a while, see him I'm like oh my god
+[1045.543,1046.513]	1	Female,English	oh my god he's cute.
+[1046.542,1047.123]	0	U	[NOISE]
+[1047.152,1047.725]	2	Female,English	yeah
+[1047.764,1048.491]	0	U	[*]
+[1048.559,1049.237]	1	Female,English	yeah [+]
+[1050.517,1051.119]	2	Female,English	yeah
+[1051.158,1051.603]	2	Female,English	honestly
+[1051.661,1054.678]	2	Female,English	my fiance is like really really cute and
+[1055.278,1055.725]	2	Female,English	yeah
+[1055.793,1056.403]	0	U	[*]
+[1056.432,1059.119]	0	U	[NOISE]
+[1059.119,1063.084]	1	Female,English	that's so funny and then when he met you he just called you Meinv all the time
+[1063.123,1064.112]	2	Female,English	ah no
+[1064.18,1067.564]	2	Female,English	it was a little funny cause like, when he I think when he met me like he
+[1067.603,1072.238]	2	Female,English	thought I was pretty and stuff but he didn't really know like what was gonna happen like he thought maybe we're just
+[1072.364,1081.713]	2	Female,English	yeah he said that he thought he could never get me cause he thought I was like out of his league but actually I thought the exact same thing and so it's good that I was like kind of brave otherwise
+[1081.742,1084.244]	2	Female,English	we probably wouldn't have gotten together and stuff.
+[1084.273,1088.432]	1	Female,English	oh yeah, I don't think you told me the story about how you guys like confirmed that you're together. [+]
+[1088.53,1089.421]	1	Female,English	did you tell me? [+]
+[1089.46,1091.061]	2	Female,English	maybe not, I don't know um
+[1091.187,1092.118]	2	Female,English	it w[~] yeah
+[1092.166,1093.262]	0	U	[*]
+[1093.33,1094.124]	2	Female,English	um
+[1095.055,1096.461]	2	Female,English	it was like an
+[1096.966,1098.381]	0	U	[*]
+[1098.381,1098.964]	1	Female,English	oh [+]
+[1098.964,1099.535]	0	U	[*]
+[1099.564,1100.815]	1	Female,English	so romantic so
+[1100.883,1104.491]	2	Female,English	yeah but we have been, cause we just met like in September and then that
+[1104.53,1105.256]	0	U	[*]
+[1105.285,1106.361]	2	Female,English	like in October.
+[1106.517,1106.964]	0	U	[*]
+[1107.099,1112.85]	2	Female,English	like pretty fast like we have like been hanging out for a while and stuff and then he was he kept asking me like oh
+[1112.859,1114.507]	0	U	[*]
+[1114.604,1117.784]	2	Female,English	he, sorry he is like asking me if a lot of boys were chasing me.
+[1117.804,1118.193]	0	U	[NOISE]
+[1118.222,1127.405]	2	Female,English	and I like I don't know how to respond like if I say yes it will sound like I'm a slut and if I say no and I'll sound like I'm like undesirable so I'm so like oh I don't know maybe.
+[1127.444,1127.976]	0	U	[NOISE]
+[1127.986,1128.277]	0	U	[*]
+[1128.306,1130.188]	2	Female,English	like that and then um
+[1130.245,1132.718]	2	Female,English	finally he asked me like oh what
+[1132.747,1134.348]	0	U	[*]
+[1134.358,1134.9]	2	Female,English	like over
+[1134.9,1135.56]	0	U	[*]
+[1135.56,1136.17]	2	Female,English	like over
+[1136.306,1144.539]	2	Female,English	message, like over Wechat and then he said that like he likes me and stuff and at that time I was like, what? Over Wechat we can't just be like that you know but
+[1144.559,1146.323]	1	Female,English	so mine was also over Wechat. [+]
+[1146.342,1146.741]	0	U	[*]
+[1146.778,1147.496]	0	U	[NOISE]
+[1147.544,1150.29]	2	Female,English	I guess that's the thing if you're in America that's not how it works.
+[1150.61,1155.254]	2	Female,English	and so ah maybe in America and ah oh it is this is a stupid thing to do but I was like
+[1155.418,1162.584]	2	Female,English	oh well, let's just talk about it in person later and I like didn't tell him how I felt and still that whole day he is like really nervous and stuff.
+[1162.662,1163.206]	1	Female,English	uh wait.
+[1163.225,1163.787]	2	Female,English	um
+[1164.466,1165.262]	1	Female,English	someone's calling me.
+[1165.271,1165.843]	2	Female,English	oh okay.
+[1168.461,1169.742]	1	Female,English	let me pause it.
+[1169.781,1173.485]	2	Female,English	um, yeah so anyway he was really nervous and then um
+[1173.775,1179.254]	2	Female,English	that night we like went ah on a date and stuff and then finally he told me that he really likes me and stuff and
+[1179.38,1187.409]	2	Female,English	I told him like, oh I like you too and everything ah but since we hadn't known each other that long it's just like a month so then I was like, well have about we like to
+[1187.438,1189.639]	2	Female,English	talking for a while more and then
+[1190.095,1192.199]	2	Female,English	and get together a little bit later cause
+[1192.277,1195.409]	2	Female,English	I still felt at that time I don't know him well enough you know.
+[1195.525,1198.6]	2	Female,English	and so um then we were together for maybe another
+[1198.87,1205.107]	2	Female,English	few weeks and months and then finally I was like, hey I really like you let's live together and so then we're boyfriend and girlfriend.
+[1205.107,1206.124]	1	Female,English	oh [+]
+[1206.416,1206.803]	1	Female,English	yeah
+[1206.841,1209.965]	2	Female,English	that's one thing that's different like in America usually people will take um
+[1210.139,1213.494]	2	Female,English	quite a lot of time to get to know each other maybe like three or four months and then be a couple.
+[1213.62,1216.617]	2	Female,English	but in China it's kinda like really quick and so
+[1217.111,1218.352]	2	Female,English	um I don't know I just
+[1218.439,1220.66]	0	U	[*]
+[1220.689,1221.427]	1	Female,English	yeah
+[1221.611,1222.319]	1	Female,English	yeah
+[1222.707,1223.599]	1	Female,English	okay, cool [+]
+[1223.628,1223.918]	0	U	[*]
+[1223.918,1224.501]	0	U	[NOISE]

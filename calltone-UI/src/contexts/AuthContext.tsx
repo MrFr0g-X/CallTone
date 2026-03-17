@@ -1,18 +1,29 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { authApi } from "@/services/api";
 
-export type UserRole = "agent" | "qa" | "admin";
+export type UserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
 
 interface AuthUser {
+  id?: number;
   email: string;
   name: string;
   role: UserRole;
+  clientId?: number | null;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (email: string) => void;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<AuthUser>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,37 +34,90 @@ export const useAuth = () => {
   return ctx;
 };
 
-// Derive role & name from email for mock auth
-const resolveUser = (email: string): AuthUser => {
-  const name = email.split("@")[0];
-  const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-
-  let role: UserRole = "agent";
-  if (email.includes("admin")) role = "admin";
-  else if (email.includes("qa")) role = "qa";
-
-  return { email, name: displayName, role };
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    const stored = sessionStorage.getItem("calltone_user");
+    const stored = localStorage.getItem("calltone_user");
     return stored ? JSON.parse(stored) : null;
   });
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback((email: string) => {
-    const u = resolveUser(email);
-    setUser(u);
-    sessionStorage.setItem("calltone_user", JSON.stringify(u));
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem("calltone_token");
+
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await authApi.me();
+        const me = response.data;
+
+        const authUser: AuthUser = {
+          id: me.id,
+          email: me.email,
+          name: me.name,
+          role: me.role,
+          clientId: me.clientId,
+        };
+
+        setUser(authUser);
+        localStorage.setItem("calltone_user", JSON.stringify(authUser));
+      } catch {
+        localStorage.removeItem("calltone_token");
+        localStorage.removeItem("calltone_user");
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-    sessionStorage.removeItem("calltone_user");
+  const login = useCallback(async (email: string, password: string) => {
+    const response = await authApi.login(email, password);
+    const { access_token, user } = response.data;
+
+    localStorage.setItem("calltone_token", access_token);
+
+    const authUser: AuthUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      clientId: user.clientId,
+    };
+
+    setUser(authUser);
+    localStorage.setItem("calltone_user", JSON.stringify(authUser));
+
+    return authUser;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // ignore logout API failures for now
+    } finally {
+      localStorage.removeItem("calltone_token");
+      localStorage.removeItem("calltone_user");
+      setUser(null);
+    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

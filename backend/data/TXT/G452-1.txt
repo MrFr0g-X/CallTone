@@ -1,0 +1,512 @@
+[2.764,5.004]	0	U	[NOISE]
+[6.478,7.661]	1	Male,English	got a you gotta
+[8.64,9.193]	1	Male,English	you know
+[9.794,13.644]	1	Male,English	you gotta live a happy life and a stress free life and and
+[13.702,16.815]	1	Male,English	to find what drama do you want to clear for yourself but
+[16.97,18.958]	1	Male,English	I'm very sorry to hear that[+]
+[19.297,21.77]	2	Female,English	yeah, It's alright I still hangout till like
+[21.925,22.497]	0	U	[*]
+[22.633,25.028]	2	Female,English	both of his parents um past away
+[25.387,26.221]	2	Female,English	and
+[26.599,31.011]	2	Female,English	like I was really close to both of them so after they passed away like it's that
+[31.234,32.592]	2	Female,English	that difficult to
+[32.718,34.541]	2	Female,English	kind of cut ties with him.
+[34.667,35.278]	2	Female,English	um
+[35.627,39.787]	2	Female,English	but so close to like my aunts and uncle and stuff on that side of the family
+[40.107,45.295]	2	Female,English	everything like Christmas tomorrow with my like with that side of the family and my dad
+[45.295,47.37]	2	Female,English	haven't been invited for years so
+[47.37,47.913]	0	U	[NOISE]
+[48.136,49.193]	2	Female,English	the whole yeah the whole
+[49.358,50.376]	0	U	[NOISE]
+[50.541,54.119]	1	Male,English	so this is not you and he in the vacuum, this this guy maybe has
+[54.148,54.536]	0	U	[*]
+[54.536,57.445]	1	Male,English	drama that extend different directions to it sounds like
+[58.027,60.907]	2	Female,English	yeah correct ah shame yeah
+[60.907,61.896]	1	Male,English	may I ask you so
+[62.032,63.496]	1	Male,English	I I'm gonna think that
+[64.301,65.901]	1	Male,English	answer this, so it sounds like
+[66.541,67.559]	1	Male,English	like we just said
+[68.267,70.478]	1	Male,English	just maybe some drama that have followed
+[70.885,72.873]	1	Male,English	do you think it would've been half bad?
+[73.038,74.793]	1	Male,English	If Facebook wasn't involved?
+[74.851,76.771]	1	Male,English	Think of it, thinking about a lot lately.
+[77.256,77.857]	0	U	[NOISE]
+[78.255,81.377]	2	Female,English	yeah I feel like if Facebook wasn't involved I just
+[81.484,83.307]	2	Female,English	wondering if spoken to aunt
+[83.307,84.548]	0	U	[*]
+[84.684,85.44]	1	Male,English	oh wow
+[86.09,86.536]	2	Female,English	yeah
+[86.633,90.056]	1	Male,English	so Facebook ah kept the ball in the air that maybe it would've
+[91.142,93.324]	1	Male,English	been able to maintain something at all and then
+[93.576,96.495]	1	Male,English	ultimately proved not doing because it's being [+]
+[96.999,97.513]	2	Female,English	yeah
+[97.765,98.095]	0	U	[NOISE]
+[98.095,100.112]	2	Female,English	Cause I remember when I was graduated
+[100.228,103.302]	2	Female,English	high school cause I graduated in high school in two thousand twelve
+[103.719,105.096]	2	Female,English	and my mom had a
+[105.387,106.415]	2	Female,English	call my dad and
+[107.21,110.72]	2	Female,English	cause they're separated um and like begged him to go
+[111.118,111.884]	2	Female,English	and
+[113.038,114.822]	2	Female,English	he like showed up and
+[115.433,117.615]	2	Female,English	then like immediately left after
+[117.867,121.891]	2	Female,English	and It was the same thing when I graduated college in two thousand sixteen.
+[122.027,125.45]	2	Female,English	so my mom called him and begged him it looks like It would be really great if
+[125.45,128.359]	2	Female,English	you showed up, cause I was the first person in my um
+[128.737,131.685]	2	Female,English	whole family to ever graduate college so
+[132.296,135.69]	2	Female,English	this is like a huge deal and I had family coming up like
+[135.69,138.696]	2	Female,English	my Aunt and uncle from different parts of the country
+[138.696,139.588]	0	U	[*]
+[139.588,140.81]	2	Female,English	different parts of country and
+[141.062,143.651]	2	Female,English	ah he just couldn't drive thirty minutes
+[143.874,144.931]	2	Female,English	to my college
+[145.067,145.639]	2	Female,English	tough
+[145.842,146.434]	2	Female,English	something
+[146.434,147.045]	0	U	[*]
+[147.045,148.519]	2	Female,English	so it's like stuff like that.
+[148.519,150.73]	1	Male,English	yeah so this one isn't Zuckerberg's fault?
+[151.244,154.027]	1	Male,English	this is not, this is not social media.[+]
+[154.027,156.044]	1	Male,English	ripping us under a society
+[156.044,157.479]	0	U	[*]
+[157.547,159.69]	1	Male,English	you know long standing serious and issues.
+[160.427,161.93]	2	Female,English	yup yeah
+[162.211,163.879]	1	Male,English	but you, are you happier now?
+[163.879,164.936]	1	Male,English	do you feel happy?
+[165.198,165.479]	0	U	[*]
+[165.508,165.954]	2	Female,English	yeah
+[165.954,166.507]	1	Male,English	good
+[166.798,167.399]	1	Male,English	good
+[167.399,170.57]	2	Female,English	yeah absolutely, I know my partner still tries
+[170.793,171.976]	2	Female,English	get me to connect with
+[172.451,175.36]	2	Female,English	my dad, and stuff cause' they have things in common.
+[175.399,175.787]	0	U	[NOISE]
+[176.233,180.17]	2	Female,English	Cause my partner is super open like will talk to anybody about anything.
+[180.325,182.924]	2	Female,English	Very extrovert and I complete lost it.
+[183.37,184.844]	2	Female,English	like super introvert.
+[184.97,188.48]	2	Female,English	don't wanna socialize, just wanna go to a party and need to
+[188.81,190.381]	2	Female,English	and that's all I wanna do.
+[190.507,195.53]	2	Female,English	like I don't wanna talk to anybody about any of their beliefs unless like I know them.
+[195.84,196.422]	2	Female,English	pretty much
+[196.432,197.13]	0	U	[NOISE]
+[197.188,200.931]	2	Female,English	ah or like face to face conversation is really unique
+[201.193,204.432]	2	Female,English	to anybody like I freak out and start panicking.[+]
+[204.432,205.576]	1	Male,English	you and me both
+[205.576,206.439]	2	Female,English	yeah
+[206.439,207.457]	1	Male,English	good on the phone
+[207.777,209.484]	1	Male,English	God forgive me for making bad concept.[+]
+[210.124,211.627]	0	U	[NOISE]
+[211.656,215.147]	2	Female,English	my partner can do that and he can talk to anybody like
+[215.438,216.912]	2	Female,English	we have ah fight
+[216.999,217.833]	0	U	[*]
+[217.833,218.987]	2	Female,English	and he's been with my partner
+[219.821,220.558]	2	Female,English	um
+[220.684,221.838]	2	Female,English	so he came out
+[222.41,226.696]	2	Female,English	to my family kind of, you can call that they just accepted me um
+[226.735,230.216]	2	Female,English	and then came out to her family and then we moved in together
+[230.41,232.931]	2	Female,English	so we have a house and two dogs.
+[232.931,234.124]	2	Female,English	and right now her
+[234.124,238.41]	2	Female,English	ah sister lives with us and her childhood best friend. So It's like
+[238.604,239.467]	2	Female,English	four
+[239.564,243.268]	2	Female,English	women living in the same house and her sister's dog, so we have three dogs
+[243.278,246.856]	2	Female,English	and four women and tiny little house which is insane
+[247.021,247.748]	2	Female,English	um
+[248.621,249.358]	2	Female,English	but
+[250.027,252.141]	2	Female,English	our neighbor is like
+[252.296,253.518]	2	Female,English	the biggest
+[253.896,254.72]	2	Female,English	ah
+[254.759,255.118]	0	U	[*]
+[255.913,260.432]	2	Female,English	serious of full redneck essentially like he goes hunting all the time and like
+[260.655,265.804]	2	Female,English	huge truck on the quarter blared his country, had a giant many cave and ah
+[265.959,267.404]	2	Female,English	ah in his back yard.
+[268.034,271.913]	2	Female,English	and my partner will go and talk to them and they're best friends.
+[272.999,275.976]	2	Female,English	so like I was little, like If you bound him at
+[275.976,281.251]	2	Female,English	first cause' like oh my gosh he knows that we are we're a thing
+[281.862,282.599]	2	Female,English	so
+[282.667,288.0]	2	Female,English	when I came over and first met him he was like oh just so you know like
+[288.33,291.491]	2	Female,English	I I know that you guys, you guys are a thing
+[291.627,293.45]	2	Female,English	I don't understand it, but
+[293.576,295.05]	2	Female,English	I mean you guys are cool
+[295.118,297.639]	2	Female,English	so was it like stare, across the fence
+[297.833,299.2]	2	Female,English	and just talk to each other
+[299.462,300.364]	2	Female,English	and it just like
+[300.422,301.091]	0	U	[*]
+[301.091,303.787]	2	Female,English	and wait we got a pride flag for um
+[304.417,305.222]	0	U	[*]
+[305.222,306.754]	2	Female,English	they hanged out and
+[307.113,312.039]	2	Female,English	like to m [~]my partner and I are very short and we couldn't really get the flagpole,
+[312.136,313.387]	2	Female,English	to hang on the side of the house.
+[313.581,317.799]	2	Female,English	So he came over, he's like, like I feel like this big burly redneck
+[317.935,319.079]	0	U	[NOISE]
+[319.079,323.462]	2	Female,English	and he's like hanging out our pride flag and everyone in our neighborhood
+[323.559,326.536]	2	Female,English	what is going on, so it's just like
+[327.535,331.055]	2	Female,English	like the whole, If you can't read the book like the cover thing
+[331.404,333.615]	2	Female,English	the friendship that we had with him
+[333.712,336.301]	2	Female,English	Is the funniest thing in the world, and he'll come over like
+[336.301,337.571]	0	U	[*]
+[338.279,339.2]	2	Female,English	in the house
+[339.239,342.119]	2	Female,English	and what if I pay in and a case of beer
+[342.381,343.312]	0	U	[NOISE]
+[343.69,344.495]	2	Female,English	okay
+[344.514,345.416]	0	U	[NOISE]
+[345.794,347.404]	1	Male,English	I loved that story
+[347.53,347.937]	2	Female,English	yeah
+[348.238,348.975]	2	Female,English	yeah[+]
+[348.975,353.513]	1	Male,English	now was he aware of the cultural significance of the pride flag? As he was hanging it
+[353.93,354.657]	2	Female,English	yes
+[354.657,356.296]	1	Male,English	So there were cracks being made?
+[356.325,358.992]	1	Male,English	does he say things is he like ah
+[359.719,361.067]	1	Male,English	boys down at the shop
+[361.096,362.056]	0	U	[*]
+[362.124,363.375]	0	U	[*]
+[363.472,364.839]	1	Male,English	are those things like that being said?
+[365.198,365.634]	0	U	[NOISE]
+[365.77,368.272]	2	Female,English	yeah and then there is one ah
+[368.33,370.832]	0	U	[*]
+[370.919,372.393]	2	Female,English	American flag
+[372.393,375.719]	2	Female,English	but there's the pride flag that looks like an American flag
+[375.884,379.695]	2	Female,English	so we've like showed him that, like oh were gonna buy you this
+[379.695,382.672]	2	Female,English	to thank you for your trouble things like I'm not
+[382.672,386.25]	0	U	[NOISE]
+[386.25,391.244]	1	Male,English	I do think It's funny though that you lifted a stereotypical redneck that having a man cave
+[391.525,393.678]	0	U	[*]
+[393.765,395.278]	1	Male,English	there's a lot of people who ah
+[395.501,399.651]	1	Male,English	our traditional rednecks still have ah sweet as big screen
+[399.816,402.017]	1	Male,English	in the basement, is a man cave[+]
+[402.696,405.159]	2	Female,English	well this thing is not, it's outside.
+[405.314,406.73]	2	Female,English	and It's like
+[406.992,409.833]	2	Female,English	It's not attached to the house. It's like he build
+[409.901,412.044]	2	Female,English	built his deck outside
+[412.16,412.936]	2	Female,English	that have this
+[413.382,415.69]	2	Female,English	like a big selling van
+[415.69,416.941]	2	Female,English	um I think there's
+[416.97,418.279]	0	U	[*]
+[418.385,419.695]	2	Female,English	has a bar
+[419.879,421.644]	2	Female,English	like a flat screen T V
+[421.828,423.176]	2	Female,English	a dart board
+[423.36,429.033]	2	Female,English	and everything you know like, he shoot his gun and stuff and like his bow and arrow like he has a globe target thing
+[429.198,431.816]	2	Female,English	back there, I'm like what is that?
+[431.855,432.592]	1	Male,English	yeah that's
+[432.64,433.222]	0	U	[*]
+[433.222,434.114]	2	Female,English	do you think yeah
+[434.124,438.895]	1	Male,English	that's a lot different than my dad watching Steven Seagal movies in the basement once in a while.
+[439.273,440.805]	2	Female,English	nope this is outdoors
+[440.97,441.581]	1	Male,English	I love it[+]
+[441.581,443.947]	2	Female,English	all types of weather to choose out there.
+[444.267,445.256]	1	Male,English	I love it! [+]
+[446.022,447.079]	2	Female,English	it's so[+]
+[447.079,450.861]	1	Male,English	So in twenty eighteen yo[~]you lost touch with your dad but you ah
+[451.336,454.216]	1	Male,English	gained a new friend in the ah Agro.
+[454.497,455.719]	1	Male,English	ultra masculine
+[456.398,458.25]	1	Male,English	redneck identify Ambrahao [+]
+[458.696,460.17]	1	Male,English	has become your de facto
+[460.616,461.295]	1	Male,English	handyman
+[462.478,463.273]	2	Female,English	yeah pretty much
+[463.302,464.165]	0	U	[NOISE]
+[464.165,465.164]	1	Male,English	that's awesome
+[465.513,466.182]	2	Female,English	yeah
+[466.444,467.433]	1	Male,English	that's awesome
+[467.976,469.673]	2	Female,English	yeah, he's a great dude.
+[470.255,474.599]	1	Male,English	then you said you had the more ah like the most formal coming out after your partners soon
+[475.821,479.147]	2	Female,English	yeah, so my partner is Catholic
+[479.37,480.0]	2	Female,English	ah
+[480.013,480.275]	0	U	[NOISE]
+[480.711,481.38]	2	Female,English	and
+[481.962,482.379]	2	Female,English	like
+[483.31,487.082]	2	Female,English	I think the story goes like she didn't really come out to her family
+[487.567,489.836]	2	Female,English	but she came after her immediate family but
+[490.243,493.87]	2	Female,English	like her sister was the one that kind of told her mom.
+[494.161,495.402]	2	Female,English	or something like that like
+[495.79,498.767]	2	Female,English	her sister was upset about something and her mom was asking her
+[498.796,502.161]	2	Female,English	her sister what was wrong and like her mom was like oh is
+[502.539,503.567]	2	Female,English	so and so
+[503.78,509.443]	2	Female,English	gay and she like her sister just didn't say anything. So then her mom kinda knew um
+[510.083,510.898]	2	Female,English	and like
+[511.218,513.933]	2	Female,English	if you look at her fairy tip
+[513.991,514.835]	0	U	[*]
+[515.019,518.481]	2	Female,English	just assume that she would be getting ah so
+[518.578,520.013]	2	Female,English	It's just funny that
+[520.614,523.368]	2	Female,English	like, she she thinks that's surprising the people.
+[523.659,528.139]	2	Female,English	yes that she's gay which I don't think is surprising at all, cause' I knew the need second I
+[528.265,530.224]	2	Female,English	met you but who cares.
+[530.243,530.767]	0	U	[NOISE]
+[530.796,533.162]	2	Female,English	so like her, I think her immediate
+[533.162,534.151]	0	U	[*]
+[534.665,535.373]	2	Female,English	um
+[535.722,537.39]	2	Female,English	but her ah
+[538.515,539.475]	2	Female,English	Grandfather
+[539.533,543.179]	2	Female,English	is the one that she's really nervous to tell and that, that was half
+[543.344,544.75]	2	Female,English	and he lived
+[545.07,546.573]	2	Female,English	in Michigan
+[546.738,548.687]	2	Female,English	and he's like Polish Catholic.
+[548.842,550.578]	2	Female,English	and like very
+[550.801,553.477]	2	Female,English	like go to church all the time and um
+[554.728,556.716]	2	Female,English	like very very Catholic.
+[557.133,557.957]	2	Female,English	and
+[558.675,562.059]	2	Female,English	she just she's like terrified to tell him and
+[562.195,564.435]	2	Female,English	I was going up there and I was like
+[564.677,565.841]	2	Female,English	okay well
+[565.841,567.499]	2	Female,English	like I've met him multiple times.
+[567.945,570.35]	2	Female,English	um he's come down for we live
+[570.699,576.847]	2	Female,English	I've gone up there at the moment I was just the roommate that like we share our bedroom like okay well like
+[577.448,582.83]	2	Female,English	obviously it's clear that I'm not just a roommate so you should just come clean and like tell us.
+[583.693,584.527]	2	Female,English	and so
+[584.75,586.408]	2	Female,English	she called him up
+[586.544,588.464]	2	Female,English	and was like oh well
+[589.075,590.762]	0	U	[*]
+[590.927,593.167]	2	Female,English	my friend or my roommate um
+[593.38,594.641]	2	Female,English	she's my girlfriend
+[594.961,597.201]	2	Female,English	and he was just like oh really?
+[597.453,598.054]	2	Female,English	and
+[598.762,603.814]	2	Female,English	like he's like oh well I love you just the same and all those stuff and at the very end
+[604.202,605.482]	2	Female,English	he was like you know
+[605.773,607.237]	2	Female,English	I'll pray for you
+[607.344,608.585]	2	Female,English	so it's like one of those
+[610.127,613.424]	2	Female,English	things that like he doesn't really agree but he's
+[613.967,614.791]	2	Female,English	accepting
+[615.208,618.447]	2	Female,English	of her which is really great because he's like a great dude.
+[618.854,619.407]	0	U	[*]
+[619.504,620.619]	2	Female,English	but the funniest part
+[620.813,623.218]	2	Female,English	is when she was like trying to come out to him
+[623.373,625.293]	2	Female,English	he was like yeah, I don't know.
+[625.584,627.31]	2	Female,English	ah two gay couples
+[627.853,628.493]	2	Female,English	so
+[628.842,630.083]	0	U	[*]
+[630.083,630.704]	2	Female,English	couple
+[630.898,634.505]	2	Female,English	that are really great and they're super rich and really well lot
+[634.767,636.173]	2	Female,English	he could end up like them
+[636.241,636.91]	0	U	[*]
+[636.968,638.093]	2	Female,English	two gay guys
+[638.287,640.585]	2	Female,English	that like got really bad into drugs
+[640.721,641.739]	2	Female,English	and they overdosed.
+[642.35,644.202]	2	Female,English	I'm like um I don't think that
+[644.202,644.881]	0	U	[NOISE]
+[645.414,647.247]	2	Female,English	yup so either were gonna be really rich
+[647.344,648.682]	0	U	[*]
+[648.847,650.253]	0	U	[*]
+[650.34,651.019]	2	Female,English	so
+[651.058,652.367]	0	U	[NOISE]
+[652.522,654.83]	2	Female,English	yes that's question he said gays do
+[654.83,655.693]	0	U	[NOISE]
+[655.819,657.584]	1	Male,English	well his, his ah[+]
+[658.573,659.048]	1	Male,English	his
+[660.018,662.481]	1	Male,English	He's knowledge and understanding
+[662.481,665.458]	1	Male,English	of the gay community is clearly graphic, seemingly I
+[665.477,665.962]	0	U	[*]
+[665.962,670.035]	1	Male,English	effort that will have to one couples act personal strings at a time.[+]
+[670.607,672.595]	1	Male,English	that will come to define the borders of[+]
+[672.973,675.339]	1	Male,English	an entire portion of society
+[675.979,676.619]	2	Female,English	yup
+[676.658,678.258]	0	U	[NOISE]
+[678.403,682.883]	2	Female,English	yes but I was like her family still super traditional and like
+[684.163,688.556]	2	Female,English	she's very close to her family, I have like this crazy broken family that
+[689.448,693.773]	2	Female,English	so many half siblings and I only have one full blooded sibling that
+[693.87,695.887]	2	Female,English	five sisters and like
+[696.459,697.894]	2	Female,English	It gets crazy
+[698.098,699.087]	2	Female,English	family that
+[699.504,704.75]	2	Female,English	I just don't feel the need to tell everybody every little detail of my life but she's like the
+[704.75,708.561]	2	Female,English	kind of person that like oh now we have to tell this person we can't post this
+[708.561,712.75]	2	Female,English	thing on Instagram because his girlfriend doesn't know that I am dating a female.
+[712.876,713.555]	2	Female,English	so
+[714.67,715.659]	2	Female,English	It's very
+[716.561,717.521]	2	Female,English	It's difficult
+[718.064,718.723]	2	Female,English	but It's fine
+[719.053,719.751]	1	Male,English	yeah
+[720.362,720.818]	0	U	[*]
+[720.818,722.99]	1	Male,English	and how does and and the[+]
+[723.688,727.635]	1	Male,English	just doing the math in my head when you graduated school, sounds like you're in your mid twenties.
+[728.275,728.915]	2	Female,English	yeah
+[728.915,729.71]	0	U	[*]
+[729.739,731.436]	1	Male,English	hold back a couple years, so
+[731.727,736.721]	1	Male,English	how did, what's it like to yup the first yes this is the first first this is the first year that you've ah
+[738.544,739.378]	1	Male,English	totally
+[740.483,741.453]	1	Male,English	totally just said
+[741.899,743.111]	1	Male,English	set our guards down
+[743.567,746.825]	1	Male,English	but this is just be part of what people know about us from
+[747.562,748.522]	1	Male,English	from outside
+[749.385,750.18]	2	Female,English	kind of yeah!
+[750.19,751.722]	1	Male,English	gotta be an interesting change.
+[752.333,752.944]	2	Female,English	yeah
+[753.351,754.99]	2	Female,English	yeah It's wild and like
+[755.213,757.104]	2	Female,English	a lot of my friend they're
+[757.259,758.19]	2	Female,English	they were very
+[759.024,763.339]	2	Female,English	taking about there yet, cause' um I dated ah Nails for
+[763.533,764.745]	2	Female,English	almost five years
+[764.939,767.664]	2	Female,English	then everybody thought were gonna get married and it was like
+[768.207,768.847]	2	Female,English	this
+[769.807,773.579]	2	Female,English	like big deal when we broke up, cause it just came out of nowhere.
+[773.579,774.258]	0	U	[*]
+[774.578,777.545]	2	Female,English	the perfect couple, never thought never did any of that.
+[778.253,780.299]	2	Female,English	um and everybody was just shocked
+[780.687,781.356]	2	Female,English	and
+[781.414,782.384]	2	Female,English	I can't like
+[782.5,784.11]	2	Female,English	I came out to him
+[784.275,785.875]	2	Female,English	probably our second year
+[786.156,787.95]	2	Female,English	of dating but I would
+[788.115,793.002]	2	Female,English	I yeah, I that my queer so I was like go on interested in pretty much
+[793.167,794.796]	2	Female,English	everybody is a human
+[794.922,795.533]	2	Female,English	um
+[795.853,800.585]	2	Female,English	It's just like personality base is what I'm interested in so when we broke up
+[801.235,803.087]	2	Female,English	like everybody like freaked out
+[803.31,805.521]	2	Female,English	and then I had like
+[805.715,806.82]	2	Female,English	my crazy
+[807.79,810.127]	2	Female,English	Floody year I guess ah
+[810.854,812.037]	2	Female,English	which then
+[812.328,814.5]	2	Female,English	everyone kinda knew me by that.
+[815.179,815.567]	2	Female,English	was
+[815.78,818.282]	2	Female,English	wild and then I just like settled down
+[818.573,821.23]	2	Female,English	they were like, what is up with you it's like you're
+[821.317,824.362]	2	Female,English	you dated this guy for like five years and then you like
+[824.585,825.07]	0	U	[*]
+[825.07,826.767]	2	Female,English	you sleep around, you have like
+[826.767,828.939]	2	Female,English	all this other partners with all this different
+[829.123,829.521]	2	Female,English	like
+[829.579,831.974]	2	Female,English	genders and everything and then you like
+[832.207,837.773]	2	Female,English	you are now pretty much domesticated with the female and all this stuff oh like yeah that's me yep
+[837.87,840.11]	1	Male,English	you're like welcome to twenty eighteen
+[840.236,840.808]	0	U	[NOISE]
+[840.808,842.195]	1	Male,English	things have changed
+[842.195,843.882]	1	Male,English	just everybody take a deep breath
+[844.396,845.802]	1	Male,English	relax and
+[846.345,847.567]	1	Male,English	mess with the world
+[848.236,849.516]	2	Female,English	yeah[+]
+[850.505,854.578]	2	Female,English	yeah and everybody just so confuse like I don't have to explain anything to anybody.
+[854.597,855.373]	0	U	[*]
+[855.47,856.333]	2	Female,English	story
+[857.419,858.602]	2	Female,English	since everybody wanna
+[858.602,860.483]	0	U	[NOISE]
+[860.483,863.121]	1	Male,English	which I do, which I do um
+[863.315,866.418]	1	Male,English	but, so your your ex partner he did for five years
+[866.602,871.237]	1	Male,English	that so he was aware that he was he did not feel blind sided he did not feel like
+[871.499,875.339]	1	Male,English	been living a lie here then I'm proud to say, is just so you know where my head's at.
+[875.339,875.659]	0	U	[*]
+[876.435,878.355]	2	Female,English	yeah and he was the only one that I told
+[878.597,879.402]	2	Female,English	until
+[879.693,880.401]	2	Female,English	I
+[880.75,884.27]	2	Female,English	really came out to my family like bringing my current partner
+[884.687,885.23]	1	Male,English	yeah
+[885.967,887.402]	2	Female,English	yeah, so[+]
+[888.042,889.807]	1	Male,English	still in touch with that guy at all or no?
+[890.767,894.956]	2	Female,English	No, yeah which is wild cause your best friends.
+[895.082,895.664]	0	U	[NOISE]
+[896.711,897.516]	0	U	[NOISE]
+[930.893,931.475]	0	U	[NOISE]
+[931.504,933.094]	2	Female,English	and it was just like
+[933.482,936.934]	2	Female,English	he started dating somebody else, I did not like that person
+[937.283,939.465]	2	Female,English	um and then that person
+[939.843,942.161]	2	Female,English	didn't like me and then pretty much
+[942.636,943.79]	2	Female,English	made us cut ties
+[943.858,944.585]	0	U	[NOISE]
+[944.711,945.293]	2	Female,English	so
+[945.419,947.562]	2	Female,English	yeah it was just sad um[+]
+[948.076,949.007]	2	Female,English	but about a
+[949.54,953.361]	2	Female,English	about two years ago I guess I got into this job at as a tattoo artist
+[953.797,958.675]	2	Female,English	and I went to go see him last year but no I guess that was two years ago cause' this
+[958.675,959.15]	0	U	[*]
+[959.208,960.003]	2	Female,English	for starting.
+[960.239,964.205]	2	Female,English	and he gave me a tattoo and that was like the last time talk to him.
+[964.428,966.26]	1	Male,English	wow, so you have a permanent
+[966.9,969.78]	1	Male,English	reminder of your, of your past with this guy.
+[970.479,971.09]	2	Female,English	yeah
+[971.341,973.01]	1	Male,English	but now I would love
+[973.01,973.999]	0	U	[NOISE]
+[973.999,974.958]	1	Male,English	I'm not going to assume
+[975.124,978.547]	1	Male,English	I'm not going to assume the tattoo is like something a meaningful or maybe
+[978.547,982.357]	1	Male,English	just means something like a visual and artistic that only you know the private meaning of it.
+[982.357,982.764]	0	U	[*]
+[982.861,986.992]	1	Male,English	I would love if it was a historically bad tattoo like if it was like ah
+[987.438,991.221]	1	Male,English	you know if it was like a Calvin testing out something or
+[991.462,997.232]	1	Male,English	you know um something from an Asian alphabet that you didn't research about for the next list double meaning that humiliating
+[997.398,1002.284]	1	Male,English	is there any chance that it's a really bad tattoo that is testament for your former half decade
+[1002.566,1003.662]	1	Male,English	of companionship?
+[1004.428,1008.307]	2	Female,English	no unfortunately it's actually really sweet
+[1008.307,1010.895]	2	Female,English	I know it's really sweet tattoo.
+[1010.924,1015.25]	1	Male,English	hoping it would be one of the minions or something like that yeah I just got a minion.[+]
+[1015.918,1017.49]	0	U	[NOISE]
+[1017.644,1021.833]	2	Female,English	I, I I really want, I told him that I wanted to get a half tat, and he was like no.
+[1021.833,1024.073]	0	U	[NOISE]
+[1025.256,1025.965]	0	U	[NOISE]
+[1025.965,1028.883]	2	Female,English	He's like no I'm not doing that I was like come on
+[1028.912,1029.126]	0	U	[*]
+[1029.233,1032.015]	2	Female,English	we dated for so long why can't you do that?
+[1032.015,1032.976]	0	U	[NOISE]
+[1033.159,1036.341]	1	Male,English	just got something meaningful instead, I guess that's better
+[1037.078,1037.678]	2	Female,English	yeah
+[1038.445,1039.064]	2	Female,English	yeah
+[1039.851,1040.373]	0	U	[*]
+[1040.373,1042.216]	1	Male,English	actually insensitive question
+[1043.729,1044.263]	2	Female,English	yeah
+[1044.689,1046.251]	1	Male,English	there people listening
+[1046.745,1048.598]	1	Male,English	who might be going and and
+[1049.072,1049.751]	1	Male,English	I'm interested
+[1049.751,1050.896]	0	U	[*]
+[1050.896,1054.668]	1	Male,English	there's some people who are listening who I, who I would bet are maybe thinking of themselves
+[1054.89,1059.341]	1	Male,English	or or wondering to themselves well you said you were queer and you're interested in people of all types but
+[1059.661,1062.639]	1	Male,English	maybe not, now that you're out of the relationship with the guy that
+[1062.639,1066.905]	1	Male,English	looks more traditional on the surface, you're dating woman are you, are you just a lesbian now?
+[1066.993,1068.399]	1	Male,English	and ah I think that's ah
+[1068.65,1072.422]	1	Male,English	I wonder is this something that you feel like you're sorting things out, you've now settled to
+[1072.422,1076.205]	1	Male,English	something feels more natural or do you still identified like nah I'm attracted to everybody?
+[1077.456,1081.645]	2	Female,English	nah I, definitely still attracted to everybody um I feel like
+[1081.742,1084.621]	2	Female,English	is my current partner in life to like ever split up
+[1084.853,1087.161]	2	Female,English	um I've probably stick to
+[1087.599,1088.267]	2	Female,English	women
+[1088.364,1092.302]	2	Female,English	like out, like holding a long ter [~] term relationship for awhile
+[1092.582,1095.181]	2	Female,English	but It's really just like personality wise.
+[1095.444,1096.918]	2	Female,English	like to whoever comes along
+[1097.101,1098.381]	1	Male,English	I think that's cool
+[1098.536,1098.741]	0	U	[*]
+[1098.964,1099.661]	2	Female,English	yeah
+[1100.176,1100.902]	2	Female,English	It just
+[1101.872,1102.745]	0	U	[*]
+[1103.347,1104.627]	2	Female,English	about it[+]
+[1104.656,1107.022]	1	Male,English	I think that's cool and I'm glad that I ask is that
+[1107.022,1110.445]	1	Male,English	that's the stereotype, right? That's the stereotype is like[+]
+[1111.599,1114.643]	1	Male,English	dates, something that looks like little bit what you are
+[1115.158,1118.319]	1	Male,English	see on on T V and movies gone up and you get more
+[1118.503,1122.13]	1	Male,English	come to terms with yourself or maybe I'm this or maybe I'm that and then
+[1122.284,1122.741]	1	Male,English	that's
+[1122.838,1126.764]	1	Male,English	that's I think I would have let a lot of people under the hedge but I don't think that that so I think that's
+[1126.929,1130.381]	1	Male,English	some people stories but I don't think that's the real story anymore I think ah 
+[1131.245,1131.67]	0	U	[*]
+[1131.67,1132.438]	1	Male,English	I think we're having
+[1132.438,1133.126]	0	U	[*]
+[1133.262,1136.821]	1	Male,English	where you can just go ahead this is I'm feeling and even if you got
+[1137.46,1140.815]	1	Male,English	in a months from now I might feel differently and that's gonna be okay too.
+[1141.388,1142.707]	1	Male,English	that's pretty cool while
+[1143.657,1144.015]	2	Female,English	yeah
+[1144.559,1147.826]	1	Male,English	yes, weird 'cause um we met on
+[1148.118,1149.524]	2	Female,English	the dating app Bumble
+[1149.62,1150.803]	2	Female,English	and [+]
+[1151.026,1151.861]	2	Female,English	like she is
+[1152.53,1156.04]	2	Female,English	super embarrassed by telling that I don't know why
+[1156.04,1157.039]	0	U	[*]
+[1157.233,1158.193]	2	Female,English	literally
+[1158.193,1159.473]	2	Female,English	being a female trying
+[1159.473,1160.937]	0	U	[*]
+[1161.101,1162.662]	2	Female,English	If I would go to a bar
+[1162.73,1163.826]	2	Female,English	'cause I'm I was pretty
+[1163.826,1164.127]	0	U	[*]
+[1164.205,1167.152]	2	Female,English	They will like how to get you to a bar and try to hit on a
+[1167.181,1169.742]	1	Male,English	seem I'm doing like oh like that normally right outfit
+[1169.742,1170.381]	0	U	[*]
+[1170.478,1171.884]	2	Female,English	you know I got it on Target like
+[1171.943,1172.495]	2	Female,English	ah
+[1172.689,1173.165]	2	Female,English	okay
+[1173.174,1174.377]	0	U	[NOISE]
+[1174.377,1176.461]	2	Female,English	cause I'm trying to flirt I'm not
+[1176.685,1178.13]	2	Female,English	I'm not trying to
+[1178.255,1180.97]	2	Female,English	like this company your outfit like I'm trying to
+[1181.194,1181.833]	2	Female,English	you know
+[1182.201,1182.929]	2	Female,English	flirt
+[1183.084,1184.782]	2	Female,English	so if is this call like
+[1184.782,1185.149]	0	U	[*]
+[1185.392,1187.603]	2	Female,English	um to female relationship
+[1188.263,1189.678]	0	U	[*]
+[1189.717,1191.278]	1	Male,English	bar something that right
+[1191.531,1193.005]	1	Male,English	is Bumble hard to find?
+[1193.266,1194.381]	1	Male,English	is Bumble the up
+[1194.575,1195.225]	1	Male,English	where
+[1195.758,1198.803]	1	Male,English	female has to initiate contact if it's if it between[+]
+[1198.958,1200.325]	1	Male,English	many women it is, right?
+[1200.656,1200.966]	2	Female,English	yeah
+[1201.392,1205.524]	2	Female,English	and then women managed whichever one initiate first yeah.[+]
+[1206.261,1208.3]	1	Male,English	Wow, I'd I I I

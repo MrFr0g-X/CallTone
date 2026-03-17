@@ -1,87 +1,332 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Users, Search, Plus, MoreHorizontal, Mail, Shield, Clock,
-  CheckCircle2, XCircle, AlertTriangle, ChevronDown, X
+  Search,
+  Plus,
+  Mail,
+  Shield,
+  CheckCircle2,
+  XCircle,
+  X,
+  Copy,
+  Trash2,
+  Ban,
 } from "lucide-react";
-import { adminUsers, roleConfig, currentAdmin, type AdminRole, type AdminUser } from "@/data/adminMockData";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AdminTeamUser } from "@/services/api";
+import { adminApi } from "@/services/api";
 import GlassCard from "@/components/GlassCard";
 import BubbleToggle from "@/components/BubbleToggle";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
+type AdminRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
+
+const roleConfig: Record<
+  AdminRole,
+  { label: string; color: string; bg: string; rank: number }
+> = {
+  super_admin: {
+    label: "Super Admin",
+    color: "text-accent",
+    bg: "bg-accent/10",
+    rank: 1,
+  },
+  admin: {
+    label: "Admin",
+    color: "text-primary",
+    bg: "bg-primary/10",
+    rank: 2,
+  },
+  manager: {
+    label: "Manager",
+    color: "text-warning",
+    bg: "bg-warning/10",
+    rank: 3,
+  },
+  viewer: {
+    label: "Viewer",
+    color: "text-muted-foreground",
+    bg: "bg-muted/30",
+    rank: 4,
+  },
+  qa: {
+    label: "QA",
+    color: "text-success",
+    bg: "bg-success/10",
+    rank: 5,
+  },
+  agent: {
+    label: "Agent",
+    color: "text-muted-foreground",
+    bg: "bg-muted/30",
+    rank: 6,
+  },
+};
+
 const statusIcons = {
   active: { icon: CheckCircle2, color: "text-success", label: "Active" },
   invited: { icon: Mail, color: "text-warning", label: "Invited" },
   disabled: { icon: XCircle, color: "text-destructive", label: "Disabled" },
-};
+} as const;
+
+const roleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const;
 
 const AdminTeam = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
-  const [inviteForm, setInviteForm] = useState({ name: "", email: "", role: "viewer" as AdminRole });
+  const [inviteForm, setInviteForm] = useState({
+    name: "",
+    email: "",
+    role: "viewer" as Exclude<AdminRole, "super_admin">,
+  });
 
-  const filteredUsers = useMemo(() => {
-    return adminUsers.filter(u => {
-      if (roleFilter !== "All" && u.role !== roleFilter) return false;
-      if (search && !u.name.toLowerCase().includes(search.toLowerCase()) && !u.email.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
-  }, [search, roleFilter]);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const response = await adminApi.getUsers();
+      return response.data;
+    },
+  });
 
-  const canManageUser = (targetUser: AdminUser) => {
-    const currentRank = roleConfig[currentAdmin.role].rank;
-    const targetRank = roleConfig[targetUser.role].rank;
-    return currentRank < targetRank && currentAdmin.id !== targetUser.id;
-  };
+  const inviteMutation = useMutation({
+    mutationFn: async (payload: {
+      name: string;
+      email: string;
+      role: "admin" | "manager" | "viewer" | "qa" | "agent";
+    }) => {
+      const response = await adminApi.inviteUser(payload);
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      try {
+        await navigator.clipboard.writeText(data.inviteUrl);
+        toast({
+          title: "Invitation created",
+          description: "Invite link copied to clipboard.",
+        });
+      } catch {
+        toast({
+          title: "Invitation created",
+          description: data.inviteUrl,
+        });
+      }
+
+      console.log("Invite URL:", data.inviteUrl);
+
+      setShowInviteModal(false);
+      setInviteForm({ name: "", email: "", role: "viewer" });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.detail || "Failed to create invitation.";
+
+      toast({
+        title: "Invite failed",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: async (payload: {
+      userId: number;
+      role: "admin" | "manager" | "viewer" | "qa" | "agent";
+    }) => {
+      const response = await adminApi.updateUserRole(payload.userId, {
+        role: payload.role,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({ title: "Role updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Role update failed",
+        description: error?.response?.data?.detail || "Failed to update role.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async (payload: {
+      userId: number;
+      status: "active" | "disabled";
+    }) => {
+      const response = await adminApi.updateUserStatus(payload.userId, {
+        status: payload.status,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({ title: "User status updated" });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Status update failed",
+        description: error?.response?.data?.detail || "Failed to update status.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const copyInviteLinkMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await adminApi.getInviteLink(userId);
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      try {
+        await navigator.clipboard.writeText(data.inviteUrl);
+        toast({
+          title: "Invite link copied",
+          description: "The invitation link has been copied to clipboard.",
+        });
+      } catch {
+        toast({
+          title: "Invite link",
+          description: data.inviteUrl,
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Copy failed",
+        description: error?.response?.data?.detail || "Failed to get invite link.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await adminApi.deleteUser(userId);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title:
+          data.deletedType === "invitation" ? "Invitation deleted" : "User deleted",
+        description: `${data.name} was removed successfully.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Delete failed",
+        description: error?.response?.data?.detail || "Failed to delete.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleInvite = () => {
     if (!inviteForm.name || !inviteForm.email) {
-      toast({ title: "Missing fields", description: "Please fill in name and email.", variant: "destructive" });
+      toast({
+        title: "Missing fields",
+        description: "Please fill in name and email.",
+        variant: "destructive",
+      });
       return;
     }
-    toast({ title: "Invitation sent", description: `${inviteForm.name} has been invited as ${roleConfig[inviteForm.role].label}.` });
-    setShowInviteModal(false);
-    setInviteForm({ name: "", email: "", role: "viewer" });
+
+    inviteMutation.mutate({
+      name: inviteForm.name,
+      email: inviteForm.email,
+      role: inviteForm.role,
+    });
   };
 
-  const handleRoleChange = (user: AdminUser, newRole: AdminRole) => {
-    toast({ title: "Role updated", description: `${user.name}'s role changed to ${roleConfig[newRole].label}.` });
-    setEditingUser(null);
+  const handleRoleChange = (
+    userId: number,
+    role: "admin" | "manager" | "viewer" | "qa" | "agent"
+  ) => {
+    updateRoleMutation.mutate({ userId, role });
   };
 
-  const handleToggleStatus = (user: AdminUser) => {
-    const action = user.status === "disabled" ? "enabled" : "disabled";
-    toast({ title: `Account ${action}`, description: `${user.name}'s account has been ${action}.` });
+  const handleToggleStatus = (user: AdminTeamUser) => {
+    const newStatus = user.status === "active" ? "disabled" : "active";
+    updateStatusMutation.mutate({ userId: user.id, status: newStatus });
   };
+
+  const handleCopyInviteLink = (userId: number) => {
+    copyInviteLinkMutation.mutate(userId);
+  };
+
+  const handleDeleteUser = (userId: number, name: string) => {
+    const confirmed = window.confirm(`Are you sure you want to delete ${name}?`);
+    if (!confirmed) return;
+    deleteUserMutation.mutate(userId);
+  };
+
+  const filteredUsers = useMemo(() => {
+    if (!data) return [];
+
+    return data.users.filter((u) => {
+      if (roleFilter !== "All" && u.role !== roleFilter) return false;
+      if (
+        search &&
+        !u.name.toLowerCase().includes(search.toLowerCase()) &&
+        !u.email.toLowerCase().includes(search.toLowerCase())
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [data, search, roleFilter]);
+
+  const activeCount =
+    data?.users.filter((u) => u.status === "active").length ?? 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <span className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="text-destructive text-sm">
+        Failed to load team members.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-light text-foreground">
             Team <span className="font-bold gradient-text">Management</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">{adminUsers.length} team members · {adminUsers.filter(u => u.status === "active").length} active</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {data.users.length} team members · {activeCount} active
+          </p>
         </div>
-        {currentAdmin.permissions.includes("team.manage") && (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowInviteModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            Invite Member
-          </motion.button>
-        )}
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setShowInviteModal(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          Invite Member
+        </motion.button>
       </header>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -93,21 +338,28 @@ const AdminTeam = () => {
             className="h-9 pl-9 pr-4 rounded-xl text-sm glass-input w-full"
           />
         </div>
+
         <BubbleToggle
-          options={["All", "super_admin", "admin", "manager", "viewer"]}
+          options={["All", "super_admin", "admin", "manager", "viewer", "qa", "agent"]}
           value={roleFilter}
           onChange={setRoleFilter}
-          labels={{ All: "All", super_admin: "Super Admin", admin: "Admin", manager: "Manager", viewer: "Viewer" }}
+          labels={{
+            All: "All",
+            super_admin: "Super Admin",
+            admin: "Admin",
+            manager: "Manager",
+            viewer: "Viewer",
+            qa: "QA",
+            agent: "Agent",
+          }}
         />
       </div>
 
-      {/* Team List */}
       <div className="space-y-3">
-        {filteredUsers.map((user, i) => {
+        {filteredUsers.map((user: AdminTeamUser, i) => {
           const role = roleConfig[user.role];
           const status = statusIcons[user.status];
-          const canManage = canManageUser(user);
-          const isCurrentUser = user.id === currentAdmin.id;
+          const isCurrentUser = user.id === data.currentUserId;
 
           return (
             <motion.div
@@ -117,87 +369,120 @@ const AdminTeam = () => {
               transition={{ delay: i * 0.03, duration: 0.3 }}
             >
               <GlassCard className="rounded-2xl p-5 hover:border-accent/20 transition-colors">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
                       <span className="text-xs font-bold text-accent">
-                        {user.name.split(" ").map(n => n[0]).join("")}
+                        {user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </span>
                     </div>
+
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-semibold truncate">{user.name}</h3>
                         {isCurrentUser && (
-                          <span className="text-[10px] font-medium text-accent bg-accent/10 px-1.5 py-0.5 rounded">You</span>
+                          <span className="text-[10px] font-medium text-accent bg-accent/10 px-1.5 py-0.5 rounded">
+                            You
+                          </span>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 sm:gap-6">
-                    {/* Role badge */}
-                    <div className="relative">
-                      {editingUser?.id === user.id ? (
-                        <div className="flex items-center gap-2">
-                          {(["admin", "manager", "viewer"] as AdminRole[]).map(r => (
-                            <button
-                              key={r}
-                              onClick={() => handleRoleChange(user, r)}
-                              className={cn(
-                                "px-2.5 py-1 rounded-lg text-xs font-medium transition-all",
-                                roleConfig[r].bg, roleConfig[r].color,
-                                "hover:brightness-110"
-                              )}
-                            >
-                              {roleConfig[r].label}
-                            </button>
-                          ))}
-                          <button onClick={() => setEditingUser(null)} className="p-1 text-muted-foreground hover:text-foreground">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium", role.bg)}>
-                          <Shield className={cn("w-3 h-3", role.color)} />
-                          <span className={role.color}>{role.label}</span>
-                        </div>
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+                    <div
+                      className={cn(
+                        "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
+                        role.bg
                       )}
+                    >
+                      <Shield className={cn("w-3 h-3", role.color)} />
+                      <span className={role.color}>{role.label}</span>
                     </div>
 
-                    {/* Status */}
                     <div className="flex items-center gap-1.5">
                       <status.icon className={cn("w-3 h-3", status.color)} />
                       <span className={cn("text-xs", status.color)}>{status.label}</span>
                     </div>
 
-                    {/* Last login */}
-                    <div className="hidden lg:block text-right min-w-[100px]">
-                      <p className="text-[10px] text-muted-foreground uppercase">Last Login</p>
+                    <div className="text-right min-w-[90px]">
+                      <p className="text-[10px] text-muted-foreground uppercase">
+                        Last Login
+                      </p>
                       <p className="text-xs text-foreground">
-                        {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
+                        {user.lastLogin
+                          ? new Date(user.lastLogin).toLocaleDateString()
+                          : "Never"}
                       </p>
                     </div>
 
-                    {/* Actions */}
-                    {canManage && currentAdmin.permissions.includes("team.manage") && (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setEditingUser(editingUser?.id === user.id ? null : user)}
-                          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
-                          title="Change role"
-                        >
-                          <Shield className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleToggleStatus(user)}
-                          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
-                          title={user.status === "disabled" ? "Enable account" : "Disable account"}
-                        >
-                          {user.status === "disabled" ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex flex-wrap items-center gap-1">
+                      {user.status === "invited" ? (
+                        <>
+                          <button
+                            onClick={() => handleCopyInviteLink(user.id)}
+                            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
+                            title="Copy invite link"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+
+                          {!isCurrentUser && (
+                            <button
+                              onClick={() => handleDeleteUser(user.id, user.name)}
+                              className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                              title="Delete invitation"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {user.role !== "super_admin" && !isCurrentUser && (
+                            <>
+                              <div className="flex flex-wrap items-center gap-1">
+                                {roleOptions.map((r) => (
+                                  <button
+                                    key={r}
+                                    onClick={() => handleRoleChange(user.id, r)}
+                                    className={cn(
+                                      "px-2 py-1 rounded text-[10px] transition-colors",
+                                      user.role === r
+                                        ? "bg-primary/20 text-primary"
+                                        : "bg-muted/30 hover:bg-muted/50"
+                                    )}
+                                    title={`Change role to ${r}`}
+                                  >
+                                    {r}
+                                  </button>
+                                ))}
+                              </div>
+
+                              <button
+                                onClick={() => handleToggleStatus(user)}
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
+                                title={user.status === "active" ? "Disable user" : "Enable user"}
+                              >
+                                <Ban className="w-3.5 h-3.5" />
+                              </button>
+
+                              <button
+                                onClick={() => handleDeleteUser(user.id, user.name)}
+                                className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+                                title="Delete user"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </GlassCard>
@@ -206,11 +491,12 @@ const AdminTeam = () => {
         })}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground text-sm">No members match your search.</div>
+          <div className="text-center py-12 text-muted-foreground text-sm">
+            No members match your search.
+          </div>
         )}
       </div>
 
-      {/* Invite Modal */}
       <AnimatePresence>
         {showInviteModal && (
           <motion.div
@@ -230,36 +516,51 @@ const AdminTeam = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold">Invite Team Member</h2>
-                <button onClick={() => setShowInviteModal(false)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => setShowInviteModal(false)}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Name</label>
+                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                    Name
+                  </label>
                   <input
                     type="text"
                     value={inviteForm.name}
-                    onChange={(e) => setInviteForm({ ...inviteForm, name: e.target.value })}
+                    onChange={(e) =>
+                      setInviteForm({ ...inviteForm, name: e.target.value })
+                    }
                     placeholder="Full name"
                     className="w-full h-10 px-4 rounded-xl glass-input text-sm"
                   />
                 </div>
+
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Email</label>
+                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={inviteForm.email}
-                    onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                    onChange={(e) =>
+                      setInviteForm({ ...inviteForm, email: e.target.value })
+                    }
                     placeholder="email@calltone.ai"
                     className="w-full h-10 px-4 rounded-xl glass-input text-sm"
                   />
                 </div>
+
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Role</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["admin", "manager", "viewer"] as AdminRole[]).map(r => (
+                  <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                    Role
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {roleOptions.map((r) => (
                       <button
                         key={r}
                         onClick={() => setInviteForm({ ...inviteForm, role: r })}
@@ -280,9 +581,10 @@ const AdminTeam = () => {
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleInvite}
-                  className="w-full h-10 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all mt-2"
+                  disabled={inviteMutation.isPending}
+                  className="w-full h-10 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all mt-2 disabled:opacity-60"
                 >
-                  Send Invitation
+                  {inviteMutation.isPending ? "Sending..." : "Send Invitation"}
                 </motion.button>
               </div>
             </motion.div>
