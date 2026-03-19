@@ -1,0 +1,40 @@
+name: Deploy CallTone UI
+
+on:
+  push:
+    branches: [deploy]
+    paths:
+      - 'calltone-UI/**'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: calltone-UI/package-lock.json
+
+      - name: Install dependencies
+        working-directory: calltone-UI
+        run: npm ci
+
+      - name: Build
+        working-directory: calltone-UI
+        run: npm run build
+
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          ssh_private_key: ${{ secrets.DEPLOY_SSH_KEY }}
+          local_path: calltone-UI/dist/*
+          remote_path: ${{ secrets.DEPLOY_PATH }}
+          sftp_only: true
+          delete_remote_files: true
