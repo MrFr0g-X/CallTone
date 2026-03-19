@@ -27,14 +27,14 @@ jobs:
         working-directory: calltone-UI
         run: npm run build
 
-      - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          ssh_private_key: ${{ secrets.DEPLOY_SSH_KEY }}
-          local_path: calltone-UI/dist/*
-          remote_path: ${{ secrets.DEPLOY_PATH }}
-          sftp_only: true
-          delete_remote_files: true
+      - name: Deploy via rsync
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          echo "$DEPLOY_KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.DEPLOY_PORT }} -i /tmp/deploy_key" \
+            calltone-UI/dist/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}
+          rm /tmp/deploy_key
