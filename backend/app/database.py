@@ -1,5 +1,7 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
@@ -8,13 +10,13 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_V1_PREFIX: str = "/api"
 
-    DB_HOST: str
+    DB_HOST: str = ""
     DB_PORT: int = 5432
-    DB_NAME: str
-    DB_USER: str
-    DB_PASSWORD: str
+    DB_NAME: str = "calltone_db"
+    DB_USER: str = ""
+    DB_PASSWORD: str = ""
 
-    SECRET_KEY: str
+    SECRET_KEY: str = "dev-secret-key-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALGORITHM: str = "HS256"
     FRONTEND_URL: str = "http://localhost:8080"
@@ -22,7 +24,14 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     @property
+    def use_sqlite(self) -> bool:
+        return not self.DB_HOST
+
+    @property
     def DATABASE_URL(self) -> str:
+        if self.use_sqlite:
+            db_path = Path(__file__).resolve().parent.parent / "calltone.db"
+            return f"sqlite:///{db_path}"
         return (
             f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
@@ -31,7 +40,22 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-engine = create_engine(settings.DATABASE_URL, echo=settings.DEBUG, future=True)
+connect_args = {"check_same_thread": False} if settings.use_sqlite else {}
+engine = create_engine(
+    settings.DATABASE_URL,
+    echo=False,
+    future=True,
+    connect_args=connect_args,
+)
+
+if settings.use_sqlite:
+    @event.listens_for(engine, "connect")
+    def _set_sqlite_pragma(dbapi_conn, _connection_record):
+        cursor = dbapi_conn.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
