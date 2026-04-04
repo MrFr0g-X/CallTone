@@ -1,6 +1,4 @@
 import axios from "axios";
-import type { Call, Agent, CallDetail } from "@/data/mockData";
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 const apiClient = axios.create({
@@ -193,15 +191,10 @@ export const agentApi = {
     ),
 
   getCalls: (params: { range?: string; sortBy?: "time" | "rating"; page?: number }) =>
-    apiClient.get<{ calls: Call[]; total: number }>("/agent/calls", { params }),
+    apiClient.get<{ calls: QaCallItem[]; total: number }>("/agent/calls", { params }),
 };
 
 export const qaApi = {
-  getSummary: (range: string) =>
-    apiClient.get<{ totalCalls: number; avgScore: number; flaggedCalls: number }>(
-      "/qa/summary",
-      { params: { range } }
-    ),
   getCallsList: () =>
   apiClient.get<QaCallListResponse>("/qa/calls"),
 
@@ -209,12 +202,39 @@ export const qaApi = {
     apiClient.get<QaCallDetailResponse>(`/qa/calls/${callId}`),
   
 
-  getAgents: (range: string) => apiClient.get<Agent[]>("/qa/agents", { params: { range } }),
-
   getAgentCalls: (agentId: string, params: { range?: string; sortBy?: "time" | "rating" }) =>
-    apiClient.get<Call[]>(`/qa/agents/${agentId}/calls`, { params }),
+    apiClient.get<QaCallItem[]>(`/qa/agents/${agentId}/calls`, { params }),
+};
 
-  getCallDetail: (callId: string) => apiClient.get<CallDetail>(`/qa/calls/${callId}`),
+export interface UploadCallResponse {
+  callId: string;
+  filename: string;
+  status: string;
+  message: string;
+}
+
+export interface CallStatusResponse {
+  callId: string;
+  status: string;
+  currentStep: string;
+  hasTranscript: boolean;
+  hasReport: boolean;
+  error: string | null;
+}
+
+export const callsApi = {
+  upload: (file: File, agentId?: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (agentId) formData.append("agent_id", agentId);
+    return apiClient.post<UploadCallResponse>("/calls/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 120000,
+    });
+  },
+
+  getStatus: (callId: string) =>
+    apiClient.get<CallStatusResponse>(`/calls/${callId}/status`),
 };
 
 export const adminApi = {
