@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, CheckCircle2, XCircle, Info, Lock, ChevronDown, ChevronRight } from "lucide-react";
-import { allPermissions, rolePermissions, roleConfig, currentAdmin, type AdminRole } from "@/data/adminMockData";
+import { allPermissions, rolePermissions, roleConfig, type AdminRole } from "@/data/adminMockData";
+import { useAuth } from "@/contexts/AuthContext";
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +23,9 @@ const AdminPermissions = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>(categories.map(c => c.id));
   const [localPermissions, setLocalPermissions] = useState(rolePermissions);
 
-  const canEditRoles = currentAdmin.permissions.includes("team.roles");
+  const { user } = useAuth();
+  const myRole = (user?.role ?? "viewer") as AdminRole;
+  const canEditRoles = myRole === "super_admin" || myRole === "admin";
   const isSuperAdmin = selectedRole === "super_admin";
 
   const toggleCategory = (id: string) => {
