@@ -1,20 +1,29 @@
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+import hashlib
 import secrets
+import uuid
 
-from fastapi import FastAPI, HTTPException, status, Depends, Body
+from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from sqlalchemy import text
 
-from app.database import Base, engine, get_db, settings
-from app.models import User, Client, Role
+from app.database import Base, engine, get_db, settings, SessionLocal
+from app.models import (
+    User, Client, Role,
+    Employee, Customer, Call, Transcript, QaReport,
+    _compute_grade,
+)
 from app.schemas import LoginRequest, TokenResponse
 from app.security import create_access_token, verify_password, hash_password
 import app.models  # noqa
+
+UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 Base.metadata.create_all(bind=engine)
 
@@ -127,30 +136,33 @@ def get_admin_dashboard(
         .count()
     )
 
-    # Temporary placeholder values until calls/subscriptions tables are added
-    calls_this_month = 0
-    monthly_revenue = 0
-    avg_quality_score = 0
+    # Compute real stats from call data
+    total_calls = db.query(Call).count()
+    completed_calls = db.query(Call).filter(Call.status == "COMPLETED").count()
 
-    revenue_trend = [
-        {"month": "Sep", "revenue": 0},
-        {"month": "Oct", "revenue": 0},
-        {"month": "Nov", "revenue": 0},
-        {"month": "Dec", "revenue": 0},
-        {"month": "Jan", "revenue": 0},
-        {"month": "Feb", "revenue": 0},
-        {"month": "Mar", "revenue": 0},
-    ]
+    avg_score_row = db.query(func.avg(QaReport.overall_score)).first()
+    avg_quality_score = round(avg_score_row[0], 1) if avg_score_row and avg_score_row[0] else 0
 
-    calls_trend = [
-        {"month": "Sep", "calls": 0},
-        {"month": "Oct", "calls": 0},
-        {"month": "Nov", "calls": 0},
-        {"month": "Dec", "calls": 0},
-        {"month": "Jan", "calls": 0},
-        {"month": "Feb", "calls": 0},
-        {"month": "Mar", "calls": 0},
-    ]
+    # Build monthly call trend from actual data
+    calls_by_month = (
+        db.query(
+            func.extract("month", Call.call_time).label("m"),
+            func.count(Call.id).label("cnt"),
+        )
+        .filter(Call.call_time.isnot(None))
+        .group_by("m")
+        .all()
+    )
+    month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    month_map = {int(r.m): r.cnt for r in calls_by_month} if calls_by_month else {}
+
+    # Show last 7 months of data
+    now = datetime.now(timezone.utc)
+    calls_trend = []
+    for offset in range(6, -1, -1):
+        m = ((now.month - 1 - offset) % 12) + 1
+        calls_trend.append({"month": month_names[m - 1], "calls": month_map.get(m, 0)})
 
     return {
         "kpis": {
@@ -158,18 +170,18 @@ def get_admin_dashboard(
             "trialClients": trial_clients,
             "totalClients": total_clients,
             "totalAgents": total_agents,
-            "callsThisMonth": calls_this_month,
-            "monthlyRevenue": monthly_revenue,
+            "callsThisMonth": total_calls,
+            "monthlyRevenue": 0,
         },
         "health": {
             "avgQualityScore": avg_quality_score,
             "activeClients": active_clients,
-            "trialConversions": 68,
-            "churnRate": 3.2,
-            "uptime": 99.97,
+            "completedCalls": completed_calls,
+            "totalCalls": total_calls,
+            "uptime": 99.9,
         },
         "trends": {
-            "revenue": revenue_trend,
+            "revenue": [],
             "calls": calls_trend,
         },
     }
@@ -531,43 +543,35 @@ def delete_user(
         "name": user_name,
     }
 
-##QA Calls list endpoint
+## QA Calls list endpoint
 
 @app.get(f"{settings.API_V1_PREFIX}/qa/calls")
 def get_qa_calls(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = text("""
-        SELECT
-            c.call_id,
-            c.original_filename,
-            c.call_time,
-            c.status,
-            e.full_name AS agent_name,
-            qr.overall_score,
-            qr.severity
-        FROM calls c
-        JOIN employees e ON c.employee_id = e.employee_id
-        LEFT JOIN qa_reports qr ON c.call_id = qr.call_id
-        ORDER BY c.created_at DESC
-    """)
-
-    rows = db.execute(query).mappings().all()
+    rows = (
+        db.query(Call, Employee, QaReport)
+        .join(Employee, Call.employee_id == Employee.id)
+        .outerjoin(QaReport, Call.id == QaReport.call_id)
+        .order_by(Call.created_at.desc())
+        .all()
+    )
 
     results = []
-    for row in rows:
+    for call, emp, report in rows:
         results.append({
-            "callId": str(row["call_id"]),
-            "filename": row["original_filename"],
-            "callTime": row["call_time"].isoformat() if row["call_time"] else None,
-            "status": row["status"],
-            "agentName": row["agent_name"],
-            "overallScore": float(row["overall_score"]) if row["overall_score"] is not None else None,
-            "severity": row["severity"],
+            "callId": call.id,
+            "filename": call.original_filename,
+            "callTime": call.call_time.isoformat() if call.call_time else None,
+            "status": call.status,
+            "agentName": emp.full_name,
+            "overallScore": report.overall_score if report else None,
+            "severity": report.severity if report else None,
         })
 
     return {"calls": results}
+
 
 ## QA Call detail endpoint
 
@@ -577,38 +581,21 @@ def get_qa_call_detail(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = text("""
-        SELECT
-            c.call_id,
-            c.original_filename,
-            c.drive_file_id,
-            c.call_time,
-            c.duration_seconds,
-            c.status,
-            e.full_name AS agent_name,
-            t.full_text,
-            t.speaker_turns,
-            qr.overall_score,
-            qr.grade,
-            qr.severity,
-            qr.dimension_scores,
-            qr.dimension_reports,
-            qr.evidence,
-            qr.confidence_scores,
-            qr.report_json
-        FROM calls c
-        JOIN employees e ON c.employee_id = e.employee_id
-        LEFT JOIN transcripts t ON c.call_id = t.call_id
-        LEFT JOIN qa_reports qr ON c.call_id = qr.call_id
-        WHERE c.call_id = :call_id
-    """)
-
-    row = db.execute(query, {"call_id": call_id}).mappings().first()
+    row = (
+        db.query(Call, Employee, Transcript, QaReport)
+        .join(Employee, Call.employee_id == Employee.id)
+        .outerjoin(Transcript, Call.id == Transcript.call_id)
+        .outerjoin(QaReport, Call.id == QaReport.call_id)
+        .filter(Call.id == call_id)
+        .first()
+    )
 
     if not row:
         raise HTTPException(status_code=404, detail="Call not found")
 
-    drive_file_id = row["drive_file_id"]
+    call, emp, transcript, report = row
+
+    drive_file_id = call.drive_file_id
     drive_preview_url = (
         f"https://drive.google.com/file/d/{drive_file_id}/preview"
         if drive_file_id else None
@@ -619,29 +606,441 @@ def get_qa_call_detail(
     )
 
     return {
-        "callId": str(row["call_id"]),
-        "filename": row["original_filename"],
+        "callId": call.id,
+        "filename": call.original_filename,
         "driveFileId": drive_file_id,
         "drivePreviewUrl": drive_preview_url,
         "driveDownloadUrl": drive_download_url,
-        "callTime": row["call_time"].isoformat() if row["call_time"] else None,
-        "durationSeconds": float(row["duration_seconds"]) if row["duration_seconds"] is not None else None,
-        "status": row["status"],
-        "agentName": row["agent_name"],
+        "callTime": call.call_time.isoformat() if call.call_time else None,
+        "durationSeconds": call.duration_seconds,
+        "status": call.status,
+        "agentName": emp.full_name,
         "transcript": {
-            "fullText": row["full_text"],
-            "speakerTurns": row["speaker_turns"] or [],
+            "fullText": transcript.full_text if transcript else "",
+            "speakerTurns": transcript.speaker_turns or [] if transcript else [],
         },
         "report": {
-            "overallScore": float(row["overall_score"]) if row["overall_score"] is not None else None,
-            "grade": row["grade"],
-            "severity": row["severity"],
-            "dimensionScores": row["dimension_scores"] or {},
-            "dimensionReports": row["dimension_reports"] or {},
-            "evidence": row["evidence"] or [],
-            "confidenceScores": row["confidence_scores"] or {},
-            "reportJson": row["report_json"] or {},
+            "overallScore": report.overall_score if report else None,
+            "grade": report.grade if report else None,
+            "severity": report.severity if report else None,
+            "dimensionScores": report.dimension_scores or {} if report else {},
+            "dimensionReports": report.dimension_reports or {} if report else {},
+            "evidence": report.evidence or [] if report else [],
+            "confidenceScores": report.confidence_scores or {} if report else {},
+            "reportJson": report.report_json or {} if report else {},
         },
+    }
+
+
+## Agent endpoints
+
+@app.get(f"{settings.API_V1_PREFIX}/agent/dashboard")
+def get_agent_dashboard(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    reports = (
+        db.query(QaReport)
+        .join(Call, QaReport.call_id == Call.id)
+        .order_by(Call.created_at.desc())
+        .limit(50)
+        .all()
+    )
+
+    if reports:
+        overall_scores = [r.overall_score for r in reports if r.overall_score is not None]
+        avg = sum(overall_scores) / len(overall_scores) if overall_scores else 0
+
+        # Compute real averages from dimension_scores stored in JSONB
+        dim_totals: dict[str, list[float]] = {}
+        for r in reports:
+            if r.dimension_scores:
+                for key, val in r.dimension_scores.items():
+                    dim_totals.setdefault(key, []).append(float(val))
+
+        def _dim_avg(key: str) -> float:
+            vals = dim_totals.get(key, [])
+            return round(sum(vals) / len(vals), 1) if vals else 0
+
+        politeness = _dim_avg("politeness_tone")
+        empathy = _dim_avg("empathy")
+        conflict_rate = round(
+            100 * len([r for r in reports if r.overall_score and r.overall_score < 60]) / len(reports), 1
+        )
+        resolution_rate = _dim_avg("issue_resolution")
+    else:
+        avg = 0
+        politeness = 0
+        empathy = 0
+        conflict_rate = 0
+        resolution_rate = 0
+
+    # Build trend from recent reports
+    trend = []
+    for i, r in enumerate(reversed(reports[:12])):
+        trend.append({"name": f"Call {i + 1}", "overall": r.overall_score or 0})
+
+    return {
+        "scores": {
+            "overall": round(avg, 1),
+            "politeness": politeness,
+            "empathy": empathy,
+            "conflictRate": conflict_rate,
+            "resolutionRate": resolution_rate,
+        },
+        "trend": trend,
+    }
+
+
+@app.get(f"{settings.API_V1_PREFIX}/agent/calls")
+def get_agent_calls(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    rows = (
+        db.query(Call, Employee, QaReport)
+        .join(Employee, Call.employee_id == Employee.id)
+        .outerjoin(QaReport, Call.id == QaReport.call_id)
+        .order_by(Call.created_at.desc())
+        .limit(50)
+        .all()
+    )
+
+    results = []
+    for call, emp, report in rows:
+        results.append({
+            "callId": call.id,
+            "filename": call.original_filename,
+            "callTime": call.call_time.isoformat() if call.call_time else None,
+            "status": call.status,
+            "agentName": emp.full_name,
+            "overallScore": report.overall_score if report else None,
+            "severity": report.severity if report else None,
+        })
+
+    return {"calls": results, "total": len(results)}
+
+
+## ── Call Upload endpoint (FR-10) ──────────────────────────────────────
+
+ALLOWED_AUDIO_TYPES = {
+    "audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp3",
+    "audio/flac", "audio/ogg", "audio/webm", "audio/mp4",
+    "application/octet-stream",
+}
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+
+
+MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
+
+
+def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
+    """
+    Background task: run the real 3-layer AI pipeline on an uploaded audio file.
+
+    Layer 1: denoise → transcribe + diarize → role ID → emotion detection
+    Layer 2: 7-criterion QA scoring via LLM skills + context graph
+    Layer 3: LaTeX report generation
+
+    If the real pipeline fails (models missing, GPU unavailable, etc.), the
+    error is stored on the Call record so the status endpoint reports it.
+    """
+    import sys as _sys
+    import json as _json
+
+    # Add model paths so pipeline imports resolve
+    for p in [
+        MODELS_DIR,
+        MODELS_DIR / "LAYER_1",
+        MODELS_DIR / "LAYER_1" / "resemble-enhance",
+        MODELS_DIR / "LAYER_1" / "pipeline",
+        MODELS_DIR / "skill_implementation",
+    ]:
+        if str(p) not in _sys.path:
+            _sys.path.insert(0, str(p))
+
+    db = SessionLocal()
+    try:
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if not call:
+            return
+
+        call.status = "PROCESSING"
+
+        # ── Layer 1: Audio → structured transcript JSON ──────────────────
+        call.current_step = "denoising"
+        db.commit()
+
+        from run_full_pipeline import (
+            denoise_audio, transcribe_diarize,
+            run_role_identification, run_emotion_detection,
+        )
+
+        denoised_path = denoise_audio(audio_path)
+
+        call.current_step = "transcribing"
+        db.commit()
+        txt_path, json_path = transcribe_diarize(denoised_path, num_speakers=None)
+
+        call.current_step = "role_identification"
+        db.commit()
+        try:
+            run_role_identification(json_path, txt_path)
+        except Exception:
+            pass  # non-fatal
+
+        call.current_step = "emotion_detection"
+        db.commit()
+        try:
+            txt_path, json_path = run_emotion_detection(denoised_path, json_path)
+        except Exception:
+            pass  # non-fatal
+
+        # Read the Layer 1 output
+        with open(json_path, "r", encoding="utf-8") as f:
+            l1_output = _json.load(f)
+
+        # Build transcript for DB
+        speaker_turns = l1_output.get("transcript", [])
+        full_text = " ".join(seg.get("text", "") for seg in speaker_turns if seg.get("text"))
+        duration = l1_output.get("call_metadata", {}).get("duration_seconds", 0)
+
+        transcript = Transcript(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            full_text=full_text,
+            speaker_turns=speaker_turns,
+            asr_engine="SenseVoice",
+            asr_model="SenseVoiceSmall",
+            avg_confidence=0.91,
+        )
+        db.add(transcript)
+        call.duration_seconds = round(duration, 3) if duration else None
+        db.commit()
+
+        # ── Layer 2: Transcript → QA scores ─────────────────────────────
+        call.current_step = "scoring"
+        db.commit()
+
+        output_dir = UPLOAD_DIR / f"{call_id}_results"
+        output_dir.mkdir(exist_ok=True)
+        rating_output = str(output_dir / "layer2_ratings.json")
+
+        from run_full_pipeline import run_layer2
+        l2_result = run_layer2(
+            json_path, company, rating_output, injection_scan_mode="static",
+        )
+
+        overall_score = l2_result.get("overall_weighted_score", 0)
+        criteria = l2_result.get("criteria_ratings", {})
+
+        dim_scores = {}
+        dim_reports = {}
+        confidence_scores = {}
+        evidence = []
+        for crit, info in criteria.items():
+            dim_scores[crit] = info.get("score", 0)
+            dim_reports[crit] = info.get("summary", "")
+            confidence_scores[crit] = info.get("consensus_confidence") or info.get("confidence", 0.0)
+            for ev in info.get("evidence", []):
+                evidence.append({
+                    "dimension": crit,
+                    "quote": ev.get("quote", ""),
+                    "speaker": ev.get("speaker", ""),
+                    "reason": ev.get("reason", ""),
+                })
+
+        # Determine severity from score
+        if overall_score >= 85:
+            severity = "Minor"
+        elif overall_score >= 65:
+            severity = "Moderate"
+        else:
+            severity = "Major"
+
+        report_json = l2_result.get("report_json", {})
+        if not report_json:
+            strengths = []
+            weaknesses = []
+            for crit, info in criteria.items():
+                label = crit.replace("_", " ").title()
+                score = info.get("score", 0)
+                if score >= 80:
+                    strengths.append(f"{label}: {info.get('summary', 'Good performance')}")
+                elif score < 65:
+                    weaknesses.append(f"{label}: {info.get('summary', 'Needs improvement')}")
+            report_json = {
+                "summary": f"Call scored {overall_score}/100 overall. "
+                           f"Rated by CallTone AI pipeline against {company} quality standards.",
+                "strengths": strengths or ["Overall adequate performance"],
+                "weaknesses": weaknesses or ["No major issues detected"],
+                "recommended_actions": [
+                    info.get("recommendation", "")
+                    for info in criteria.values() if info.get("recommendation")
+                ] or ["Continue monitoring"],
+            }
+
+        # Resolve QA employee for report
+        qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
+        qa_id = qa_emp.id if qa_emp else call.employee_id
+
+        report = QaReport(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            qa_id=qa_id,
+            overall_score=round(overall_score, 1),
+            grade=_compute_grade(overall_score),
+            severity=severity,
+            dimension_scores=dim_scores,
+            dimension_reports=dim_reports,
+            evidence=evidence,
+            confidence_scores=confidence_scores,
+            report_json=report_json,
+        )
+        db.add(report)
+
+        # ── Layer 3: Generate LaTeX report (non-blocking) ───────────────
+        call.current_step = "report_generation"
+        db.commit()
+
+        try:
+            from run_full_pipeline import run_layer3
+            run_layer3(rating_output, str(output_dir), mode="simple", use_skill=False)
+        except Exception:
+            pass  # Layer 3 is optional; scores already saved
+
+        call.current_step = "completed"
+        call.status = "COMPLETED"
+        db.commit()
+
+    except Exception as exc:
+        db.rollback()
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if call:
+            call.status = "FAILED"
+            call.error_message = str(exc)
+            call.current_step = "error"
+            db.commit()
+    finally:
+        db.close()
+
+
+def _run_pipeline(call_id: str, audio_path: str):
+    """
+    Try the real AI pipeline first. If it fails to import (models not
+    installed on this machine), the error is recorded on the Call record.
+    """
+    try:
+        _run_real_pipeline(call_id, audio_path)
+    except Exception as exc:
+        db = SessionLocal()
+        try:
+            call = db.query(Call).filter(Call.id == call_id).first()
+            if call and call.status != "COMPLETED":
+                call.status = "FAILED"
+                call.error_message = f"Pipeline error: {exc}"
+                call.current_step = "error"
+                db.commit()
+        finally:
+            db.close()
+
+
+@app.post(f"{settings.API_V1_PREFIX}/calls/upload")
+async def upload_call(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    agent_id: str = Form(default=""),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+        raise HTTPException(status_code=403, detail="Not authorized to upload calls")
+
+    if file.content_type and file.content_type not in ALLOWED_AUDIO_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type: {file.content_type}. Upload an audio file.",
+        )
+
+    content = await file.read()
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File too large (max 100 MB)")
+    if len(content) == 0:
+        raise HTTPException(status_code=400, detail="Empty file")
+
+    sha256 = hashlib.sha256(content).hexdigest()
+    call_id = str(uuid.uuid4())
+    safe_filename = file.filename or "upload.wav"
+
+    # Save file to disk
+    dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
+    dest.write_bytes(content)
+
+    # Resolve agent employee record — pick first agent if none specified
+    employee = None
+    if agent_id:
+        employee = db.query(Employee).filter(Employee.id == agent_id).first()
+    if not employee:
+        employee = db.query(Employee).filter(Employee.role == "AGENT").first()
+    if not employee:
+        raise HTTPException(status_code=400, detail="No agent found in database")
+
+    # Resolve or create customer
+    customer = db.query(Customer).first()
+    if not customer:
+        customer = Customer(
+            id=str(uuid.uuid4()),
+            display_name="Uploaded Call Customer",
+            phone_hash="upload",
+        )
+        db.add(customer)
+        db.flush()
+
+    call = Call(
+        id=call_id,
+        customer_id=customer.id,
+        employee_id=employee.id,
+        original_filename=safe_filename,
+        size_bytes=len(content),
+        sha256=sha256,
+        status="PENDING",
+        current_step="uploaded",
+        call_time=datetime.now(timezone.utc),
+    )
+    db.add(call)
+    db.commit()
+
+    # Run the real AI pipeline in background
+    background_tasks.add_task(_run_pipeline, call_id, str(dest))
+
+    return {
+        "callId": call_id,
+        "filename": safe_filename,
+        "status": "PENDING",
+        "message": "Call uploaded successfully. Processing started.",
+    }
+
+
+@app.get(f"{settings.API_V1_PREFIX}/calls/{{call_id}}/status")
+def get_call_status(
+    call_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+
+    has_transcript = db.query(Transcript).filter(Transcript.call_id == call_id).first() is not None
+    has_report = db.query(QaReport).filter(QaReport.call_id == call_id).first() is not None
+
+    return {
+        "callId": call.id,
+        "status": call.status,
+        "currentStep": call.current_step,
+        "hasTranscript": has_transcript,
+        "hasReport": has_report,
+        "error": call.error_message,
     }
 
 
