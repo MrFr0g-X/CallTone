@@ -1,6 +1,6 @@
 import { useState, useId } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { LogOut, BarChart3, Users, Menu, X } from "lucide-react";
+import { LogOut, BarChart3, Users, Menu, X, Upload } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -30,6 +30,7 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
 
   const qaLinks = [
     { to: "/qa/dashboard", label: "Dashboard", icon: Users },
+    { to: "/qa/upload", label: "Upload", icon: Upload },
   ];
 
   const links = userRole === "agent" ? agentLinks : qaLinks;

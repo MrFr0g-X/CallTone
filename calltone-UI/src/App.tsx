@@ -22,6 +22,7 @@ import CallDetail from "./pages/CallDetail";
 import NotFound from "./pages/NotFound";
 import NotAuthorized from "./pages/NotAuthorized";
 import AcceptInvite from "./pages/AcceptInvite";
+import UploadCall from "./pages/UploadCall";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,11 @@ const AnimatedRoutes = () => {
         <Route path="/qa/call/:callId" element={
           <ProtectedRoute allowedRoles={["qa"]}>
             <CallDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/qa/upload" element={
+          <ProtectedRoute allowedRoles={["qa", "admin", "super_admin"]}>
+            <UploadCall />
           </ProtectedRoute>
         } />
 
