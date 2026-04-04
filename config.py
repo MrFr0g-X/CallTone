@@ -17,7 +17,7 @@ MODEL_PATHS = {
     / "skill_implementation"
     / "models"
     / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf",
-    "sensevoice": REPO_ROOT / "LAYER_1" / "models" / "sensevoice" / "iic" / "SenseVoiceSmall",
+    "whisper": REPO_ROOT / "LAYER_1" / "models" / "whisper" / "openai" / "whisper-large-v3",
     "resemble_enhance": REPO_ROOT / "LAYER_1" / "models" / "resemble-enhance",
     "audio2emotion": REPO_ROOT
     / "LAYER_1"

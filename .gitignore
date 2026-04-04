@@ -131,3 +131,7 @@ Test_audio/
 
 # Logs
 *.log
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
