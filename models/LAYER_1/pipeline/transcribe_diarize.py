@@ -48,7 +48,6 @@ _pa_sd.get_plda = _noop_get_plda
 from collections import defaultdict, Counter
 
 import warnings
-import logging
 import numpy as np
 import torchaudio
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
@@ -61,11 +60,7 @@ warnings.filterwarnings("ignore", message=".*chunk_length_s.*experimental.*")
 warnings.filterwarnings("ignore", message=".*forced_decoder_ids.*deprecated.*")
 warnings.filterwarnings("ignore", message=".*pipelines sequentially on GPU.*")
 warnings.filterwarnings("ignore", message=".*multilingual Whisper.*")
-warnings.filterwarnings("ignore", message=".*SuppressTokens.*")
 warnings.filterwarnings("ignore", category=UserWarning, module="pyannote")
-# transformers emits some warnings via logging, not warnings.warn — silence those too
-logging.getLogger("transformers").setLevel(logging.ERROR)
-logging.getLogger("transformers.generation").setLevel(logging.ERROR)
 
 # ── paths ───────────────────────────────────────────────────────────────────────
 MODEL_DIR  = os.path.join(os.path.dirname(__file__), "../models/whisper/openai/whisper-large-v3")
@@ -142,10 +137,9 @@ def load_sense_model():
     model.to(DEVICE)
     processor = AutoProcessor.from_pretrained(MODEL_DIR)
 
-    # Clear conflicting generation_config fields to avoid max_new_tokens vs max_length warnings
+    # Remove max_length from generation_config to avoid conflict with max_new_tokens
     if hasattr(model, "generation_config") and model.generation_config is not None:
         model.generation_config.max_length = None
-        model.generation_config.max_new_tokens = None
 
     pipe = pipeline(
         "automatic-speech-recognition",
@@ -153,13 +147,10 @@ def load_sense_model():
         tokenizer=processor.tokenizer,
         feature_extractor=processor.feature_extractor,
         batch_size=16,
-        # return_timestamps=True handles segments >30 s (>3000 mel features) without errors.
-        # result["text"] still works correctly — we just ignore the chunk timestamps.
-        return_timestamps=True,
+        return_timestamps=False,
         dtype=dtype,
         device=DEVICE,
-        # 448 is Whisper's hard max output tokens (~3-4 min of dense speech per segment)
-        generate_kwargs={"max_new_tokens": 448, "language": "en", "task": "transcribe"},
+        generate_kwargs={"max_new_tokens": 128, "language": "en", "task": "transcribe"},
     )
     return pipe
 

@@ -10,7 +10,7 @@ Usage:
 
 Models required (~12.5 GB total):
   - Meta-Llama-3.1-8B-Instruct-Q8_0.gguf    ~8.0 GB  (skill_implementation)
-  - SenseVoiceSmall/model.pt                  ~893 MB  (LAYER_1 transcription)
+  - whisper-large-v3                           ~3.0 GB  (LAYER_1 transcription)
   - resemble-enhance weights                  ~681 MB  (LAYER_1 audio enhancement)
   - Audio2Emotion-v3.0/network.onnx           ~1.2 GB  (LAYER_1 emotion detection)
   - pyannote/segmentation-3.0                 ~500 MB  (LAYER_1 diarization)
@@ -40,13 +40,13 @@ MODELS = {
         "repo_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
         "filename": "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf",
     },
-    "sensevoice": {
-        "description": "SenseVoiceSmall — used by LAYER_1 transcription",
-        "size": "~893 MB",
-        "dest": REPO_ROOT / "LAYER_1" / "models" / "sensevoice" / "iic" / "SenseVoiceSmall",
+    "whisper": {
+        "description": "whisper-large-v3 — used by LAYER_1 transcription",
+        "size": "~3.0 GB",
+        "dest": REPO_ROOT / "LAYER_1" / "models" / "whisper" / "openai" / "whisper-large-v3",
         "requires_token": False,
         "download": "huggingface_snapshot",
-        "repo_id": "iic/SenseVoiceSmall",
+        "repo_id": "openai/whisper-large-v3",
     },
     "resemble": {
         "description": "resemble-enhance weights — used by LAYER_1 audio enhancement",
@@ -172,7 +172,7 @@ def main():
         epilog=__doc__,
     )
     parser.add_argument("--list", action="store_true", help="List all models and exit")
-    parser.add_argument("--model", metavar="NAME", help="Download only this model (e.g. llama, sensevoice)")
+    parser.add_argument("--model", metavar="NAME", help="Download only this model (e.g. llama, whisper)")
     parser.add_argument("--hf-token", metavar="TOKEN", help="HuggingFace token (required for pyannote models)")
     args = parser.parse_args()
 

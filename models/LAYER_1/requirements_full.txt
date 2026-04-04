@@ -21,6 +21,6 @@ gradio>=4.8.0
 
 # For transcribe_diarize.py (transcription & diarization)
 pyannote.audio
-funasr
+transformers
 lightning-fabric
 huggingface_hub
