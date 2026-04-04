@@ -1,0 +1,26 @@
+{
+  "ticket_id": "TICKET-001",
+  "submitted_by": "QA_Head",
+  "submitted_at": "2026-03-19T10:00:00",
+  "field_name": "current_promotions",
+  "topic": "autopay_discount",
+  "category": "factual_accuracy",
+  "reason": "After reviewing several agent calls and cross-checking with the billing team, we have confirmed that the O2Pay AutoPay discount actually activates on the FIRST billing cycle after enrollment, not the second. The original policy was written based on a misunderstanding of the system behavior. The billing system applies the discount immediately from the next cycle. This change is a real factual correction — the meaning changes from 'second cycle' to 'first cycle', so this is NOT a simple rewording.",
+
+  "old_text": "O2PAY AUTOPAY DISCOUNT:\nCustomers who enroll their payment method in O2Pay (AutoPay) receive a $5 discount on their monthly bill.\nIMPORTANT: The discount takes effect starting from the SECOND billing cycle after enrollment. The first bill after enrollment is charged at the regular rate. The discount is not applied retroactively.\nThe discount is ongoing as long as AutoPay remains active. If the customer cancels AutoPay, the discount is removed from the next billing cycle.",
+
+  "new_text": "O2PAY AUTOPAY DISCOUNT:\nCustomers who enroll their payment method in O2Pay (AutoPay) receive a $5 discount on their monthly bill.\nIMPORTANT: The discount takes effect starting from the NEXT (first) billing cycle after enrollment. As soon as a customer enrolls in AutoPay, their very next bill will reflect the $5 discount. The discount is not applied retroactively to the current cycle.\nThe discount is ongoing as long as AutoPay remains active. If the customer cancels AutoPay, the discount is removed from the next billing cycle.",
+
+  "status": "pending",
+  "is_semantically_equivalent": null,
+  "equivalence_confidence": null,
+  "equivalence_explanation": null,
+  "processed_at": null,
+
+  "_notes_for_layer2": {
+    "expected_equivalence_result": "NOT equivalent — this changes a factual rule (2nd cycle → 1st cycle). The change tracker should create a supersedes edge, mark old node inactive, and create a new node. Scores for factual_accuracy on calls where agents said 'next billing cycle' should IMPROVE after this ticket is processed.",
+    "impact_on_test_call": "After this ticket is applied, the agent's statement 'you'll automatically get the $5 discount on your next billing cycle' will now be CORRECT per updated policy. Her factual accuracy score on this point should improve from a violation to compliant.",
+    "what_the_model_should_detect_before_ticket": "Agent said 'next billing cycle'. Original policy says 'second billing cycle'. This is a factual discrepancy — agent stated earlier activation than policy allows. LAYER 2 should flag this under factual_accuracy.",
+    "what_the_model_should_detect_after_ticket": "Policy now says 'next billing cycle'. Agent said 'next billing cycle'. No discrepancy. LAYER 2 should no longer flag this."
+  }
+}

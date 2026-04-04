@@ -1,0 +1,27 @@
+{
+  "ticket_id": "TICKET-002",
+  "submitted_by": "QA_Head",
+  "submitted_at": "2026-03-19T10:30:00",
+  "field_name": "products_and_services",
+  "topic": "metro_basic_plan",
+  "category": "factual_accuracy",
+  "reason": "I made a documentation error when writing the MetroBoost company context. I listed the Metro Basic ($40) plan as having 10GB of high-speed LTE data. The correct data allowance for this plan is 5GB, not 10GB. I cross-checked with the current product catalog from the MetroBoost product team (internal ref: PROD-2026-Q1) and confirmed: Metro Basic = 5GB. This was a QA head writing error, not a policy change. The plan has always been 5GB. This correction should update the products_and_services entry so that LAYER 2 evaluates agents against the correct factual baseline.",
+
+  "old_text": "--- METRO BASIC PLAN: $40/month ---\nIncludes: Unlimited domestic calls, unlimited domestic texts, 10GB of high-speed LTE data.\nAfter 10GB: data speeds reduced to 128 Kbps (no overage charges).\nTaxes and fees: NOT included in the $40 price. Taxes vary by location, typically $2–$4/month.\nHotspot: Not included.\nNote: This plan is NOT unlimited data. Agents must be clear that data is capped at 10GB.",
+
+  "new_text": "--- METRO BASIC PLAN: $40/month ---\nIncludes: Unlimited domestic calls, unlimited domestic texts, 5GB of high-speed LTE data.\nAfter 5GB: data speeds reduced to 128 Kbps (no overage charges).\nTaxes and fees: NOT included in the $40 price. Taxes vary by location, typically $2–$4/month.\nHotspot: Not included.\nNote: This plan is NOT unlimited data. Agents must be clear that data is capped at 5GB. When comparing to the Metro Unlimited plan, agents should highlight that heavy data users (streaming, gaming, social media) will exceed 5GB quickly.",
+
+  "status": "pending",
+  "is_semantically_equivalent": null,
+  "equivalence_confidence": null,
+  "equivalence_explanation": null,
+  "processed_at": null,
+
+  "_notes_for_layer2": {
+    "expected_equivalence_result": "NOT equivalent — the data amount changed from 10GB to 5GB. This is a factual correction with real meaning change. The change tracker should create a supersedes edge. This is NOT a rewording of the same concept — 10GB and 5GB are different facts.",
+    "impact_on_test_call": "Before this ticket: The agent said 'five gigs of data for $40'. Policy said 10GB. LAYER 2 should flag this as a factual accuracy violation (agent understated the data). After this ticket: Policy now says 5GB. Agent said 5GB. No discrepancy. LAYER 2 should clear this violation.",
+    "what_the_model_should_detect_before_ticket": "Agent stated the $40 plan has 'five gigs of data'. The initial policy says 10GB. This is a factual error by the agent — she told the customer the plan has half the data it actually offers. LAYER 2 should penalize factual accuracy on this point.",
+    "what_the_model_should_detect_after_ticket": "Policy now correctly states 5GB. Agent said 5GB. Agent was correct all along — the error was in the QA documentation, not the agent's knowledge. LAYER 2 should recognize no violation on this point.",
+    "deliberate_design_note": "This ticket is intentionally the more interesting case: the QA head's documentation was WRONG, and the AGENT was actually RIGHT. LAYER 2 initially penalizes a good agent due to a documentation mistake. After the correction ticket is processed, the agent's score improves — demonstrating that the change management system protects agents from unfair scoring caused by QA documentation errors."
+  }
+}

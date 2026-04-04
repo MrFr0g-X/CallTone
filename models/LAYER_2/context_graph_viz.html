@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Context Graph — MetroBoost</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+
+  #graph { width: 100vw; height: 100vh; }
+
+  /* ── Tooltip ── */
+  #tooltip {
+    position: fixed;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px 14px;
+    max-width: 320px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .15s;
+    z-index: 100;
+    font-size: 12px;
+    line-height: 1.6;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  }
+  #tooltip.visible { opacity: 1; }
+  #tooltip .tt-type   { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  #tooltip .tt-content{ color: #e6edf3; font-weight: 500; margin-bottom: 8px; }
+  #tooltip .tt-tags   { display: flex; flex-wrap: wrap; gap: 4px; }
+  #tooltip .tt-tag    { background: #21262d; border: 1px solid #30363d; border-radius: 4px; padding: 1px 6px; font-size: 10px; color: #58a6ff; }
+  #tooltip .tt-refs   { margin-top: 6px; color: #8b949e; font-size: 11px; }
+
+  /* ── Legend ── */
+  #legend {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(22,27,34,.9);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+  #legend h4 { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; user-select: none; }
+  .legend-row:last-child { margin-bottom: 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-row.dimmed { opacity: .35; }
+  .legend-row.dimmed .legend-dot { filter: grayscale(1); }
+
+  /* ── Edge legend ── */
+  #edge-legend {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(22,27,34,.9);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+  #edge-legend h4 { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .edge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .edge-swatch { width: 28px; height: 2px; flex-shrink: 0; }
+
+  /* ── Controls ── */
+  #controls {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+  }
+  #search {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #e6edf3;
+    padding: 6px 12px;
+    font-size: 13px;
+    width: 260px;
+    outline: none;
+  }
+  #search:focus { border-color: #58a6ff; }
+  #search::placeholder { color: #484f58; }
+  button.ctrl {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #8b949e;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  button.ctrl:hover { border-color: #58a6ff; color: #58a6ff; }
+
+  /* ── Stats ── */
+  #stats {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    color: #484f58;
+    font-size: 11px;
+    text-align: right;
+    z-index: 50;
+    line-height: 1.8;
+  }
+
+  /* ── Links ── */
+  .link { fill: none; }
+  .link.part_of    { stroke: #21262d; stroke-width: 1; }
+  .link.related_to { stroke-width: 1.5; opacity: .7; }
+  .link.supersedes { stroke: #f85149; stroke-width: 2; stroke-dasharray: 5,3; }
+  .link.same_concept{ stroke: #e3b341; stroke-width: 1.5; stroke-dasharray: 2,3; }
+
+  /* ── Nodes ── */
+  .node { cursor: pointer; }
+  .node circle { transition: r .1s; }
+  .node.hub circle { filter: drop-shadow(0 0 6px currentColor); }
+  .node.faded { opacity: .12; }
+  .node.faded.hub { opacity: .2; }
+  .node-label {
+    font-size: 9px;
+    fill: #8b949e;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+  }
+  .node.hub .node-label {
+    font-size: 11px;
+    fill: #e6edf3;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div id="graph"></div>
+<div id="tooltip"></div>
+
+<div id="controls">
+  <input id="search" type="text" placeholder="Search nodes…"/>
+  <button class="ctrl" onclick="resetView()">⊙ Reset</button>
+  <button class="ctrl" onclick="toggleLabels()">Aa Labels</button>
+</div>
+
+<div id="stats"></div>
+<div id="legend"><h4>Categories</h4></div>
+<div id="edge-legend">
+  <h4>Edges</h4>
+  <div class="edge-row"><div class="edge-swatch" style="background:#30363d"></div><span>part of</span></div>
+  <div class="edge-row"><div class="edge-swatch" style="background:#58a6ff;opacity:.7"></div><span>related to</span></div>
+  <div class="edge-row"><div class="edge-swatch" style="background:#f85149;border-top:2px dashed #f85149;height:0"></div><span>supersedes</span></div>
+  <div class="edge-row"><div class="edge-swatch" style="border-top:2px dotted #e3b341;height:0"></div><span>same concept</span></div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const GRAPH = {"nodes": [{"id": "gre_0001", "label": "Thank you for calling MetroBoost, this is [Agent Name], your…", "content": "Thank you for calling MetroBoost, this is [Agent Name], your wireless specialist. How can I assist you today?", "category": "script_compliance", "topic": "greeting", "node_type": "protocol", "is_hub": false, "semantic_tags": ["greeting-script", "opening-phrase", "your-wireless-specialist", "thank-you-for-calling", "wireless-specialist", "assist-you-today", "metroboost"], "active": true, "version": 1}, {"id": "clo_0002", "label": "Thank you so much for being a valued part of the MetroBoost …", "content": "Thank you so much for being a valued part of the MetroBoost family, [Customer Name]. If you ever need anything, do not hesitate to call us back. Have a wonderful day!", "category": "script_compliance", "topic": "closing", "node_type": "protocol", "is_hub": false, "semantic_tags": ["closing-script", "thank-you-for-being-valued", "valued-part-of-metroboost", "have-a-wonderful-day", "call-us-back", "customer-name"], "active": true, "version": 1}, {"id": "req_0003", "label": "Ask for the customer's full name.", "content": "Ask for the customer's full name.", "category": "script_compliance", "topic": "verification", "node_type": "protocol", "is_hub": false, "semantic_tags": ["required-verification", "customer-full-name", "ask-for-full-name", "identification-verification"], "active": true, "version": 1}, {"id": "req_0004", "label": "Ask for the mobile number on the account.", "content": "Ask for the mobile number on the account.", "category": "script_compliance", "topic": "verification", "node_type": "protocol", "is_hub": false, "semantic_tags": ["required-verification", "mobile-number", "account-number", "ask-for-mobile-number"], "active": true, "version": 1}, {"id": "req_0005", "label": "Ask for the 4-digit account security PIN.", "content": "Ask for the 4-digit account security PIN.", "category": "script_compliance", "topic": "verification", "node_type": "protocol", "is_hub": false, "semantic_tags": ["required-verification", "account-security-pin", "4-digit-pin", "security-pin"], "active": true, "version": 1}, {"id": "hol_0006", "label": "May I please place you on a brief hold while I look into thi…", "content": "May I please place you on a brief hold while I look into this for you?", "category": "script_compliance", "topic": "hold", "node_type": "protocol", "is_hub": false, "semantic_tags": ["hold-procedure", "brief-hold", "please-hold", "look-into-this"], "active": true, "version": 1}, {"id": "hol_0007", "label": "I'll be back with you in no more than two minutes.", "content": "I'll be back with you in no more than two minutes.", "category": "script_compliance", "topic": "hold", "node_type": "protocol", "is_hub": false, "semantic_tags": ["hold-procedure", "brief-hold", "two-minutes", "be-back-with-you"], "active": true, "version": 1}, {"id": "hol_0008", "label": "Thank you so much for your patience, [Customer Name].", "content": "Thank you so much for your patience, [Customer Name].", "category": "script_compliance", "topic": "hold", "node_type": "protocol", "is_hub": false, "semantic_tags": ["thank-you-for-patience", "customer-name", "patience-appreciation"], "active": true, "version": 1}, {"id": "tra_0009", "label": "Explain why the transfer is needed.", "content": "Explain why the transfer is needed.", "category": "script_compliance", "topic": "transfer", "node_type": "protocol", "is_hub": false, "semantic_tags": ["transfer-procedure", "explain-transfer", "transfer-needed", "why-transfer"], "active": true, "version": 1}, {"id": "tra_0010", "label": "Name the department they're sending the customer to.", "content": "Name the department they're sending the customer to.", "category": "script_compliance", "topic": "transfer", "node_type": "protocol", "is_hub": false, "semantic_tags": ["transfer-procedure", "department-name", "customer-department", "send-to-department"], "active": true, "version": 1}, {"id": "tra_0011", "label": "Offer to stay on the line until the other department picks u…", "content": "Offer to stay on the line until the other department picks up.", "category": "script_compliance", "topic": "transfer", "node_type": "protocol", "is_hub": false, "semantic_tags": ["transfer-procedure", "stay-on-line", "other-department", "pick-up"], "active": true, "version": 1}, {"id": "tra_0012", "label": "Give the customer a direct callback number in case the trans…", "content": "Give the customer a direct callback number in case the transfer drops.", "category": "script_compliance", "topic": "transfer", "node_type": "protocol", "is_hub": false, "semantic_tags": ["transfer-procedure", "callback-number", "direct-number", "transfer-drops"], "active": true, "version": 1}, {"id": "esc_0013", "label": "Escalate to a supervisor immediately if the customer explici…", "content": "Escalate to a supervisor immediately if the customer explicitly asks for a supervisor or manager.", "category": "script_compliance", "topic": "escalation", "node_type": "protocol", "is_hub": false, "semantic_tags": ["escalation-procedure", "supervisor-escalation", "customer-requests-supervisor", "explicit-request"], "active": true, "version": 1}, {"id": "esc_0014", "label": "Escalate to a supervisor immediately if the customer mention…", "content": "Escalate to a supervisor immediately if the customer mentions filing a complaint with the FCC, BBB, or any regulatory body.", "category": "script_compliance", "topic": "escalation", "node_type": "protocol", "is_hub": false, "semantic_tags": ["escalation-procedure", "supervisor-escalation", "customer-mentions-complaint", "filing-complaint"], "active": true, "version": 1}, {"id": "esc_0015", "label": "Escalate to a supervisor immediately if the issue can't be r…", "content": "Escalate to a supervisor immediately if the issue can't be resolved after two genuine attempts.", "category": "script_compliance", "topic": "escalation", "node_type": "protocol", "is_hub": false, "semantic_tags": ["escalation-procedure", "supervisor-escalation", "issue-unresolved", "two-attempts"], "active": true, "version": 1}, {"id": "esc_0016", "label": "Escalate to a supervisor immediately if the customer has bee…", "content": "Escalate to a supervisor immediately if the customer has been calling about the same unresolved issue for more than 3 contacts.", "category": "script_compliance", "topic": "escalation", "node_type": "protocol", "is_hub": false, "semantic_tags": ["escalation-procedure", "supervisor-escalation", "customer-has-been-calling", "same-issue", "more-than-3-contacts"], "active": true, "version": 1}, {"id": "man_0017", "label": "Just to let you know, this call may be recorded for quality …", "content": "Just to let you know, this call may be recorded for quality assurance and training purposes.", "category": "script_compliance", "topic": "disclosure", "node_type": "protocol", "is_hub": false, "semantic_tags": ["recording-disclosure", "quality-assurance", "training-purposes", "call-recorded"], "active": true, "version": 1}, {"id": "man_0018", "label": "Before I make this change, I want to confirm: [describe the …", "content": "Before I make this change, I want to confirm: [describe the change and billing impact].", "category": "script_compliance", "topic": "disclosure", "node_type": "protocol", "is_hub": false, "semantic_tags": ["plan-change-disclosure", "change-confirmation", "billing-impact", "describe-change"], "active": true, "version": 1}, {"id": "man_0019", "label": "Do you authorize this change?", "content": "Do you authorize this change?", "category": "script_compliance", "topic": "disclosure", "node_type": "protocol", "is_hub": false, "semantic_tags": ["authorization-disclosure", "authorize-change", "change-authorization"], "active": true, "version": 1}, {"id": "man_0020", "label": "By enrolling in O2Pay, you authorize MetroBoost to automatic…", "content": "By enrolling in O2Pay, you authorize MetroBoost to automatically charge your selected payment method each billing cycle.", "category": "script_compliance", "topic": "disclosure", "node_type": "protocol", "is_hub": false, "semantic_tags": ["autopay-enrollment-disclosure", "autopay-authorization", "automatic-charge", "billing-cycle"], "active": true, "version": 1}, {"id": "man_0021", "label": "You can cancel AutoPay at any time through the MetroBoost ap…", "content": "You can cancel AutoPay at any time through the MetroBoost app or by calling us.", "category": "script_compliance", "topic": "disclosure", "node_type": "protocol", "is_hub": false, "semantic_tags": ["autopay-cancellation-disclosure", "autopay-cancel", "cancel-autopay", "metroboost-app"], "active": true, "version": 1}, {"id": "pro_0022", "label": "Calm down.", "content": "Calm down.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "calm-down", "stay-calm"], "active": true, "version": 1}, {"id": "pro_0023", "label": "There's nothing I can do.", "content": "There's nothing I can do.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "nothing-can-be-done", "no-solution"], "active": true, "version": 1}, {"id": "pro_0024", "label": "That's not my department.", "content": "That's not my department.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "not-my-department", "wrong-department"], "active": true, "version": 1}, {"id": "pro_0025", "label": "I don't know.", "content": "I don't know.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "don't-know", "unknown"], "active": true, "version": 1}, {"id": "pro_0026", "label": "You should have read the terms.", "content": "You should have read the terms.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "should-have-read-terms", "terms-and-conditions"], "active": true, "version": 1}, {"id": "pro_0027", "label": "No problem.", "content": "No problem.", "category": "script_compliance", "topic": "prohibited", "node_type": "rule", "is_hub": false, "semantic_tags": ["prohibited-phrase", "no-problem", "no-issue"], "active": true, "version": 1}, {"id": "pro_0028", "label": "Metro Basic plan costs $40/month.", "content": "Metro Basic plan costs $40/month.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "monthly-plan", "wireless-plan", "price", "cost", "metro"], "active": true, "version": 1}, {"id": "pro_0029", "label": "Metro Basic plan features unlimited domestic calls and texts…", "content": "Metro Basic plan features unlimited domestic calls and texts.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "features", "unlimited-calls", "unlimited-texts", "domestic"], "active": true, "version": 1}, {"id": "pro_0030", "label": "Metro Basic plan includes 10GB of high-speed LTE data.", "content": "Metro Basic plan includes 10GB of high-speed LTE data.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "features", "lte-data", "high-speed-data", "data"], "active": true, "version": 1}, {"id": "pro_0031", "label": "Metro Basic plan does not include hotspot data.", "content": "Metro Basic plan does not include hotspot data.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "features", "no-hotspot", "hotspot"], "active": true, "version": 1}, {"id": "pro_0032", "label": "Metro Basic plan does not include taxes.", "content": "Metro Basic plan does not include taxes.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "taxes", "not-included"], "active": true, "version": 1}, {"id": "pro_0033", "label": "Metro Unlimited plan costs $65/month.", "content": "Metro Unlimited plan costs $65/month.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-unlimited", "monthly-plan", "wireless-plan", "price", "cost", "metro"], "active": true, "version": 1}, {"id": "pro_0034", "label": "Metro Unlimited plan features unlimited calls, texts, and da…", "content": "Metro Unlimited plan features unlimited calls, texts, and data.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-unlimited", "features", "unlimited-calls", "unlimited-texts", "unlimited-data"], "active": true, "version": 1}, {"id": "pro_0035", "label": "Metro Unlimited plan includes 15GB of hotspot data.", "content": "Metro Unlimited plan includes 15GB of hotspot data.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-unlimited", "features", "hotspot-data", "lte-data", "data"], "active": true, "version": 1}, {"id": "pro_0036", "label": "Metro Unlimited plan includes taxes.", "content": "Metro Unlimited plan includes taxes.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-unlimited", "taxes", "included"], "active": true, "version": 1}, {"id": "pro_0037", "label": "Metro Plus plan costs $85/month.", "content": "Metro Plus plan costs $85/month.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-plus", "monthly-plan", "wireless-plan", "price", "cost", "metro"], "active": true, "version": 1}, {"id": "pro_0038", "label": "Metro Plus plan features everything in Metro Unlimited, plus…", "content": "Metro Plus plan features everything in Metro Unlimited, plus international calls to 20 countries.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-plus", "features", "international-calls", "countries"], "active": true, "version": 1}, {"id": "pro_0039", "label": "Metro Plus plan includes 30GB of hotspot data.", "content": "Metro Plus plan includes 30GB of hotspot data.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-plus", "features", "hotspot-data", "lte-data", "data"], "active": true, "version": 1}, {"id": "pro_0040", "label": "Metro Plus plan includes one year of partner streaming subsc…", "content": "Metro Plus plan includes one year of partner streaming subscription.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-plus", "features", "streaming-subscription", "partner"], "active": true, "version": 1}, {"id": "pro_0041", "label": "International Add-On plan costs $10/month.", "content": "International Add-On plan costs $10/month.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["international-add-on", "monthly-plan", "wireless-plan", "price", "cost"], "active": true, "version": 1}, {"id": "pro_0042", "label": "International Add-On plan adds international calling to 50+ …", "content": "International Add-On plan adds international calling to 50+ countries to any plan.", "category": "factual_accuracy", "topic": "products", "node_type": "fact", "is_hub": false, "semantic_tags": ["international-add-on", "features", "international-calls", "countries"], "active": true, "version": 1}, {"id": "cur_0043", "label": "Customers who enroll in O2Pay get $5 off their monthly bill.", "content": "Customers who enroll in O2Pay get $5 off their monthly bill.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["o2pay", "autopay-discount", "5-dollar-off", "monthly-credit"], "active": true, "version": 1}, {"id": "cur_0044", "label": "O2Pay discount starts from the second billing cycle after en…", "content": "O2Pay discount starts from the second billing cycle after enrollment.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["o2pay", "autopay-discount", "second-billing-cycle", "enrollment"], "active": true, "version": 1}, {"id": "cur_0045", "label": "O2Pay discount is not applied retroactively.", "content": "O2Pay discount is not applied retroactively.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["o2pay", "autopay-discount", "not-applied-retroactively"], "active": true, "version": 1}, {"id": "cur_0046", "label": "O2Pay discount is removed from the next billing cycle after …", "content": "O2Pay discount is removed from the next billing cycle after cancellation.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["o2pay", "autopay-discount", "next-billing-cycle", "cancellation"], "active": true, "version": 1}, {"id": "cur_0047", "label": "New customers who bring an unlocked device and activate Metr…", "content": "New customers who bring an unlocked device and activate Metro Unlimited or Metro Plus get a one-time $25 credit on their third billing cycle.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["bring-your-own-device", "credit", "third-billing-cycle", "new-customer"], "active": true, "version": 1}, {"id": "cur_0048", "label": "Existing customers earn $15 credit per friend who activates …", "content": "Existing customers earn $15 credit per friend who activates a plan and stays active for 30 days.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["refer-a-friend", "credit", "existing-customer", "friend"], "active": true, "version": 1}, {"id": "cur_0049", "label": "Existing customers earn $10 off their first month for each f…", "content": "Existing customers earn $10 off their first month for each friend who activates a plan.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["refer-a-friend", "credit", "existing-customer", "friend"], "active": true, "version": 1}, {"id": "cur_0050", "label": "Customers switching from a competitor who port their number …", "content": "Customers switching from a competitor who port their number and activate Metro Unlimited or Metro Plus get a $30 bill credit on the second billing cycle.", "category": "factual_accuracy", "topic": "promotions", "node_type": "offer", "is_hub": false, "semantic_tags": ["switcher-bonus", "credit", "second-billing-cycle", "switching"], "active": true, "version": 1}, {"id": "pol_0051", "label": "MetroBoost bills in advance, each payment covers the next 30…", "content": "MetroBoost bills in advance, each payment covers the next 30 days.", "category": "factual_accuracy", "topic": "policies", "node_type": "rule", "is_hub": false, "semantic_tags": ["billing", "metroboost", "advance", "payment", "30-days"], "active": true, "version": 1}, {"id": "pol_0052", "label": "Agents cannot issue refunds over $20 without supervisor appr…", "content": "Agents cannot issue refunds over $20 without supervisor approval.", "category": "factual_accuracy", "topic": "policies", "node_type": "rule", "is_hub": false, "semantic_tags": ["refund", "agent", "supervisor-approval", "limit"], "active": true, "version": 1}, {"id": "pol_0053", "label": "Customers can cancel anytime, prepaid balances are non-refun…", "content": "Customers can cancel anytime, prepaid balances are non-refundable.", "category": "factual_accuracy", "topic": "policies", "node_type": "rule", "is_hub": false, "semantic_tags": ["cancellation", "prepaid", "non-refundable"], "active": true, "version": 1}, {"id": "pol_0054", "label": "Porting from MetroBoost to another carrier closes the accoun…", "content": "Porting from MetroBoost to another carrier closes the account automatically, takes 2–4 hours weekdays, up to 24 hours weekends.", "category": "factual_accuracy", "topic": "policies", "node_type": "rule", "is_hub": false, "semantic_tags": ["porting", "metroboost", "account-closure", "timeframe"], "active": true, "version": 1}, {"id": "com_0055", "label": "Billing discrepancy: Pull up the account, review the last st…", "content": "Billing discrepancy: Pull up the account, review the last statement, identify the charge breakdown, compare to what the customer expected, issue a credit and document the cause if there's a real discrepancy.", "category": "factual_accuracy", "topic": "troubleshooting", "node_type": "procedure", "is_hub": false, "semantic_tags": ["billing-discrepancy", "account-review", "charge-breakdown", "credit"], "active": true, "version": 1}, {"id": "com_0056", "label": "Bank overdraft fee: MetroBoost is not responsible, offer a o…", "content": "Bank overdraft fee: MetroBoost is not responsible, offer a one-time $5 courtesy credit for customers who've been with us 12+ months, subject to supervisor approval.", "category": "factual_accuracy", "topic": "troubleshooting", "node_type": "procedure", "is_hub": false, "semantic_tags": ["bank-overdraft", "courtesy-credit", "supervisor-approval", "timeframe"], "active": true, "version": 1}, {"id": "com_0057", "label": "AutoPay not working: Check if the card on file is expired, c…", "content": "AutoPay not working: Check if the card on file is expired, check if the card has sufficient funds, walk them through re-enrolling AutoPay in the MetroBoost app, escalate to billing tier 2 if still broken.", "category": "factual_accuracy", "topic": "troubleshooting", "node_type": "procedure", "is_hub": false, "semantic_tags": ["autopay-not-working", "card-expiration", "sufficient-funds", "re-enrollment"], "active": true, "version": 1}, {"id": "con_0058", "label": "Customer Care: 1-800-METRO-01, Monday–Saturday 7am–10pm loca…", "content": "Customer Care: 1-800-METRO-01, Monday–Saturday 7am–10pm local time, Sunday 9am–7pm.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["customer-care", "phone-number", "hours-of-operation"], "active": true, "version": 1}, {"id": "con_0059", "label": "Billing: 1-800-METRO-02, Monday–Friday 8am–8pm EST.", "content": "Billing: 1-800-METRO-02, Monday–Friday 8am–8pm EST.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["billing", "phone-number", "hours-of-operation"], "active": true, "version": 1}, {"id": "con_0060", "label": "Tech Support: 1-800-METRO-03, 24/7.", "content": "Tech Support: 1-800-METRO-03, 24/7.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["tech-support", "phone-number", "hours-of-operation"], "active": true, "version": 1}, {"id": "con_0061", "label": "MetroBoost App: iOS App Store and Google Play, search 'Metro…", "content": "MetroBoost App: iOS App Store and Google Play, search 'MetroBoost'.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["metroboost-app", "app-store", "google-play"], "active": true, "version": 1}, {"id": "con_0062", "label": "Live Chat: metroboost.com, Monday–Friday 8am–11pm EST.", "content": "Live Chat: metroboost.com, Monday–Friday 8am–11pm EST.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["live-chat", "website", "hours-of-operation"], "active": true, "version": 1}, {"id": "con_0063", "label": "Stores: metroboost.com/stores.", "content": "Stores: metroboost.com/stores.", "category": "factual_accuracy", "topic": "contacts", "node_type": "fact", "is_hub": false, "semantic_tags": ["stores", "website"], "active": true, "version": 1}, {"id": "fre_0064", "label": "Why is my bill higher than my plan price?", "content": "Why is my bill higher than my plan price?", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["billing", "plan-price", "higher-bill"], "active": true, "version": 1}, {"id": "fre_0065", "label": "The Metro Basic ($40) doesn't include taxes, taxes add $2–$4…", "content": "The Metro Basic ($40) doesn't include taxes, taxes add $2–$4 depending on your state.", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-basic", "taxes", "not-included", "state-dependent"], "active": true, "version": 1}, {"id": "fre_0066", "label": "Does the $65 plan really include taxes?", "content": "Does the $65 plan really include taxes?", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["metro-unlimited", "taxes", "included"], "active": true, "version": 1}, {"id": "fre_0067", "label": "Yes, the only extra you might see is a one-time $5 activatio…", "content": "Yes, the only extra you might see is a one-time $5 activation fee if you're a new customer.", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["activation-fee", "new-customer", "one-time-fee"], "active": true, "version": 1}, {"id": "fre_0068", "label": "When does the AutoPay discount kick in?", "content": "When does the AutoPay discount kick in?", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["autopay-discount", "kick-in", "second-billing-cycle"], "active": true, "version": 1}, {"id": "fre_0069", "label": "The $5 discount starts on your second billing cycle after en…", "content": "The $5 discount starts on your second billing cycle after enrollment.", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["autopay-discount", "second-billing-cycle", "enrollment"], "active": true, "version": 1}, {"id": "fre_0070", "label": "What if I cancel AutoPay?", "content": "What if I cancel AutoPay?", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["autopay-cancellation", "impact"], "active": true, "version": 1}, {"id": "fre_0071", "label": "The $5 discount is removed from the next billing cycle after…", "content": "The $5 discount is removed from the next billing cycle after cancellation.", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["autopay-discount", "next-billing-cycle", "cancellation"], "active": true, "version": 1}, {"id": "fre_0072", "label": "Can I switch from postpaid to prepaid and keep my number?", "content": "Can I switch from postpaid to prepaid and keep my number?", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["switching", "postpaid", "prepaid", "number-porting"], "active": true, "version": 1}, {"id": "fre_0073", "label": "Yes, we port your number over, takes 2–4 hours weekdays, up …", "content": "Yes, we port your number over, takes 2–4 hours weekdays, up to 24 hours weekends.", "category": "factual_accuracy", "topic": "faq", "node_type": "fact", "is_hub": false, "semantic_tags": ["number-porting", "timeframe", "weekdays", "weekends"], "active": true, "version": 1}, {"id": "ton_0074", "label": "Use a warm, professional, and empathetic tone.", "content": "Use a warm, professional, and empathetic tone.", "category": "politeness_tone", "topic": "tone", "node_type": "rule", "is_hub": false, "semantic_tags": ["friendly-voice", "professional-tone", "empathetic-communication", "customer-centric", "positive-language"], "active": true, "version": 1}, {"id": "ton_0075", "label": "Match the customer's urgency.", "content": "Match the customer's urgency.", "category": "politeness_tone", "topic": "tone", "node_type": "rule", "is_hub": false, "semantic_tags": ["urgency-matching", "customer-needs", "timely-response", "responsive-service"], "active": true, "version": 1}, {"id": "ton_0076", "label": "Avoid jargon.", "content": "Avoid jargon.", "category": "politeness_tone", "topic": "tone", "node_type": "rule", "is_hub": false, "semantic_tags": ["clear-language", "simple-explanations", "avoid-jargon", "plain-english"], "active": true, "version": 1}, {"id": "ton_0077", "label": "Frame things positively.", "content": "Frame things positively.", "category": "politeness_tone", "topic": "tone", "node_type": "rule", "is_hub": false, "semantic_tags": ["positive-framing", "solution-focused", "customer-centric", "optimistic-attitude"], "active": true, "version": 1}, {"id": "ton_0078", "label": "Never minimize charges.", "content": "Never minimize charges.", "category": "politeness_tone", "topic": "tone", "node_type": "rule", "is_hub": false, "semantic_tags": ["charge-minimization", "charge-disclosure", "transparency", "honesty"], "active": true, "version": 1}, {"id": "emp_0079", "label": "Acknowledge the customer's feelings.", "content": "Acknowledge the customer's feelings.", "category": "empathy", "topic": "empathy", "node_type": "rule", "is_hub": false, "semantic_tags": ["emotional-validation", "feeling-acknowledgment", "empathy", "customer-emotions"], "active": true, "version": 1}, {"id": "emp_0080", "label": "Validate their emotions.", "content": "Validate their emotions.", "category": "empathy", "topic": "empathy", "node_type": "rule", "is_hub": false, "semantic_tags": ["emotional-validation", "emotional-understanding", "empathy", "customer-emotions"], "active": true, "version": 1}, {"id": "emp_0081", "label": "Take ownership of the issue.", "content": "Take ownership of the issue.", "category": "empathy", "topic": "empathy", "node_type": "rule", "is_hub": false, "semantic_tags": ["ownership", "responsibility", "issue-resolution", "customer-satisfaction"], "active": true, "version": 1}, {"id": "emp_0082", "label": "Never tell them they 'shouldn't feel that way'.", "content": "Never tell them they 'shouldn't feel that way'.", "category": "empathy", "topic": "empathy", "node_type": "rule", "is_hub": false, "semantic_tags": ["emotional-judgment", "emotional-shaming", "empathy", "customer-emotions"], "active": true, "version": 1}, {"id": "con_0083", "label": "Stay calm.", "content": "Stay calm.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["calm-communication", "emotional-control", "conflict-resolution", "customer-satisfaction"], "active": true, "version": 1}, {"id": "con_0084", "label": "Don't argue.", "content": "Don't argue.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["conflict-resolution", "calm-communication", "emotional-control", "customer-satisfaction"], "active": true, "version": 1}, {"id": "con_0085", "label": "Don't blame.", "content": "Don't blame.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["blame-avoidance", "conflict-resolution", "calm-communication", "customer-satisfaction"], "active": true, "version": 1}, {"id": "con_0086", "label": "Close with a concrete next step.", "content": "Close with a concrete next step.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["next-step", "concrete-action", "customer-satisfaction", "issue-resolution"], "active": true, "version": 1}, {"id": "con_0087", "label": "Offer a supervisor callback if necessary.", "content": "Offer a supervisor callback if necessary.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["supervisor-escalation", "callback-offer", "customer-satisfaction", "issue-resolution"], "active": true, "version": 1}, {"id": "con_0088", "label": "Never hang up without supervisor approval.", "content": "Never hang up without supervisor approval.", "category": "conflict_detection", "topic": "conflict", "node_type": "rule", "is_hub": false, "semantic_tags": ["supervisor-approval", "hang-up-protocol", "customer-satisfaction", "issue-resolution"], "active": true, "version": 1}, {"id": "res_0089", "label": "An issue is resolved when the customer confirms satisfaction…", "content": "An issue is resolved when the customer confirms satisfaction.", "category": "issue_resolution", "topic": "resolution", "node_type": "rule", "is_hub": false, "semantic_tags": ["issue-resolution", "customer-satisfaction", "confirmation", "resolution-criteria"], "active": true, "version": 1}, {"id": "res_0090", "label": "A credit/correction is issued and acknowledged.", "content": "A credit/correction is issued and acknowledged.", "category": "issue_resolution", "topic": "resolution", "node_type": "rule", "is_hub": false, "semantic_tags": ["credit-issuance", "correction-acknowledgment", "issue-resolution", "customer-satisfaction"], "active": true, "version": 1}, {"id": "res_0091", "label": "If not resolved, create a ticket.", "content": "If not resolved, create a ticket.", "category": "issue_resolution", "topic": "resolution", "node_type": "rule", "is_hub": false, "semantic_tags": ["ticket-creation", "issue-tracking", "resolution-failure", "customer-satisfaction"], "active": true, "version": 1}, {"id": "res_0092", "label": "Set a follow-up timeline.", "content": "Set a follow-up timeline.", "category": "issue_resolution", "topic": "resolution", "node_type": "rule", "is_hub": false, "semantic_tags": ["follow-up-scheduling", "issue-tracking", "resolution-failure", "customer-satisfaction"], "active": true, "version": 1}, {"id": "res_0093", "label": "Log the call in the CRM.", "content": "Log the call in the CRM.", "category": "issue_resolution", "topic": "resolution", "node_type": "rule", "is_hub": false, "semantic_tags": ["crm-logging", "issue-tracking", "resolution-failure", "customer-satisfaction"], "active": true, "version": 1}, {"id": "hub_0094", "label": "Hub: Script Compliance — 27 rules covering: closing, disclos…", "content": "Hub: Script Compliance — 27 rules covering: closing, disclosure, escalation, greeting, hold, prohibited, transfer, verification", "category": "script_compliance", "topic": "script_compliance_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["script_compliance", "script-compliance", "closing", "disclosure", "escalation", "greeting", "hold", "prohibited", "transfer", "verification"], "active": true, "version": 1}, {"id": "hub_0095", "label": "Hub: Factual Accuracy — 46 rules covering: contacts, faq, po…", "content": "Hub: Factual Accuracy — 46 rules covering: contacts, faq, policies, products, promotions, troubleshooting", "category": "factual_accuracy", "topic": "factual_accuracy_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["factual_accuracy", "factual-accuracy", "contacts", "faq", "policies", "products", "promotions", "troubleshooting"], "active": true, "version": 1}, {"id": "hub_0096", "label": "Hub: Politeness Tone — 5 rules covering: tone", "content": "Hub: Politeness Tone — 5 rules covering: tone", "category": "politeness_tone", "topic": "politeness_tone_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["politeness_tone", "politeness-tone", "tone"], "active": true, "version": 1}, {"id": "hub_0097", "label": "Hub: Empathy — 4 rules covering: empathy", "content": "Hub: Empathy — 4 rules covering: empathy", "category": "empathy", "topic": "empathy_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["empathy", "empathy", "empathy"], "active": true, "version": 1}, {"id": "hub_0098", "label": "Hub: Conflict Detection — 6 rules covering: conflict", "content": "Hub: Conflict Detection — 6 rules covering: conflict", "category": "conflict_detection", "topic": "conflict_detection_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["conflict_detection", "conflict-detection", "conflict"], "active": true, "version": 1}, {"id": "hub_0099", "label": "Hub: Issue Resolution — 5 rules covering: resolution", "content": "Hub: Issue Resolution — 5 rules covering: resolution", "category": "issue_resolution", "topic": "issue_resolution_hub", "node_type": "hub", "is_hub": true, "semantic_tags": ["issue_resolution", "issue-resolution", "resolution"], "active": true, "version": 1}], "links": [{"source": "gre_0001", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "clo_0002", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "req_0003", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "req_0004", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "req_0005", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "hol_0006", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "hol_0007", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "hol_0008", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "tra_0009", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "tra_0010", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "tra_0011", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "tra_0012", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "esc_0013", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "esc_0014", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "esc_0015", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "esc_0016", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "man_0017", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "man_0018", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "man_0019", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "man_0020", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "man_0021", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0022", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0023", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0024", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0025", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0026", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0027", "target": "hub_0094", "relation": "part_of", "note": "Part of script_compliance"}, {"source": "pro_0028", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0029", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0030", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0031", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0032", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0033", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0034", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0035", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0036", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0037", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0038", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0039", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0040", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0041", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pro_0042", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0043", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0044", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0045", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0046", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0047", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0048", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0049", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "cur_0050", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pol_0051", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pol_0052", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pol_0053", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "pol_0054", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "com_0055", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "com_0056", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "com_0057", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0058", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0059", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0060", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0061", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0062", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "con_0063", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0064", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0065", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0066", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0067", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0068", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0069", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0070", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0071", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0072", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "fre_0073", "target": "hub_0095", "relation": "part_of", "note": "Part of factual_accuracy"}, {"source": "ton_0074", "target": "hub_0096", "relation": "part_of", "note": "Part of politeness_tone"}, {"source": "ton_0075", "target": "hub_0096", "relation": "part_of", "note": "Part of politeness_tone"}, {"source": "ton_0076", "target": "hub_0096", "relation": "part_of", "note": "Part of politeness_tone"}, {"source": "ton_0077", "target": "hub_0096", "relation": "part_of", "note": "Part of politeness_tone"}, {"source": "ton_0078", "target": "hub_0096", "relation": "part_of", "note": "Part of politeness_tone"}, {"source": "emp_0079", "target": "hub_0097", "relation": "part_of", "note": "Part of empathy"}, {"source": "emp_0080", "target": "hub_0097", "relation": "part_of", "note": "Part of empathy"}, {"source": "emp_0081", "target": "hub_0097", "relation": "part_of", "note": "Part of empathy"}, {"source": "emp_0082", "target": "hub_0097", "relation": "part_of", "note": "Part of empathy"}, {"source": "con_0083", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "con_0084", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "con_0085", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "con_0086", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "con_0087", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "con_0088", "target": "hub_0098", "relation": "part_of", "note": "Part of conflict_detection"}, {"source": "res_0089", "target": "hub_0099", "relation": "part_of", "note": "Part of issue_resolution"}, {"source": "res_0090", "target": "hub_0099", "relation": "part_of", "note": "Part of issue_resolution"}, {"source": "res_0091", "target": "hub_0099", "relation": "part_of", "note": "Part of issue_resolution"}, {"source": "res_0092", "target": "hub_0099", "relation": "part_of", "note": "Part of issue_resolution"}, {"source": "res_0093", "target": "hub_0099", "relation": "part_of", "note": "Part of issue_resolution"}, {"source": "gre_0001", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "gre_0001", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "clo_0002", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "clo_0002", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "hol_0006", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "hol_0006", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "hol_0007", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "hol_0007", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "hol_0008", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "hol_0008", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "esc_0013", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "esc_0013", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "esc_0014", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "esc_0014", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "esc_0015", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "esc_0015", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "esc_0016", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "esc_0016", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "man_0017", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "man_0017", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "man_0018", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "man_0018", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "man_0019", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "man_0019", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "man_0020", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "man_0020", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "man_0021", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "man_0021", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0022", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0022", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0023", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0023", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0024", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0024", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0025", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0025", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0026", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0026", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "pro_0027", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "pro_0027", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0074", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "ton_0074", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0074", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "ton_0075", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "ton_0075", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0075", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "ton_0076", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "ton_0076", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0076", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "ton_0077", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "ton_0077", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0077", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "ton_0078", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "ton_0078", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "ton_0078", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "emp_0079", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "emp_0079", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "emp_0079", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "emp_0080", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "emp_0080", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "emp_0080", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "emp_0081", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "emp_0081", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "emp_0081", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "emp_0082", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "emp_0082", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "emp_0082", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "con_0083", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0083", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0083", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "con_0084", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0084", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0084", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "con_0085", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0085", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0085", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "con_0086", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0086", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0086", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "con_0087", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0087", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0087", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "con_0088", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "con_0088", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "con_0088", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0089", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "res_0089", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "res_0089", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0089", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "res_0090", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "res_0090", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "res_0090", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0090", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "res_0091", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "res_0091", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "res_0091", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0091", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "res_0092", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "res_0092", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "res_0092", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0092", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}, {"source": "res_0093", "target": "hub_0094", "relation": "related_to", "note": "Declared cross-reference to greeting_script"}, {"source": "res_0093", "target": "hub_0096", "relation": "related_to", "note": "Declared cross-reference to tone_guidelines"}, {"source": "res_0093", "target": "hub_0097", "relation": "related_to", "note": "Declared cross-reference to empathy_guidelines"}, {"source": "res_0093", "target": "hub_0098", "relation": "related_to", "note": "Declared cross-reference to conflict_resolution_guidelines"}]};
+
+const CATEGORY_COLORS = {
+  "script_compliance":  "#4a9af4",
+  "factual_accuracy":   "#e8a838",
+  "politeness_tone":    "#9b59b6",
+  "empathy":            "#2ecc71",
+  "conflict_detection": "#e74c3c",
+  "issue_resolution":   "#f39c12",
+  "unknown":            "#555",
+};
+
+const CATEGORY_LABELS = {
+  "script_compliance":  "Script Compliance",
+  "factual_accuracy":   "Factual Accuracy",
+  "politeness_tone":    "Politeness & Tone",
+  "empathy":            "Empathy",
+  "conflict_detection": "Conflict Detection",
+  "issue_resolution":   "Issue Resolution",
+};
+
+const LINK_COLORS = {
+  "part_of":      "#21262d",
+  "related_to":   "#58a6ff",
+  "supersedes":   "#f85149",
+  "same_concept": "#e3b341",
+};
+
+let showLabels = true;
+let activeCategories = new Set(Object.keys(CATEGORY_COLORS));
+
+// ── Build index ────────────────────────────────────────────────────────────
+const nodeById = {};
+GRAPH.nodes.forEach(n => nodeById[n.id] = n);
+
+// ── SVG setup ──────────────────────────────────────────────────────────────
+const W = window.innerWidth, H = window.innerHeight;
+const svg = d3.select("#graph").append("svg")
+    .attr("width", W).attr("height", H);
+
+const defs = svg.append("defs");
+
+// Glow filter for hub nodes
+const glow = defs.append("filter").attr("id","glow").attr("x","-50%").attr("y","-50%").attr("width","200%").attr("height","200%");
+glow.append("feGaussianBlur").attr("stdDeviation","4").attr("result","blur");
+const feMerge = glow.append("feMerge");
+feMerge.append("feMergeNode").attr("in","blur");
+feMerge.append("feMergeNode").attr("in","SourceGraphic");
+
+const g = svg.append("g");
+
+const zoom = d3.zoom().scaleExtent([0.05, 6])
+    .on("zoom", e => g.attr("transform", e.transform));
+svg.call(zoom);
+
+// ── Simulation ─────────────────────────────────────────────────────────────
+const simulation = d3.forceSimulation(GRAPH.nodes)
+  .force("link", d3.forceLink(GRAPH.links)
+      .id(d => d.id)
+      .distance(d => d.relation === "part_of" ? 80 : d.relation === "related_to" ? 160 : 120)
+      .strength(d => d.relation === "part_of" ? 0.6 : 0.3))
+  .force("charge", d3.forceManyBody().strength(d => d.is_hub ? -800 : -120))
+  .force("center", d3.forceCenter(W / 2, H / 2).strength(0.05))
+  .force("collision", d3.forceCollide(d => d.is_hub ? 40 : 18))
+  .alphaDecay(0.02);
+
+// ── Draw links ─────────────────────────────────────────────────────────────
+const linkGroup = g.append("g").attr("class","links");
+const link = linkGroup.selectAll("line")
+  .data(GRAPH.links)
+  .join("line")
+  .attr("class", d => `link ${d.relation}`)
+  .style("stroke", d => LINK_COLORS[d.relation] || "#444");
+
+// ── Draw nodes ─────────────────────────────────────────────────────────────
+const nodeGroup = g.append("g").attr("class","nodes");
+const node = nodeGroup.selectAll("g.node")
+  .data(GRAPH.nodes)
+  .join("g")
+  .attr("class", d => `node${d.is_hub ? " hub" : ""}`)
+  .call(d3.drag()
+    .on("start", dragStart)
+    .on("drag",  dragged)
+    .on("end",   dragEnd))
+  .on("mouseover", showTooltip)
+  .on("mousemove", moveTooltip)
+  .on("mouseout",  hideTooltip)
+  .on("click",     highlightNode);
+
+node.append("circle")
+  .attr("r", d => d.is_hub ? 18 : 7)
+  .style("fill", d => CATEGORY_COLORS[d.category] || "#555")
+  .style("fill-opacity", d => d.active ? (d.is_hub ? 0.95 : 0.75) : 0.3)
+  .style("stroke", d => CATEGORY_COLORS[d.category] || "#555")
+  .style("stroke-width", d => d.is_hub ? 2 : 1)
+  .style("stroke-opacity", 0.8)
+  .style("filter", d => d.is_hub ? "url(#glow)" : "none");
+
+const labels = node.append("text")
+  .attr("class","node-label")
+  .attr("dy", d => d.is_hub ? 24 : 12)
+  .text(d => {
+    if (d.is_hub) return d.label.replace(/^Hub: /, "").split(" —")[0];
+    return d.label.length > 35 ? d.label.slice(0,34)+"…" : d.label;
+  });
+
+// ── Simulation tick ────────────────────────────────────────────────────────
+simulation.on("tick", () => {
+  link
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
+  node.attr("transform", d => `translate(${d.x},${d.y})`);
+});
+
+// ── Tooltip ────────────────────────────────────────────────────────────────
+const tooltip = d3.select("#tooltip");
+
+function showTooltip(event, d) {
+  const cat  = CATEGORY_LABELS[d.category] || d.category;
+  const tags = d.semantic_tags.slice(0,10).map(t => `<span class="tt-tag">${t}</span>`).join("");
+  tooltip.html(`
+    <div class="tt-type">${cat} · ${d.node_type}</div>
+    <div class="tt-content">${d.content}</div>
+    ${tags ? `<div class="tt-tags">${tags}</div>` : ""}
+    ${d.is_hub ? `<div class="tt-refs">Hub node · click to focus category</div>` : ""}
+  `).classed("visible", true);
+  moveTooltip(event);
+}
+
+function moveTooltip(event) {
+  const x = event.clientX + 14, y = event.clientY - 10;
+  const tw = 320, th = tooltip.node().offsetHeight;
+  tooltip
+    .style("left",  (x + tw > W ? x - tw - 20 : x) + "px")
+    .style("top",   (y + th > H ? y - th       : y) + "px");
+}
+
+function hideTooltip() {
+  tooltip.classed("visible", false);
+}
+
+// ── Click highlight ────────────────────────────────────────────────────────
+let highlighted = null;
+
+function highlightNode(event, d) {
+  event.stopPropagation();
+  if (highlighted === d.id) {
+    // Deselect
+    node.classed("faded", false);
+    link.style("opacity", null);
+    highlighted = null;
+    return;
+  }
+  highlighted = d.id;
+
+  const connectedIds = new Set([d.id]);
+  GRAPH.links.forEach(l => {
+    const sid = typeof l.source === "object" ? l.source.id : l.source;
+    const tid = typeof l.target === "object" ? l.target.id : l.target;
+    if (sid === d.id) connectedIds.add(tid);
+    if (tid === d.id) connectedIds.add(sid);
+  });
+
+  node.classed("faded", n => !connectedIds.has(n.id));
+  link.style("opacity", l => {
+    const sid = typeof l.source === "object" ? l.source.id : l.source;
+    const tid = typeof l.target === "object" ? l.target.id : l.target;
+    return (sid === d.id || tid === d.id) ? 1 : 0.05;
+  });
+}
+
+svg.on("click", () => {
+  highlighted = null;
+  node.classed("faded", false);
+  link.style("opacity", null);
+});
+
+// ── Drag ───────────────────────────────────────────────────────────────────
+function dragStart(event, d) {
+  if (!event.active) simulation.alphaTarget(0.2).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+function dragEnd(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// ── Search ─────────────────────────────────────────────────────────────────
+d3.select("#search").on("input", function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) {
+    node.classed("faded", false);
+    link.style("opacity", null);
+    return;
+  }
+  const matched = new Set();
+  GRAPH.nodes.forEach(n => {
+    if (n.content.toLowerCase().includes(q) ||
+        n.semantic_tags.some(t => t.toLowerCase().includes(q)) ||
+        n.category.includes(q) || n.topic.includes(q)) {
+      matched.add(n.id);
+    }
+  });
+  node.classed("faded", n => !matched.has(n.id));
+  link.style("opacity", l => {
+    const sid = typeof l.source==="object" ? l.source.id : l.source;
+    const tid = typeof l.target==="object" ? l.target.id : l.target;
+    return (matched.has(sid) && matched.has(tid)) ? 0.6 : 0.04;
+  });
+});
+
+// ── Controls ───────────────────────────────────────────────────────────────
+function resetView() {
+  svg.transition().duration(600)
+     .call(zoom.transform, d3.zoomIdentity.translate(W/2, H/2).scale(0.9).translate(-W/2, -H/2));
+  d3.select("#search").property("value","");
+  node.classed("faded", false);
+  link.style("opacity", null);
+  highlighted = null;
+}
+
+function toggleLabels() {
+  showLabels = !showLabels;
+  labels.style("display", showLabels ? null : "none");
+}
+
+// ── Legend ─────────────────────────────────────────────────────────────────
+const categories = [...new Set(GRAPH.nodes.map(n => n.category))].filter(c => c !== "unknown");
+const legendEl = d3.select("#legend");
+
+categories.forEach(cat => {
+  const row = legendEl.append("div").attr("class","legend-row")
+    .datum(cat)
+    .on("click", function(event, c) {
+      if (activeCategories.has(c)) activeCategories.delete(c);
+      else activeCategories.add(c);
+      d3.select(this).classed("dimmed", !activeCategories.has(c));
+      node.style("display", n => activeCategories.has(n.category) ? null : "none");
+      link.style("display", l => {
+        const sc = typeof l.source==="object" ? l.source.category : "";
+        const tc = typeof l.target==="object" ? l.target.category : "";
+        return (activeCategories.has(sc) || activeCategories.has(tc)) ? null : "none";
+      });
+    });
+  row.append("div").attr("class","legend-dot")
+     .style("background", CATEGORY_COLORS[cat] || "#555");
+  row.append("span").text(CATEGORY_LABELS[cat] || cat);
+});
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+const hubs = GRAPH.nodes.filter(n => n.is_hub).length;
+const atoms = GRAPH.nodes.length - hubs;
+d3.select("#stats").html(`
+  ${GRAPH.nodes.length} nodes (${hubs} hubs · ${atoms} atomic)<br>
+  ${GRAPH.links.length} edges
+`);
+
+// ── Initial fit ────────────────────────────────────────────────────────────
+simulation.on("end", () => {
+  const bbox = g.node().getBBox();
+  const scale = Math.min(0.9 * W / bbox.width, 0.9 * H / bbox.height, 1);
+  const tx = W/2 - scale*(bbox.x + bbox.width/2);
+  const ty = H/2 - scale*(bbox.y + bbox.height/2);
+  svg.transition().duration(800)
+     .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+});
+</script>
+</body>
+</html>
