@@ -1,0 +1,55 @@
+---
+id: cbb9b8b4-0b91-4478-ae9f-70953b3e229d
+---
+flowchart TB
+    Start([Audio File Input<br/>MP3/WAV/FLAC]) --> PreCheck{Preprocessing<br/>Option?}
+    
+    PreCheck -->|1. As-is| Diarize
+    PreCheck -->|2. Denoise| Denoise[Resemble-Enhance<br/>Denoiser]
+    PreCheck -->|3. Enhance| Enhance[Resemble-Enhance<br/>Enhancer Stage2]
+    PreCheck -->|4. Both| Denoise
+    
+    Denoise --> DenoisedAudio[Denoised Audio<br/>16kHz WAV]
+    Enhance --> EnhancedAudio[Enhanced Audio<br/>16kHz WAV]
+    Denoise --> Enhance
+    
+    DenoisedAudio --> Diarize
+    EnhancedAudio --> Diarize
+    
+    Diarize[Speaker Diarization<br/>pyannote/segmentation-3.0<br/>+ wespeaker-resnet34] --> Segments[(Audio Segments<br/>with Timestamps<br/>SPEAKER_A: 0-5s<br/>SPEAKER_B: 5-10s)]
+    
+    Segments --> Transcribe[Transcription<br/>Whisper Model<br/>openai/whisper-large-v3]
+    
+    Transcribe --> RawTranscript[(Raw Transcript<br/>+ Generic Labels<br/>SPEAKER_A: text<br/>SPEAKER_B: text)]
+    
+    RawTranscript --> RoleCheck{Role ID<br/>Enabled?}
+    
+    RoleCheck -->|Yes| RoleID[Role Identification<br/>Llama-3.1-8B-Instruct<br/>identify-call-roles skill]
+    RoleCheck -->|No| EmotionCheck
+    
+    RoleID --> RoleTranscript[(Transcript with Roles<br/>Agent: text<br/>Customer: text)]
+    
+    RoleTranscript --> EmotionCheck{Emotion<br/>Detection?}
+    
+    EmotionCheck -->|No| Output1[Output Files<br/>TXT + JSON]
+    EmotionCheck -->|Yes| EmotionModel[Audio Emotion Analysis<br/>NVIDIA Audio2Emotion-v3.0<br/>ONNX Model]
+    
+    EmotionModel --> EmotionData[(Emotion Labels<br/>per Segment<br/>anger/joy/fear<br/>disgust/sad/neutral)]
+    
+    EmotionData --> Merge[Merge Emotions<br/>with Transcript]
+    
+    Merge --> FinalOutput[Final Output Files<br/>TXT + JSON<br/>with Roles + Emotions]
+    
+    Output1 --> End([Complete])
+    FinalOutput --> End
+    
+    style Start fill:#e1f5ff
+    style End fill:#c8e6c9
+    style Denoise fill:#fff3e0
+    style Enhance fill:#fff3e0
+    style Diarize fill:#f3e5f5
+    style Transcribe fill:#e8eaf6
+    style RoleID fill:#fce4ec
+    style EmotionModel fill:#fff9c4
+    style Output1 fill:#c8e6c9
+    style FinalOutput fill:#c8e6c9

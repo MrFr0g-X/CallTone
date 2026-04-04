@@ -1,0 +1,3842 @@
+{
+  "nodes": {
+    "gre_0001": {
+      "node_id": "gre_0001",
+      "content": "Thank you for calling MetroBoost, this is [Agent Name], your wireless specialist. How can I assist you today?",
+      "topic": "greeting",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "1636386f12efde25",
+      "keywords": [
+        "thank",
+        "calling",
+        "metroboost",
+        "agent",
+        "name",
+        "wireless",
+        "specialist",
+        "assist",
+        "today"
+      ],
+      "semantic_tags": [
+        "greeting-script",
+        "opening-phrase",
+        "your-wireless-specialist",
+        "thank-you-for-calling",
+        "wireless-specialist",
+        "assist-you-today",
+        "metroboost"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "clo_0002": {
+      "node_id": "clo_0002",
+      "content": "Thank you so much for being a valued part of the MetroBoost family, [Customer Name]. If you ever need anything, do not hesitate to call us back. Have a wonderful day!",
+      "topic": "closing",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "56de0b5b48364e5e",
+      "keywords": [
+        "thank",
+        "much",
+        "valued",
+        "part",
+        "metroboost",
+        "family",
+        "customer",
+        "name",
+        "ever",
+        "need",
+        "anything",
+        "hesitate",
+        "call",
+        "back",
+        "wonderful",
+        "day"
+      ],
+      "semantic_tags": [
+        "closing-script",
+        "thank-you-for-being-valued",
+        "valued-part-of-metroboost",
+        "have-a-wonderful-day",
+        "call-us-back",
+        "customer-name"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "req_0003": {
+      "node_id": "req_0003",
+      "content": "Ask for the customer's full name.",
+      "topic": "verification",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "7b2cf7363e727168",
+      "keywords": [
+        "ask",
+        "customer",
+        "full",
+        "name"
+      ],
+      "semantic_tags": [
+        "required-verification",
+        "customer-full-name",
+        "ask-for-full-name",
+        "identification-verification"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "req_0004": {
+      "node_id": "req_0004",
+      "content": "Ask for the mobile number on the account.",
+      "topic": "verification",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "f55c500d2afa7d04",
+      "keywords": [
+        "ask",
+        "mobile",
+        "number",
+        "account"
+      ],
+      "semantic_tags": [
+        "required-verification",
+        "mobile-number",
+        "account-number",
+        "ask-for-mobile-number"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "req_0005": {
+      "node_id": "req_0005",
+      "content": "Ask for the 4-digit account security PIN.",
+      "topic": "verification",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "d0ab75827d530e7e",
+      "keywords": [
+        "ask",
+        "digit",
+        "account",
+        "security",
+        "pin"
+      ],
+      "semantic_tags": [
+        "required-verification",
+        "account-security-pin",
+        "4-digit-pin",
+        "security-pin"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "hol_0006": {
+      "node_id": "hol_0006",
+      "content": "May I please place you on a brief hold while I look into this for you?",
+      "topic": "hold",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "2736c217a7828a69",
+      "keywords": [
+        "please",
+        "place",
+        "brief",
+        "hold",
+        "while",
+        "look"
+      ],
+      "semantic_tags": [
+        "hold-procedure",
+        "brief-hold",
+        "please-hold",
+        "look-into-this"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "hol_0007": {
+      "node_id": "hol_0007",
+      "content": "I'll be back with you in no more than two minutes.",
+      "topic": "hold",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "777c687c9efbea86",
+      "keywords": [
+        "back",
+        "more",
+        "two",
+        "minutes"
+      ],
+      "semantic_tags": [
+        "hold-procedure",
+        "brief-hold",
+        "two-minutes",
+        "be-back-with-you"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "hol_0008": {
+      "node_id": "hol_0008",
+      "content": "Thank you so much for your patience, [Customer Name].",
+      "topic": "hold",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "b32965f095c1222d",
+      "keywords": [
+        "thank",
+        "much",
+        "patience",
+        "customer",
+        "name"
+      ],
+      "semantic_tags": [
+        "thank-you-for-patience",
+        "customer-name",
+        "patience-appreciation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "tra_0009": {
+      "node_id": "tra_0009",
+      "content": "Explain why the transfer is needed.",
+      "topic": "transfer",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "ec6d100a95a990d3",
+      "keywords": [
+        "explain",
+        "why",
+        "transfer",
+        "needed"
+      ],
+      "semantic_tags": [
+        "transfer-procedure",
+        "explain-transfer",
+        "transfer-needed",
+        "why-transfer"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "tra_0010": {
+      "node_id": "tra_0010",
+      "content": "Name the department they're sending the customer to.",
+      "topic": "transfer",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "a9a126ccebfec25f",
+      "keywords": [
+        "name",
+        "department",
+        "sending",
+        "customer"
+      ],
+      "semantic_tags": [
+        "transfer-procedure",
+        "department-name",
+        "customer-department",
+        "send-to-department"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "tra_0011": {
+      "node_id": "tra_0011",
+      "content": "Offer to stay on the line until the other department picks up.",
+      "topic": "transfer",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "0cc4e0d10321a24f",
+      "keywords": [
+        "offer",
+        "stay",
+        "line",
+        "until",
+        "other",
+        "department",
+        "picks"
+      ],
+      "semantic_tags": [
+        "transfer-procedure",
+        "stay-on-line",
+        "other-department",
+        "pick-up"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "tra_0012": {
+      "node_id": "tra_0012",
+      "content": "Give the customer a direct callback number in case the transfer drops.",
+      "topic": "transfer",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "bba4826fed0eceb3",
+      "keywords": [
+        "give",
+        "customer",
+        "direct",
+        "callback",
+        "number",
+        "case",
+        "transfer",
+        "drops"
+      ],
+      "semantic_tags": [
+        "transfer-procedure",
+        "callback-number",
+        "direct-number",
+        "transfer-drops"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "esc_0013": {
+      "node_id": "esc_0013",
+      "content": "Escalate to a supervisor immediately if the customer explicitly asks for a supervisor or manager.",
+      "topic": "escalation",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "2aae3eeb15fcbecd",
+      "keywords": [
+        "escalate",
+        "supervisor",
+        "immediately",
+        "customer",
+        "explicitly",
+        "asks",
+        "manager"
+      ],
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-requests-supervisor",
+        "explicit-request"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "esc_0014": {
+      "node_id": "esc_0014",
+      "content": "Escalate to a supervisor immediately if the customer mentions filing a complaint with the FCC, BBB, or any regulatory body.",
+      "topic": "escalation",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "d565193ff84b7232",
+      "keywords": [
+        "escalate",
+        "supervisor",
+        "immediately",
+        "customer",
+        "mentions",
+        "filing",
+        "complaint",
+        "fcc",
+        "bbb",
+        "any",
+        "regulatory",
+        "body"
+      ],
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-mentions-complaint",
+        "filing-complaint"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "esc_0015": {
+      "node_id": "esc_0015",
+      "content": "Escalate to a supervisor immediately if the issue can't be resolved after two genuine attempts.",
+      "topic": "escalation",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "082fed906d350151",
+      "keywords": [
+        "escalate",
+        "supervisor",
+        "immediately",
+        "issue",
+        "resolved",
+        "two",
+        "genuine",
+        "attempts"
+      ],
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "issue-unresolved",
+        "two-attempts"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "esc_0016": {
+      "node_id": "esc_0016",
+      "content": "Escalate to a supervisor immediately if the customer has been calling about the same unresolved issue for more than 3 contacts.",
+      "topic": "escalation",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "070b83da4d074b93",
+      "keywords": [
+        "escalate",
+        "supervisor",
+        "immediately",
+        "customer",
+        "calling",
+        "about",
+        "same",
+        "unresolved",
+        "issue",
+        "more",
+        "contacts"
+      ],
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-has-been-calling",
+        "same-issue",
+        "more-than-3-contacts"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "man_0017": {
+      "node_id": "man_0017",
+      "content": "Just to let you know, this call may be recorded for quality assurance and training purposes.",
+      "topic": "disclosure",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "c681d2b0496cdf7b",
+      "keywords": [
+        "just",
+        "let",
+        "know",
+        "call",
+        "recorded",
+        "quality",
+        "assurance",
+        "training",
+        "purposes"
+      ],
+      "semantic_tags": [
+        "recording-disclosure",
+        "quality-assurance",
+        "training-purposes",
+        "call-recorded"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "man_0018": {
+      "node_id": "man_0018",
+      "content": "Before I make this change, I want to confirm: [describe the change and billing impact].",
+      "topic": "disclosure",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "7fdddaeb7fd2fa5a",
+      "keywords": [
+        "make",
+        "change",
+        "want",
+        "confirm",
+        "describe",
+        "billing",
+        "impact"
+      ],
+      "semantic_tags": [
+        "plan-change-disclosure",
+        "change-confirmation",
+        "billing-impact",
+        "describe-change"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "man_0019": {
+      "node_id": "man_0019",
+      "content": "Do you authorize this change?",
+      "topic": "disclosure",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "51ecf99c560efd9b",
+      "keywords": [
+        "authorize",
+        "change"
+      ],
+      "semantic_tags": [
+        "authorization-disclosure",
+        "authorize-change",
+        "change-authorization"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "man_0020": {
+      "node_id": "man_0020",
+      "content": "By enrolling in O2Pay, you authorize MetroBoost to automatically charge your selected payment method each billing cycle.",
+      "topic": "disclosure",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "bd66bfc3ad4f0a45",
+      "keywords": [
+        "enrolling",
+        "authorize",
+        "metroboost",
+        "automatically",
+        "charge",
+        "selected",
+        "payment",
+        "method",
+        "each",
+        "billing",
+        "cycle"
+      ],
+      "semantic_tags": [
+        "autopay-enrollment-disclosure",
+        "autopay-authorization",
+        "automatic-charge",
+        "billing-cycle"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "man_0021": {
+      "node_id": "man_0021",
+      "content": "You can cancel AutoPay at any time through the MetroBoost app or by calling us.",
+      "topic": "disclosure",
+      "category": "script_compliance",
+      "node_type": "protocol",
+      "content_hash": "8fb99e6bae30090e",
+      "keywords": [
+        "cancel",
+        "autopay",
+        "any",
+        "time",
+        "metroboost",
+        "app",
+        "calling"
+      ],
+      "semantic_tags": [
+        "autopay-cancellation-disclosure",
+        "autopay-cancel",
+        "cancel-autopay",
+        "metroboost-app"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0022": {
+      "node_id": "pro_0022",
+      "content": "Calm down.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "5ebac7d82eda55ef",
+      "keywords": [
+        "calm",
+        "down"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "calm-down",
+        "stay-calm"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0023": {
+      "node_id": "pro_0023",
+      "content": "There's nothing I can do.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "e51a2b26ba4ccbf5",
+      "keywords": [
+        "there",
+        "nothing"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "nothing-can-be-done",
+        "no-solution"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0024": {
+      "node_id": "pro_0024",
+      "content": "That's not my department.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "700c83db179443c5",
+      "keywords": [
+        "department"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "not-my-department",
+        "wrong-department"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0025": {
+      "node_id": "pro_0025",
+      "content": "I don't know.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "7e19a9617ba06e1d",
+      "keywords": [
+        "don",
+        "know"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "don't-know",
+        "unknown"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0026": {
+      "node_id": "pro_0026",
+      "content": "You should have read the terms.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "1af566f8cebd8961",
+      "keywords": [
+        "read",
+        "terms"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "should-have-read-terms",
+        "terms-and-conditions"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0027": {
+      "node_id": "pro_0027",
+      "content": "No problem.",
+      "topic": "prohibited",
+      "category": "script_compliance",
+      "node_type": "rule",
+      "content_hash": "1a4d56d0d7bdb17e",
+      "keywords": [
+        "problem"
+      ],
+      "semantic_tags": [
+        "prohibited-phrase",
+        "no-problem",
+        "no-issue"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0028": {
+      "node_id": "pro_0028",
+      "content": "Metro Basic plan costs $40/month.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "1360980609e62c7f",
+      "keywords": [
+        "metro",
+        "basic",
+        "plan",
+        "costs",
+        "month"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0029": {
+      "node_id": "pro_0029",
+      "content": "Metro Basic plan features unlimited domestic calls and texts.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "13383cc4a3323b8f",
+      "keywords": [
+        "metro",
+        "basic",
+        "plan",
+        "features",
+        "unlimited",
+        "domestic",
+        "calls",
+        "texts"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "unlimited-calls",
+        "unlimited-texts",
+        "domestic"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0030": {
+      "node_id": "pro_0030",
+      "content": "Metro Basic plan includes 10GB of high-speed LTE data.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "d890b43872693093",
+      "keywords": [
+        "metro",
+        "basic",
+        "plan",
+        "includes",
+        "high",
+        "speed",
+        "lte",
+        "data"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "lte-data",
+        "high-speed-data",
+        "data"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0031": {
+      "node_id": "pro_0031",
+      "content": "Metro Basic plan does not include hotspot data.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "562926f7a94d60be",
+      "keywords": [
+        "metro",
+        "basic",
+        "plan",
+        "include",
+        "hotspot",
+        "data"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "no-hotspot",
+        "hotspot"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0032": {
+      "node_id": "pro_0032",
+      "content": "Metro Basic plan does not include taxes.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "e06a646a055515f5",
+      "keywords": [
+        "metro",
+        "basic",
+        "plan",
+        "include",
+        "taxes"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "taxes",
+        "not-included"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0033": {
+      "node_id": "pro_0033",
+      "content": "Metro Unlimited plan costs $65/month.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "a493d49cf1efc6d7",
+      "keywords": [
+        "metro",
+        "unlimited",
+        "plan",
+        "costs",
+        "month"
+      ],
+      "semantic_tags": [
+        "metro-unlimited",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0034": {
+      "node_id": "pro_0034",
+      "content": "Metro Unlimited plan features unlimited calls, texts, and data.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "82896519f955f0ed",
+      "keywords": [
+        "metro",
+        "unlimited",
+        "plan",
+        "features",
+        "calls",
+        "texts",
+        "data"
+      ],
+      "semantic_tags": [
+        "metro-unlimited",
+        "features",
+        "unlimited-calls",
+        "unlimited-texts",
+        "unlimited-data"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0035": {
+      "node_id": "pro_0035",
+      "content": "Metro Unlimited plan includes 15GB of hotspot data.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "60b88d7ac856497e",
+      "keywords": [
+        "metro",
+        "unlimited",
+        "plan",
+        "includes",
+        "hotspot",
+        "data"
+      ],
+      "semantic_tags": [
+        "metro-unlimited",
+        "features",
+        "hotspot-data",
+        "lte-data",
+        "data"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0036": {
+      "node_id": "pro_0036",
+      "content": "Metro Unlimited plan includes taxes.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "a849a159f7989839",
+      "keywords": [
+        "metro",
+        "unlimited",
+        "plan",
+        "includes",
+        "taxes"
+      ],
+      "semantic_tags": [
+        "metro-unlimited",
+        "taxes",
+        "included"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0037": {
+      "node_id": "pro_0037",
+      "content": "Metro Plus plan costs $85/month.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "2b79a1c0102b16c1",
+      "keywords": [
+        "metro",
+        "plus",
+        "plan",
+        "costs",
+        "month"
+      ],
+      "semantic_tags": [
+        "metro-plus",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0038": {
+      "node_id": "pro_0038",
+      "content": "Metro Plus plan features everything in Metro Unlimited, plus international calls to 20 countries.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "960b9280b9e33a86",
+      "keywords": [
+        "metro",
+        "plus",
+        "plan",
+        "features",
+        "everything",
+        "unlimited",
+        "international",
+        "calls",
+        "countries"
+      ],
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "international-calls",
+        "countries"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0039": {
+      "node_id": "pro_0039",
+      "content": "Metro Plus plan includes 30GB of hotspot data.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "5e40a102addd1e04",
+      "keywords": [
+        "metro",
+        "plus",
+        "plan",
+        "includes",
+        "hotspot",
+        "data"
+      ],
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "hotspot-data",
+        "lte-data",
+        "data"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0040": {
+      "node_id": "pro_0040",
+      "content": "Metro Plus plan includes one year of partner streaming subscription.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "006debffb7f0d9a9",
+      "keywords": [
+        "metro",
+        "plus",
+        "plan",
+        "includes",
+        "one",
+        "year",
+        "partner",
+        "streaming",
+        "subscription"
+      ],
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "streaming-subscription",
+        "partner"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0041": {
+      "node_id": "pro_0041",
+      "content": "International Add-On plan costs $10/month.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "567e70322c93bae4",
+      "keywords": [
+        "international",
+        "add",
+        "plan",
+        "costs",
+        "month"
+      ],
+      "semantic_tags": [
+        "international-add-on",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pro_0042": {
+      "node_id": "pro_0042",
+      "content": "International Add-On plan adds international calling to 50+ countries to any plan.",
+      "topic": "products",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "4d9b04364a3efd60",
+      "keywords": [
+        "international",
+        "add",
+        "plan",
+        "adds",
+        "calling",
+        "countries",
+        "any"
+      ],
+      "semantic_tags": [
+        "international-add-on",
+        "features",
+        "international-calls",
+        "countries"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0043": {
+      "node_id": "cur_0043",
+      "content": "Customers who enroll in O2Pay get $5 off their monthly bill.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "8bf741ee72310bc6",
+      "keywords": [
+        "customers",
+        "who",
+        "enroll",
+        "get",
+        "off",
+        "monthly",
+        "bill"
+      ],
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "5-dollar-off",
+        "monthly-credit"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0044": {
+      "node_id": "cur_0044",
+      "content": "O2Pay discount starts from the second billing cycle after enrollment.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "3b06a113d42cceed",
+      "keywords": [
+        "discount",
+        "starts",
+        "second",
+        "billing",
+        "cycle",
+        "enrollment"
+      ],
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "second-billing-cycle",
+        "enrollment"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0045": {
+      "node_id": "cur_0045",
+      "content": "O2Pay discount is not applied retroactively.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "adcc8c0374fd8123",
+      "keywords": [
+        "discount",
+        "applied",
+        "retroactively"
+      ],
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "not-applied-retroactively"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0046": {
+      "node_id": "cur_0046",
+      "content": "O2Pay discount is removed from the next billing cycle after cancellation.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "387b4e2b75f04791",
+      "keywords": [
+        "discount",
+        "removed",
+        "next",
+        "billing",
+        "cycle",
+        "cancellation"
+      ],
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "next-billing-cycle",
+        "cancellation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0047": {
+      "node_id": "cur_0047",
+      "content": "New customers who bring an unlocked device and activate Metro Unlimited or Metro Plus get a one-time $25 credit on their third billing cycle.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "ea84827e6da370b1",
+      "keywords": [
+        "new",
+        "customers",
+        "who",
+        "bring",
+        "unlocked",
+        "device",
+        "activate",
+        "metro",
+        "unlimited",
+        "plus",
+        "get",
+        "one",
+        "time",
+        "credit",
+        "third",
+        "billing",
+        "cycle"
+      ],
+      "semantic_tags": [
+        "bring-your-own-device",
+        "credit",
+        "third-billing-cycle",
+        "new-customer"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0048": {
+      "node_id": "cur_0048",
+      "content": "Existing customers earn $15 credit per friend who activates a plan and stays active for 30 days.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "b840eee680d9ad1e",
+      "keywords": [
+        "existing",
+        "customers",
+        "earn",
+        "credit",
+        "per",
+        "friend",
+        "who",
+        "activates",
+        "plan",
+        "stays",
+        "active",
+        "days"
+      ],
+      "semantic_tags": [
+        "refer-a-friend",
+        "credit",
+        "existing-customer",
+        "friend"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0049": {
+      "node_id": "cur_0049",
+      "content": "Existing customers earn $10 off their first month for each friend who activates a plan.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "ecc8e968df7b0ba0",
+      "keywords": [
+        "existing",
+        "customers",
+        "earn",
+        "off",
+        "first",
+        "month",
+        "each",
+        "friend",
+        "who",
+        "activates",
+        "plan"
+      ],
+      "semantic_tags": [
+        "refer-a-friend",
+        "credit",
+        "existing-customer",
+        "friend"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "cur_0050": {
+      "node_id": "cur_0050",
+      "content": "Customers switching from a competitor who port their number and activate Metro Unlimited or Metro Plus get a $30 bill credit on the second billing cycle.",
+      "topic": "promotions",
+      "category": "factual_accuracy",
+      "node_type": "offer",
+      "content_hash": "fbcb6c147bc46c46",
+      "keywords": [
+        "customers",
+        "switching",
+        "competitor",
+        "who",
+        "port",
+        "number",
+        "activate",
+        "metro",
+        "unlimited",
+        "plus",
+        "get",
+        "bill",
+        "credit",
+        "second",
+        "billing",
+        "cycle"
+      ],
+      "semantic_tags": [
+        "switcher-bonus",
+        "credit",
+        "second-billing-cycle",
+        "switching"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pol_0051": {
+      "node_id": "pol_0051",
+      "content": "MetroBoost bills in advance, each payment covers the next 30 days.",
+      "topic": "policies",
+      "category": "factual_accuracy",
+      "node_type": "rule",
+      "content_hash": "f3cb3c9c7b65eb30",
+      "keywords": [
+        "metroboost",
+        "bills",
+        "advance",
+        "each",
+        "payment",
+        "covers",
+        "next",
+        "days"
+      ],
+      "semantic_tags": [
+        "billing",
+        "metroboost",
+        "advance",
+        "payment",
+        "30-days"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pol_0052": {
+      "node_id": "pol_0052",
+      "content": "Agents cannot issue refunds over $20 without supervisor approval.",
+      "topic": "policies",
+      "category": "factual_accuracy",
+      "node_type": "rule",
+      "content_hash": "4c037857f1059a18",
+      "keywords": [
+        "agents",
+        "cannot",
+        "issue",
+        "refunds",
+        "over",
+        "without",
+        "supervisor",
+        "approval"
+      ],
+      "semantic_tags": [
+        "refund",
+        "agent",
+        "supervisor-approval",
+        "limit"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pol_0053": {
+      "node_id": "pol_0053",
+      "content": "Customers can cancel anytime, prepaid balances are non-refundable.",
+      "topic": "policies",
+      "category": "factual_accuracy",
+      "node_type": "rule",
+      "content_hash": "37645b74ea806d2c",
+      "keywords": [
+        "customers",
+        "cancel",
+        "anytime",
+        "prepaid",
+        "balances",
+        "non",
+        "refundable"
+      ],
+      "semantic_tags": [
+        "cancellation",
+        "prepaid",
+        "non-refundable"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "pol_0054": {
+      "node_id": "pol_0054",
+      "content": "Porting from MetroBoost to another carrier closes the account automatically, takes 2–4 hours weekdays, up to 24 hours weekends.",
+      "topic": "policies",
+      "category": "factual_accuracy",
+      "node_type": "rule",
+      "content_hash": "db4390f4b3126ced",
+      "keywords": [
+        "porting",
+        "metroboost",
+        "another",
+        "carrier",
+        "closes",
+        "account",
+        "automatically",
+        "takes",
+        "hours",
+        "weekdays",
+        "weekends"
+      ],
+      "semantic_tags": [
+        "porting",
+        "metroboost",
+        "account-closure",
+        "timeframe"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "com_0055": {
+      "node_id": "com_0055",
+      "content": "Billing discrepancy: Pull up the account, review the last statement, identify the charge breakdown, compare to what the customer expected, issue a credit and document the cause if there's a real discrepancy.",
+      "topic": "troubleshooting",
+      "category": "factual_accuracy",
+      "node_type": "procedure",
+      "content_hash": "f0fbbe0db719a453",
+      "keywords": [
+        "billing",
+        "discrepancy",
+        "pull",
+        "account",
+        "review",
+        "last",
+        "statement",
+        "identify",
+        "charge",
+        "breakdown",
+        "compare",
+        "customer",
+        "expected",
+        "issue",
+        "credit",
+        "document",
+        "cause",
+        "there",
+        "real"
+      ],
+      "semantic_tags": [
+        "billing-discrepancy",
+        "account-review",
+        "charge-breakdown",
+        "credit"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "com_0056": {
+      "node_id": "com_0056",
+      "content": "Bank overdraft fee: MetroBoost is not responsible, offer a one-time $5 courtesy credit for customers who've been with us 12+ months, subject to supervisor approval.",
+      "topic": "troubleshooting",
+      "category": "factual_accuracy",
+      "node_type": "procedure",
+      "content_hash": "7a98862a5137f686",
+      "keywords": [
+        "bank",
+        "overdraft",
+        "fee",
+        "metroboost",
+        "responsible",
+        "offer",
+        "one",
+        "time",
+        "courtesy",
+        "credit",
+        "customers",
+        "who",
+        "months",
+        "subject",
+        "supervisor",
+        "approval"
+      ],
+      "semantic_tags": [
+        "bank-overdraft",
+        "courtesy-credit",
+        "supervisor-approval",
+        "timeframe"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "com_0057": {
+      "node_id": "com_0057",
+      "content": "AutoPay not working: Check if the card on file is expired, check if the card has sufficient funds, walk them through re-enrolling AutoPay in the MetroBoost app, escalate to billing tier 2 if still broken.",
+      "topic": "troubleshooting",
+      "category": "factual_accuracy",
+      "node_type": "procedure",
+      "content_hash": "bc3b125244db7f42",
+      "keywords": [
+        "autopay",
+        "working",
+        "check",
+        "card",
+        "file",
+        "expired",
+        "sufficient",
+        "funds",
+        "walk",
+        "enrolling",
+        "metroboost",
+        "app",
+        "escalate",
+        "billing",
+        "tier",
+        "still",
+        "broken"
+      ],
+      "semantic_tags": [
+        "autopay-not-working",
+        "card-expiration",
+        "sufficient-funds",
+        "re-enrollment"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0058": {
+      "node_id": "con_0058",
+      "content": "Customer Care: 1-800-METRO-01, Monday–Saturday 7am–10pm local time, Sunday 9am–7pm.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "f7f12e1ec367782e",
+      "keywords": [
+        "customer",
+        "care",
+        "metro",
+        "monday",
+        "saturday",
+        "local",
+        "time",
+        "sunday"
+      ],
+      "semantic_tags": [
+        "customer-care",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0059": {
+      "node_id": "con_0059",
+      "content": "Billing: 1-800-METRO-02, Monday–Friday 8am–8pm EST.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "2b3ab51e745e17b2",
+      "keywords": [
+        "billing",
+        "metro",
+        "monday",
+        "friday",
+        "est"
+      ],
+      "semantic_tags": [
+        "billing",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0060": {
+      "node_id": "con_0060",
+      "content": "Tech Support: 1-800-METRO-03, 24/7.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "8ae033f91c24a857",
+      "keywords": [
+        "tech",
+        "support",
+        "metro"
+      ],
+      "semantic_tags": [
+        "tech-support",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0061": {
+      "node_id": "con_0061",
+      "content": "MetroBoost App: iOS App Store and Google Play, search 'MetroBoost'.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "144dab9439f40c57",
+      "keywords": [
+        "metroboost",
+        "app",
+        "ios",
+        "store",
+        "google",
+        "play",
+        "search"
+      ],
+      "semantic_tags": [
+        "metroboost-app",
+        "app-store",
+        "google-play"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0062": {
+      "node_id": "con_0062",
+      "content": "Live Chat: metroboost.com, Monday–Friday 8am–11pm EST.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "89c3f75a23bd3cc7",
+      "keywords": [
+        "live",
+        "chat",
+        "metroboost",
+        "com",
+        "monday",
+        "friday",
+        "est"
+      ],
+      "semantic_tags": [
+        "live-chat",
+        "website",
+        "hours-of-operation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0063": {
+      "node_id": "con_0063",
+      "content": "Stores: metroboost.com/stores.",
+      "topic": "contacts",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "bca103419d7c8f69",
+      "keywords": [
+        "stores",
+        "metroboost",
+        "com"
+      ],
+      "semantic_tags": [
+        "stores",
+        "website"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0064": {
+      "node_id": "fre_0064",
+      "content": "Why is my bill higher than my plan price?",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "089764a05fd6592c",
+      "keywords": [
+        "why",
+        "bill",
+        "higher",
+        "plan",
+        "price"
+      ],
+      "semantic_tags": [
+        "billing",
+        "plan-price",
+        "higher-bill"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0065": {
+      "node_id": "fre_0065",
+      "content": "The Metro Basic ($40) doesn't include taxes, taxes add $2–$4 depending on your state.",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "41651cc3e9b72bbb",
+      "keywords": [
+        "metro",
+        "basic",
+        "doesn",
+        "include",
+        "taxes",
+        "add",
+        "depending",
+        "state"
+      ],
+      "semantic_tags": [
+        "metro-basic",
+        "taxes",
+        "not-included",
+        "state-dependent"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0066": {
+      "node_id": "fre_0066",
+      "content": "Does the $65 plan really include taxes?",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "240dcbbc0bb77c3a",
+      "keywords": [
+        "plan",
+        "really",
+        "include",
+        "taxes"
+      ],
+      "semantic_tags": [
+        "metro-unlimited",
+        "taxes",
+        "included"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0067": {
+      "node_id": "fre_0067",
+      "content": "Yes, the only extra you might see is a one-time $5 activation fee if you're a new customer.",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "cd32c09f637132ee",
+      "keywords": [
+        "yes",
+        "only",
+        "extra",
+        "see",
+        "one",
+        "time",
+        "activation",
+        "fee",
+        "new",
+        "customer"
+      ],
+      "semantic_tags": [
+        "activation-fee",
+        "new-customer",
+        "one-time-fee"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0068": {
+      "node_id": "fre_0068",
+      "content": "When does the AutoPay discount kick in?",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "91b069b49f6beb6c",
+      "keywords": [
+        "autopay",
+        "discount",
+        "kick"
+      ],
+      "semantic_tags": [
+        "autopay-discount",
+        "kick-in",
+        "second-billing-cycle"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0069": {
+      "node_id": "fre_0069",
+      "content": "The $5 discount starts on your second billing cycle after enrollment.",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "a00a0a215fd9b8fd",
+      "keywords": [
+        "discount",
+        "starts",
+        "second",
+        "billing",
+        "cycle",
+        "enrollment"
+      ],
+      "semantic_tags": [
+        "autopay-discount",
+        "second-billing-cycle",
+        "enrollment"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0070": {
+      "node_id": "fre_0070",
+      "content": "What if I cancel AutoPay?",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "829cc6915dc15607",
+      "keywords": [
+        "cancel",
+        "autopay"
+      ],
+      "semantic_tags": [
+        "autopay-cancellation",
+        "impact"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0071": {
+      "node_id": "fre_0071",
+      "content": "The $5 discount is removed from the next billing cycle after cancellation.",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "51fab23b0529bff6",
+      "keywords": [
+        "discount",
+        "removed",
+        "next",
+        "billing",
+        "cycle",
+        "cancellation"
+      ],
+      "semantic_tags": [
+        "autopay-discount",
+        "next-billing-cycle",
+        "cancellation"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0072": {
+      "node_id": "fre_0072",
+      "content": "Can I switch from postpaid to prepaid and keep my number?",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "09ff11345467fe1d",
+      "keywords": [
+        "switch",
+        "postpaid",
+        "prepaid",
+        "keep",
+        "number"
+      ],
+      "semantic_tags": [
+        "switching",
+        "postpaid",
+        "prepaid",
+        "number-porting"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "fre_0073": {
+      "node_id": "fre_0073",
+      "content": "Yes, we port your number over, takes 2–4 hours weekdays, up to 24 hours weekends.",
+      "topic": "faq",
+      "category": "factual_accuracy",
+      "node_type": "fact",
+      "content_hash": "ea54e475f1ae4e08",
+      "keywords": [
+        "yes",
+        "port",
+        "number",
+        "over",
+        "takes",
+        "hours",
+        "weekdays",
+        "weekends"
+      ],
+      "semantic_tags": [
+        "number-porting",
+        "timeframe",
+        "weekdays",
+        "weekends"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "ton_0074": {
+      "node_id": "ton_0074",
+      "content": "Use a warm, professional, and empathetic tone.",
+      "topic": "tone",
+      "category": "politeness_tone",
+      "node_type": "rule",
+      "content_hash": "e311c675bf9e0e7d",
+      "keywords": [
+        "use",
+        "warm",
+        "professional",
+        "empathetic",
+        "tone"
+      ],
+      "semantic_tags": [
+        "friendly-voice",
+        "professional-tone",
+        "empathetic-communication",
+        "customer-centric",
+        "positive-language"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "ton_0075": {
+      "node_id": "ton_0075",
+      "content": "Match the customer's urgency.",
+      "topic": "tone",
+      "category": "politeness_tone",
+      "node_type": "rule",
+      "content_hash": "d3672e9a9f26e5aa",
+      "keywords": [
+        "match",
+        "customer",
+        "urgency"
+      ],
+      "semantic_tags": [
+        "urgency-matching",
+        "customer-needs",
+        "timely-response",
+        "responsive-service"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "ton_0076": {
+      "node_id": "ton_0076",
+      "content": "Avoid jargon.",
+      "topic": "tone",
+      "category": "politeness_tone",
+      "node_type": "rule",
+      "content_hash": "4468a2e0a479ae6b",
+      "keywords": [
+        "avoid",
+        "jargon"
+      ],
+      "semantic_tags": [
+        "clear-language",
+        "simple-explanations",
+        "avoid-jargon",
+        "plain-english"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "ton_0077": {
+      "node_id": "ton_0077",
+      "content": "Frame things positively.",
+      "topic": "tone",
+      "category": "politeness_tone",
+      "node_type": "rule",
+      "content_hash": "7e4e86630a63c698",
+      "keywords": [
+        "frame",
+        "things",
+        "positively"
+      ],
+      "semantic_tags": [
+        "positive-framing",
+        "solution-focused",
+        "customer-centric",
+        "optimistic-attitude"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "ton_0078": {
+      "node_id": "ton_0078",
+      "content": "Never minimize charges.",
+      "topic": "tone",
+      "category": "politeness_tone",
+      "node_type": "rule",
+      "content_hash": "82812fa3434164dd",
+      "keywords": [
+        "never",
+        "minimize",
+        "charges"
+      ],
+      "semantic_tags": [
+        "charge-minimization",
+        "charge-disclosure",
+        "transparency",
+        "honesty"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "emp_0079": {
+      "node_id": "emp_0079",
+      "content": "Acknowledge the customer's feelings.",
+      "topic": "empathy",
+      "category": "empathy",
+      "node_type": "rule",
+      "content_hash": "82b65965022ad13e",
+      "keywords": [
+        "acknowledge",
+        "customer",
+        "feelings"
+      ],
+      "semantic_tags": [
+        "emotional-validation",
+        "feeling-acknowledgment",
+        "empathy",
+        "customer-emotions"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "emp_0080": {
+      "node_id": "emp_0080",
+      "content": "Validate their emotions.",
+      "topic": "empathy",
+      "category": "empathy",
+      "node_type": "rule",
+      "content_hash": "ff4dc35bd7201fe7",
+      "keywords": [
+        "validate",
+        "emotions"
+      ],
+      "semantic_tags": [
+        "emotional-validation",
+        "emotional-understanding",
+        "empathy",
+        "customer-emotions"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "emp_0081": {
+      "node_id": "emp_0081",
+      "content": "Take ownership of the issue.",
+      "topic": "empathy",
+      "category": "empathy",
+      "node_type": "rule",
+      "content_hash": "b66595f733e6f175",
+      "keywords": [
+        "take",
+        "ownership",
+        "issue"
+      ],
+      "semantic_tags": [
+        "ownership",
+        "responsibility",
+        "issue-resolution",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "emp_0082": {
+      "node_id": "emp_0082",
+      "content": "Never tell them they 'shouldn't feel that way'.",
+      "topic": "empathy",
+      "category": "empathy",
+      "node_type": "rule",
+      "content_hash": "ca30031281469282",
+      "keywords": [
+        "never",
+        "tell",
+        "shouldn",
+        "feel",
+        "way"
+      ],
+      "semantic_tags": [
+        "emotional-judgment",
+        "emotional-shaming",
+        "empathy",
+        "customer-emotions"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0083": {
+      "node_id": "con_0083",
+      "content": "Stay calm.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "83bed4eadaa9ea1f",
+      "keywords": [
+        "stay",
+        "calm"
+      ],
+      "semantic_tags": [
+        "calm-communication",
+        "emotional-control",
+        "conflict-resolution",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0084": {
+      "node_id": "con_0084",
+      "content": "Don't argue.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "ab3b5d0af2527641",
+      "keywords": [
+        "don",
+        "argue"
+      ],
+      "semantic_tags": [
+        "conflict-resolution",
+        "calm-communication",
+        "emotional-control",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0085": {
+      "node_id": "con_0085",
+      "content": "Don't blame.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "0ebb076e32faabde",
+      "keywords": [
+        "don",
+        "blame"
+      ],
+      "semantic_tags": [
+        "blame-avoidance",
+        "conflict-resolution",
+        "calm-communication",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0086": {
+      "node_id": "con_0086",
+      "content": "Close with a concrete next step.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "ca4f469daf9ac70b",
+      "keywords": [
+        "close",
+        "concrete",
+        "next",
+        "step"
+      ],
+      "semantic_tags": [
+        "next-step",
+        "concrete-action",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0087": {
+      "node_id": "con_0087",
+      "content": "Offer a supervisor callback if necessary.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "42d9824a2b36faf6",
+      "keywords": [
+        "offer",
+        "supervisor",
+        "callback",
+        "necessary"
+      ],
+      "semantic_tags": [
+        "supervisor-escalation",
+        "callback-offer",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "con_0088": {
+      "node_id": "con_0088",
+      "content": "Never hang up without supervisor approval.",
+      "topic": "conflict",
+      "category": "conflict_detection",
+      "node_type": "rule",
+      "content_hash": "49c49a7931c969a3",
+      "keywords": [
+        "never",
+        "hang",
+        "without",
+        "supervisor",
+        "approval"
+      ],
+      "semantic_tags": [
+        "supervisor-approval",
+        "hang-up-protocol",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "res_0089": {
+      "node_id": "res_0089",
+      "content": "An issue is resolved when the customer confirms satisfaction.",
+      "topic": "resolution",
+      "category": "issue_resolution",
+      "node_type": "rule",
+      "content_hash": "b8b69b91b4b31e7c",
+      "keywords": [
+        "issue",
+        "resolved",
+        "customer",
+        "confirms",
+        "satisfaction"
+      ],
+      "semantic_tags": [
+        "issue-resolution",
+        "customer-satisfaction",
+        "confirmation",
+        "resolution-criteria"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "res_0090": {
+      "node_id": "res_0090",
+      "content": "A credit/correction is issued and acknowledged.",
+      "topic": "resolution",
+      "category": "issue_resolution",
+      "node_type": "rule",
+      "content_hash": "bf4180fdd7b87559",
+      "keywords": [
+        "credit",
+        "correction",
+        "issued",
+        "acknowledged"
+      ],
+      "semantic_tags": [
+        "credit-issuance",
+        "correction-acknowledgment",
+        "issue-resolution",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "res_0091": {
+      "node_id": "res_0091",
+      "content": "If not resolved, create a ticket.",
+      "topic": "resolution",
+      "category": "issue_resolution",
+      "node_type": "rule",
+      "content_hash": "25a86c3f7316f969",
+      "keywords": [
+        "resolved",
+        "create",
+        "ticket"
+      ],
+      "semantic_tags": [
+        "ticket-creation",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "res_0092": {
+      "node_id": "res_0092",
+      "content": "Set a follow-up timeline.",
+      "topic": "resolution",
+      "category": "issue_resolution",
+      "node_type": "rule",
+      "content_hash": "2f6e24518f21eba2",
+      "keywords": [
+        "set",
+        "follow",
+        "timeline"
+      ],
+      "semantic_tags": [
+        "follow-up-scheduling",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "res_0093": {
+      "node_id": "res_0093",
+      "content": "Log the call in the CRM.",
+      "topic": "resolution",
+      "category": "issue_resolution",
+      "node_type": "rule",
+      "content_hash": "ab99c2c82a09789a",
+      "keywords": [
+        "log",
+        "call",
+        "crm"
+      ],
+      "semantic_tags": [
+        "crm-logging",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "is_hub": false,
+      "version": 1,
+      "active": true
+    },
+    "hub_0094": {
+      "node_id": "hub_0094",
+      "content": "Hub: Script Compliance — 27 rules covering: closing, disclosure, escalation, greeting, hold, prohibited, transfer, verification",
+      "topic": "script_compliance_hub",
+      "category": "script_compliance",
+      "node_type": "hub",
+      "content_hash": "678489ff1cb58ed7",
+      "keywords": [],
+      "semantic_tags": [
+        "script_compliance",
+        "script-compliance",
+        "closing",
+        "disclosure",
+        "escalation",
+        "greeting",
+        "hold",
+        "prohibited",
+        "transfer",
+        "verification"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    },
+    "hub_0095": {
+      "node_id": "hub_0095",
+      "content": "Hub: Factual Accuracy — 46 rules covering: contacts, faq, policies, products, promotions, troubleshooting",
+      "topic": "factual_accuracy_hub",
+      "category": "factual_accuracy",
+      "node_type": "hub",
+      "content_hash": "914fc179558f3b78",
+      "keywords": [],
+      "semantic_tags": [
+        "factual_accuracy",
+        "factual-accuracy",
+        "contacts",
+        "faq",
+        "policies",
+        "products",
+        "promotions",
+        "troubleshooting"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    },
+    "hub_0096": {
+      "node_id": "hub_0096",
+      "content": "Hub: Politeness Tone — 5 rules covering: tone",
+      "topic": "politeness_tone_hub",
+      "category": "politeness_tone",
+      "node_type": "hub",
+      "content_hash": "4b8a398a526e9165",
+      "keywords": [],
+      "semantic_tags": [
+        "politeness_tone",
+        "politeness-tone",
+        "tone"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    },
+    "hub_0097": {
+      "node_id": "hub_0097",
+      "content": "Hub: Empathy — 4 rules covering: empathy",
+      "topic": "empathy_hub",
+      "category": "empathy",
+      "node_type": "hub",
+      "content_hash": "dd387b594e907533",
+      "keywords": [],
+      "semantic_tags": [
+        "empathy",
+        "empathy",
+        "empathy"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    },
+    "hub_0098": {
+      "node_id": "hub_0098",
+      "content": "Hub: Conflict Detection — 6 rules covering: conflict",
+      "topic": "conflict_detection_hub",
+      "category": "conflict_detection",
+      "node_type": "hub",
+      "content_hash": "3a33fd4560b1eb5c",
+      "keywords": [],
+      "semantic_tags": [
+        "conflict_detection",
+        "conflict-detection",
+        "conflict"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    },
+    "hub_0099": {
+      "node_id": "hub_0099",
+      "content": "Hub: Issue Resolution — 5 rules covering: resolution",
+      "topic": "issue_resolution_hub",
+      "category": "issue_resolution",
+      "node_type": "hub",
+      "content_hash": "9c69453a07f6f34f",
+      "keywords": [],
+      "semantic_tags": [
+        "issue_resolution",
+        "issue-resolution",
+        "resolution"
+      ],
+      "is_hub": true,
+      "version": 1,
+      "active": true
+    }
+  },
+  "edges": [
+    {
+      "source_id": "gre_0001",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "clo_0002",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "req_0003",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "req_0004",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "req_0005",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "hol_0006",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "hol_0007",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "hol_0008",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "tra_0009",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "tra_0010",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "tra_0011",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "tra_0012",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "esc_0013",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "esc_0014",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "esc_0015",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "esc_0016",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "man_0017",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "man_0018",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "man_0019",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "man_0020",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "man_0021",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0022",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0023",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0024",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0025",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0026",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0027",
+      "target_id": "hub_0094",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of script_compliance"
+    },
+    {
+      "source_id": "pro_0028",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0029",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0030",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0031",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0032",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0033",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0034",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0035",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0036",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0037",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0038",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0039",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0040",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0041",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pro_0042",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0043",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0044",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0045",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0046",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0047",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0048",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0049",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "cur_0050",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pol_0051",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pol_0052",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pol_0053",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "pol_0054",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "com_0055",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "com_0056",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "com_0057",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0058",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0059",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0060",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0061",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0062",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "con_0063",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0064",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0065",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0066",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0067",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0068",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0069",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0070",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0071",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0072",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "fre_0073",
+      "target_id": "hub_0095",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of factual_accuracy"
+    },
+    {
+      "source_id": "ton_0074",
+      "target_id": "hub_0096",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of politeness_tone"
+    },
+    {
+      "source_id": "ton_0075",
+      "target_id": "hub_0096",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of politeness_tone"
+    },
+    {
+      "source_id": "ton_0076",
+      "target_id": "hub_0096",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of politeness_tone"
+    },
+    {
+      "source_id": "ton_0077",
+      "target_id": "hub_0096",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of politeness_tone"
+    },
+    {
+      "source_id": "ton_0078",
+      "target_id": "hub_0096",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of politeness_tone"
+    },
+    {
+      "source_id": "emp_0079",
+      "target_id": "hub_0097",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of empathy"
+    },
+    {
+      "source_id": "emp_0080",
+      "target_id": "hub_0097",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of empathy"
+    },
+    {
+      "source_id": "emp_0081",
+      "target_id": "hub_0097",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of empathy"
+    },
+    {
+      "source_id": "emp_0082",
+      "target_id": "hub_0097",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of empathy"
+    },
+    {
+      "source_id": "con_0083",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "con_0084",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "con_0085",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "con_0086",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "con_0087",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "con_0088",
+      "target_id": "hub_0098",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of conflict_detection"
+    },
+    {
+      "source_id": "res_0089",
+      "target_id": "hub_0099",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of issue_resolution"
+    },
+    {
+      "source_id": "res_0090",
+      "target_id": "hub_0099",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of issue_resolution"
+    },
+    {
+      "source_id": "res_0091",
+      "target_id": "hub_0099",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of issue_resolution"
+    },
+    {
+      "source_id": "res_0092",
+      "target_id": "hub_0099",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of issue_resolution"
+    },
+    {
+      "source_id": "res_0093",
+      "target_id": "hub_0099",
+      "relation": "part_of",
+      "confidence": 1.0,
+      "note": "Part of issue_resolution"
+    },
+    {
+      "source_id": "gre_0001",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "gre_0001",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "clo_0002",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "clo_0002",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "hol_0006",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "hol_0006",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "hol_0007",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "hol_0007",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "hol_0008",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "hol_0008",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "esc_0013",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "esc_0013",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "esc_0014",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "esc_0014",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "esc_0015",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "esc_0015",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "esc_0016",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "esc_0016",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "man_0017",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "man_0017",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "man_0018",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "man_0018",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "man_0019",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "man_0019",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "man_0020",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "man_0020",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "man_0021",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "man_0021",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0022",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0022",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0023",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0023",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0024",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0024",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0025",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0025",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0026",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0026",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "pro_0027",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "pro_0027",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0074",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "ton_0074",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0074",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "ton_0075",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "ton_0075",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0075",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "ton_0076",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "ton_0076",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0076",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "ton_0077",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "ton_0077",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0077",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "ton_0078",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "ton_0078",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "ton_0078",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "emp_0079",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "emp_0079",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "emp_0079",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "emp_0080",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "emp_0080",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "emp_0080",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "emp_0081",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "emp_0081",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "emp_0081",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "emp_0082",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "emp_0082",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "emp_0082",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "con_0083",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0083",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0083",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "con_0084",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0084",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0084",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "con_0085",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0085",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0085",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "con_0086",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0086",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0086",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "con_0087",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0087",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0087",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "con_0088",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "con_0088",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "con_0088",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0089",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "res_0089",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "res_0089",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0089",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "res_0090",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "res_0090",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "res_0090",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0090",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "res_0091",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "res_0091",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "res_0091",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0091",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "res_0092",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "res_0092",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "res_0092",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0092",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    },
+    {
+      "source_id": "res_0093",
+      "target_id": "hub_0094",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to greeting_script"
+    },
+    {
+      "source_id": "res_0093",
+      "target_id": "hub_0096",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to tone_guidelines"
+    },
+    {
+      "source_id": "res_0093",
+      "target_id": "hub_0097",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to empathy_guidelines"
+    },
+    {
+      "source_id": "res_0093",
+      "target_id": "hub_0098",
+      "relation": "related_to",
+      "confidence": 0.9,
+      "note": "Declared cross-reference to conflict_resolution_guidelines"
+    }
+  ]
+}

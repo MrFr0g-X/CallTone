@@ -1,0 +1,203 @@
+MetroBoost Company Policy Document
+Written by: QA Department
+Date: March 19, 2026
+
+=== CALL OPENING ===
+
+Every agent must open the call with this exact greeting:
+"Thank you for calling MetroBoost, this is [Agent Name], your wireless specialist. How can I assist you today?"
+The agent must always say their name and include the phrase "your wireless specialist". If they skip the brand name, their name, or the specialist phrase, it's a compliance failure.
+
+=== CALL CLOSING ===
+
+To close a call, the agent must say:
+"Thank you so much for being a valued part of the MetroBoost family, [Customer Name]. If you ever need anything, do not hesitate to call us back. Have a wonderful day!"
+They must use the customer's actual name. Saying just "have a good one" without the customer name and the "valued part of the MetroBoost family" phrase does not count.
+
+=== CUSTOMER VERIFICATION ===
+
+Before looking at any account, the agent MUST complete these three steps in order:
+1. Ask for the customer's full name
+2. Ask for the mobile number on the account
+3. Ask for the 4-digit account security PIN
+All three are mandatory. You can't skip any of them. Don't pull up the account until all three are confirmed.
+
+=== HOLD PROCEDURE ===
+
+Before putting someone on hold say: "May I please place you on a brief hold while I look into this for you? I'll be back with you in no more than two minutes."
+After coming back: "Thank you so much for your patience, [Customer Name]. I appreciate you holding."
+If the hold goes longer than 2 minutes, check back in with the customer.
+
+=== TRANSFERS ===
+
+When transferring a call, the agent must:
+1. Explain why the transfer is needed
+2. Name the department they're sending the customer to
+3. Offer to stay on the line until the other department picks up
+4. Give the customer a direct callback number in case the transfer drops
+Example: "I'm going to connect you with our billing team who can process that adjustment directly. I'll stay on the line until they pick up. If we get disconnected, you can reach billing at 1-800-METRO-02."
+
+=== ESCALATION ===
+
+Escalate to a supervisor immediately if:
+- The customer explicitly asks for a supervisor or manager
+- The customer mentions filing a complaint with the FCC, BBB, or any regulatory body
+- The issue can't be resolved after two genuine attempts
+- The customer has been calling about the same unresolved issue for more than 3 contacts
+When escalating, tell the customer: "I'm going to connect you with my supervisor right now. You won't need to repeat anything — I'll brief them on your full situation before the transfer."
+
+=== MANDATORY DISCLOSURES ===
+
+1. Recording disclosure (must say within first 30 seconds of every call): "Just to let you know, this call may be recorded for quality assurance and training purposes."
+2. Plan change disclosure (before confirming any plan change): "Before I make this change, I want to confirm: [describe the change and billing impact]. Do you authorize this change?"
+3. AutoPay enrollment disclosure (before enrolling O2Pay): "By enrolling in O2Pay, you authorize MetroBoost to automatically charge your selected payment method each billing cycle. You can cancel AutoPay at any time through the MetroBoost app or by calling us."
+
+=== THINGS AGENTS MUST NEVER SAY ===
+
+These phrases are strictly banned:
+- "Calm down" → say instead: "I hear you, and I want to make this right."
+- "There's nothing I can do" → say instead: "Here is what I can do for you right now."
+- "That's not my department" → say instead: "Let me connect you with the right team."
+- "I don't know" → say instead: "That's a great question, let me find out for you."
+- "You should have read the terms" → never blame the customer
+- "No problem" → say "You're welcome" or "Absolutely, happy to help."
+
+=== OUR PLANS ===
+
+MetroBoost has these prepaid wireless plans. Agents must quote prices and features exactly:
+
+Metro Basic — $40/month
+- Unlimited domestic calls and texts
+- 10GB of high-speed LTE data
+- After 10GB, speeds drop to 128 Kbps (no overage charges)
+- Taxes NOT included (usually $2–$4 extra per month depending on state)
+- No hotspot
+- This is NOT unlimited data — agents must be clear about the 10GB cap
+
+Metro Unlimited — $65/month
+- Unlimited calls, texts, and data
+- Taxes included in the $65 price (all-in pricing)
+- 15GB of hotspot data included
+- The only extra charge a new customer might see is a one-time $5 activation fee on their first bill
+
+Metro Plus — $85/month
+- Everything in Metro Unlimited
+- Plus international calls to 20 countries
+- 30GB hotspot
+- One year of a partner streaming subscription
+- Taxes included
+
+International Add-On — $10/month
+- Adds international calling to 50+ countries to any plan
+
+=== PROMOTIONS AND OFFERS ===
+
+1. O2Pay AutoPay Discount:
+   Customers who enroll in O2Pay get $5 off their monthly bill.
+   IMPORTANT: The discount starts from the SECOND billing cycle after enrollment. The first bill after enrollment is at regular price. Not applied retroactively.
+   If they cancel AutoPay, the discount is removed from the next cycle.
+
+2. Bring Your Own Device (BYOD) Credit:
+   New customers who bring an unlocked device and activate Metro Unlimited or Metro Plus get a one-time $25 credit on their third billing cycle.
+
+3. Refer-a-Friend:
+   Existing customers earn $15 credit per friend who activates a plan and stays active for 30 days. The referred friend gets $10 off their first month.
+
+4. Switcher Bonus (limited time, expires June 30, 2026):
+   Customers switching from a competitor who port their number and activate Metro Unlimited or Metro Plus get a $30 bill credit on the second billing cycle.
+
+=== BILLING AND ACCOUNT POLICIES ===
+
+Billing: MetroBoost bills in advance. Each payment covers the next 30 days. We are prepaid only — no postpaid since January 2026. Customers switching from postpaid to prepaid should know their billing date resets.
+
+Overcharges: If a customer says they were overcharged, pull the account and review. If it's our error, issue a full credit within 1 billing cycle. If the charge is valid (taxes, mid-cycle plan change, etc.), explain it clearly and document. Agents CANNOT issue refunds over $20 without supervisor approval.
+
+Cancellation: Customers can cancel anytime. Prepaid balances are non-refundable. Before cancelling, try to understand why and offer one alternative. If they still want to cancel after that, process it without friction.
+
+Number porting: Porting from MetroBoost to another carrier closes the account automatically. The process takes 2–4 hours on weekdays, up to 24 hours on weekends.
+
+=== TROUBLESHOOTING ===
+
+Billing discrepancy:
+1. Pull up the account and review the last statement
+2. Identify the charge breakdown (plan, taxes, add-ons, fees)
+3. Compare to what the customer expected
+4. If there's a real discrepancy, issue a credit and document the cause
+5. If correct, explain each line item and confirm the customer understands
+
+Bank overdraft fee:
+MetroBoost is not responsible for bank overdraft fees. But empathize, and you can offer a one-time $5 courtesy credit for customers who've been with us 12+ months, subject to supervisor approval.
+
+AutoPay not working:
+1. Check if the card on file is expired
+2. Check if the card has sufficient funds
+3. Walk them through re-enrolling AutoPay in the MetroBoost app
+4. If still broken, escalate to billing tier 2
+
+Setting up AutoPay in the app:
+1. Open the MetroBoost app and log in
+2. Tap the hamburger icon (three horizontal lines) in the upper left corner
+3. Select "Payment" from the menu
+4. Find the "Auto-Pay" toggle below the "Add Funds" button
+5. Toggle Auto-Pay to ON and enter card details
+6. Save changes, then read the enrollment disclosure
+
+=== CONTACT INFO ===
+
+Customer Care: 1-800-METRO-01, Monday–Saturday 7am–10pm local time, Sunday 9am–7pm
+Billing: 1-800-METRO-02, Monday–Friday 8am–8pm EST
+Tech Support: 1-800-METRO-03, 24/7
+MetroBoost App: iOS App Store and Google Play, search "MetroBoost"
+Live Chat: metroboost.com, Monday–Friday 8am–11pm EST
+Stores: metroboost.com/stores
+
+=== FREQUENTLY ASKED QUESTIONS ===
+
+Q: Why is my bill higher than my plan price?
+A: The Metro Basic ($40) doesn't include taxes. Taxes add $2–$4 depending on your state. Metro Unlimited ($65) is all-in — no extra charges.
+
+Q: Does the $65 plan really include taxes?
+A: Yes. The only extra you might see is a one-time $5 activation fee if you're a new customer.
+
+Q: When does the AutoPay discount kick in?
+A: The $5 discount starts on your second billing cycle after enrollment. First bill is full price.
+
+Q: What if I cancel AutoPay?
+A: The $5 discount is removed from the next billing cycle after cancellation.
+
+Q: Can I switch from postpaid to prepaid and keep my number?
+A: Yes. We port your number over. Takes 2–4 hours weekdays, up to 24 hours weekends.
+
+=== TONE AND BEHAVIOR ===
+
+Keep it warm, professional, and empathetic. Specific rules:
+- Use the customer's first name at least three times during the call (after verification, mid-call, and in closing)
+- Don't use jargon — if they ask about "LTE", explain it means high-speed internet
+- Match their urgency. If they're stressed, be efficient. Don't make small talk when someone is upset.
+- Never minimize charges. Don't say "it's just a few dollars" — what's small for one person is big for another.
+- Frame things positively. Instead of "your plan doesn't include unlimited data," say "your plan includes 10GB of high-speed data — would you like me to walk you through the unlimited option?"
+
+=== HANDLING UPSET CUSTOMERS ===
+
+When someone is frustrated or angry, follow this sequence before trying to fix anything:
+1. ACKNOWLEDGE — Name what they're feeling: "I completely understand why you're upset."
+2. VALIDATE — Confirm it's reasonable: "If I were in your position, I would feel the same way."
+3. TAKE OWNERSHIP — Use "I" and "we": "I want to personally make sure this gets resolved for you today."
+4. THEN solve the problem
+
+Don't jump straight to solutions. A customer who doesn't feel heard stays frustrated even if you fix the issue. Never tell them they "shouldn't feel that way."
+
+=== CONFLICT AND IRATE CUSTOMERS ===
+
+- Stay calm. Never match their elevated tone. Lower your voice slightly — it de-escalates naturally.
+- Don't argue. If they insist something was promised, acknowledge what they heard and investigate rather than contradicting.
+- Don't blame. Never say "the salesperson should have told you." Focus on what can be done now.
+- Always close with a concrete next step: "Here is exactly what I am doing for you right now."
+- If they use abusive language, one calm warning: "I want to help you, but I need us to keep this conversation respectful so I can focus on your account." If it continues, offer a supervisor callback. Never hang up without supervisor approval.
+
+=== RESOLUTION STANDARDS ===
+
+An issue is resolved when the customer verbally confirms they're satisfied, OR when a credit/correction is issued and acknowledged.
+If it can't be resolved on this call, create a ticket, give them the ticket number, and set a clear follow-up timeline.
+Log every call in the CRM: reason for contact, action taken, outcome, any credits or changes.
+If a customer wants to cancel, try one genuine retention attempt by understanding the root cause and offering an alternative. If they've clearly decided, process it — don't push more than once.
