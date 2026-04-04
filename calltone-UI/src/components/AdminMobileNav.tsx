@@ -7,7 +7,7 @@ import {
   Menu, X, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { currentAdmin, roleConfig } from "@/data/adminMockData";
+import { roleConfig } from "@/data/adminMockData";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
 
@@ -23,9 +23,11 @@ const navItems = [
 const AdminMobileNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [open, setOpen] = useState(false);
-  const role = roleConfig[currentAdmin.role];
+  const adminRole = (user?.role ?? "viewer") as keyof typeof roleConfig;
+  const role = roleConfig[adminRole] ?? roleConfig.viewer;
+  const userName = user?.name ?? "Admin";
 
   return (
     <nav className="bg-background/60 backdrop-blur-2xl border-b border-border/50">
@@ -96,11 +98,11 @@ const AdminMobileNav = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
                     <span className="text-xs font-bold text-accent">
-                      {currentAdmin.name.split(" ").map(n => n[0]).join("")}
+                      {userName.split(" ").map(n => n[0]).join("")}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{currentAdmin.name}</p>
+                    <p className="text-sm font-medium">{userName}</p>
                     <p className={cn("text-xs font-medium", role.color)}>{role.label}</p>
                   </div>
                 </div>

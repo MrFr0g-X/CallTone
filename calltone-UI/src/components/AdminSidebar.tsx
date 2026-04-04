@@ -6,7 +6,7 @@ import {
   ChevronLeft, ChevronRight, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { currentAdmin, roleConfig } from "@/data/adminMockData";
+import { roleConfig } from "@/data/adminMockData";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
 import calltoneLogo from "@/assets/calltone-logo.png";
@@ -24,9 +24,11 @@ const navItems = [
 const AdminSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
-  const role = roleConfig[currentAdmin.role];
+  const adminRole = (user?.role ?? "viewer") as keyof typeof roleConfig;
+  const role = roleConfig[adminRole] ?? roleConfig.viewer;
+  const userName = user?.name ?? "Admin";
 
   return (
     <aside
@@ -101,12 +103,12 @@ const AdminSidebar = () => {
         <div className={cn("flex items-center gap-3 px-2", collapsed && "justify-center")}>
           <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
             <span className="text-xs font-bold text-accent">
-              {currentAdmin.name.split(" ").map(n => n[0]).join("")}
+              {userName.split(" ").map(n => n[0]).join("")}
             </span>
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold truncate">{currentAdmin.name}</p>
+              <p className="text-xs font-semibold truncate">{userName}</p>
               <p className={cn("text-[10px] font-medium", role.color)}>{role.label}</p>
             </div>
           )}

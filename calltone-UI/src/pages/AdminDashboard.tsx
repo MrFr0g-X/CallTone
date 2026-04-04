@@ -4,11 +4,7 @@ import {
   Building2,
   Users,
   Phone,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
   Activity,
-  ArrowUpRight,
   CheckCircle2,
 } from "lucide-react";
 import {
@@ -23,12 +19,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import GlassCard from "@/components/GlassCard";
-import BubbleToggle from "@/components/BubbleToggle";
 import { adminApi } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 const AdminDashboard = () => {
-  const [chartView, setChartView] = useState("Revenue");
+  const [chartView, setChartView] = useState("Calls");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-dashboard"],
@@ -40,10 +35,10 @@ const AdminDashboard = () => {
 
   const chartData = useMemo(() => {
     if (!data) return [];
-    return chartView === "Revenue" ? data.trends.revenue : data.trends.calls;
-  }, [data, chartView]);
+    return data.trends.calls;
+  }, [data]);
 
-  const chartKey = chartView === "Revenue" ? "revenue" : "calls";
+  const chartKey = "calls";
 
   if (isLoading) {
     return (
@@ -77,30 +72,21 @@ const AdminDashboard = () => {
             label: "ACTIVE CLIENTS",
             value: data.kpis.activeClients,
             suffix: data.kpis.trialClients > 0 ? ` (+${data.kpis.trialClients} trial)` : "",
-            trend: "+12%",
-            up: true,
           },
           {
             icon: Users,
             label: "TOTAL AGENTS",
             value: data.kpis.totalAgents,
-            trend: "+8%",
-            up: true,
           },
           {
             icon: Phone,
-            label: "CALLS THIS MONTH",
+            label: "TOTAL CALLS",
             value: data.kpis.callsThisMonth,
-            trend: "+9.2%",
-            up: true,
           },
           {
-            icon: DollarSign,
-            label: "MONTHLY REVENUE",
-            value: data.kpis.monthlyRevenue,
-            prefix: "$",
-            trend: "+15%",
-            up: true,
+            icon: Activity,
+            label: "AVG QUALITY SCORE",
+            value: data.health.avgQualityScore,
           },
         ].map((kpi) => (
           <GlassCard key={kpi.label} className="rounded-2xl p-5 sm:p-6">
@@ -108,22 +94,8 @@ const AdminDashboard = () => {
               <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center">
                 <kpi.icon className="w-4 h-4 text-accent" />
               </div>
-              <span
-                className={cn(
-                  "flex items-center gap-0.5 text-xs font-medium",
-                  kpi.up ? "text-success" : "text-destructive"
-                )}
-              >
-                {kpi.up ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
-                {kpi.trend}
-              </span>
             </div>
             <p className="text-2xl sm:text-3xl font-bold">
-              {kpi.prefix || ""}
               <AnimatedNumber value={kpi.value} />
             </p>
             <p className="text-[11px] text-muted-foreground uppercase tracking-wider mt-1">
@@ -140,11 +112,7 @@ const AdminDashboard = () => {
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Platform Trends
             </h2>
-            <BubbleToggle
-              options={["Revenue", "Calls"]}
-              value={chartView}
-              onChange={setChartView}
-            />
+            <span className="text-xs text-muted-foreground">Calls per month</span>
           </div>
 
           <div className="h-64">
@@ -167,9 +135,7 @@ const AdminDashboard = () => {
                   tick={{ fill: "hsl(215, 16%, 54%)", fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v) =>
-                    chartView === "Revenue" ? `$${(v / 1000).toFixed(0)}k` : `${(v / 1000).toFixed(0)}k`
-                  }
+                  tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -179,10 +145,7 @@ const AdminDashboard = () => {
                     fontSize: "13px",
                   }}
                   labelStyle={{ color: "hsl(215, 16%, 54%)" }}
-                  formatter={(value: number) => [
-                    chartView === "Revenue" ? `$${value.toLocaleString()}` : value.toLocaleString(),
-                    chartView,
-                  ]}
+                  formatter={(value: number) => [value.toLocaleString(), "Calls"]}
                 />
                 <Area
                   type="monotone"
@@ -215,16 +178,16 @@ const AdminDashboard = () => {
                 color: "text-accent",
               },
               {
-                label: "Trial Conversions",
-                value: `${data.health.trialConversions}%`,
-                icon: ArrowUpRight,
+                label: "Completed Calls",
+                value: `${data.health.completedCalls ?? 0}`,
+                icon: CheckCircle2,
                 color: "text-primary",
               },
               {
-                label: "Churn Rate",
-                value: `${data.health.churnRate}%`,
-                icon: TrendingDown,
-                color: "text-destructive",
+                label: "Total Calls",
+                value: `${data.health.totalCalls ?? 0}`,
+                icon: Phone,
+                color: "text-accent",
               },
               {
                 label: "Uptime",

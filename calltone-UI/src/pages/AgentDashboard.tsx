@@ -15,7 +15,7 @@ import DateRangePicker from "@/components/DateRangePicker";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { agentApi } from "@/services/api";
-import type { Call } from "@/data/mockData";
+import type { QaCallItem } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 const timeRanges = ["Per Call", "Weekly", "Monthly", "Quarterly", "Yearly", "Custom"];
@@ -36,7 +36,7 @@ const AgentDashboard = () => {
     queryFn: () => agentApi.getCalls({ range: selectedRange }).then(r => r.data),
   });
 
-  const agentCalls: Call[] = callsData?.calls ?? [];
+  const agentCalls: QaCallItem[] = callsData?.calls ?? [];
   const trendData = dashData?.trend ?? [];
 
   const greeting = useMemo(() => {
@@ -51,7 +51,13 @@ const AgentDashboard = () => {
   const sortedCalls = useMemo(() => {
     const sorted = [...agentCalls];
     if (sortBy === "rating") {
-      sorted.sort((a, b) => b.overallScore - a.overallScore);
+      sorted.sort((a, b) => (b.overallScore ?? 0) - (a.overallScore ?? 0));
+    } else {
+      sorted.sort((a, b) => {
+        const da = a.callTime ? new Date(a.callTime).getTime() : 0;
+        const db = b.callTime ? new Date(b.callTime).getTime() : 0;
+        return db - da;
+      });
     }
     return sorted;
   }, [agentCalls, sortBy]);
@@ -189,56 +195,59 @@ const AgentDashboard = () => {
               />
             </div>
             <div className="space-y-2">
-              {sortedCalls.map((call, i) => (
-                <motion.div
-                  key={call.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  whileHover={{ scale: 1.01, y: -2 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => navigate(`/qa/call/${call.id}`)}
-                  className={cn(
-                    "glass rounded-2xl p-4 sm:p-5 flex items-center gap-4 cursor-pointer transition-colors duration-300 hover:bg-foreground/[0.04] group",
-                    call.overallScore < 50 && "border-destructive/20 bg-destructive/[0.03]"
-                  )}
-                >
-                  {/* Score */}
-                  <div className="flex-shrink-0 w-12 sm:w-14 text-center">
-                    <span className={cn(
-                      "text-2xl sm:text-3xl font-extralight",
-                      call.overallScore >= 80 ? "text-success" : call.overallScore >= 60 ? "text-warning" : "text-destructive"
-                    )}>
-                      {call.overallScore}
-                    </span>
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-sm font-medium text-foreground">{call.date}</span>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="w-3 h-3" />{call.duration}</span>
+              {sortedCalls.map((call, i) => {
+                const score = call.overallScore ?? 0;
+                const sev = (call.severity ?? "").toLowerCase();
+                return (
+                  <motion.div
+                    key={call.callId}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    whileHover={{ scale: 1.01, y: -2 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => navigate(`/qa/call/${call.callId}`)}
+                    className={cn(
+                      "glass rounded-2xl p-4 sm:p-5 flex items-center gap-4 cursor-pointer transition-colors duration-300 hover:bg-foreground/[0.04] group",
+                      score < 50 && "border-destructive/20 bg-destructive/[0.03]"
+                    )}
+                  >
+                    <div className="flex-shrink-0 w-12 sm:w-14 text-center">
                       <span className={cn(
-                        "text-[10px] px-2 py-0.5 rounded-full font-medium",
-                        call.status === "reviewed" && "bg-success/10 text-success",
-                        call.status === "pending" && "bg-warning/10 text-warning",
-                        call.status === "flagged" && "bg-destructive/10 text-destructive"
+                        "text-2xl sm:text-3xl font-extralight",
+                        score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive"
                       )}>
-                        {call.status}
+                        {score}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
-                      <span>Politeness {call.politeness}/5</span>
-                      <span>Empathy {call.empathy}/5</span>
-                      <span className="hidden sm:inline">{call.conflict ? "Conflict detected" : "No conflict"}</span>
-                      <span className="hidden sm:inline">{call.resolution ? "Resolved" : "Unresolved"}</span>
-                    </div>
-                  </div>
 
-                  {/* Arrow */}
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors flex-shrink-0" />
-                </motion.div>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-sm font-medium text-foreground">{call.filename}</span>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          {call.callTime ? new Date(call.callTime).toLocaleDateString() : "—"}
+                        </span>
+                        <span className={cn(
+                          "text-[10px] px-2 py-0.5 rounded-full font-medium capitalize",
+                          sev === "minor" && "bg-success/10 text-success",
+                          sev === "moderate" && "bg-warning/10 text-warning",
+                          (sev === "major" || sev === "critical") && "bg-destructive/10 text-destructive",
+                          !sev && "bg-muted/30 text-muted-foreground"
+                        )}>
+                          {call.severity ?? call.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
+                        <span>{call.agentName}</span>
+                        <span className="hidden sm:inline">{call.status}</span>
+                      </div>
+                    </div>
+
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors flex-shrink-0" />
+                  </motion.div>
+                );
+              })}
             </div>
           </section>
         </main>
