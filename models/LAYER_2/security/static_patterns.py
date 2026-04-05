@@ -119,7 +119,7 @@ _p("pretend_roleplay",
    "medium")
 
 _p("new_task_redirect",
-   r"\b(new\s+task|instead\s+(of|do)|forget\s+the\s+(above|task|evaluation)|your\s+(real|actual|true)\s+(task|job|goal))\b",
+   r"\b(new\s+task|instead\s+(of|do)\s+(evaluating|rating|scoring|this|that|the\s+above)|forget\s+the\s+(above|task|evaluation)|your\s+(real|actual|true)\s+(task|job|goal))\b",
    "medium")
 
 # ── LOW — weak signals, log only ─────────────────────────────────────────────

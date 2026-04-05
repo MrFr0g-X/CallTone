@@ -310,16 +310,22 @@ def _seed_qa_data(db):
     db.add(qa_emp)
     db.flush()
 
-    # Create agents
+    # Create agents — link to their User records via user_id
     agents = []
+    agent_user_emails = ["agent1@calltone.ai", "agent2@calltone.ai", None]
     agent_names = ["Agent One", "Agent Two", "Rania Mahmoud"]
-    for i, name in enumerate(agent_names, start=1):
+    for i, (name, email) in enumerate(zip(agent_names, agent_user_emails), start=1):
+        user_id = None
+        if email:
+            u = db.query(User).filter(User.email == email).first()
+            user_id = u.id if u else None
         agent = Employee(
             id=str(uuid.uuid4()),
             employee_code=f"AG{i:03d}",
             full_name=name,
             role="AGENT",
             assigned_qa_id=qa_emp.id,
+            user_id=user_id,
         )
         db.add(agent)
         agents.append(agent)

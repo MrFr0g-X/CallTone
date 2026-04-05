@@ -208,9 +208,14 @@ def _run_llm_detector(transcript_text: str, static_matches: list[PatternMatch]) 
         "{static_findings}", static_summary
     )
 
-    from skill_runtime.runner import SkillRunner
-    runner = SkillRunner()
-    raw_output = runner.run(bundle, user_prompt, system_prompt=system_prompt)
+    from skill_runtime.runner import run_skill, select_backend
+    backend = select_backend(bundle["model_dir"])
+    raw_output = backend.generate(
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        temperature=bundle.get("decoding", {}).get("temperature", 0.0),
+        max_tokens=bundle.get("decoding", {}).get("max_tokens", 2048),
+    )
 
     # Parse JSON output
     try:

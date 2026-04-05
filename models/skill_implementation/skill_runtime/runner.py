@@ -6,40 +6,56 @@ from pathlib import Path
 from typing import Optional
 from .types import SkillBundle
 
+# Module-level backend cache — keyed by model path.
+# Ensures Llama (and any other heavy model) is loaded only once per process,
+# even when ConsensusRunner() is instantiated multiple times across calls.
+_BACKEND_CACHE: dict = {}
+
 
 def select_backend(model_dir: str):
     """
     Automatically select the appropriate backend based on model format.
-    
+    Returns a cached instance if the same model path was already loaded.
+
     Args:
         model_dir: Path to model directory or file
-        
+
     Returns:
-        Initialized backend instance
-        
+        Initialized backend instance (cached after first load)
+
     Raises:
         ValueError: If model format cannot be determined
     """
+    cache_key = str(Path(model_dir).resolve())
+    if cache_key in _BACKEND_CACHE:
+        return _BACKEND_CACHE[cache_key]
+
     model_path = Path(model_dir)
-    
+
     # Check for GGUF file
     if model_path.is_file() and model_path.suffix == '.gguf':
         from .backends.llama_cpp_backend import LlamaCppBackend
-        return LlamaCppBackend(str(model_path))
+        backend = LlamaCppBackend(str(model_path))
+        _BACKEND_CACHE[cache_key] = backend
+        return backend
 
     # Check if directory contains GGUF files
     if model_path.is_dir():
         gguf_files = list(model_path.glob("*.gguf"))
         if gguf_files:
             from .backends.llama_cpp_backend import LlamaCppBackend
-            return LlamaCppBackend(str(gguf_files[0]))
+            backend = LlamaCppBackend(str(gguf_files[0]))
+            _BACKEND_CACHE[cache_key] = backend
+            return backend
 
         # Check for HuggingFace format (config.json)
         config_file = model_path / "config.json"
         if config_file.exists():
             from .backends.transformers_backend import TransformersBackend
-            return TransformersBackend(str(model_path))
-    
+            backend = TransformersBackend(str(model_path))
+            _BACKEND_CACHE[cache_key] = backend
+            return backend
+
     raise ValueError(
         f"Cannot determine model format for: {model_dir}\n"
         f"Expected either:\n"

@@ -99,7 +99,7 @@ const UploadCall = () => {
         } catch {
           // ignore transient errors during polling
         }
-      }, 1500);
+      }, 5000);
     },
     []
   );
