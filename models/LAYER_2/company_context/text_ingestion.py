@@ -198,22 +198,39 @@ Return ONLY the JSON:"""
 # LLM helper
 # ---------------------------------------------------------------------------
 
-def _load_llm(n_ctx: int = 8192):
-    """Load the Llama model for text ingestion."""
-    from llama_cpp import Llama
+def _get_llm():
+    """
+    Get the Llama model for text ingestion.
 
-    model_path = str(
+    Reuses the backend already cached by skill_runtime.runner so only ONE
+    Llama instance is ever in VRAM at a time.  Falls back to a direct load
+    if the runner cache is unavailable (e.g. standalone CLI usage).
+    """
+    model_dir = str(
         Path(__file__).parent.parent.parent
         / "skill_implementation"
         / "models"
-        / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"
     )
 
+    # Try to reuse the runner's cached backend — avoids loading a second
+    # 8 GB model into VRAM when the scoring backend is already loaded.
+    try:
+        from skill_runtime.runner import select_backend
+        backend = select_backend(model_dir)   # hits _BACKEND_CACHE if already loaded
+        return backend.model                  # the underlying llama_cpp.Llama object
+    except Exception:
+        pass
+
+    # Fallback: direct load with a small context window to save VRAM
+    from llama_cpp import Llama
+    import torch
+
+    model_path = str(Path(model_dir) / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf")
     return Llama(
         model_path=model_path,
-        n_ctx=n_ctx,
+        n_ctx=4096,                                             # was 16384 — 4× less VRAM
         n_threads=8,
-        n_gpu_layers=-1,
+        n_gpu_layers=-1 if torch.cuda.is_available() else 0,
         seed=12345,
         verbose=False,
     )
@@ -303,6 +320,7 @@ def ingest_text_context(
     context_version: str = "1.0.0",
     contexts_dir: Optional[str] = None,
     skip_validation: bool = False,
+    progress_callback=None,
 ) -> dict:
     """
     Ingest a plain-text company policy document and convert it to structured JSON.
@@ -335,29 +353,34 @@ def ingest_text_context(
     print(f"Source:  {text_path}")
     print(f"Length:  {len(raw_text)} chars (~{_estimate_tokens(raw_text)} tokens)")
 
-    # Load model once, reuse for all passes
-    print(f"\nLoading LLM...")
-    llm = _load_llm(n_ctx=16384)
+    # Get Llama — reuses the runner's cached backend so no second 8 GB load
+    print(f"\nLoading LLM (shared cache)...")
+    llm = _get_llm()
 
     # Truncate if needed for each pass (leave room for prompt + output)
     text_for_prompt = _truncate_for_context(raw_text, max_input_tokens=5000)
 
+    def _report(msg: str):
+        print(msg)
+        if progress_callback:
+            progress_callback(msg)
+
     # --- Pass 1: Script Compliance ---
-    print(f"\nPass 1/4: Extracting script compliance fields...")
+    _report("Pass 1/5 – extracting script compliance fields…")
     prompt1 = PASS_SCRIPT_PROMPT.format(input_text=text_for_prompt)
     raw1 = _run_llm(llm, SYSTEM_PROMPT, prompt1)
     script_fields = _parse_json_response(raw1)
     print(f"  Extracted {sum(1 for v in script_fields.values() if v)} / {len(script_fields)} fields")
 
     # --- Pass 2: Factual Accuracy ---
-    print(f"Pass 2/4: Extracting factual accuracy fields...")
+    _report("Pass 2/5 – extracting factual accuracy fields…")
     prompt2 = PASS_FACTUAL_PROMPT.format(input_text=text_for_prompt)
     raw2 = _run_llm(llm, SYSTEM_PROMPT, prompt2)
     factual_fields = _parse_json_response(raw2)
     print(f"  Extracted {sum(1 for v in factual_fields.values() if v)} / {len(factual_fields)} fields")
 
     # --- Pass 3: Behavioral ---
-    print(f"Pass 3/4: Extracting behavioral fields...")
+    _report("Pass 3/5 – extracting behavioral fields…")
     prompt3 = PASS_BEHAVIORAL_PROMPT.format(input_text=text_for_prompt)
     raw3 = _run_llm(llm, SYSTEM_PROMPT, prompt3)
     behavioral_fields = _parse_json_response(raw3)
@@ -415,7 +438,7 @@ def ingest_text_context(
     # --- Pass 4: Validation ---
     validation = None
     if not skip_validation:
-        print(f"Pass 4/4: Validating completeness...")
+        _report("Pass 4/5 – validating completeness…")
         context_summary = json.dumps(context.to_dict(), indent=2)
         # Truncate the summary if too long for the validation prompt
         context_summary_truncated = _truncate_for_context(context_summary, max_input_tokens=4500)
@@ -444,7 +467,7 @@ def ingest_text_context(
         ("Behavioral", behavioral_fields),
     ]
 
-    print(f"\nPass 5/5: Generating semantic tags for Zettelkasten graph...")
+    _report("Pass 5/5 – generating Zettelkasten semantic tags…")
     for section_name, fields in pass5_sections:
         fields_text = _format_fields(fields)
         if not fields_text.strip():

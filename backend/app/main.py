@@ -3,6 +3,21 @@ from pathlib import Path
 import hashlib
 import secrets
 import uuid
+import threading
+
+# ── Monkey-patch llama-cpp-python 0.3.x crash in LlamaModel.__del__ ──────────
+# When model fails to load (e.g. CUDA OOM), __del__ accesses a non-existent
+# 'sampler' attribute.  This patch silences the spurious traceback.
+try:
+    import llama_cpp._internals as _li
+    _orig_close = _li.LlamaModel.close
+    def _safe_llama_close(self):
+        if not hasattr(self, "sampler"):
+            return
+        _orig_close(self)
+    _li.LlamaModel.close = _safe_llama_close
+except Exception:
+    pass
 
 from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,6 +31,7 @@ from app.database import Base, engine, get_db, settings, SessionLocal
 from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
+    PipelineSettings,
     _compute_grade,
 )
 from app.schemas import LoginRequest, TokenResponse
@@ -24,8 +40,41 @@ import app.models  # noqa
 
 UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
+MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
 
 Base.metadata.create_all(bind=engine)
+
+# ── GPU optimizations ────────────────────────────────────────────────────────
+try:
+    import torch
+    if torch.cuda.is_available():
+        torch.backends.cudnn.benchmark = True          # auto-tune cuDNN kernels
+        torch.set_float32_matmul_precision("high")     # TF32 on Ampere+ / Blackwell
+except Exception:
+    pass
+
+
+def _run_startup_migrations():
+    """Add columns to existing tables that were added after initial create_all."""
+    from sqlalchemy import text, inspect
+    with engine.connect() as conn:
+        inspector = inspect(engine)
+        emp_cols = [c["name"] for c in inspector.get_columns("employees")]
+        if "user_id" not in emp_cols:
+            conn.execute(text("ALTER TABLE employees ADD COLUMN user_id INTEGER REFERENCES users(id)"))
+            conn.commit()
+
+    # Ensure the singleton pipeline settings row exists
+    db = SessionLocal()
+    try:
+        if not db.query(PipelineSettings).filter(PipelineSettings.id == 1).first():
+            db.add(PipelineSettings(id=1))
+            db.commit()
+    finally:
+        db.close()
+
+
+_run_startup_migrations()
 
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 
@@ -634,18 +683,21 @@ def get_qa_call_detail(
 
 ## Agent endpoints
 
+def _get_agent_employee(current_user: User, db: Session) -> Employee | None:
+    """Return the Employee record linked to this user, or None."""
+    return db.query(Employee).filter(Employee.user_id == current_user.id).first()
+
+
 @app.get(f"{settings.API_V1_PREFIX}/agent/dashboard")
 def get_agent_dashboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    reports = (
-        db.query(QaReport)
-        .join(Call, QaReport.call_id == Call.id)
-        .order_by(Call.created_at.desc())
-        .limit(50)
-        .all()
-    )
+    employee = _get_agent_employee(current_user, db)
+    query = db.query(QaReport).join(Call, QaReport.call_id == Call.id)
+    if employee:
+        query = query.filter(Call.employee_id == employee.id)
+    reports = query.order_by(Call.created_at.desc()).limit(50).all()
 
     if reports:
         overall_scores = [r.overall_score for r in reports if r.overall_score is not None]
@@ -697,10 +749,15 @@ def get_agent_calls(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    employee = _get_agent_employee(current_user, db)
+    if not employee:
+        return {"calls": [], "total": 0}
+
     rows = (
         db.query(Call, Employee, QaReport)
         .join(Employee, Call.employee_id == Employee.id)
         .outerjoin(QaReport, Call.id == QaReport.call_id)
+        .filter(Call.employee_id == employee.id)
         .order_by(Call.created_at.desc())
         .limit(50)
         .all()
@@ -731,9 +788,6 @@ ALLOWED_AUDIO_TYPES = {
 MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
 
 
-MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
-
-
 def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
     """
     Background task: run the real 3-layer AI pipeline on an uploaded audio file.
@@ -759,38 +813,48 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         if str(p) not in _sys.path:
             _sys.path.insert(0, str(p))
 
+    # Helper: update DB step (pipeline has its own process + GIL, so
+    # db.commit() here does NOT contend with uvicorn's event loop).
+    def _set_step(step: str):
+        call.current_step = step
+        db.commit()
+
     db = SessionLocal()
     try:
         call = db.query(Call).filter(Call.id == call_id).first()
         if not call:
             return
 
+        # Load pipeline settings (use defaults if row missing)
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        audio_mode      = ps.audio_mode      if ps else "denoise"
+        injection_scan  = ps.injection_scan  if ps else "static"
+        num_speakers    = ps.num_speakers    if ps else None
+        report_mode     = ps.report_mode     if ps else "simple"
+        use_consensus   = ps.use_consensus   if ps else False
+        _company        = ps.company_name    if ps else company
+
         call.status = "PROCESSING"
+        _set_step("denoising")
 
         # ── Layer 1: Audio → structured transcript JSON ──────────────────
-        call.current_step = "denoising"
-        db.commit()
-
         from run_full_pipeline import (
             denoise_audio, transcribe_diarize,
             run_role_identification, run_emotion_detection,
         )
 
-        denoised_path = denoise_audio(audio_path)
+        denoised_path = denoise_audio(audio_path, mode=audio_mode)
 
-        call.current_step = "transcribing"
-        db.commit()
-        txt_path, json_path = transcribe_diarize(denoised_path, num_speakers=None)
+        _set_step("transcribing")
+        txt_path, json_path = transcribe_diarize(denoised_path, num_speakers=num_speakers)
 
-        call.current_step = "role_identification"
-        db.commit()
+        _set_step("role_identification")
         try:
             run_role_identification(json_path, txt_path)
         except Exception:
             pass  # non-fatal
 
-        call.current_step = "emotion_detection"
-        db.commit()
+        _set_step("emotion_detection")
         try:
             txt_path, json_path = run_emotion_detection(denoised_path, json_path)
         except Exception:
@@ -800,7 +864,7 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         with open(json_path, "r", encoding="utf-8") as f:
             l1_output = _json.load(f)
 
-        # Build transcript for DB
+        # Build transcript for DB — single commit for Layer 1 results
         speaker_turns = l1_output.get("transcript", [])
         full_text = " ".join(seg.get("text", "") for seg in speaker_turns if seg.get("text"))
         duration = l1_output.get("call_metadata", {}).get("duration_seconds", 0)
@@ -815,12 +879,41 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
             avg_confidence=0.91,
         )
         db.add(transcript)
+        call.current_step = "scoring"
         call.duration_seconds = round(duration, 3) if duration else None
         db.commit()
 
+        # ── Free Layer 1 VRAM before loading the Layer 2 LLM ───────────
+        # PyTorch / ONNX Runtime hold reserved VRAM blocks invisible to
+        # llama.cpp.  Releasing them here lets LLaMA 3.1 8B load without OOM.
+        import gc as _gc
+        import torch as _torch
+        try:
+            import transcribe_diarize as _td
+            _td._WHISPER_MODEL     = None
+            _td._PYANNOTE_PIPELINE = None
+        except Exception:
+            pass
+        try:
+            from resemble_enhance.enhancer.inference import load_enhancer
+            load_enhancer.cache_clear()
+        except Exception:
+            pass
+        try:
+            from emotion_integration import _DETECTOR_CACHE as _edc
+            for _det in _edc.values():
+                if hasattr(_det, "onnx_session") and _det.onnx_session is not None:
+                    del _det.onnx_session
+                    _det.onnx_session = None
+            _edc.clear()
+        except Exception:
+            pass
+        _gc.collect()
+        if _torch.cuda.is_available():
+            _torch.cuda.empty_cache()
+
         # ── Layer 2: Transcript → QA scores ─────────────────────────────
-        call.current_step = "scoring"
-        db.commit()
+        _set_step("scoring")
 
         output_dir = UPLOAD_DIR / f"{call_id}_results"
         output_dir.mkdir(exist_ok=True)
@@ -828,7 +921,7 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
 
         from run_full_pipeline import run_layer2
         l2_result = run_layer2(
-            json_path, company, rating_output, injection_scan_mode="static",
+            json_path, _company, rating_output, injection_scan_mode=injection_scan,
         )
 
         overall_score = l2_result.get("overall_weighted_score", 0)
@@ -899,16 +992,27 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         )
         db.add(report)
 
-        # ── Layer 3: Generate LaTeX report (non-blocking) ───────────────
-        call.current_step = "report_generation"
-        db.commit()
-
+        # ── Free Layer 2 VRAM (LLaMA) so next pipeline run can load Layer 1 ─
         try:
-            from run_full_pipeline import run_layer3
-            run_layer3(rating_output, str(output_dir), mode="simple", use_skill=False)
+            from skill_runtime.runner import _BACKEND_CACHE as _bc
+            _bc.clear()
         except Exception:
-            pass  # Layer 3 is optional; scores already saved
+            pass
+        _gc.collect()
+        if _torch.cuda.is_available():
+            _torch.cuda.empty_cache()
 
+        # ── Layer 3: Generate LaTeX report (non-blocking) ───────────────
+        _set_step("report_generation")
+
+        if report_mode != "none":
+            try:
+                from run_full_pipeline import run_layer3
+                run_layer3(rating_output, str(output_dir), mode=report_mode, use_skill=False)
+            except Exception:
+                pass  # Layer 3 is optional; scores already saved
+
+        # Single final commit — all results (transcript + report + status)
         call.current_step = "completed"
         call.status = "COMPLETED"
         db.commit()
@@ -947,7 +1051,6 @@ def _run_pipeline(call_id: str, audio_path: str):
 
 @app.post(f"{settings.API_V1_PREFIX}/calls/upload")
 async def upload_call(
-    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     agent_id: str = Form(default=""),
     current_user: User = Depends(get_current_user),
@@ -976,10 +1079,13 @@ async def upload_call(
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
     dest.write_bytes(content)
 
-    # Resolve agent employee record — pick first agent if none specified
+    # Resolve agent employee record
+    # Priority: explicit agent_id > current user's linked employee > first agent in DB
     employee = None
     if agent_id:
         employee = db.query(Employee).filter(Employee.id == agent_id).first()
+    if not employee:
+        employee = db.query(Employee).filter(Employee.user_id == current_user.id).first()
     if not employee:
         employee = db.query(Employee).filter(Employee.role == "AGENT").first()
     if not employee:
@@ -1010,8 +1116,17 @@ async def upload_call(
     db.add(call)
     db.commit()
 
-    # Run the real AI pipeline in background
-    background_tasks.add_task(_run_pipeline, call_id, str(dest))
+    # Run pipeline in a SEPARATE PROCESS so it gets its own GIL.
+    # This eliminates all GIL contention between uvicorn (HTTP handling)
+    # and the GPU pipeline.  Must use 'spawn' (not 'fork') because CUDA
+    # contexts cannot be re-initialized in forked subprocesses.
+    import multiprocessing
+    ctx = multiprocessing.get_context("spawn")
+    p = ctx.Process(
+        target=_run_pipeline, args=(call_id, str(dest)),
+        name=f"pipeline-{call_id[:8]}", daemon=True,
+    )
+    p.start()
 
     return {
         "callId": call_id,
@@ -1027,6 +1142,8 @@ def get_call_status(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    # Pipeline runs in a separate process (own GIL), so DB queries here
+    # don't contend with GPU work.  No need for in-memory caching.
     call = db.query(Call).filter(Call.id == call_id).first()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
@@ -1047,3 +1164,281 @@ def get_call_status(
 @app.post(f"{settings.API_V1_PREFIX}/auth/logout")
 def logout():
     return {"message": "Logged out successfully"}
+
+
+# ── Pipeline Settings endpoints ──────────────────────────────────────────────
+
+@app.get(f"{settings.API_V1_PREFIX}/settings/pipeline")
+def get_pipeline_settings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+    if not ps:
+        ps = PipelineSettings(id=1)
+        db.add(ps)
+        db.commit()
+        db.refresh(ps)
+    return {
+        "audioMode":     ps.audio_mode,
+        "injectionScan": ps.injection_scan,
+        "numSpeakers":   ps.num_speakers,
+        "reportMode":    ps.report_mode,
+        "useConsensus":  ps.use_consensus,
+        "companyName":   ps.company_name,
+    }
+
+
+@app.put(f"{settings.API_V1_PREFIX}/settings/pipeline")
+def update_pipeline_settings(
+    payload: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    role_name = current_user.role.name if current_user.role else ""
+    if role_name not in ("admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+    if not ps:
+        ps = PipelineSettings(id=1)
+        db.add(ps)
+
+    if "audioMode" in payload:
+        if payload["audioMode"] not in ("none", "denoise", "enhance"):
+            raise HTTPException(status_code=400, detail="audioMode must be none|denoise|enhance")
+        ps.audio_mode = payload["audioMode"]
+    if "injectionScan" in payload:
+        if payload["injectionScan"] not in ("static", "llm"):
+            raise HTTPException(status_code=400, detail="injectionScan must be static|llm")
+        ps.injection_scan = payload["injectionScan"]
+    if "numSpeakers" in payload:
+        val = payload["numSpeakers"]
+        ps.num_speakers = int(val) if val else None
+    if "reportMode" in payload:
+        if payload["reportMode"] not in ("none", "simple", "narrative"):
+            raise HTTPException(status_code=400, detail="reportMode must be none|simple|narrative")
+        ps.report_mode = payload["reportMode"]
+    if "useConsensus" in payload:
+        ps.use_consensus = bool(payload["useConsensus"])
+    if "companyName" in payload:
+        ps.company_name = str(payload["companyName"])
+
+    from datetime import datetime, timezone
+    ps.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(ps)
+    return {
+        "audioMode":     ps.audio_mode,
+        "injectionScan": ps.injection_scan,
+        "numSpeakers":   ps.num_speakers,
+        "reportMode":    ps.report_mode,
+        "useConsensus":  ps.use_consensus,
+        "companyName":   ps.company_name,
+    }
+
+
+# ── Company Context endpoints ─────────────────────────────────────────────────
+
+CONTEXTS_DIR = MODELS_DIR / "LAYER_2" / "company_context" / "contexts"
+TICKETS_DIR  = MODELS_DIR / "LAYER_2" / "change_management" / "tickets"
+
+# In-memory store for background ingest jobs
+# { job_id: { "status": "running"|"completed"|"failed", "progress": str, "result": dict|None, "error": str|None } }
+_INGEST_JOBS: dict = {}
+
+
+@app.get(f"{settings.API_V1_PREFIX}/context/companies")
+def list_companies(current_user: User = Depends(get_current_user)):
+    import json as _json
+    companies = []
+    if CONTEXTS_DIR.exists():
+        for f in sorted(CONTEXTS_DIR.glob("*.json")):
+            if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
+                continue
+            try:
+                data = _json.loads(f.read_text(encoding="utf-8"))
+                companies.append({
+                    "name":    data.get("company_name", f.stem),
+                    "version": data.get("context_version", "1.0.0"),
+                    "updated": data.get("last_updated", ""),
+                    "file":    f.name,
+                    "fieldCount": sum(
+                        1 for k, v in data.items()
+                        if isinstance(v, str) and v and k not in
+                        ("company_name", "context_version", "last_updated")
+                    ),
+                })
+            except Exception:
+                pass
+    return {"companies": companies}
+
+
+@app.get(f"{settings.API_V1_PREFIX}/context/companies/{'{name}'}")
+def get_company_context(name: str, current_user: User = Depends(get_current_user)):
+    import json as _json
+    path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Company context not found")
+    try:
+        data = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return data
+
+
+def _run_ingest_job(job_id: str, tmp_path: Path, company_name: str):
+    """Background thread: runs LLM ingestion and updates _INGEST_JOBS[job_id]."""
+    import sys as _sys
+    for p in [MODELS_DIR, MODELS_DIR / "skill_implementation"]:
+        if str(p) not in _sys.path:
+            _sys.path.insert(0, str(p))
+    try:
+        _INGEST_JOBS[job_id]["progress"] = "Pass 1/5 – script compliance…"
+        from LAYER_2.company_context.text_ingestion import ingest_text_context
+        result = ingest_text_context(
+            text_path=str(tmp_path),
+            company_name=company_name,
+            contexts_dir=str(CONTEXTS_DIR),
+            progress_callback=lambda msg: _INGEST_JOBS[job_id].update({"progress": msg}),
+        )
+        tmp_path.unlink(missing_ok=True)
+        _INGEST_JOBS[job_id].update({
+            "status":   "completed",
+            "progress": "Done",
+            "result": {
+                "success":          True,
+                "company":          company_name,
+                "jsonPath":         result["json_path"],
+                "atomicNodesCount": result.get("atomic_nodes_count", 0),
+                "validation":       result.get("validation"),
+                "schema":           result.get("schema"),
+            },
+        })
+    except Exception as e:
+        tmp_path.unlink(missing_ok=True)
+        _INGEST_JOBS[job_id].update({
+            "status":   "failed",
+            "progress": "Failed",
+            "error":    str(e),
+        })
+
+
+@app.post(f"{settings.API_V1_PREFIX}/context/ingest")
+async def ingest_company_context(
+    file: UploadFile = File(...),
+    company_name: str = Form(...),
+    current_user: User = Depends(get_current_user),
+):
+    role_name = current_user.role.name if current_user.role else ""
+    if role_name not in ("qa", "admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+
+    content = await file.read()
+    if not content:
+        raise HTTPException(status_code=400, detail="Empty file")
+
+    # Save the text file temporarily — the background thread will delete it when done
+    tmp_path = UPLOAD_DIR / f"context_{company_name.lower().replace(' ', '_')}_{uuid.uuid4().hex[:8]}.txt"
+    tmp_path.write_bytes(content)
+
+    job_id = uuid.uuid4().hex
+    _INGEST_JOBS[job_id] = {
+        "status":      "running",
+        "progress":    "Starting…",
+        "result":      None,
+        "error":       None,
+        "company":     company_name,
+        "started_at":  datetime.now(timezone.utc).isoformat(),
+    }
+
+    t = threading.Thread(target=_run_ingest_job, args=(job_id, tmp_path, company_name), daemon=True)
+    t.start()
+
+    return {"jobId": job_id, "status": "running"}
+
+
+@app.get(f"{settings.API_V1_PREFIX}/context/ingest/{{job_id}}/status")
+def ingest_job_status(
+    job_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    job = _INGEST_JOBS.get(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
+
+
+@app.get(f"{settings.API_V1_PREFIX}/context/tickets")
+def list_tickets(current_user: User = Depends(get_current_user)):
+    import json as _json
+    tickets = []
+    if TICKETS_DIR.exists():
+        for f in sorted(TICKETS_DIR.glob("*.json"), reverse=True):
+            try:
+                t = _json.loads(f.read_text(encoding="utf-8"))
+                tickets.append(t)
+            except Exception:
+                pass
+    return {"tickets": tickets}
+
+
+@app.post(f"{settings.API_V1_PREFIX}/context/tickets")
+def create_ticket(
+    payload: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+):
+    import json as _json
+    role_name = current_user.role.name if current_user.role else ""
+    if role_name not in ("qa", "admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+
+    TICKETS_DIR.mkdir(parents=True, exist_ok=True)
+    existing = list(TICKETS_DIR.glob("TICKET-*.json"))
+    next_num = len(existing) + 1
+    ticket_id = f"TICKET-{next_num:03d}"
+
+    ticket = {
+        "ticket_id":    ticket_id,
+        "submitted_by": current_user.email,
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
+        "status":       "pending",
+        "company_name": payload.get("companyName", ""),
+        "field_name":   payload.get("fieldName", ""),
+        "old_text":     payload.get("oldText", ""),
+        "new_text":     payload.get("newText", ""),
+        "reason":       payload.get("reason", ""),
+    }
+
+    out = TICKETS_DIR / f"{ticket_id}.json"
+    out.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
+    return ticket
+
+
+@app.patch(f"{settings.API_V1_PREFIX}/context/tickets/{'{ticket_id}'}")
+def update_ticket_status(
+    ticket_id: str,
+    payload: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+):
+    import json as _json
+    role_name = current_user.role.name if current_user.role else ""
+    if role_name not in ("admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required to approve/reject tickets")
+
+    ticket_file = TICKETS_DIR / f"{ticket_id}.json"
+    if not ticket_file.exists():
+        raise HTTPException(status_code=404, detail="Ticket not found")
+
+    ticket = _json.loads(ticket_file.read_text(encoding="utf-8"))
+    new_status = payload.get("status", "")
+    if new_status not in ("approved", "rejected"):
+        raise HTTPException(status_code=400, detail="status must be approved or rejected")
+    ticket["status"] = new_status
+    ticket["reviewed_by"] = current_user.email
+    ticket["reviewed_at"] = datetime.now(timezone.utc).isoformat()
+    if "note" in payload:
+        ticket["review_note"] = payload["note"]
+
+    ticket_file.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
+    return ticket

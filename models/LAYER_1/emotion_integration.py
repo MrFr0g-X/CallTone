@@ -13,6 +13,9 @@ sys.path.insert(0, str(Path(__file__).parent / "audio_emotion_detection_enhanced
 
 from audio_emotion_detector import Audio2EmotionDetector
 
+# Module-level cache — loaded once, reused across pipeline calls
+_DETECTOR_CACHE: dict = {}
+
 
 def enhance_diarization_with_emotions(
     audio_path: str,
@@ -47,36 +50,17 @@ def enhance_diarization_with_emotions(
         print("Warning: No segments found in JSON file")
         return json_output_path
     
-    # Initialize emotion detector
-    detector = Audio2EmotionDetector(model_dir=model_dir)
+    # Initialize emotion detector (cached — loads 1.18 GB ONNX model only once)
+    cache_key = str(model_dir)
+    if cache_key not in _DETECTOR_CACHE:
+        _DETECTOR_CACHE[cache_key] = Audio2EmotionDetector(model_dir=model_dir)
+    else:
+        print("  Audio2Emotion model already loaded — reusing cached model.")
+    detector = _DETECTOR_CACHE[cache_key]
     
-    # Process each segment
-    enriched_segments = []
-    
-    for i, segment in enumerate(segments, 1):
-        print(f"  [{i}/{len(segments)}] {segment['speaker']} "
-              f"[{segment['start']:.1f}s → {segment['end']:.1f}s]", end="\r")
-        
-        try:
-            emotion_result = detector.process_audio_segment(
-                audio_path,
-                segment['start'],
-                segment['end']
-            )
-            
-            # Add emotion info
-            enriched_segment = segment.copy()
-            enriched_segment['audio_emotion'] = emotion_result['emotion']
-            enriched_segment['audio_emotion_confidence'] = emotion_result['confidence']
-            enriched_segment['audio_emotion_scores'] = emotion_result['all_scores']
-            
-            enriched_segments.append(enriched_segment)
-            
-        except Exception as e:
-            print(f"\n  Warning: Failed to process segment {i}: {e}")
-            enriched_segments.append(segment)
-    
-    print(f"\n✓ Emotion detection complete for {len(enriched_segments)} segments\n")
+    # Batch-process all segments in a single GPU forward pass
+    enriched_segments = detector.process_diarization_segments(audio_path, segments)
+    print()
     
     # Update data with enriched segments (preserve original key name)
     segments_key = 'transcript' if 'transcript' in data else 'segments'

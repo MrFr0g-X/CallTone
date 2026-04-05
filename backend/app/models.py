@@ -80,9 +80,25 @@ class Employee(Base):
     full_name = Column(String(150), nullable=False)
     role = Column(String(20), nullable=False)  # AGENT, QA, BOTH
     assigned_qa_id = Column(String(36), ForeignKey("employees.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, unique=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     calls = relationship("Call", back_populates="employee")
+    user = relationship("User", foreign_keys=[user_id])
+
+
+class PipelineSettings(Base):
+    """Singleton table — always one row (id=1). Stores admin-controlled pipeline config."""
+    __tablename__ = "pipeline_settings"
+
+    id = Column(Integer, primary_key=True, default=1)
+    audio_mode = Column(String(20), nullable=False, default="denoise")    # none | denoise | enhance
+    injection_scan = Column(String(20), nullable=False, default="static") # static | llm
+    num_speakers = Column(Integer, nullable=True)                          # None = auto-detect
+    report_mode = Column(String(20), nullable=False, default="simple")    # none | simple | narrative
+    use_consensus = Column(Boolean, nullable=False, default=False)
+    company_name = Column(String(150), nullable=False, default="BankServ Global")
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 class Customer(Base):

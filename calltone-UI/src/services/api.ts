@@ -314,4 +314,99 @@ export interface QaCallDetailResponse {
   };
 }
 
+// ── Pipeline Settings ──────────────────────────────────────────────────────
+
+export interface PipelineSettingsResponse {
+  audioMode:     "none" | "denoise" | "enhance";
+  injectionScan: "static" | "llm";
+  numSpeakers:   number | null;
+  reportMode:    "none" | "simple" | "narrative";
+  useConsensus:  boolean;
+  companyName:   string;
+}
+
+export const pipelineApi = {
+  getSettings: () =>
+    apiClient.get<PipelineSettingsResponse>("/settings/pipeline"),
+  updateSettings: (payload: Partial<PipelineSettingsResponse>) =>
+    apiClient.put<PipelineSettingsResponse>("/settings/pipeline", payload),
+};
+
+// ── Company Context ────────────────────────────────────────────────────────
+
+export interface CompanyContextSummary {
+  name:       string;
+  version:    string;
+  updated:    string;
+  file:       string;
+  fieldCount: number;
+}
+
+export interface ContextTicket {
+  ticket_id:    string;
+  submitted_by: string;
+  submitted_at: string;
+  status:       "pending" | "approved" | "rejected";
+  company_name: string;
+  field_name:   string;
+  old_text:     string;
+  new_text:     string;
+  reason:       string;
+  reviewed_by?: string;
+  reviewed_at?: string;
+  review_note?: string;
+}
+
+export interface IngestResult {
+  success:          boolean;
+  company:          string;
+  jsonPath:         string;
+  atomicNodesCount: number;
+  validation:       Record<string, unknown> | null;
+  schema:           Record<string, string> | null;
+}
+
+export interface IngestJobStatus {
+  status:     "running" | "completed" | "failed";
+  progress:   string;
+  result:     IngestResult | null;
+  error:      string | null;
+  company:    string;
+  started_at: string;
+}
+
+export const contextApi = {
+  listCompanies: () =>
+    apiClient.get<{ companies: CompanyContextSummary[] }>("/context/companies"),
+
+  getCompany: (name: string) =>
+    apiClient.get<Record<string, unknown>>(`/context/companies/${encodeURIComponent(name)}`),
+
+  ingest: (file: File, companyName: string) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("company_name", companyName);
+    return apiClient.post<{ jobId: string; status: string }>("/context/ingest", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  ingestStatus: (jobId: string) =>
+    apiClient.get<IngestJobStatus>(`/context/ingest/${jobId}/status`),
+
+  listTickets: () =>
+    apiClient.get<{ tickets: ContextTicket[] }>("/context/tickets"),
+
+  createTicket: (payload: {
+    companyName: string;
+    fieldName:   string;
+    oldText:     string;
+    newText:     string;
+    reason:      string;
+  }) => apiClient.post<ContextTicket>("/context/tickets", payload),
+
+  updateTicket: (ticketId: string, status: "approved" | "rejected", note?: string) =>
+    apiClient.patch<ContextTicket>(`/context/tickets/${ticketId}`, { status, note }),
+};
+
 export default apiClient;

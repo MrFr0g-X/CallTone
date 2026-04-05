@@ -14,6 +14,7 @@ Usage:
 
 import os
 os.environ["DS_BUILD_OPS"] = "0"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # avoid fork warnings
 
 import sys
 import json
@@ -21,6 +22,26 @@ import shutil
 import argparse
 from pathlib import Path
 from datetime import datetime
+
+# ── Monkey-patch llama-cpp-python 0.3.x bug ──────────────────────────────────
+# LlamaModel.__del__ crashes with "AttributeError: has no attribute 'sampler'"
+# when the C++ model fails to load (partial init).  The patch silences that.
+try:
+    import llama_cpp._internals as _li
+    _orig_close = _li.LlamaModel.close
+    def _safe_llama_close(self):
+        if not hasattr(self, "sampler"):
+            return
+        _orig_close(self)
+    _li.LlamaModel.close = _safe_llama_close
+except Exception:
+    pass
+
+# ── GPU optimizations ────────────────────────────────────────────────────────
+import torch as _torch
+if _torch.cuda.is_available():
+    _torch.backends.cudnn.benchmark = True          # auto-tune cuDNN for fixed sizes
+    _torch.set_float32_matmul_precision("high")     # TF32 on Ampere+ / Blackwell
 
 # ── paths ───────────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).parent
@@ -36,12 +57,27 @@ sys.path.insert(0, str(PROJECT_ROOT / "skill_implementation"))
 
 # ── Layer 1 helpers (reused from run_pipeline.py) ────────────────────────────
 
-def denoise_audio(input_path: str) -> str:
+def denoise_audio(input_path: str, mode: str = "denoise") -> str:
+    """
+    Process audio before transcription.
+
+    mode:
+      "none"    — skip processing, return original path
+      "denoise" — noise removal only (default, faster)
+      "enhance" — full enhancement: denoise + super-resolution (slower)
+    """
     import torch
     import torch.nn.functional as F
     import soundfile as sf
     from torchaudio.functional import resample as torchaudio_resample
-    from resemble_enhance.enhancer.inference import denoise
+
+    if mode == "none":
+        print(f"\n{'='*70}")
+        print("LAYER 1 — STEP 1: AUDIO PROCESSING SKIPPED (mode=none)")
+        print(f"{'='*70}")
+        return input_path
+
+    from resemble_enhance.enhancer.inference import denoise, enhance as _enhance
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\n{'='*70}")
@@ -58,8 +94,12 @@ def denoise_audio(input_path: str) -> str:
         dwav = dwav.mean(dim=-1) if dwav.shape[-1] > 1 else dwav.squeeze()
 
     run_dir = LAYER1_DIR / "models" / "resemble-enhance" / "enhancer_stage2"
-    print("Denoising...")
-    processed_wav, new_sr = denoise(dwav, sr, device, run_dir=run_dir)
+    if mode == "enhance":
+        print("Enhancing (denoise + super-resolution)...")
+        processed_wav, new_sr = _enhance(dwav, sr, device, run_dir=run_dir)
+    else:
+        print("Denoising...")
+        processed_wav, new_sr = denoise(dwav, sr, device, run_dir=run_dir)
 
     if new_sr != sr:
         processed_wav = torchaudio_resample(processed_wav, orig_freq=new_sr, new_freq=sr)
@@ -128,6 +168,57 @@ def run_emotion_detection(audio_path: str, json_path: str) -> tuple[str, str]:
 
 # ── Layer 2 ──────────────────────────────────────────────────────────────────
 
+def _free_layer1_vram() -> None:
+    """
+    Release VRAM held by Layer 1 models (Whisper, pyannote, ONNX emotion detector)
+    before loading the Layer 2 LLM.
+
+    PyTorch's allocator keeps reserved blocks invisible to llama.cpp's CUDA
+    allocator.  Nulling the module-level caches + calling empty_cache() returns
+    those blocks to the driver so LLaMA 3.1 8B Q8_0 (~8.5 GB) can load.
+
+    This function is safe to call even if Layer 1 was never run in this process.
+    """
+    import gc
+    import torch
+
+    # Clear Whisper + pyannote caches (transcribe_diarize.py module globals)
+    try:
+        import transcribe_diarize as _td
+        _td._WHISPER_MODEL     = None
+        _td._PYANNOTE_PIPELINE = None
+    except Exception:
+        pass
+
+    # Clear resemble-enhance denoiser — uses @functools.cache, holds model on GPU
+    try:
+        from resemble_enhance.enhancer.inference import load_enhancer
+        load_enhancer.cache_clear()
+    except Exception:
+        pass
+
+    # Clear Audio2Emotion detector cache (emotion_integration.py module global).
+    # The ONNX session holds its own CUDA memory, so we must delete the session
+    # explicitly — torch.cuda.empty_cache() does NOT release ONNX allocations.
+    try:
+        from emotion_integration import _DETECTOR_CACHE as _edc
+        for det in _edc.values():
+            if hasattr(det, "onnx_session") and det.onnx_session is not None:
+                del det.onnx_session
+                det.onnx_session = None
+        _edc.clear()
+    except Exception:
+        pass
+
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        reserved_mb = torch.cuda.memory_reserved(0) // 1024 ** 2
+        free_mb     = (torch.cuda.get_device_properties(0).total_memory
+                       - torch.cuda.memory_reserved(0)) // 1024 ** 2
+        print(f"  [VRAM] PyTorch reserved: {reserved_mb} MB | CUDA free: {free_mb} MB")
+
+
 def run_layer2(layer1_json: str, company_name: str, output_path: str,
                injection_scan_mode: str = "llm") -> dict:
     print(f"\n{'='*70}")
@@ -137,6 +228,10 @@ def run_layer2(layer1_json: str, company_name: str, output_path: str,
     print(f"Company:          {company_name}")
     print(f"Output:           {output_path}")
     print(f"Injection scan:   {injection_scan_mode}\n")
+
+    # Free VRAM used by Layer 1 models so the Layer 2 LLM has room to load.
+    # This is a no-op when Layer 1 was not run in the same process.
+    _free_layer1_vram()
 
     from LAYER_2.pipeline import run_layer2_pipeline, InjectionBlockedError
     try:
@@ -301,6 +396,7 @@ def main():
             print(f"Warning: emotion detection failed: {e}")
 
     # ── Layer 2 ───────────────────────────────────────────────────────────────
+    # (VRAM is freed inside run_layer2 before loading the LLM)
 
     rating_output = str(output_dir / "layer2_ratings.json")
     try:

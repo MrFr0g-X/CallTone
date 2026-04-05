@@ -60,11 +60,31 @@ warnings.filterwarnings("ignore", message=".*chunk_length_s.*experimental.*")
 warnings.filterwarnings("ignore", message=".*forced_decoder_ids.*deprecated.*")
 warnings.filterwarnings("ignore", message=".*pipelines sequentially on GPU.*")
 warnings.filterwarnings("ignore", message=".*multilingual Whisper.*")
+warnings.filterwarnings("ignore", message=".*max_target_positions.*")
+warnings.filterwarnings("ignore", message=".*SuppressTokensLogitsProcessor.*")
+warnings.filterwarnings("ignore", message=".*SuppressTokensAtBeginLogitsProcessor.*")
 warnings.filterwarnings("ignore", category=UserWarning, module="pyannote")
+
+# Silence transformers logger spam (these are logger.warning, not warnings.warn,
+# so warnings.filterwarnings doesn't catch them).  Each message holds the GIL
+# for string formatting + stderr I/O — 25+ per transcription run.
+import logging
+logging.getLogger("transformers.generation.utils").setLevel(logging.ERROR)
+logging.getLogger("transformers.pipelines.automatic_speech_recognition").setLevel(logging.ERROR)
+logging.getLogger("transformers.generation.configuration_utils").setLevel(logging.ERROR)
+
+# GPU optimizations
+if torch.cuda.is_available():
+    torch.backends.cudnn.benchmark = True
+    torch.set_float32_matmul_precision("high")
 
 # ── paths ───────────────────────────────────────────────────────────────────────
 MODEL_DIR  = os.path.join(os.path.dirname(__file__), "../models/whisper/openai/whisper-large-v3")
 DEVICE     = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+# ── model cache — loaded once, reused across pipeline calls ──────────────────
+_WHISPER_MODEL   = None   # Whisper ASR pipeline
+_PYANNOTE_PIPELINE = None # pyannote diarization pipeline
 
 # ── tag parsing ────────────────────────────────────────────────────────────────
 SEGMENT_RE = re.compile(
@@ -129,6 +149,11 @@ def parse_sense_output(raw: str) -> tuple[str, str, str]:
 
 
 def load_sense_model():
+    global _WHISPER_MODEL
+    if _WHISPER_MODEL is not None:
+        print("  Whisper model already loaded — reusing cached model.")
+        return _WHISPER_MODEL
+
     print("  Loading Whisper model...")
     dtype = torch.float16 if torch.cuda.is_available() else torch.float32
     model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -137,21 +162,24 @@ def load_sense_model():
     model.to(DEVICE)
     processor = AutoProcessor.from_pretrained(MODEL_DIR)
 
-    # Remove max_length from generation_config to avoid conflict with max_new_tokens
+    # Clean up generation_config to avoid conflicts with our generate_kwargs
     if hasattr(model, "generation_config") and model.generation_config is not None:
         model.generation_config.max_length = None
+        model.generation_config.max_new_tokens = 440
+        model.generation_config.suppress_tokens = []
 
     pipe = pipeline(
         "automatic-speech-recognition",
         model=model,
         tokenizer=processor.tokenizer,
         feature_extractor=processor.feature_extractor,
-        batch_size=16,
-        return_timestamps=False,
+        batch_size=1,           # one 30 s chunk at a time (pipeline runs in own process, no GIL contention)
+        return_timestamps="word",
         dtype=dtype,
         device=DEVICE,
-        generate_kwargs={"max_new_tokens": 128, "language": "en", "task": "transcribe"},
+        generate_kwargs={"max_new_tokens": 440, "language": "en", "task": "transcribe"},
     )
+    _WHISPER_MODEL = pipe
     return pipe
 
 
@@ -520,33 +548,39 @@ def main():
 
     # ── 1. Diarization ─────────────────────────────────────────────────────────
     print("Step 1/3  Running speaker diarization (pyannote)...")
-    
-    if local_model_path and os.path.exists(local_model_path):
-        pipeline = Pipeline.from_pretrained(local_model_path)
+
+    global _PYANNOTE_PIPELINE
+    if _PYANNOTE_PIPELINE is not None:
+        print("  pyannote pipeline already loaded — reusing cached model.")
+        pipeline = _PYANNOTE_PIPELINE
     else:
-        # Online mode with HuggingFace token
-        try:
-            from huggingface_hub import get_token
-            hf_token = get_token()
-            pipeline = Pipeline.from_pretrained(
-                "pyannote/speaker-diarization-3.1",
-                token=hf_token,
-            )
-        except Exception as e:
-            print(f"\nERROR: Could not load pyannote model: {e}")
-            print("  You must either:")
-            print("    1. Set PYANNOTE_MODEL_PATH to use local models")
-            print("    2. Login to HuggingFace and accept model terms")
+        if local_model_path and os.path.exists(local_model_path):
+            pipeline = Pipeline.from_pretrained(local_model_path)
+        else:
+            # Online mode with HuggingFace token
+            try:
+                from huggingface_hub import get_token
+                hf_token = get_token()
+                pipeline = Pipeline.from_pretrained(
+                    "pyannote/speaker-diarization-3.1",
+                    token=hf_token,
+                )
+            except Exception as e:
+                print(f"\nERROR: Could not load pyannote model: {e}")
+                print("  You must either:")
+                print("    1. Set PYANNOTE_MODEL_PATH to use local models")
+                print("    2. Login to HuggingFace and accept model terms")
+                sys.exit(1)
+
+        if pipeline is None:
+            print("\nERROR: Could not load pyannote/speaker-diarization-3.1")
+            print("  You must accept the model terms at:")
+            print("    https://huggingface.co/pyannote/speaker-diarization-3.1")
+            print("    https://huggingface.co/pyannote/segmentation-3.0")
+            print("  (log in with your HF account, then click 'Agree and access repository')")
             sys.exit(1)
-            
-    if pipeline is None:
-        print("\nERROR: Could not load pyannote/speaker-diarization-3.1")
-        print("  You must accept the model terms at:")
-        print("    https://huggingface.co/pyannote/speaker-diarization-3.1")
-        print("    https://huggingface.co/pyannote/segmentation-3.0")
-        print("  (log in with your HF account, then click 'Agree and access repository')")
-        sys.exit(1)
-    pipeline.to(torch.device(DEVICE))
+        pipeline.to(torch.device(DEVICE))
+        _PYANNOTE_PIPELINE = pipeline
 
     # MP3/compressed audio causes sample-count mismatches in pyannote 4.x.
     # Convert to a lossless WAV in a temp file so crop() gets exact counts.
@@ -607,23 +641,54 @@ def main():
     for spk, ps in sorted(spk_pitch_summary.items()):
         print(f"    {spk}  median F0 = {np.median(ps):.0f} Hz  ({len(ps)} voiced turns)")
 
-    # ── 2. Transcription per turn ──────────────────────────────────────────────
-    print("Step 2/3  Transcribing each speaker turn (Whisper)...")
+    # ── 2. Full-file transcription + alignment to diarization turns ────────────
+    # Transcribe the ENTIRE audio in one pass with word-level timestamps.
+    # Whisper internally splits into 30 s windows, so any file length works.
+    # This is 5-10× faster than per-turn inference because:
+    #   • ONE encoder pass over the full spectrogram (not 65 separate ones)
+    #   • No variable-length padding waste across turns
+    print("Step 2/3  Transcribing full audio (Whisper, single pass)...")
     sense_model = load_sense_model()
-    # waveform already loaded above
 
+    mono = waveform.mean(dim=0) if waveform.shape[0] > 1 else waveform.squeeze()
+    full_result = sense_model(
+        {"array": mono.cpu().numpy(), "sampling_rate": sr},
+        return_timestamps="word",
+        chunk_length_s=30,
+        ignore_warning=True,
+        generate_kwargs={"max_new_tokens": 440, "language": "en", "task": "transcribe"},
+    )
+
+    # Build sorted list of (word_center_time, word_text)
+    word_entries: list[tuple[float, str]] = []
+    for chunk in full_result.get("chunks", []):
+        ts = chunk.get("timestamp", (None, None))
+        if ts[0] is not None and ts[1] is not None:
+            word_entries.append(((ts[0] + ts[1]) / 2.0, chunk["text"]))
+    print(f"  Whisper returned {len(word_entries)} words — aligning to {len(turns)} turns...")
+
+    # Assign words to diarization turns by word center time
     index_map = {}
     segments  = []
-    for i, (t0, t1, raw_spk) in enumerate(turns, 1):
-        print(f"  [{i:>3}/{len(turns)}] {fmt_time(t0)}→{fmt_time(t1)}  {raw_spk}", end="\r")
-        s0 = int(t0 * sr)
-        s1 = int(t1 * sr)
-        chunk = waveform[:, s0:s1]
+    wi = 0   # pointer into word_entries (sorted by time)
+    for t0, t1, raw_spk in turns:
+        turn_words: list[str] = []
+        # Advance pointer past words before this turn
+        while wi < len(word_entries) and word_entries[wi][0] < t0:
+            wi += 1
+        # Collect words inside this turn
+        j = wi
+        while j < len(word_entries) and word_entries[j][0] <= t1:
+            turn_words.append(word_entries[j][1])
+            j += 1
 
-        text, emo, evt = transcribe_chunk(sense_model, chunk, sr)
+        text = "".join(turn_words).strip()
         if not text:
             continue
 
+        text, emo, evt = parse_sense_output(text)
+        if not text:
+            continue
         segments.append({
             "start":   t0,
             "end":     t1,
@@ -634,7 +699,7 @@ def main():
             "text":    text,
         })
 
-    print(f"\n  → {len(segments)} segments transcribed")
+    print(f"  → {len(segments)} segments transcribed")
 
     # ── 3. Format & save ───────────────────────────────────────────────────────
     print("Step 3/3  Formatting output...")
