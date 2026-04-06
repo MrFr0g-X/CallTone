@@ -1,0 +1,53 @@
+# ── CallTone Docker Compose ─────────────────────────────────────────────────
+# Run:  docker compose up --build
+#
+# Prerequisites:
+#   1. NVIDIA Container Toolkit installed
+#   2. Model weights in ./model-weights/ (download_models.py)
+#   3. HF_TOKEN env var set (for pyannote model access)
+# ────────────────────────────────────────────────────────────────────────────
+
+services:
+  calltone:
+    build: .
+    image: calltone:latest
+    container_name: calltone
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - CORS_ORIGINS=*
+      - DEBUG=false
+      - HF_TOKEN=${HF_TOKEN:-}
+
+    volumes:
+      # Mount model weights (read-only) — keeps image small
+      # The pipeline expects models at /app/models/LAYER_1/models/
+      # and the GGUF at /app/models/skill_implementation/models/
+      - ./model-weights/LAYER_1/models:/app/models/LAYER_1/models:ro
+      - ./model-weights/skill_implementation/models:/app/models/skill_implementation/models:ro
+      # resemble-enhance checkpoint
+      - ./model-weights/LAYER_1/resemble-enhance/enhancer_stage2:/app/models/LAYER_1/resemble-enhance/enhancer_stage2:ro
+      # Writable: uploads, database, context data
+      - calltone-uploads:/app/backend/uploads
+      - calltone-db:/app/backend
+      - calltone-context:/app/backend/data
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    # Pipeline can take minutes per call — generous stop timeout
+    stop_grace_period: 60s
+
+volumes:
+  calltone-uploads:
+  calltone-db:
+  calltone-context:
