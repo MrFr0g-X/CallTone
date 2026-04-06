@@ -1,0 +1,45 @@
+# Model weights (mounted via volume, not baked into image)
+models/LAYER_1/models/
+models/skill_implementation/models/
+models/LAYER_1/resemble-enhance/enhancer_stage2/
+**/*.gguf
+**/*.onnx
+**/*.safetensors
+**/*.pt
+**/*.pth
+**/*.bin
+
+# Node modules (rebuilt in build stage)
+calltone-UI/node_modules/
+calltone-UI/dist/
+
+# Python caches
+**/__pycache__/
+**/*.pyc
+*.egg-info/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Local data
+backend/calltone.db*
+backend/uploads/
+*.wav
+*.mp3
+*.flac
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Docs / non-essential
+PART1/
+*.md
+architecture/
+database/
