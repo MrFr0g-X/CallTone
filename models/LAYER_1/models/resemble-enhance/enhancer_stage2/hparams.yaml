@@ -1,10 +1,10 @@
-fg_dir: !!python/object/apply:pathlib.PosixPath
+fg_dir: !!python/object/apply:pathlib.Path
 - data
 - fg
-bg_dir: !!python/object/apply:pathlib.PosixPath
+bg_dir: !!python/object/apply:pathlib.Path
 - data
 - bg
-rir_dir: !!python/object/apply:pathlib.PosixPath
+rir_dir: !!python/object/apply:pathlib.Path
 - data
 - rir
 load_fg_only: false

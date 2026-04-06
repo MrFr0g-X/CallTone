@@ -81,6 +81,19 @@ node_modules/
 LAYER_1/models/sensevoice/**/example/
 LAYER_1/models/sensevoice/**/fig/
 
+# Stray top-level LAYER_1 (residue from a previous restructure — actual code lives in models/LAYER_1)
+/LAYER_1/
+
+# Downloaded HuggingFace caches and weights
+**/wav2vec2-emotion/
+**/whisper-large-v3/
+**/Audio2Emotion-v3.0/network.onnx
+**/Meta-Llama-3.1-8B-Instruct-Q8_0.gguf
+
+# Backend uploads / generated artefacts
+backend/uploads/
+backend/calltone.db*
+
 
 ########
 

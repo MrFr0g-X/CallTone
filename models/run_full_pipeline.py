@@ -17,6 +17,13 @@ os.environ["DS_BUILD_OPS"] = "0"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # avoid fork warnings
 
 import sys
+
+# Fix Windows subprocess Unicode encoding (cp1252 can't handle → ═ etc.)
+if sys.platform == "win32":
+    for _stream in ("stdout", "stderr"):
+        _s = getattr(sys, _stream, None)
+        if _s and hasattr(_s, "reconfigure"):
+            _s.reconfigure(encoding="utf-8", errors="replace")
 import json
 import shutil
 import argparse
@@ -388,6 +395,23 @@ def main():
             run_role_identification(json_path, txt_path)
         except Exception as e:
             print(f"Warning: role identification failed: {e}")
+
+        # Free Whisper + pyannote VRAM so Audio2Emotion can load on GPU
+        import gc as _gc
+        try:
+            import transcribe_diarize as _td
+            _td._WHISPER_MODEL     = None
+            _td._PYANNOTE_PIPELINE = None
+        except Exception:
+            pass
+        try:
+            from resemble_enhance.enhancer.inference import load_enhancer
+            load_enhancer.cache_clear()
+        except Exception:
+            pass
+        _gc.collect()
+        if _torch.cuda.is_available():
+            _torch.cuda.empty_cache()
 
         # Step 4: Emotion detection
         try:

@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALGORITHM: str = "HS256"
     FRONTEND_URL: str = "http://localhost:8080"
+    CORS_ORIGINS: str = ""  # comma-separated extra origins, e.g. "http://gpu-server:3000"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

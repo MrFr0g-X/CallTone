@@ -25,6 +25,15 @@ import json
 import tempfile
 from pathlib import Path
 
+# On Windows, a spawned subprocess inherits the system codepage (cp1252) for
+# stdout/stderr.  The pipeline prints Unicode arrows (→) and box-drawing
+# characters that cp1252 cannot encode, causing UnicodeEncodeError.
+if sys.platform == "win32":
+    for _stream in ("stdout", "stderr"):
+        _s = getattr(sys, _stream, None)
+        if _s and hasattr(_s, "reconfigure"):
+            _s.reconfigure(encoding="utf-8", errors="replace")
+
 # pyannote checkpoints contain many custom classes (Specifications, etc.).
 # PyTorch 2.6+ changed weights_only default to True, breaking pyannote.
 # Patch lightning_fabric's _load (used by pyannote) to use weights_only=False.
@@ -555,6 +564,24 @@ def main():
         pipeline = _PYANNOTE_PIPELINE
     else:
         if local_model_path and os.path.exists(local_model_path):
+            # Patch hardcoded absolute paths in config.yaml (original dev used /home/mazen/...)
+            # Recompute from __file__ so this works on any machine without manual edits.
+            _config_file = Path(local_model_path) / "config.yaml"
+            if _config_file.exists():
+                _pyannote_root = Path(__file__).parent.parent / "models" / "pyannote"
+                _new_seg = (_pyannote_root / "segmentation-3.0").as_posix()
+                _new_emb = (_pyannote_root / "wespeaker-voxceleb-resnet34-LM").as_posix()
+                _patched = []
+                for _ln in _config_file.read_text(encoding="utf-8").splitlines():
+                    _s = _ln.lstrip()
+                    _ind = _ln[: len(_ln) - len(_s)]
+                    if _s.startswith("segmentation:") and "segmentation-3.0" in _s:
+                        _patched.append(f"{_ind}segmentation: {_new_seg}")
+                    elif _s.startswith("embedding:") and "wespeaker" in _s:
+                        _patched.append(f"{_ind}embedding: {_new_emb}")
+                    else:
+                        _patched.append(_ln)
+                _config_file.write_text("\n".join(_patched) + "\n", encoding="utf-8")
             pipeline = Pipeline.from_pretrained(local_model_path)
         else:
             # Online mode with HuggingFace token
@@ -582,24 +609,20 @@ def main():
         pipeline.to(torch.device(DEVICE))
         _PYANNOTE_PIPELINE = pipeline
 
-    # MP3/compressed audio causes sample-count mismatches in pyannote 4.x.
-    # Convert to a lossless WAV in a temp file so crop() gets exact counts.
-    _tmp_wav = None
-    diarize_audio_path = audio_path
-    if not audio_path.lower().endswith(".wav"):
-        import tempfile
-        waveform, sr = torchaudio.load(audio_path)
-        _tmp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
-        torchaudio.save(_tmp_wav.name, waveform, sr)
-        diarize_audio_path = _tmp_wav.name
-        print(f"  Converted to WAV for diarization: {_tmp_wav.name}")
+    # Load audio into memory and pass as a waveform dict to pyannote.
+    # This bypasses pyannote's AudioDecoder (which requires torchcodec /
+    # FFmpeg DLLs that are missing on Windows) and avoids sample-count
+    # mismatches that occur when pyannote reads compressed files directly.
+    # NOTE: torchaudio.load() itself uses torchcodec since v2.9, so we
+    # use soundfile (libsndfile) which has no FFmpeg dependency.
+    import soundfile as sf
+    _wav_np, sr = sf.read(audio_path, dtype="float32")
+    waveform = torch.from_numpy(_wav_np).T if _wav_np.ndim > 1 else torch.from_numpy(_wav_np).unsqueeze(0)
 
     diarize_kwargs = {"num_speakers": num_speakers} if num_speakers else {}
-    diarization = pipeline(diarize_audio_path, **diarize_kwargs)
-
-    if _tmp_wav is not None:
-        _tmp_wav.close()
-        os.unlink(_tmp_wav.name)
+    diarization = pipeline(
+        {"waveform": waveform, "sample_rate": sr}, **diarize_kwargs
+    )
 
     # Handle different pyannote output formats
     # Local models return DiarizeOutput with speaker_diarization attribute
@@ -621,7 +644,8 @@ def main():
 
     # ── Pitch-based speaker anchoring ──────────────────────────────────────────
     # Load audio once here; reused in step 2 below.
-    waveform, sr = torchaudio.load(audio_path)
+    _wav_np2, sr = sf.read(audio_path, dtype="float32")
+    waveform = torch.from_numpy(_wav_np2).T if _wav_np2.ndim > 1 else torch.from_numpy(_wav_np2).unsqueeze(0)
 
     print("  Anchoring speaker labels by pitch (F0)...")
     pitches = []

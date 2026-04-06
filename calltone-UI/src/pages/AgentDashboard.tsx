@@ -3,7 +3,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { TrendingUp, TrendingDown, Clock, Shield, Heart, AlertTriangle, CheckCircle, ChevronRight } from "lucide-react";
+import { Clock, Shield, Heart, AlertTriangle, CheckCircle, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import GlassCard from "@/components/GlassCard";
@@ -66,11 +66,11 @@ const AgentDashboard = () => {
   const avgScore = scores?.overall ?? 0;
 
   const scoreCards = [
-    { label: "Overall Score", value: avgScore, icon: Shield, trend: 3.2, glow: "primary" as const },
-    { label: "Politeness", value: String(scores?.politeness ?? 0), icon: Heart, trend: 1.5, glow: "accent" as const },
-    { label: "Empathy", value: String(scores?.empathy ?? 0), icon: Heart, trend: -0.3, glow: "accent" as const },
-    { label: "Conflict Rate", value: `${scores?.conflictRate ?? 0}%`, icon: AlertTriangle, trend: -5.0, glow: "warning" as const },
-    { label: "Resolution Rate", value: `${scores?.resolutionRate ?? 0}%`, icon: CheckCircle, trend: 2.1, glow: "success" as const },
+    { label: "Overall Score", value: avgScore, icon: Shield, glow: "primary" as const },
+    { label: "Politeness", value: String(scores?.politeness ?? 0), icon: Heart, glow: "accent" as const },
+    { label: "Empathy", value: String(scores?.empathy ?? 0), icon: Heart, glow: "accent" as const },
+    { label: "Conflict Rate", value: `${scores?.conflictRate ?? 0}%`, icon: AlertTriangle, glow: "warning" as const },
+    { label: "Resolution Rate", value: `${scores?.resolutionRate ?? 0}%`, icon: CheckCircle, glow: "success" as const },
   ];
 
   return (
@@ -134,13 +134,6 @@ const AgentDashboard = () => {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <card.icon className="w-4 h-4 text-muted-foreground/60" />
-                    <span className={cn(
-                      "flex items-center gap-1 text-[11px] font-medium",
-                      card.trend > 0 ? "text-success" : "text-destructive"
-                    )}>
-                      {card.trend > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      {Math.abs(card.trend)}%
-                    </span>
                   </div>
                   <p className="text-3xl sm:text-4xl font-extralight text-foreground tracking-tight">
                     {typeof card.value === "number" ? (

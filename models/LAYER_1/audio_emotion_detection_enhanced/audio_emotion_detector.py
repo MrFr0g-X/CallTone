@@ -203,7 +203,11 @@ class Audio2EmotionDetector:
         if cache_key in self._audio_cache:
             return self._audio_cache[cache_key]
 
-        waveform, sr = torchaudio.load(audio_path)
+        # Use soundfile instead of torchaudio.load() because torchaudio 2.9+
+        # delegates to torchcodec which requires FFmpeg DLLs on Windows.
+        import soundfile as sf
+        wav_np, sr = sf.read(audio_path, dtype="float32")
+        waveform = torch.from_numpy(wav_np).T if wav_np.ndim > 1 else torch.from_numpy(wav_np).unsqueeze(0)
         if waveform.shape[0] > 1:
             waveform = waveform.mean(dim=0, keepdim=True)
         if sr != sample_rate:
