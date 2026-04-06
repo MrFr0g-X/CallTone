@@ -78,15 +78,21 @@ _run_startup_migrations()
 
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
 
+_cors_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
+if settings.CORS_ORIGINS:
+    _cors_origins += [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
+
+# CORS: wildcard "*" is incompatible with credentials; use allow_all pattern instead
+_allow_all = "*" in _cors_origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"] if _allow_all else _cors_origins,
+    allow_credentials=not _allow_all,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -854,6 +860,24 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         except Exception:
             pass  # non-fatal
 
+        # Free Whisper + pyannote VRAM so Audio2Emotion ONNX can load on GPU
+        import gc as _gc_l1
+        import torch as _torch_l1
+        try:
+            import transcribe_diarize as _td
+            _td._WHISPER_MODEL     = None
+            _td._PYANNOTE_PIPELINE = None
+        except Exception:
+            pass
+        try:
+            from resemble_enhance.enhancer.inference import load_enhancer
+            load_enhancer.cache_clear()
+        except Exception:
+            pass
+        _gc_l1.collect()
+        if _torch_l1.cuda.is_available():
+            _torch_l1.cuda.empty_cache()
+
         _set_step("emotion_detection")
         try:
             txt_path, json_path = run_emotion_detection(denoised_path, json_path)
@@ -934,13 +958,23 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         for crit, info in criteria.items():
             dim_scores[crit] = info.get("score", 0)
             dim_reports[crit] = info.get("summary", "")
-            confidence_scores[crit] = info.get("consensus_confidence") or info.get("confidence", 0.0)
+            cc = info.get("consensus_confidence")
+            confidence_scores[crit] = cc if cc is not None else info.get("confidence")
             for ev in info.get("evidence", []):
+                quote = (ev.get("quote")
+                         or ev.get("customer_quote")
+                         or ev.get("description", ""))
+                speaker = (ev.get("speaker", "")
+                           or ("Customer" if ev.get("customer_quote") else ""))
+                reason = (ev.get("reason")
+                          or ev.get("note")
+                          or ev.get("assessment")
+                          or ev.get("severity_contribution", ""))
                 evidence.append({
                     "dimension": crit,
-                    "quote": ev.get("quote", ""),
-                    "speaker": ev.get("speaker", ""),
-                    "reason": ev.get("reason", ""),
+                    "quote": quote,
+                    "speaker": speaker,
+                    "reason": reason,
                 })
 
         # Determine severity from score
@@ -1442,3 +1476,23 @@ def update_ticket_status(
 
     ticket_file.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
     return ticket
+
+
+# ── Serve built frontend (SPA) in production ────────────────────────────────
+# If a `static/` directory exists next to the backend (Docker places it there),
+# serve it and fall back to index.html for client-side routing.
+# API routes are defined above and matched first; this catch-all is last.
+_STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+if _STATIC_DIR.is_dir():
+    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import FileResponse
+
+    if (_STATIC_DIR / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=_STATIC_DIR / "assets"), name="static-assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        file = _STATIC_DIR / full_path
+        if file.is_file():
+            return FileResponse(file)
+        return FileResponse(_STATIC_DIR / "index.html")

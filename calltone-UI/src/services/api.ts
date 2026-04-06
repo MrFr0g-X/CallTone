@@ -67,8 +67,8 @@ export interface AdminDashboardResponse {
   health: {
     avgQualityScore: number;
     activeClients: number;
-    trialConversions: number;
-    churnRate: number;
+    completedCalls?: number;
+    totalCalls?: number;
     uptime: number;
   };
   trends: {
@@ -288,8 +288,13 @@ export interface QaCallDetailResponse {
       start: number;
       end: number;
       speaker: string;
-      profile: string;
+      profile?: string;
+      role?: string;
       text: string;
+      emotion?: string;
+      audio_emotion?: string;
+      signals?: string[];
+      event?: string;
     }>;
   };
   report: {

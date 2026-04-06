@@ -155,30 +155,80 @@ const CallDetailPage = () => {
                 </h2>
 
                 <div className="space-y-2.5">
-                  {call.transcript.speakerTurns?.map((line, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.02, duration: 0.2 }}
-                      className="p-3 rounded-2xl bg-primary/[0.04] border border-primary/10"
-                    >
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-[10px] font-semibold text-foreground/80">
-                          Speaker {line.speaker}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {line.start.toFixed(2)}s - {line.end.toFixed(2)}s
-                        </span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-accent/10 text-accent">
-                          {line.profile}
-                        </span>
-                      </div>
-                      <p className="text-[13px] text-foreground/75 leading-relaxed">
-                        {line.text}
-                      </p>
-                    </motion.div>
-                  ))}
+                  {call.transcript.speakerTurns?.map((line, i) => {
+                    const isAgent =
+                      String(line.speaker ?? line.role ?? "")
+                        .toLowerCase()
+                        .includes("agent");
+                    const displayName =
+                      line.role || line.speaker || `Speaker ${i}`;
+                    const signals: string[] = line.signals ?? [];
+                    const emotion =
+                      line.emotion && line.emotion !== "EMO_UNKNOWN"
+                        ? line.emotion
+                        : line.audio_emotion && line.audio_emotion !== "EMO_UNKNOWN"
+                        ? line.audio_emotion
+                        : null;
+
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.02, duration: 0.2 }}
+                        className={cn(
+                          "p-3 rounded-2xl border",
+                          isAgent
+                            ? "bg-accent/[0.06] border-accent/15"
+                            : "bg-primary/[0.04] border-primary/10"
+                        )}
+                      >
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span
+                            className={cn(
+                              "text-[10px] font-semibold px-2 py-0.5 rounded-full",
+                              isAgent
+                                ? "bg-accent/15 text-accent"
+                                : "bg-primary/15 text-primary"
+                            )}
+                          >
+                            {displayName}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {line.start.toFixed(1)}s – {line.end.toFixed(1)}s
+                          </span>
+                          {emotion && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-warning/10 text-warning">
+                              {emotion}
+                            </span>
+                          )}
+                          {signals.map((sig: string, si: number) => (
+                            <span
+                              key={si}
+                              className={cn(
+                                "text-[9px] px-1.5 py-0.5 rounded-full font-medium",
+                                sig === "FRUSTRATED" || sig === "ESCALATION"
+                                  ? "bg-destructive/10 text-destructive"
+                                  : sig === "APOLOGETIC" || sig === "SATISFIED"
+                                  ? "bg-success/10 text-success"
+                                  : "bg-muted/30 text-muted-foreground"
+                              )}
+                            >
+                              {sig}
+                            </span>
+                          ))}
+                          {line.profile && !emotion && signals.length === 0 && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-accent/10 text-accent">
+                              {line.profile}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[13px] text-foreground/75 leading-relaxed">
+                          {line.text}
+                        </p>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </GlassCard>
 

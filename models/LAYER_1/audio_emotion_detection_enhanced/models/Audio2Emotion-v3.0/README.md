@@ -16,7 +16,9 @@ For source code, documentation, helper scripts, packaged builds, and links to al
 
 ### License/Terms of Use
 
-Use of this model is governed by the [License Agreement for NVIDIA Audio2Emotion Model for Use with Audio2Face Project](https://huggingface.co/nvidia/Audio2Emotion-v3.0/blob/main/LICENSE)
+Use of this model is governed by the [License Agreement for NVIDIA Audio2Emotion Model for Use with Audio2Face Project](https://huggingface.co/nvidia/Audio2Emotion-v3.0/blob/main/LICENSE) 
+
+AUDIO2EMOTION MODEL NOTICE: This model and any technology included with this model may only be used in connection with the [NVIDIA Audio2Face project](https://docs.omniverse.nvidia.com/audio2face/latest/overview.html) consistent with all applicable documentation. You may not use this model and any technology included with it outside of the Audio2Face project. You may not use this model or any of its components for the purpose of emotion recognition.
 
 ### Deployment Geography:
 Global
