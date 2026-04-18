@@ -125,6 +125,75 @@ def root():
     return {"message": "CallTone API is running"}
 
 
+CALLTONE_VERSION = "0.9.0"
+_STARTED_AT = datetime.now(timezone.utc)
+
+
+@app.get("/api/health")
+def health_basic():
+    """Liveness probe — cheap, no DB, no disk, used by load balancers."""
+    return {"status": "ok"}
+
+
+@app.get("/api/health/detailed")
+def health_detailed():
+    """Readiness probe — checks DB, model dir, and disk so ops can see
+    *why* the service is unhappy without grepping logs."""
+    import shutil
+
+    checks: dict = {}
+    overall_ok = True
+
+    # DB connectivity
+    try:
+        with engine.connect() as conn:
+            conn.exec_driver_sql("SELECT 1")
+        checks["database"] = {"ok": True}
+    except Exception as exc:
+        overall_ok = False
+        checks["database"] = {"ok": False, "error": str(exc)[:200]}
+
+    # Model directory presence (don't load weights, just confirm path)
+    try:
+        model_dir_exists = MODELS_DIR.exists()
+        checks["models_dir"] = {
+            "ok": model_dir_exists,
+            "path": str(MODELS_DIR),
+        }
+        if not model_dir_exists:
+            overall_ok = False
+    except Exception as exc:
+        overall_ok = False
+        checks["models_dir"] = {"ok": False, "error": str(exc)[:200]}
+
+    # Upload directory + free disk
+    try:
+        usage = shutil.disk_usage(UPLOAD_DIR)
+        free_gb = round(usage.free / (1024 ** 3), 2)
+        # Soft threshold: warn under 1 GB free, fail under 100 MB
+        disk_ok = usage.free > 100 * 1024 * 1024
+        if not disk_ok:
+            overall_ok = False
+        checks["disk"] = {
+            "ok": disk_ok,
+            "free_gb": free_gb,
+            "upload_dir": str(UPLOAD_DIR),
+        }
+    except Exception as exc:
+        overall_ok = False
+        checks["disk"] = {"ok": False, "error": str(exc)[:200]}
+
+    uptime_s = int((datetime.now(timezone.utc) - _STARTED_AT).total_seconds())
+
+    return {
+        "status": "ok" if overall_ok else "degraded",
+        "version": CALLTONE_VERSION,
+        "uptime_seconds": uptime_s,
+        "started_at": _STARTED_AT.isoformat(),
+        "checks": checks,
+    }
+
+
 @app.post(f"{settings.API_V1_PREFIX}/auth/login", response_model=TokenResponse)
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
