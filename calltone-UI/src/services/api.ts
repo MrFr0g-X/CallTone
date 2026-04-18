@@ -29,6 +29,29 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Accepted audio MIME types for the /api/calls/upload endpoint.
+// Kept in sync with backend ALLOWED_AUDIO_TYPES.
+export const ACCEPTED_AUDIO_TYPES = [
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/mp3",
+  "audio/flac",
+  "audio/ogg",
+  "audio/webm",
+] as const;
+
+export const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024;
+
+/** Pure predicate: does the file look like a supported audio upload? */
+export function isAudioFile(file: Pick<File, "name" | "type">): boolean {
+  if (file.type && (ACCEPTED_AUDIO_TYPES as readonly string[]).includes(file.type)) {
+    return true;
+  }
+  const ext = file.name.toLowerCase().split(".").pop() ?? "";
+  return ["wav", "mp3", "mpeg", "flac", "ogg", "webm", "m4a"].includes(ext);
+}
+
 export type ApiUserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
 
 export interface AuthApiUser {
