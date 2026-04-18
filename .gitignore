@@ -47,6 +47,11 @@ build/
 # ============================================================
 test_outputs/
 *.test.txt
+.pytest_cache/
+.coverage
+htmlcov/
+docs/coverage_backend/
+docs/coverage_skills/
 
 # ============================================================
 # IDE & OS
