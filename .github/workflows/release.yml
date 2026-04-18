@@ -1,0 +1,56 @@
+name: Release
+
+# Creates a GitHub Release with auto-generated changelog when a `v*.*.*`
+# tag is pushed. Independent of the deploy workflow — release notes are
+# valuable even if a deploy is delayed (e.g. waiting on prod approval).
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write   # needed to create the release
+
+jobs:
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # full history for changelog generation
+
+      - name: Generate changelog from git
+        id: log
+        run: |
+          set -euo pipefail
+          PREV=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || echo "")
+          if [ -z "$PREV" ]; then
+            RANGE="HEAD"
+            HEADING="## Changes"
+          else
+            RANGE="${PREV}..${GITHUB_REF_NAME}"
+            HEADING="## Changes since ${PREV}"
+          fi
+          {
+            echo "$HEADING"
+            echo
+            git log --pretty=format:"- %s (%h)" "$RANGE" | grep -v "^- Merge "
+            echo
+            echo
+            echo "## Verification"
+            echo "- CI: ${{ github.server_url }}/${{ github.repository }}/actions"
+            echo "- Audit: docs/AUDIT_2026-04-18.md"
+            echo "- Deploy plan: docs/DEPLOYMENT_PLAN.md"
+          } > release_notes.md
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') }}
