@@ -1,0 +1,59 @@
+# ─── docker-compose override: PROD ─────────────────────────────────────────
+# Apply with:
+#   docker compose --env-file .env.prod \
+#       -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Differences vs base:
+#   - DEBUG=false (no /docs in prod)
+#   - bigger log retention for forensics
+#   - explicit healthcheck override (faster failure detection)
+#   - PostgreSQL side-car (replaces SQLite from the base file)
+
+services:
+  calltone:
+    image: calltone:prod
+    container_name: calltone-prod
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=false
+      - CORS_ORIGINS=https://calltone.local
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB:-calltone}
+      - DB_USER=${POSTGRES_USER:-calltone}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "10"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health/detailed"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: calltone-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-calltone}
+      - POSTGRES_USER=${POSTGRES_USER:-calltone}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - calltone-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-calltone}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  calltone-postgres-data:
+    name: calltone-prod-postgres
