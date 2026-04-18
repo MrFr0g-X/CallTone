@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  LayoutDashboard, Building2, Users, Shield, Settings, LogOut,
+  LayoutDashboard, Users, Settings, LogOut,
   Menu, X, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,7 @@ import calltoneIcon from "@/assets/calltone-icon.png";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
-  { to: "/admin/permissions", label: "Roles & Access", icon: Shield },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
