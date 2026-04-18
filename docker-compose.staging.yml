@@ -1,0 +1,33 @@
+# ─── docker-compose override: STAGING ──────────────────────────────────────
+# Apply with:
+#   docker compose --env-file .env.staging \
+#       -f docker-compose.yml -f docker-compose.staging.yml up -d --build
+#
+# Differences vs base:
+#   - exposes :8001 (so prod can keep :8000)
+#   - DEBUG=true so /docs is available
+#   - tags the image so we don't clobber the prod tag
+#   - smaller log retention (staging is noisier)
+
+services:
+  calltone:
+    image: calltone:staging
+    container_name: calltone-staging
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=true
+      - CORS_ORIGINS=https://stage.calltone.local
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+volumes:
+  calltone-uploads:
+    name: calltone-staging-uploads
+  calltone-db:
+    name: calltone-staging-db
+  calltone-context:
+    name: calltone-staging-context
