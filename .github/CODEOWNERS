@@ -1,0 +1,41 @@
+# ─── CodeOwners for CallTone ───────────────────────────────────────────────
+# Reviewers required for changes in critical paths. GitHub Branch
+# Protection enforces this when the rule "Require review from Code
+# Owners" is enabled on `main`.
+#
+# Mapping (per docs/AUDIT_2026-04-18.md §5):
+#   Hothifa Hamdan (DSAI)   — test infrastructure, CI/CD, deploy, audit
+#   Mazen Khaled (DSAI)     — LAYER 1 audio pipeline, model integration
+#   Habiba Magdy (SWD)      — frontend, UX
+#   NasrEldin Khaled (IT)   — backend auth, admin, invite
+# ───────────────────────────────────────────────────────────────────────────
+
+# Default owner — every change pings the maintainer at minimum
+*                                       @MrFr0g-X
+
+# CI/CD, deploy, scripts, audit
+.github/                                @MrFr0g-X
+docker-compose*.yml                     @MrFr0g-X
+Dockerfile                              @MrFr0g-X
+scripts/                                @MrFr0g-X
+docs/AUDIT_*                            @MrFr0g-X
+docs/DEPLOYMENT_*                       @MrFr0g-X
+backend/tests/                          @MrFr0g-X
+backend/loadtest/                       @MrFr0g-X
+backend/app/logging_config.py           @MrFr0g-X
+backend/app/main.py                     @MrFr0g-X @nasr
+
+# LAYER 1 — audio pipeline
+models/LAYER_1/                         @mazen
+models/LAYER_2/                         @mazen
+models/LAYER_3/                         @mazen
+models/skill_implementation/            @mazen
+download_models.py                      @mazen
+
+# Frontend
+calltone-UI/                            @habibamagdy
+
+# Backend auth/admin
+backend/app/security.py                 @nasr
+backend/app/seed_data.py                @nasr
+backend/app/models.py                   @nasr

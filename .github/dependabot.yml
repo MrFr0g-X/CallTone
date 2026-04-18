@@ -1,0 +1,64 @@
+# ─── Dependabot — automated dependency updates ─────────────────────────────
+# Weekly cadence keeps PR noise low. Security updates fire on detection
+# regardless of schedule.
+
+version: 2
+updates:
+  # GitHub Actions versions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "ci"
+    labels: [dependencies, ci]
+
+  # Backend Python deps
+  - package-ecosystem: pip
+    directory: "/backend"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(backend)"
+    labels: [dependencies, backend]
+    # Ignore framework majors — those need manual migration
+    ignore:
+      - dependency-name: fastapi
+        update-types: [version-update:semver-major]
+      - dependency-name: sqlalchemy
+        update-types: [version-update:semver-major]
+      - dependency-name: pydantic
+        update-types: [version-update:semver-major]
+
+  # Frontend npm deps
+  - package-ecosystem: npm
+    directory: "/calltone-UI"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ui)"
+    labels: [dependencies, frontend]
+    ignore:
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+      - dependency-name: vite
+        update-types: [version-update:semver-major]
+
+  # Docker base image
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 1
+    commit-message:
+      prefix: "chore(docker)"
+    labels: [dependencies, docker]
