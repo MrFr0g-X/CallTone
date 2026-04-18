@@ -36,7 +36,11 @@ from app.models import (
 )
 from app.schemas import LoginRequest, TokenResponse
 from app.security import create_access_token, verify_password, hash_password
+from app.logging_config import configure_logging, get_logger
 import app.models  # noqa
+
+configure_logging()
+log = get_logger("calltone.api")
 
 UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
