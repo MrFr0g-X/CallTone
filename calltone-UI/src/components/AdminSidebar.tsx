@@ -2,7 +2,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  LayoutDashboard, Building2, Users, Shield, Settings, LogOut,
+  LayoutDashboard, Users, Settings, LogOut,
   ChevronLeft, ChevronRight, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,9 +14,7 @@ import { useState } from "react";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
-  { to: "/admin/permissions", label: "Roles & Access", icon: Shield },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];

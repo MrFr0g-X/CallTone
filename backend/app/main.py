@@ -483,7 +483,10 @@ def get_invite_details(token: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="Invalid invitation link")
 
-    if not user.invite_expires_at or user.invite_expires_at < datetime.now(timezone.utc):
+    expires_at = user.invite_expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not expires_at or expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Invitation link has expired")
 
     if user.is_active:
@@ -520,7 +523,10 @@ def accept_invite(
     if not user:
         raise HTTPException(status_code=404, detail="Invalid invitation link")
 
-    if not user.invite_expires_at or user.invite_expires_at < datetime.now(timezone.utc):
+    expires_at = user.invite_expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not expires_at or expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Invitation link has expired")
 
     if user.is_active:

@@ -7,15 +7,12 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import AgentDashboard from "./pages/AgentDashboard";
 import QADashboard from "./pages/QADashboard";
 import AdminLayout from "./components/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminClients from "./pages/AdminClients";
 import AdminTeam from "./pages/AdminTeam";
-import AdminPermissions from "./pages/AdminPermissions";
 import AdminActivity from "./pages/AdminActivity";
 import AdminSettings from "./pages/AdminSettings";
 import CallDetail from "./pages/CallDetail";
@@ -32,8 +29,8 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Public routes */}
-        <Route path="/" element={<Landing />} />
+        {/* Public routes — root redirects straight to /login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
@@ -74,9 +71,7 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         }>
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="clients" element={<AdminClients />} />
           <Route path="team" element={<AdminTeam />} />
-          <Route path="permissions" element={<AdminPermissions />} />
           <Route path="activity" element={<AdminActivity />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route index element={<Navigate to="dashboard" replace />} />
