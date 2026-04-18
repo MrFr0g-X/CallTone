@@ -8,3 +8,8 @@ python-jose[cryptography]
 passlib[bcrypt]
 email-validator
 python-multipart
+
+# dev/test
+pytest>=7
+pytest-cov>=4
+httpx>=0.24
