@@ -6,6 +6,9 @@ pydantic
 pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
+# Pin bcrypt: passlib 1.7.4 (unmaintained) probes with a 100+ byte string at import.
+# bcrypt 5.x enforces the 72-byte spec and raises; 4.0.x silently truncates as before.
+bcrypt<4.1
 email-validator
 python-multipart
 
