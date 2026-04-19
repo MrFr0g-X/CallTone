@@ -536,6 +536,14 @@ def main():
     local_model_path = os.environ.get("PYANNOTE_MODEL_PATH") or str(_default_local)
 
     if os.path.exists(local_model_path):
+        # Newer huggingface_hub validates the argument as a repo id when it
+        # looks like a path. pyannote.Pipeline.from_pretrained only skips that
+        # validation when the argument points directly at a file. If we got a
+        # directory, append config.yaml so we land on the file branch.
+        if os.path.isdir(local_model_path):
+            _cfg = os.path.join(local_model_path, "config.yaml")
+            if os.path.isfile(_cfg):
+                local_model_path = _cfg
         print(f"Using local pyannote model: {local_model_path}")
     else:
         # Try fallback to HuggingFace if local model not found
