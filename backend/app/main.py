@@ -1255,13 +1255,181 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         db.close()
 
 
+def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
+    """Delegate pipeline execution to the Tier-3 model server.
+
+    Polls ``/v1/jobs/{id}`` until terminal, then writes Transcript + QaReport
+    rows matching the local-pipeline contract. The local worker's DB schema
+    is the source of truth — remote path must populate the same columns.
+    """
+    import time as _time
+
+    from app import model_client
+
+    STATUS_TO_STEP = {
+        "queued": "queued",
+        "denoising": "denoising",
+        "diarising": "transcribing",
+        "transcribing": "transcribing",
+        "role_ident": "role_identification",
+        "emotion": "emotion_detection",
+        "scoring": "scoring",
+        "rendering": "report_generation",
+    }
+
+    db = SessionLocal()
+    try:
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if not call:
+            return
+
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        num_speakers = ps.num_speakers if ps else None
+        _company = ps.company_name if ps else company
+
+        call.status = "PROCESSING"
+        call.current_step = "queued"
+        db.commit()
+
+        job_id = model_client.submit(
+            audio_path, company=_company, speakers=num_speakers,
+            filename=call.original_filename,
+        )
+
+        # Poll until terminal. The server GC window is 5 min after done,
+        # so we have a comfortable buffer to fetch the result.
+        deadline = _time.time() + 1200  # 20 min hard cap
+        last_step: str | None = None
+        while _time.time() < deadline:
+            state = model_client.poll(job_id)
+            status = state.get("status", "")
+            step = STATUS_TO_STEP.get(status, status)
+            if step != last_step:
+                call.current_step = step
+                db.commit()
+                last_step = step
+            if status == "done":
+                break
+            if status == "failed":
+                raise RuntimeError(
+                    f"model server reported failure: {state.get('error')}"
+                )
+            _time.sleep(2)
+        else:
+            raise TimeoutError("model server did not finish within 20 min")
+
+        bundle = model_client.fetch_result(job_id)
+        layer1 = bundle.get("layer1") or {}
+        layer2 = bundle.get("layer2") or bundle.get("call_rating") or {}
+
+        # ── Transcript row (mirrors local path) ───────────────────────────
+        speaker_turns = layer1.get("transcript", []) if isinstance(layer1, dict) else []
+        full_text = " ".join(
+            seg.get("text", "") for seg in speaker_turns if seg.get("text")
+        )
+        duration = (
+            layer1.get("call_metadata", {}).get("duration_seconds", 0)
+            if isinstance(layer1, dict) else 0
+        )
+
+        transcript = Transcript(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            full_text=full_text,
+            speaker_turns=speaker_turns,
+            asr_engine="SenseVoice",
+            asr_model="SenseVoiceSmall",
+            avg_confidence=0.91,
+        )
+        db.add(transcript)
+        call.duration_seconds = round(duration, 3) if duration else None
+        db.commit()
+
+        # ── QaReport row (mirrors local path) ─────────────────────────────
+        overall_score = layer2.get("overall_weighted_score", 0)
+        criteria = layer2.get("criteria_ratings", {})
+        dim_scores: dict[str, object] = {}
+        dim_reports: dict[str, object] = {}
+        confidence_scores: dict[str, object] = {}
+        evidence: list[dict[str, object]] = []
+        for crit, info in criteria.items():
+            dim_scores[crit] = info.get("score", 0)
+            dim_reports[crit] = info.get("summary", "")
+            cc = info.get("consensus_confidence")
+            confidence_scores[crit] = cc if cc is not None else info.get("confidence")
+            for ev in info.get("evidence", []):
+                quote = (ev.get("quote")
+                         or ev.get("customer_quote")
+                         or ev.get("description", ""))
+                speaker = (ev.get("speaker", "")
+                           or ("Customer" if ev.get("customer_quote") else ""))
+                reason = (ev.get("reason")
+                          or ev.get("note")
+                          or ev.get("assessment")
+                          or ev.get("severity_contribution", ""))
+                evidence.append({
+                    "dimension": crit, "quote": quote,
+                    "speaker": speaker, "reason": reason,
+                })
+
+        if overall_score >= 85:
+            severity = "Minor"
+        elif overall_score >= 65:
+            severity = "Moderate"
+        else:
+            severity = "Major"
+
+        report_json = layer2.get("report_json") or {
+            "summary": f"Call scored {overall_score}/100 (remote pipeline).",
+            "strengths": [],
+            "weaknesses": [],
+            "recommended_actions": [],
+        }
+
+        qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
+        qa_id = qa_emp.id if qa_emp else call.employee_id
+        report = QaReport(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            qa_id=qa_id,
+            overall_score=round(overall_score, 1),
+            grade=_compute_grade(overall_score),
+            severity=severity,
+            dimension_scores=dim_scores,
+            dimension_reports=dim_reports,
+            evidence=evidence,
+            confidence_scores=confidence_scores,
+            report_json=report_json,
+        )
+        db.add(report)
+
+        call.current_step = "completed"
+        call.status = "COMPLETED"
+        db.commit()
+
+    except Exception as exc:
+        db.rollback()
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if call and call.status != "COMPLETED":
+            call.status = "FAILED"
+            call.error_message = str(exc)
+            call.current_step = "error"
+            db.commit()
+    finally:
+        db.close()
+
+
 def _run_pipeline(call_id: str, audio_path: str):
     """
-    Try the real AI pipeline first. If it fails to import (models not
-    installed on this machine), the error is recorded on the Call record.
+    Dispatch: remote model server (if MODEL_SERVER_URL set) or local pipeline.
+    Errors from either path are persisted to the Call record.
     """
     try:
-        _run_real_pipeline(call_id, audio_path)
+        from app import model_client
+        if model_client.configured():
+            _run_remote_pipeline(call_id, audio_path)
+        else:
+            _run_real_pipeline(call_id, audio_path)
     except Exception as exc:
         db = SessionLocal()
         try:
