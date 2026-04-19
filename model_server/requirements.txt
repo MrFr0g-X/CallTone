@@ -1,0 +1,30 @@
+# ── model_server — dependencies ────────────────────────────────────────────
+# Split into two groups: "server" (light; installable anywhere for tests/dev)
+# and "ml" (heavy, CUDA-bound; installed on the Vast instance only via
+# setup_vast_instance.sh).
+#
+# CI and local unit tests only need the "server" group because the pipeline
+# subprocess is mocked in tests.
+
+# ── server group ───────────────────────────────────────────────────────────
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.20
+pydantic==2.9.2
+pydantic-settings==2.5.2
+httpx==0.27.2
+starlette==0.38.6
+
+# ── test group ─────────────────────────────────────────────────────────────
+pytest==8.3.3
+pytest-asyncio==0.24.0
+
+# ── ml group ───────────────────────────────────────────────────────────────
+# NOT installed locally. Documented here for the Vast bootstrap script.
+# torch==2.4.1+cu121         -f https://download.pytorch.org/whl/cu121
+# torchaudio==2.4.1+cu121    -f https://download.pytorch.org/whl/cu121
+# llama-cpp-python[cuda]==0.3.2
+# pyannote.audio==3.3.2
+# funasr==1.1.14
+# resemble-enhance           # installed from Git; pinned by download_models.py
+# onnxruntime-gpu==1.19.2
