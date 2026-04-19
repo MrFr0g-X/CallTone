@@ -19,7 +19,7 @@ try:
 except Exception:
     pass
 
-from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -36,6 +36,8 @@ from app.models import (
 )
 from app.schemas import LoginRequest, TokenResponse
 from app.security import create_access_token, verify_password, hash_password
+from app.security_headers import SecurityHeadersMiddleware
+from app.rate_limit import login_limiter, invite_accept_limiter, client_key
 from app.logging_config import configure_logging, get_logger
 import app.models  # noqa
 
@@ -101,7 +103,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Security-headers middleware. Added AFTER CORS so it wraps the outer
+# response — Starlette runs middleware in reverse-add order, so the
+# last add() runs first on the way out (and last on the way in). CORS
+# stays innermost so its preflight handling is unaffected.
+app.add_middleware(SecurityHeadersMiddleware)
+
 bearer_scheme = HTTPBearer()
+
+
+# ── Upload filename sanitization (C-4) ──────────────────────────────────────
+# Defangs path-traversal in user-supplied filenames before they reach the
+# disk. UUID prefixing alone is not enough — `f"{uuid}_../../etc/passwd"`
+# still resolves outside UPLOAD_DIR on most filesystems.
+import os as _os_for_sanitize
+import re as _re_for_sanitize
+
+_FILENAME_SAFE_RE = _re_for_sanitize.compile(r"[^A-Za-z0-9._-]")
+_FILENAME_FALLBACK = "upload.bin"
+_FILENAME_MAX_LEN = 80
+
+
+def _sanitize_filename(name: str | None) -> str:
+    """Return a safe basename suitable for joining with UPLOAD_DIR."""
+    if not name:
+        return _FILENAME_FALLBACK
+    base = _os_for_sanitize.path.basename(name.replace("\\", "/"))
+    cleaned = _FILENAME_SAFE_RE.sub("_", base)
+    cleaned = cleaned.lstrip(".")  # forbid leading dots (hidden files / traversal)
+    if len(cleaned) > _FILENAME_MAX_LEN:
+        # Preserve extension when truncating
+        stem, dot, ext = cleaned.rpartition(".")
+        if dot and len(ext) <= 8:
+            keep = _FILENAME_MAX_LEN - len(ext) - 1
+            cleaned = (stem[:keep] if keep > 0 else stem[: _FILENAME_MAX_LEN]) + dot + ext
+        else:
+            cleaned = cleaned[:_FILENAME_MAX_LEN]
+    return cleaned or _FILENAME_FALLBACK
 
 
 def get_current_user(
@@ -199,16 +237,38 @@ def health_detailed():
 
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
+def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    # C-1: per-IP rate limit; fires before any DB or bcrypt work so a
+    # script cannot exhaust CPU.
+    login_limiter.check(client_key(request))
+
     user = db.query(User).filter(User.email == payload.email).first()
 
     if not user or not verify_password(payload.password, user.password_hash):
+        # C-6: structured security event for log aggregators.
+        log.warning(
+            "login_failed",
+            extra={
+                "event": "login_failed",
+                "email": payload.email,
+                "client_ip": client_key(request),
+            },
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
 
     if not user.is_active:
+        log.warning(
+            "login_inactive_account",
+            extra={
+                "event": "login_inactive_account",
+                "user_id": user.id,
+                "email": payload.email,
+                "client_ip": client_key(request),
+            },
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is inactive",
@@ -502,9 +562,14 @@ def get_invite_details(token: str, db: Session = Depends(get_db)):
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/invite/accept")
 def accept_invite(
+    request: Request,
     payload: dict = Body(...),
     db: Session = Depends(get_db),
 ):
+    # C-1: rate-limit per IP — token is 256-bit URL-safe, but cheap to
+    # block automated guessing anyway.
+    invite_accept_limiter.check(client_key(request))
+
     token = (payload.get("token") or "").strip()
     password = (payload.get("password") or "").strip()
     confirm_password = (payload.get("confirmPassword") or "").strip()
@@ -517,6 +582,14 @@ def accept_invite(
 
     if len(password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
+
+    # C-5: bcrypt has a hard 72-byte input ceiling. Reject early so the
+    # error is predictable; bcrypt 5.x raises ValueError otherwise.
+    if len(password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at most 72 bytes (UTF-8). Bcrypt does not store more.",
+        )
 
     user = db.query(User).filter(User.invite_token == token).first()
 
@@ -573,9 +646,22 @@ def update_user_role(
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")
 
+    old_role_name = user.role.name if user.role else None
     user.role_id = role.id
     db.commit()
     db.refresh(user)
+
+    # C-6: privilege-change audit line.
+    log.warning(
+        "role_changed",
+        extra={
+            "event": "role_changed",
+            "actor_id": current_user.id,
+            "target_user_id": user.id,
+            "old_role": old_role_name,
+            "new_role": role.name,
+        },
+    )
 
     return {
         "message": "Role updated successfully",
@@ -612,9 +698,22 @@ def update_user_status(
     if user.invite_token and not user.is_active:
         raise HTTPException(status_code=400, detail="Invited users cannot be enabled/disabled. They must accept the invitation or be deleted.")
 
+    old_status = "active" if user.is_active else "disabled"
     user.is_active = new_status == "active"
     db.commit()
     db.refresh(user)
+
+    # C-6: account-status audit line.
+    log.warning(
+        "status_changed",
+        extra={
+            "event": "status_changed",
+            "actor_id": current_user.id,
+            "target_user_id": user.id,
+            "old_status": old_status,
+            "new_status": new_status,
+        },
+    )
 
     return {
         "message": f"User {new_status} successfully",
@@ -667,9 +766,23 @@ def delete_user(
 
     was_invited = bool(user.invite_token and not user.is_active)
     user_name = user.full_name
+    target_email = user.email
+    target_id = user.id
 
     db.delete(user)
     db.commit()
+
+    # C-6: deletion audit line.
+    log.warning(
+        "user_deleted",
+        extra={
+            "event": "user_deleted",
+            "actor_id": current_user.id,
+            "target_user_id": target_id,
+            "target_email": target_email,
+            "was_invited": was_invited,
+        },
+    )
 
     return {
         "message": "Invitation deleted successfully" if was_invited else "User deleted successfully",
@@ -1186,9 +1299,12 @@ async def upload_call(
 
     sha256 = hashlib.sha256(content).hexdigest()
     call_id = str(uuid.uuid4())
-    safe_filename = file.filename or "upload.wav"
+    # C-4: strip any path separators / control chars from the
+    # user-supplied name before joining with UPLOAD_DIR. Without this,
+    # a filename of "../../etc/passwd" escapes the upload directory
+    # despite the UUID prefix.
+    safe_filename = _sanitize_filename(file.filename)
 
-    # Save file to disk
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
     dest.write_bytes(content)
 
