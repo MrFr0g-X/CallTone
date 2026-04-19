@@ -1,0 +1,31 @@
+# ─── gitleaks config — CallTone ────────────────────────────────────────────
+# Inherits the default ruleset (use-default = true) and adds a tight
+# allowlist for the placeholder values shipped in .env.example so the
+# weekly Security workflow does not train the team to ignore alerts.
+#
+# Verify locally:
+#   gitleaks detect --no-git --source . --config .gitleaks.toml
+# A clean run reports "no leaks found".
+
+title = "CallTone gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow .env.example placeholders; refuse silence elsewhere."
+
+# Only the template file is exempt — real .env* files stay gitignored
+# and would still trip the scanner if accidentally committed.
+paths = [
+  '''^\.env\.example$''',
+]
+
+# Defensive regex allowlist for the literal placeholders we ship.
+# Listed individually instead of one broad pattern so that adding a new
+# placeholder requires a deliberate edit here.
+regexes = [
+  '''replace-with-openssl-rand-hex-32''',
+  '''replace-with-openssl-rand-hex-24''',
+  '''hf_replace_me''',
+]

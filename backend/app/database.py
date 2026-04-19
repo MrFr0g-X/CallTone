@@ -41,6 +41,20 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+
+# ── Production SECRET_KEY guard ──────────────────────────────────────────────
+# When DEBUG=false the JWT signing key MUST NOT be the dev default.
+# Refusing to boot is intentional — a warning would be ignored and the
+# resulting deploy would be trivially compromised (anyone can forge
+# tokens against the well-known default).
+_DEV_SECRET_KEY_DEFAULT = "dev-secret-key-change-in-production"
+if not settings.DEBUG and settings.SECRET_KEY == _DEV_SECRET_KEY_DEFAULT:
+    raise RuntimeError(
+        "SECRET_KEY is the development default but DEBUG=false. "
+        "Set SECRET_KEY in .env.prod via `openssl rand -hex 32` before "
+        "starting the production server."
+    )
+
 connect_args = {"check_same_thread": False} if settings.use_sqlite else {}
 engine = create_engine(
     settings.DATABASE_URL,

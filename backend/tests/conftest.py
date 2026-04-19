@@ -57,6 +57,23 @@ def _setup_db():
         pass
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limiters():
+    """Stop test N's login attempts from poisoning test N+1.
+
+    The rate-limit buckets are module-level state that survives between
+    tests, so a test file that exercises /auth/login many times can
+    exhaust the limit and 429 the next file's admin_token fixture.
+    Resetting before each test keeps every test starting from a clean
+    bucket without weakening the limiter behavior under test (each test
+    that cares about the limiter resets it again explicitly).
+    """
+    from app.rate_limit import login_limiter, invite_accept_limiter
+    login_limiter.reset()
+    invite_accept_limiter.reset()
+    yield
+
+
 @pytest.fixture
 def client():
     return TestClient(app)
