@@ -18,10 +18,18 @@ Env vars honoured:
 
 from __future__ import annotations
 
+import io
 import os
 import sys
 
 import httpx
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except (AttributeError, io.UnsupportedOperation):
+        pass
 
 OK = "[ OK ]"
 WARN = "[WARN]"
