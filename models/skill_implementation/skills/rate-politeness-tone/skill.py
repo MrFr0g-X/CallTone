@@ -15,7 +15,7 @@ def get_rate_politeness_tone_skill_bundle():
     return {
         "name": "rate-politeness-tone",
 
-        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"),
+        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Qwen3-8B-Q4_K_M.gguf"),
 
         "system_prompt": """You are a precise JSON-only quality assurance evaluator for call center agents.
 
@@ -50,7 +50,9 @@ CRITICAL RULES:
 3. Score MUST be exactly one of: 0, 25, 50, 75, 100
 4. Consider emotional context from audio emotions if provided
 
-Output the JSON immediately with no preamble.""",
+Output the JSON immediately with no preamble.
+
+/no_think""",
 
         "user_prompt_template": """Rate the agent's politeness and tone in this call.
 
@@ -78,7 +80,7 @@ Return ONLY the JSON object:""",
         "decoding": {
             "temperature": 0.0,
             "top_p": 1.0,
-            "max_tokens": 4096,
+            "max_tokens": 500,
             "seed": 12345,
             "do_sample": False,
             "stop": ["\n\n\n"],

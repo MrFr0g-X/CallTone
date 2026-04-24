@@ -23,8 +23,9 @@ pytest-asyncio==0.24.0
 # NOT installed locally. Documented here for the Vast bootstrap script.
 # torch==2.4.1+cu121         -f https://download.pytorch.org/whl/cu121
 # torchaudio==2.4.1+cu121    -f https://download.pytorch.org/whl/cu121
-# llama-cpp-python[cuda]==0.3.2
+# llama-cpp-python[cuda]==0.3.20
 # pyannote.audio==3.3.2
 # funasr==1.1.14
+# faster-whisper>=1.0.3       # CT2 backend — 4-8x faster than HF transformers Whisper
 # resemble-enhance           # installed from Git; pinned by download_models.py
 # onnxruntime-gpu==1.19.2

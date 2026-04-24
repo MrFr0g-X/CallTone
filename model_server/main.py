@@ -35,9 +35,58 @@ def _gpu_available() -> bool:
     return shutil.which("nvidia-smi") is not None
 
 
+def _prewarm_models() -> None:
+    """Warm the OS page cache for model weights at startup.
+
+    Each /v1/analyze spawns a fresh Python subprocess for VRAM/crash isolation
+    (see pipeline_adapter.py), so we cannot share loaded model state across
+    jobs. What we *can* share is the OS file page cache: reading the model
+    files at boot fills the cache, so the subprocess's cold-load drops from
+    multi-minutes (disk I/O bound) to seconds (RAM-resident files).
+
+    Set CALLTONE_PREWARM=0 to skip (CI/tests).
+    """
+    if os.getenv("CALLTONE_PREWARM", "1") == "0":
+        log.info("model_server.prewarm.skipped", extra={"event": "prewarm_skipped"})
+        return
+    # Real cache locations on Vast: faster-whisper + Audio2Emotion + pyannote
+    # are HF Hub downloads; LLaMA + resemble-enhance live under /opt/calltone.
+    hf_hub = os.path.expanduser("~/.cache/huggingface/hub")
+    targets = [
+        os.path.join(hf_hub, "models--Systran--faster-whisper-large-v3"),
+        os.path.join(hf_hub, "models--pyannote--segmentation-3.0"),
+        os.path.join(hf_hub, "models--pyannote--wespeaker-voxceleb-resnet34-LM"),
+        os.path.join(hf_hub, "models--nvidia--Audio2Emotion-v3.0"),
+        "/opt/calltone/models/skill_implementation/models",
+        "/opt/calltone/models/LAYER_1/models/resemble-enhance",
+    ]
+    total_bytes = 0
+    for root in targets:
+        if not os.path.isdir(root):
+            continue
+        for dirpath, _, filenames in os.walk(root):
+            for name in filenames:
+                fpath = os.path.join(dirpath, name)
+                try:
+                    with open(fpath, "rb", buffering=1024 * 1024) as f:
+                        while f.read(1024 * 1024):
+                            pass
+                    total_bytes += os.path.getsize(fpath)
+                except OSError as exc:
+                    log.debug(
+                        "model_server.prewarm.read_failed",
+                        extra={"event": "prewarm_read_failed", "path": fpath, "err": str(exc)},
+                    )
+    log.info(
+        "model_server.prewarm.ok",
+        extra={"event": "prewarm_ok", "bytes": total_bytes},
+    )
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     log.info("model_server.startup", extra={"event": "startup"})
+    _prewarm_models()
     yield
     log.info("model_server.shutdown", extra={"event": "shutdown"})
 

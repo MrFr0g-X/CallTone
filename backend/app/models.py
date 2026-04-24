@@ -97,7 +97,7 @@ class PipelineSettings(Base):
     num_speakers = Column(Integer, nullable=True)                          # None = auto-detect
     report_mode = Column(String(20), nullable=False, default="simple")    # none | simple | narrative
     use_consensus = Column(Boolean, nullable=False, default=False)
-    company_name = Column(String(150), nullable=False, default="BankServ Global")
+    company_name = Column(String(150), nullable=False, default="metroboost")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
@@ -120,6 +120,7 @@ class Call(Base):
     drive_file_id = Column(String(255), nullable=True)
     drive_folder_id = Column(String(255), nullable=True)
     original_filename = Column(String(255), nullable=False)
+    storage_path = Column(String(512), nullable=True)
     duration_seconds = Column(Float, nullable=True)
     size_bytes = Column(Integer, nullable=True)
     sample_rate_hz = Column(Integer, nullable=True)

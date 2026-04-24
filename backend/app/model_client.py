@@ -60,12 +60,22 @@ def _retry_sleep(attempt: int) -> None:
     time.sleep(2 ** (attempt - 1))
 
 
+def model_server_health(timeout: float = 2.0) -> dict[str, Any]:
+    """Probe the remote /v1/health endpoint. Used by the readiness check;
+    short timeout so a paused Vast instance doesn't hang the probe."""
+    url = f"{_base_url()}/v1/health"
+    resp = httpx.get(url, timeout=timeout)
+    resp.raise_for_status()
+    return resp.json()
+
+
 def submit(
     audio_path: str | Path,
     *,
     company: str,
     speakers: int | None = None,
     filename: str | None = None,
+    asr_engine: str = "fasterwhisper",
 ) -> str:
     """Upload audio to /v1/analyze and return the job_id."""
     path = Path(audio_path)
@@ -75,7 +85,7 @@ def submit(
     url = f"{_base_url()}/v1/analyze"
     display_name = filename or path.name
 
-    data: dict[str, Any] = {"company": company}
+    data: dict[str, Any] = {"company": company, "asr_engine": asr_engine}
     if speakers is not None:
         data["speakers"] = str(speakers)
 

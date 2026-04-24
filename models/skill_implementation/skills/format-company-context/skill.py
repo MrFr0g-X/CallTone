@@ -16,7 +16,7 @@ def get_format_company_context_skill_bundle():
     return {
         "name": "format-company-context",
 
-        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"),
+        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Qwen3-8B-Q4_K_M.gguf"),
 
         "system_prompt": """You are a precise JSON-only assistant that reformats company rules and protocols.
 
@@ -52,7 +52,9 @@ OUTPUT SCHEMA (return valid JSON matching this structure):
   "validation_notes": "any issues, ambiguities, or missing information found in the input"
 }}
 
-Return ONLY the JSON object:""",
+Return ONLY the JSON object:
+
+/no_think""",
 
         "decoding": {
             "temperature": 0.0,

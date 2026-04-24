@@ -5,14 +5,15 @@ Download all required models for the grad_project pipeline.
 Usage:
     python download_models.py                  # Download all models
     python download_models.py --list           # Show what will be downloaded
-    python download_models.py --model llama    # Download a specific model
+    python download_models.py --model qwen3    # Download a specific model
     python download_models.py --hf-token TOKEN # Pass HuggingFace token (required for pyannote)
 
-Models required (~12.5 GB total):
-  - Meta-Llama-3.1-8B-Instruct-Q8_0.gguf    ~8.0 GB  (skill_implementation)
+Models required (~10 GB total):
+  - Qwen3-8B-Q4_K_M.gguf                      ~5.0 GB  (skill_implementation, LAYER 2)
   - whisper-large-v3                           ~3.0 GB  (LAYER_1 transcription)
   - resemble-enhance weights                  ~681 MB  (LAYER_1 audio enhancement)
   - Audio2Emotion-v3.0/network.onnx           ~1.2 GB  (LAYER_1 emotion detection)
+  - pyannote/speaker-diarization-3.1          small     (LAYER_1 diarization pipeline config)
   - pyannote/segmentation-3.0                 ~500 MB  (LAYER_1 diarization)
   - pyannote/wespeaker-voxceleb-resnet34-LM   ~500 MB  (LAYER_1 diarization)
 
@@ -31,14 +32,14 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).parent.resolve()
 
 MODELS = {
-    "llama": {
-        "description": "Meta-Llama-3.1-8B-Instruct (Q8, GGUF) — used by skill_implementation",
-        "size": "~8.0 GB",
+    "qwen3": {
+        "description": "Qwen3-8B (Q4_K_M, GGUF) — selective-thinking judge for LAYER 2 + all skills",
+        "size": "~5.0 GB",
         "dest": REPO_ROOT / "skill_implementation" / "models",
         "requires_token": False,
         "download": "huggingface_file",
-        "repo_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
-        "filename": "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf",
+        "repo_id": "Qwen/Qwen3-8B-GGUF",
+        "filename": "Qwen3-8B-Q4_K_M.gguf",
     },
     "whisper": {
         "description": "whisper-large-v3 — used by LAYER_1 transcription",
@@ -49,12 +50,12 @@ MODELS = {
         "repo_id": "openai/whisper-large-v3",
     },
     "resemble": {
-        "description": "resemble-enhance weights — used by LAYER_1 audio enhancement",
+        "description": "resemble-enhance weights — auto-downloaded by package on first denoise call",
         "size": "~681 MB",
         "dest": REPO_ROOT / "LAYER_1" / "models" / "resemble-enhance",
         "requires_token": False,
-        "download": "huggingface_snapshot",
-        "repo_id": "resemble-enhance/resemble-enhance",
+        "download": "skip",  # the resemble_enhance package fetches weights lazily from its own CDN
+        "repo_id": "ResembleAI/resemble-enhance",
     },
     "audio2emotion": {
         "description": "Audio2Emotion-v3.0 (ONNX) — used by LAYER_1 emotion detection",
@@ -63,6 +64,14 @@ MODELS = {
         "requires_token": False,
         "download": "huggingface_snapshot",
         "repo_id": "nvidia/Audio2Emotion-v3.0",
+    },
+    "pyannote-diarization": {
+        "description": "pyannote/speaker-diarization-3.1 — top-level diarization pipeline config",
+        "size": "small",
+        "dest": REPO_ROOT / "LAYER_1" / "models" / "pyannote" / "speaker-diarization-3.1",
+        "requires_token": True,
+        "download": "huggingface_snapshot",
+        "repo_id": "pyannote/speaker-diarization-3.1",
     },
     "pyannote-segmentation": {
         "description": "pyannote/segmentation-3.0 — used by LAYER_1 diarization",
@@ -113,6 +122,9 @@ def download_file(repo_id, filename, local_dir, token=None):
 
 
 def is_already_downloaded(model_key, model_info):
+    if model_info.get("download") == "skip":
+        # Lazy-loaded models (e.g. resemble-enhance) — always treat as already handled.
+        return True
     dest = model_info["dest"]
     if not dest.exists():
         return False
@@ -130,7 +142,7 @@ def print_model_list():
     for key, info in MODELS.items():
         token_note = "  [requires HF token]" if info["requires_token"] else ""
         print(f"  {key:<28} {info['size']:<12} {info['description']}{token_note}")
-    print("\n  Total: ~12.5 GB")
+    print("\n  Total: ~10 GB")
     print()
 
 
@@ -142,7 +154,10 @@ def download_model(key, info, token=None):
     print(f"  Size   : {info['size']}")
 
     if is_already_downloaded(key, info):
-        print(f"  Status : Already downloaded, skipping.")
+        if info.get("download") == "skip":
+            print(f"  Status : Lazy-loaded by package on first use — no pre-download needed.")
+        else:
+            print(f"  Status : Already downloaded, skipping.")
         return True
 
     if info["requires_token"] and not token:

@@ -21,7 +21,7 @@ def get_generate_call_report_skill_bundle():
     return {
         "name": "generate-call-report",
 
-        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"),
+        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Qwen3-8B-Q4_K_M.gguf"),
 
         "system_prompt": """You are a senior call center quality assurance coach writing a detailed feedback report for a customer service agent.
 
@@ -74,7 +74,9 @@ OUTPUT SCHEMA (return valid JSON matching this structure exactly):
   "coaching_recommendation": "A single actionable paragraph summarizing what the agent should focus on in their next coaching session, referencing the most impactful areas"
 }}
 
-Return ONLY the JSON object:""",
+Return ONLY the JSON object:
+
+/no_think""",
 
         "decoding": {
             "temperature": 0.0,

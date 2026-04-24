@@ -117,6 +117,8 @@ def test_remote_pipeline_happy_path(monkeypatch, client):
         "fetch_result",
         lambda jid: {"layer1": _SAMPLE_LAYER1, "layer2": _SAMPLE_LAYER2},
     )
+    monkeypatch.setattr(app_main, "_ensure_known_company_context", lambda name: name)
+    monkeypatch.setattr(app_main, "REMOTE_PIPELINE_DEADLINE_SECONDS", None)
     # Skip the real sleep to keep the test fast.
     import time
 
@@ -163,6 +165,8 @@ def test_remote_pipeline_failure_marks_call_failed(monkeypatch, client):
         "poll",
         lambda jid: {"status": "failed", "error": "model crashed"},
     )
+    monkeypatch.setattr(app_main, "_ensure_known_company_context", lambda name: name)
+    monkeypatch.setattr(app_main, "REMOTE_PIPELINE_DEADLINE_SECONDS", None)
     import time
 
     monkeypatch.setattr(time, "sleep", lambda *_: None)

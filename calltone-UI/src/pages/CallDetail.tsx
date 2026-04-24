@@ -1,5 +1,7 @@
 import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import apiClient from "@/services/api";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -42,6 +44,33 @@ const CallDetailPage = () => {
     queryFn: () => qaApi.getCallDetailReal(callId!).then((r) => r.data),
     enabled: !!callId,
   });
+
+  const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!call?.audioUrl) {
+      setAudioBlobUrl(null);
+      return;
+    }
+    let objectUrl: string | null = null;
+    let cancelled = false;
+    const path = call.audioUrl.startsWith("/api/")
+      ? call.audioUrl.slice(4)
+      : call.audioUrl;
+    apiClient
+      .get(path, { responseType: "blob", timeout: 60000 })
+      .then((resp) => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(resp.data);
+        setAudioBlobUrl(objectUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setAudioBlobUrl(null);
+      });
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [call?.audioUrl]);
 
   return (
     <PageTransition>
@@ -130,7 +159,18 @@ const CallDetailPage = () => {
                 )}
               </div>
 
-              {call.drivePreviewUrl ? (
+              {audioBlobUrl ? (
+                <div className="rounded-2xl overflow-hidden border border-white/[0.06] bg-black/20 p-3">
+                  <audio
+                    controls
+                    preload="metadata"
+                    className="w-full"
+                    src={audioBlobUrl}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              ) : call.drivePreviewUrl ? (
                 <div className="rounded-2xl overflow-hidden border border-white/[0.06] bg-black/20">
                   <iframe
                     src={call.drivePreviewUrl}
@@ -141,6 +181,8 @@ const CallDetailPage = () => {
                     title="Call audio preview"
                   />
                 </div>
+              ) : call.audioUrl ? (
+                <p className="text-sm text-muted-foreground">Loading audio…</p>
               ) : (
                 <p className="text-sm text-muted-foreground">
                   No audio preview available for this call.

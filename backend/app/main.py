@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import hashlib
+import os
 import secrets
 import uuid
 import threading
@@ -44,9 +45,47 @@ import app.models  # noqa
 configure_logging()
 log = get_logger("calltone.api")
 
-UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
+APP_DIR = Path(__file__).resolve().parent
+BACKEND_DIR = APP_DIR.parent
+REPO_DIR_CANDIDATES = [
+    BACKEND_DIR.parent,  # repo root in local dev: <repo>/backend/app/main.py
+    BACKEND_DIR,         # deployed backend root: <deploy>/app/main.py
+]
+
+
+def _resolve_models_dir() -> Path:
+    for base in REPO_DIR_CANDIDATES:
+        candidate = base / "models"
+        if candidate.exists():
+            return candidate
+    # Default to the deployed-backend layout if no models dir exists yet.
+    return BACKEND_DIR / "models"
+
+
+def _env_timeout_seconds(name: str) -> int | None:
+    """
+    Parse an optional timeout env var.
+
+    Unset, empty, zero, or negative disables the backend-side deadline so the
+    remote GPU pipeline can run as long as needed.
+    """
+    raw = str(os.getenv(name, "")).strip()
+    if not raw:
+        return None
+    try:
+        value = int(raw)
+    except ValueError:
+        log.warning("invalid timeout env %s=%r; disabling backend deadline", name, raw)
+        return None
+    return value if value > 0 else None
+
+
+UPLOAD_DIR = BACKEND_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
-MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
+MODELS_DIR = _resolve_models_dir()
+CONTEXTS_DIR = MODELS_DIR / "LAYER_2" / "company_context" / "contexts"
+TICKETS_DIR  = MODELS_DIR / "LAYER_2" / "change_management" / "tickets"
+REMOTE_PIPELINE_DEADLINE_SECONDS = _env_timeout_seconds("REMOTE_PIPELINE_DEADLINE_SECONDS")
 
 Base.metadata.create_all(bind=engine)
 
@@ -60,6 +99,72 @@ except Exception:
     pass
 
 
+def _context_path(company_name: str) -> Path:
+    return CONTEXTS_DIR / f"{str(company_name or '').strip().lower().replace(' ', '_')}.json"
+
+
+def _available_company_contexts() -> list[str]:
+    import json as _json
+
+    names: list[str] = []
+    if CONTEXTS_DIR.exists():
+        for f in sorted(CONTEXTS_DIR.glob("*.json")):
+            if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
+                continue
+            try:
+                data = _json.loads(f.read_text(encoding="utf-8"))
+                names.append(str(data.get("company_name") or f.stem))
+            except Exception:
+                names.append(f.stem)
+    return names
+
+
+def _default_pipeline_company() -> str:
+    available = _available_company_contexts()
+    for candidate in available:
+        if str(candidate).strip().lower() == "metroboost":
+            return candidate
+    return available[0] if available else "metroboost"
+
+
+def _ensure_known_company_context(company_name: str) -> str:
+    company_name = str(company_name or "").strip()
+    if not company_name:
+        raise FileNotFoundError("No company context configured for QA scoring.")
+    if _context_path(company_name).exists():
+        return company_name
+
+    available = _available_company_contexts()
+    # In the split 3-server deployment, the authoritative company-context store
+    # lives on the GPU model server. The backend may have an empty local
+    # contexts dir after a fresh deploy, so do not reject valid uploads just
+    # because this host is missing mirrored JSON files.
+    if os.getenv("MODEL_SERVER_URL"):
+        if available:
+            log.warning(
+                "Local backend context missing for '%s'; trusting remote model "
+                "server context store. Local contexts currently available: %s",
+                company_name,
+                ", ".join(available),
+            )
+        else:
+            log.warning(
+                "Local backend context store is empty; trusting remote model "
+                "server to resolve '%s'.",
+                company_name,
+            )
+        return company_name
+
+    if available:
+        raise FileNotFoundError(
+            "No context found for company: "
+            f"{company_name}. Available contexts: {', '.join(available)}"
+        )
+    raise FileNotFoundError(
+        f"No context found for company: {company_name}. No contexts are available."
+    )
+
+
 def _run_startup_migrations():
     """Add columns to existing tables that were added after initial create_all."""
     from sqlalchemy import text, inspect
@@ -70,11 +175,16 @@ def _run_startup_migrations():
             conn.execute(text("ALTER TABLE employees ADD COLUMN user_id INTEGER REFERENCES users(id)"))
             conn.commit()
 
+        call_cols = [c["name"] for c in inspector.get_columns("calls")]
+        if "storage_path" not in call_cols:
+            conn.execute(text("ALTER TABLE calls ADD COLUMN storage_path VARCHAR(512)"))
+            conn.commit()
+
     # Ensure the singleton pipeline settings row exists
     db = SessionLocal()
     try:
         if not db.query(PipelineSettings).filter(PipelineSettings.id == 1).first():
-            db.add(PipelineSettings(id=1))
+            db.add(PipelineSettings(id=1, company_name=_default_pipeline_company()))
             db.commit()
     finally:
         db.close()
@@ -122,6 +232,61 @@ import re as _re_for_sanitize
 _FILENAME_SAFE_RE = _re_for_sanitize.compile(r"[^A-Za-z0-9._-]")
 _FILENAME_FALLBACK = "upload.bin"
 _FILENAME_MAX_LEN = 80
+
+
+def _extract_evidence_row(ev: dict, speaker_turns: list[dict]) -> dict:
+    """Normalize one Layer-2 evidence dict into the UI's row shape.
+
+    The skill's evidence schema varies per criterion (quote vs customer_quote
+    vs agent_quote, reason vs rationale vs assessment, ...). We try every
+    known key and, if speaker is still missing, infer it by substring-matching
+    the quote against transcript turns.
+    """
+    quote = (ev.get("quote")
+             or ev.get("customer_quote")
+             or ev.get("agent_quote")
+             or ev.get("agent_utterance")
+             or ev.get("statement")
+             or ev.get("description", ""))
+    speaker = (ev.get("speaker", "")
+               or ("Customer" if ev.get("customer_quote") else "")
+               or ("Customer Service Agent" if ev.get("agent_quote") or ev.get("agent_utterance") else ""))
+    # The L2 skill embeds the speaker as a "Speaker: text" prefix in `quote`.
+    # Strip it into the dedicated speaker field so the UI can render both.
+    if quote and ":" in quote and not speaker:
+        head, sep, rest = quote.partition(":")
+        head = head.strip()
+        if head in ("Customer Service Agent", "Customer", "Agent"):
+            speaker = head
+            quote = rest.strip()
+    if not speaker and quote and speaker_turns:
+        # Substring lookup: cheap O(N) scan; transcripts are <100 turns.
+        snippet = quote.strip()[:40]
+        for turn in speaker_turns:
+            text = turn.get("text", "") or ""
+            if snippet and snippet in text:
+                speaker = turn.get("role") or turn.get("speaker", "")
+                break
+    reason = (ev.get("reason")
+              or ev.get("rationale")
+              or ev.get("explanation")
+              or ev.get("justification")
+              or ev.get("note")
+              or ev.get("assessment")
+              or ev.get("severity_contribution", ""))
+    # script_compliance evidence carries `rule` + `met` instead of a free-text
+    # reason; synthesize a human sentence so the UI has something to show.
+    if not reason:
+        rule = ev.get("rule") or ev.get("policy") or ev.get("guideline")
+        if rule is not None:
+            met = ev.get("met")
+            if met is True:
+                reason = f"Followed: {rule}"
+            elif met is False:
+                reason = f"Missed: {rule}"
+            else:
+                reason = str(rule)
+    return {"quote": quote, "speaker": speaker, "reason": reason}
 
 
 def _sanitize_filename(name: str | None) -> str:
@@ -195,18 +360,36 @@ def health_detailed():
         overall_ok = False
         checks["database"] = {"ok": False, "error": str(exc)[:200]}
 
-    # Model directory presence (don't load weights, just confirm path)
-    try:
-        model_dir_exists = MODELS_DIR.exists()
-        checks["models_dir"] = {
-            "ok": model_dir_exists,
-            "path": str(MODELS_DIR),
-        }
-        if not model_dir_exists:
+    # Model presence: in split deployments (MODEL_SERVER_URL set) the weights
+    # live on a separate GPU host reached via the model_server, so the local
+    # /opt/models check is meaningless — skip it. Ping the remote /v1/health
+    # if reachable, but treat unreachable as a soft warning, not a failure:
+    # the backend should still be ready to serve UI, login, history etc. even
+    # when the GPU instance is paused (cost-saving on Vast on-demand).
+    if os.getenv("MODEL_SERVER_URL"):
+        from app.model_client import model_server_health
+        try:
+            remote = model_server_health(timeout=2.0)
+            checks["model_server"] = {"ok": True, "remote": remote}
+        except Exception as exc:
+            checks["model_server"] = {
+                "ok": False,
+                "warning": "remote model server unreachable",
+                "error": str(exc)[:200],
+            }
+            # Intentionally don't flip overall_ok — see comment above.
+    else:
+        try:
+            model_dir_exists = MODELS_DIR.exists()
+            checks["models_dir"] = {
+                "ok": model_dir_exists,
+                "path": str(MODELS_DIR),
+            }
+            if not model_dir_exists:
+                overall_ok = False
+        except Exception as exc:
             overall_ok = False
-    except Exception as exc:
-        overall_ok = False
-        checks["models_dir"] = {"ok": False, "error": str(exc)[:200]}
+            checks["models_dir"] = {"ok": False, "error": str(exc)[:200]}
 
     # Upload directory + free disk
     try:
@@ -822,6 +1005,37 @@ def get_qa_calls(
 
 ## QA Call detail endpoint
 
+@app.get(f"{settings.API_V1_PREFIX}/qa/calls/{{call_id}}/audio")
+def get_qa_call_audio(
+    call_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    from fastapi.responses import FileResponse
+    import mimetypes
+
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+    if not call.storage_path:
+        raise HTTPException(status_code=404, detail="No stored audio for this call")
+
+    path = Path(call.storage_path)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Audio file missing on disk")
+
+    media_type, _ = mimetypes.guess_type(str(path))
+    if media_type is None:
+        media_type = "application/octet-stream"
+
+    return FileResponse(
+        str(path),
+        media_type=media_type,
+        filename=call.original_filename or path.name,
+        headers={"Accept-Ranges": "bytes", "Cache-Control": "private, max-age=300"},
+    )
+
+
 @app.get(f"{settings.API_V1_PREFIX}/qa/calls/{{call_id}}")
 def get_qa_call_detail(
     call_id: str,
@@ -851,6 +1065,10 @@ def get_qa_call_detail(
         f"https://drive.google.com/uc?export=download&id={drive_file_id}"
         if drive_file_id else None
     )
+    audio_url = (
+        f"{settings.API_V1_PREFIX}/qa/calls/{call.id}/audio"
+        if call.storage_path and Path(call.storage_path).is_file() else None
+    )
 
     return {
         "callId": call.id,
@@ -858,6 +1076,7 @@ def get_qa_call_detail(
         "driveFileId": drive_file_id,
         "drivePreviewUrl": drive_preview_url,
         "driveDownloadUrl": drive_download_url,
+        "audioUrl": audio_url,
         "callTime": call.call_time.isoformat() if call.call_time else None,
         "durationSeconds": call.duration_seconds,
         "status": call.status,
@@ -984,9 +1203,32 @@ ALLOWED_AUDIO_TYPES = {
     "application/octet-stream",
 }
 MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+VALID_ASR_ENGINES = {"fasterwhisper", "sensevoice"}
 
 
-def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
+def _normalize_asr_engine(asr_engine: str | None) -> str:
+    engine = str(asr_engine or "fasterwhisper").strip().lower()
+    if engine not in VALID_ASR_ENGINES:
+        raise ValueError(
+            f"Unsupported ASR engine: {engine}. Expected one of: "
+            f"{', '.join(sorted(VALID_ASR_ENGINES))}"
+        )
+    return engine
+
+
+def _asr_metadata(asr_engine: str | None) -> tuple[str, str]:
+    engine = _normalize_asr_engine(asr_engine)
+    if engine == "sensevoice":
+        return "sensevoice", "SenseVoiceSmall"
+    return "fasterwhisper", "large-v3"
+
+
+def _run_real_pipeline(
+    call_id: str,
+    audio_path: str,
+    company: str = "BankServ Global",
+    asr_engine: str = "fasterwhisper",
+):
     """
     Background task: run the real 3-layer AI pipeline on an uploaded audio file.
 
@@ -997,6 +1239,7 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
     If the real pipeline fails (models missing, GPU unavailable, etc.), the
     error is stored on the Call record so the status endpoint reports it.
     """
+    import os as _os
     import sys as _sys
     import json as _json
 
@@ -1030,12 +1273,17 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         num_speakers    = ps.num_speakers    if ps else None
         report_mode     = ps.report_mode     if ps else "simple"
         use_consensus   = ps.use_consensus   if ps else False
-        _company        = ps.company_name    if ps else company
+        _company        = _ensure_known_company_context(ps.company_name if ps else company)
+
+        asr_engine = _normalize_asr_engine(asr_engine)
+        asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
 
         call.status = "PROCESSING"
         _set_step("denoising")
 
         # ── Layer 1: Audio → structured transcript JSON ──────────────────
+        _os.environ["CALLTONE_ASR"] = asr_engine
+
         from run_full_pipeline import (
             denoise_audio, transcribe_diarize,
             run_role_identification, run_emotion_detection,
@@ -1090,9 +1338,11 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
             call_id=call_id,
             full_text=full_text,
             speaker_turns=speaker_turns,
-            asr_engine="SenseVoice",
-            asr_model="SenseVoiceSmall",
-            avg_confidence=0.91,
+            asr_engine=asr_engine_db,
+            asr_model=asr_model_db,
+            # Layer 1 doesn't surface per-word probabilities; leave null rather
+            # than fabricate a value. WER eval (T09) is the source of truth.
+            avg_confidence=None,
         )
         db.add(transcript)
         call.current_step = "scoring"
@@ -1142,6 +1392,8 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
 
         overall_score = l2_result.get("overall_weighted_score", 0)
         criteria = l2_result.get("criteria_ratings", {})
+        if not criteria:
+            raise RuntimeError("Local pipeline completed without Layer 2 QA scores.")
 
         dim_scores = {}
         dim_reports = {}
@@ -1153,21 +1405,8 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
             cc = info.get("consensus_confidence")
             confidence_scores[crit] = cc if cc is not None else info.get("confidence")
             for ev in info.get("evidence", []):
-                quote = (ev.get("quote")
-                         or ev.get("customer_quote")
-                         or ev.get("description", ""))
-                speaker = (ev.get("speaker", "")
-                           or ("Customer" if ev.get("customer_quote") else ""))
-                reason = (ev.get("reason")
-                          or ev.get("note")
-                          or ev.get("assessment")
-                          or ev.get("severity_contribution", ""))
-                evidence.append({
-                    "dimension": crit,
-                    "quote": quote,
-                    "speaker": speaker,
-                    "reason": reason,
-                })
+                row = _extract_evidence_row(ev, speaker_turns)
+                evidence.append({"dimension": crit, **row})
 
         # Determine severity from score
         if overall_score >= 85:
@@ -1255,7 +1494,12 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         db.close()
 
 
-def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
+def _run_remote_pipeline(
+    call_id: str,
+    audio_path: str,
+    company: str = "BankServ Global",
+    asr_engine: str = "fasterwhisper",
+):
     """Delegate pipeline execution to the Tier-3 model server.
 
     Polls ``/v1/jobs/{id}`` until terminal, then writes Transcript + QaReport
@@ -1283,9 +1527,12 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
         if not call:
             return
 
+        asr_engine = _normalize_asr_engine(asr_engine)
+        asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
+
         ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
         num_speakers = ps.num_speakers if ps else None
-        _company = ps.company_name if ps else company
+        _company = _ensure_known_company_context(ps.company_name if ps else company)
 
         call.status = "PROCESSING"
         call.current_step = "queued"
@@ -1294,13 +1541,20 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
         job_id = model_client.submit(
             audio_path, company=_company, speakers=num_speakers,
             filename=call.original_filename,
+            asr_engine=asr_engine,
         )
 
-        # Poll until terminal. The server GC window is 5 min after done,
-        # so we have a comfortable buffer to fetch the result.
-        deadline = _time.time() + 1200  # 20 min hard cap
+        # Poll until terminal. By default there is no backend-side hard cap;
+        # long calls should finish instead of being failed at an arbitrary
+        # wall-clock limit. Set REMOTE_PIPELINE_DEADLINE_SECONDS>0 to restore
+        # a safety deadline if needed during ops/debugging.
+        deadline = (
+            _time.time() + REMOTE_PIPELINE_DEADLINE_SECONDS
+            if REMOTE_PIPELINE_DEADLINE_SECONDS is not None
+            else None
+        )
         last_step: str | None = None
-        while _time.time() < deadline:
+        while True:
             state = model_client.poll(job_id)
             status = state.get("status", "")
             step = STATUS_TO_STEP.get(status, status)
@@ -1314,13 +1568,21 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
                 raise RuntimeError(
                     f"model server reported failure: {state.get('error')}"
                 )
+            if deadline is not None and _time.time() >= deadline:
+                raise TimeoutError(
+                    "model server did not finish before REMOTE_PIPELINE_DEADLINE_SECONDS elapsed"
+                )
             _time.sleep(2)
-        else:
-            raise TimeoutError("model server did not finish within 20 min")
 
         bundle = model_client.fetch_result(job_id)
         layer1 = bundle.get("layer1") or {}
         layer2 = bundle.get("layer2") or bundle.get("call_rating") or {}
+        criteria = layer2.get("criteria_ratings", {}) if isinstance(layer2, dict) else {}
+        if not criteria:
+            raise RuntimeError(
+                "Remote pipeline completed without Layer 2 QA scores. "
+                "Check model-server pipeline.log for the underlying failure."
+            )
 
         # ── Transcript row (mirrors local path) ───────────────────────────
         speaker_turns = layer1.get("transcript", []) if isinstance(layer1, dict) else []
@@ -1337,9 +1599,9 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
             call_id=call_id,
             full_text=full_text,
             speaker_turns=speaker_turns,
-            asr_engine="SenseVoice",
-            asr_model="SenseVoiceSmall",
-            avg_confidence=0.91,
+            asr_engine=asr_engine_db,
+            asr_model=asr_model_db,
+            avg_confidence=None,
         )
         db.add(transcript)
         call.duration_seconds = round(duration, 3) if duration else None
@@ -1347,7 +1609,6 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
 
         # ── QaReport row (mirrors local path) ─────────────────────────────
         overall_score = layer2.get("overall_weighted_score", 0)
-        criteria = layer2.get("criteria_ratings", {})
         dim_scores: dict[str, object] = {}
         dim_reports: dict[str, object] = {}
         confidence_scores: dict[str, object] = {}
@@ -1358,19 +1619,8 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
             cc = info.get("consensus_confidence")
             confidence_scores[crit] = cc if cc is not None else info.get("confidence")
             for ev in info.get("evidence", []):
-                quote = (ev.get("quote")
-                         or ev.get("customer_quote")
-                         or ev.get("description", ""))
-                speaker = (ev.get("speaker", "")
-                           or ("Customer" if ev.get("customer_quote") else ""))
-                reason = (ev.get("reason")
-                          or ev.get("note")
-                          or ev.get("assessment")
-                          or ev.get("severity_contribution", ""))
-                evidence.append({
-                    "dimension": crit, "quote": quote,
-                    "speaker": speaker, "reason": reason,
-                })
+                row = _extract_evidence_row(ev, speaker_turns)
+                evidence.append({"dimension": crit, **row})
 
         if overall_score >= 85:
             severity = "Minor"
@@ -1379,12 +1629,45 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
         else:
             severity = "Major"
 
-        report_json = layer2.get("report_json") or {
-            "summary": f"Call scored {overall_score}/100 (remote pipeline).",
-            "strengths": [],
-            "weaknesses": [],
-            "recommended_actions": [],
-        }
+        # Prefer LAYER 3's narrative if the model server returned one;
+        # otherwise synthesize a passable AI quality report from LAYER 2's
+        # per-criterion summaries so the UI never has empty bullets.
+        report_json = layer2.get("report_json") or bundle.get("layer3", {}).get("report_json")
+        if not report_json:
+            _label = lambda k: k.replace("_", " ").title()
+            strengths = [
+                f"{_label(c)} ({info.get('score', 0)}/100): {(info.get('summary') or '').strip()}"
+                for c, info in criteria.items()
+                if (info.get("score") or 0) >= 70 and (info.get("summary") or "").strip()
+            ]
+            weaknesses = [
+                f"{_label(c)} ({info.get('score', 0)}/100): {(info.get('summary') or '').strip()}"
+                for c, info in criteria.items()
+                if (info.get("score") or 0) < 70 and (info.get("summary") or "").strip()
+            ]
+            actions: list[str] = []
+            for c, info in criteria.items():
+                if (info.get("score") or 0) >= 70:
+                    continue
+                for ev in info.get("evidence", [])[:2]:
+                    rule = ev.get("rule") or ev.get("policy") or ev.get("guideline")
+                    if ev.get("met") is False and rule:
+                        actions.append(f"{_label(c)}: enforce '{rule}'.")
+                    elif rule:
+                        actions.append(f"{_label(c)}: review '{rule}'.")
+            # Dedupe while preserving order.
+            seen: set[str] = set()
+            actions = [a for a in actions if not (a in seen or seen.add(a))][:6]
+            report_json = {
+                "summary": (
+                    f"Call scored {overall_score}/100 across {len(criteria)} dimensions. "
+                    f"Severity: {severity}. {len(strengths)} dimension(s) above threshold, "
+                    f"{len(weaknesses)} below."
+                ),
+                "strengths": strengths,
+                "weaknesses": weaknesses,
+                "recommended_actions": actions,
+            }
 
         qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
         qa_id = qa_emp.id if qa_emp else call.employee_id
@@ -1419,7 +1702,7 @@ def _run_remote_pipeline(call_id: str, audio_path: str, company: str = "BankServ
         db.close()
 
 
-def _run_pipeline(call_id: str, audio_path: str):
+def _run_pipeline(call_id: str, audio_path: str, asr_engine: str = "fasterwhisper"):
     """
     Dispatch: remote model server (if MODEL_SERVER_URL set) or local pipeline.
     Errors from either path are persisted to the Call record.
@@ -1427,9 +1710,9 @@ def _run_pipeline(call_id: str, audio_path: str):
     try:
         from app import model_client
         if model_client.configured():
-            _run_remote_pipeline(call_id, audio_path)
+            _run_remote_pipeline(call_id, audio_path, asr_engine=asr_engine)
         else:
-            _run_real_pipeline(call_id, audio_path)
+            _run_real_pipeline(call_id, audio_path, asr_engine=asr_engine)
     except Exception as exc:
         db = SessionLocal()
         try:
@@ -1447,6 +1730,7 @@ def _run_pipeline(call_id: str, audio_path: str):
 async def upload_call(
     file: UploadFile = File(...),
     agent_id: str = Form(default=""),
+    asr_engine: str = Form(default="fasterwhisper"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -1458,6 +1742,11 @@ async def upload_call(
             status_code=400,
             detail=f"Unsupported file type: {file.content_type}. Upload an audio file.",
         )
+
+    try:
+        asr_engine = _normalize_asr_engine(asr_engine)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
@@ -1504,6 +1793,7 @@ async def upload_call(
         customer_id=customer.id,
         employee_id=employee.id,
         original_filename=safe_filename,
+        storage_path=str(dest),
         size_bytes=len(content),
         sha256=sha256,
         status="PENDING",
@@ -1520,7 +1810,7 @@ async def upload_call(
     import multiprocessing
     ctx = multiprocessing.get_context("spawn")
     p = ctx.Process(
-        target=_run_pipeline, args=(call_id, str(dest)),
+        target=_run_pipeline, args=(call_id, str(dest), asr_engine),
         name=f"pipeline-{call_id[:8]}", daemon=True,
     )
     p.start()
@@ -1572,7 +1862,7 @@ def get_pipeline_settings(
 ):
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
-        ps = PipelineSettings(id=1)
+        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
         db.add(ps)
         db.commit()
         db.refresh(ps)
@@ -1598,7 +1888,7 @@ def update_pipeline_settings(
 
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
-        ps = PipelineSettings(id=1)
+        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
         db.add(ps)
 
     if "audioMode" in payload:
@@ -1619,7 +1909,10 @@ def update_pipeline_settings(
     if "useConsensus" in payload:
         ps.use_consensus = bool(payload["useConsensus"])
     if "companyName" in payload:
-        ps.company_name = str(payload["companyName"])
+        try:
+            ps.company_name = _ensure_known_company_context(payload["companyName"])
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
 
     from datetime import datetime, timezone
     ps.updated_at = datetime.now(timezone.utc)
@@ -1636,9 +1929,6 @@ def update_pipeline_settings(
 
 
 # ── Company Context endpoints ─────────────────────────────────────────────────
-
-CONTEXTS_DIR = MODELS_DIR / "LAYER_2" / "company_context" / "contexts"
-TICKETS_DIR  = MODELS_DIR / "LAYER_2" / "change_management" / "tickets"
 
 # In-memory store for background ingest jobs
 # { job_id: { "status": "running"|"completed"|"failed", "progress": str, "result": dict|None, "error": str|None } }

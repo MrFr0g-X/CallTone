@@ -15,14 +15,14 @@ from skill_runtime import load_skill, run_skill
 # These tests load the real Llama 3.1 8B GGUF (~8 GB). Skip when the
 # weights aren't present (CI, fresh clones) so the suite stays useful
 # without forcing a model download.
-_LLAMA_GGUF = (
+_QWEN3_GGUF = (
     Path(__file__).parent.parent
     / "models"
-    / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"
+    / "Qwen3-8B-Q4_K_M.gguf"
 )
 pytestmark = pytest.mark.skipif(
-    not _LLAMA_GGUF.exists(),
-    reason=f"Llama GGUF not present at {_LLAMA_GGUF}; run download_models.py",
+    not _QWEN3_GGUF.exists(),
+    reason=f"Qwen3 GGUF not present at {_QWEN3_GGUF}; run download_models.py",
 )
 
 

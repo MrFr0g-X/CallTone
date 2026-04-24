@@ -236,6 +236,8 @@ export interface UploadCallResponse {
   message: string;
 }
 
+export type AsrEngine = "fasterwhisper" | "sensevoice";
+
 export interface CallStatusResponse {
   callId: string;
   status: string;
@@ -246,10 +248,11 @@ export interface CallStatusResponse {
 }
 
 export const callsApi = {
-  upload: (file: File, agentId?: string) => {
+  upload: (file: File, agentId?: string, asrEngine: AsrEngine = "fasterwhisper") => {
     const formData = new FormData();
     formData.append("file", file);
     if (agentId) formData.append("agent_id", agentId);
+    formData.append("asr_engine", asrEngine);
     return apiClient.post<UploadCallResponse>("/calls/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
       timeout: 120000,
@@ -301,6 +304,7 @@ export interface QaCallDetailResponse {
   driveFileId: string;
   drivePreviewUrl: string | null;
   driveDownloadUrl: string | null;
+  audioUrl: string | null;
   callTime: string | null;
   durationSeconds: number | null;
   status: string;
