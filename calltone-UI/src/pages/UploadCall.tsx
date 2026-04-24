@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
 import { callsApi } from "@/services/api";
+import type { AsrEngine } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type UploadStage = "idle" | "uploading" | "processing" | "completed" | "error";
@@ -40,6 +41,7 @@ const UploadCall = () => {
   const [callId, setCallId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [asrEngine, setAsrEngine] = useState<AsrEngine>("fasterwhisper");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = () => {
@@ -110,7 +112,7 @@ const UploadCall = () => {
     setErrorMsg("");
 
     try {
-      const res = await callsApi.upload(file);
+      const res = await callsApi.upload(file, undefined, asrEngine);
       const { callId: id } = res.data;
       setCallId(id);
       setStage("processing");
@@ -220,6 +222,53 @@ const UploadCall = () => {
                     <X className="w-4 h-4 text-muted-foreground" />
                   </button>
                 )}
+              </div>
+            </GlassCard>
+          )}
+
+          {file && (stage === "idle" || stage === "error") && (
+            <GlassCard className="p-5">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    ASR Engine
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Test transcript quality using the current fast engine or the original SenseVoice path.
+                  </p>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAsrEngine("fasterwhisper")}
+                    className={cn(
+                      "text-left rounded-2xl border p-4 transition-all",
+                      asrEngine === "fasterwhisper"
+                        ? "border-primary bg-primary/10"
+                        : "border-border/50 hover:border-primary/40"
+                    )}
+                  >
+                    <p className="text-sm font-medium text-foreground">Faster-Whisper</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Current default. Faster, lower latency, best for quick testing.
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAsrEngine("sensevoice")}
+                    className={cn(
+                      "text-left rounded-2xl border p-4 transition-all",
+                      asrEngine === "sensevoice"
+                        ? "border-primary bg-primary/10"
+                        : "border-border/50 hover:border-primary/40"
+                    )}
+                  >
+                    <p className="text-sm font-medium text-foreground">SenseVoice</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Original path. Better for A/B transcript checks, usually slower.
+                    </p>
+                  </button>
+                </div>
               </div>
             </GlassCard>
           )}

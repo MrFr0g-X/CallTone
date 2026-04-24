@@ -1,0 +1,22 @@
+{
+  "company_name": "BankServ Global",
+  "industry": "banking_finance",
+  "version": "1.0.0",
+  "opening_greeting": "Thank you for calling [Company]. My name is [Agent]. How may I help you today?",
+  "closing_phrase": "Is there anything else I can help you with? Thank you for calling and have a great day.",
+  "required_verification_steps": "1. Confirm caller's full name.\n2. Verify account or reference number.\n3. Confirm one security detail (DOB, postcode, last transaction, etc.).",
+  "hold_procedure": "Before hold: 'May I place you on a brief hold while I look into this?' After hold: 'Thank you for holding. Here is what I found...'",
+  "transfer_procedure": "Explain the reason for transfer, name the destination department, and stay on the line until the customer is connected.",
+  "escalation_procedure": "Escalate to a supervisor if: customer requests one, threatens legal action, the issue cannot be resolved in two attempts, or compliance is at risk.",
+  "mandatory_disclosures": "Inform the customer if the call is being recorded for quality and training purposes at the start of the call.",
+  "products_services": "General customer service: account inquiries, technical support, billing questions, complaints, and general information requests.",
+  "pricing_policies": "All pricing must match current published rates. Agents must NOT quote prices not present in the official price list.",
+  "policy_documents": "Standard refund window: 30 days from purchase date with receipt. Warranty: per product specification. Cancellation: 30-day notice required.",
+  "common_facts": "Business hours: 9 AM - 6 PM weekdays. Support phone: 1-800-XXX-XXXX. Average resolution time for standard issues: 24-48 hours.",
+  "tone_guidelines": "Professional, warm, and courteous throughout. Use the customer's name. Avoid technical jargon. Match the customer's pace. Never argue or be defensive.",
+  "empathy_phrases": "I understand how frustrating that must be.\nI'm sorry you're experiencing this.\nThat is completely understandable.\nLet's see how we can resolve this together.",
+  "prohibited_language": "Profanity, slang, dismissive phrases (e.g., 'calm down', 'that's not my problem'), promises that cannot be kept, blaming the customer.",
+  "conflict_handling": "Acknowledge the customer's feelings first. Apologize for the inconvenience even if not at fault. Restate the issue in your own words. Offer at least one concrete next step. Escalate if tension does not de-escalate.",
+  "resolution_definition": "Issue is resolved when: (a) customer explicitly confirms satisfaction, (b) the agent provided a concrete solution, follow-up commitment, or ticket reference, and (c) the customer agreed with the next step.",
+  "follow_up_requirements": "Provide a ticket or reference number for any unresolved issue. Offer a callback if the resolution requires more time. Confirm the next step before ending the call."
+}

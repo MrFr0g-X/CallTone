@@ -71,7 +71,13 @@ def build_command(
     output_dir: Path,
     speakers: int | None = None,
     report_mode: str = "both",
+    asr_engine: str = "fasterwhisper",
 ) -> list[str]:
+    # QA calls are agent + customer = 2 speakers. Letting pyannote auto-detect
+    # over-segments short calls into 3+ clusters, leaving the extra cluster
+    # without a role label and zeroing Issue Resolution downstream.
+    effective_speakers = 2 if speakers is None else speakers
+
     cmd: list[str] = [
         sys.executable,
         str(pipeline_script_path()),
@@ -82,9 +88,11 @@ def build_command(
         str(output_dir),
         "--report",
         report_mode,
+        "--asr",
+        asr_engine,
+        "--speakers",
+        str(effective_speakers),
     ]
-    if speakers is not None:
-        cmd += ["--speakers", str(speakers)]
     return cmd
 
 
@@ -95,7 +103,8 @@ def run_pipeline_blocking(
     output_dir: Path,
     speakers: int | None = None,
     report_mode: str = "both",
-    timeout_seconds: int = 600,
+    asr_engine: str = "fasterwhisper",
+    timeout_seconds: int | None = None,
     on_line: Callable[[str], None] | None = None,
 ) -> int:
     """Run the pipeline subprocess synchronously and stream its stdout.
@@ -114,6 +123,7 @@ def run_pipeline_blocking(
         output_dir=output_dir,
         speakers=speakers,
         report_mode=report_mode,
+        asr_engine=asr_engine,
     )
     log.info(
         "model_server.pipeline.start",
@@ -121,6 +131,14 @@ def run_pipeline_blocking(
     )
     env = os.environ.copy()
     env.setdefault("PYTHONIOENCODING", "utf-8")
+    env.setdefault("TOKENIZERS_PARALLELISM", "false")
+    env.setdefault("OMP_NUM_THREADS", "4")
+    env.setdefault("MKL_NUM_THREADS", "4")
+    env.setdefault("OPENBLAS_NUM_THREADS", "4")
+    env.setdefault("NUMEXPR_NUM_THREADS", "4")
+
+    pipeline_log = output_dir / "pipeline.log"
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Popen so we can stream stdout as the pipeline progresses. stderr is
     # merged in so stack traces don't get lost on failure.
@@ -134,14 +152,19 @@ def run_pipeline_blocking(
     )
     try:
         assert proc.stdout is not None
-        for raw in proc.stdout:
-            line = raw.rstrip()
-            if on_line is not None:
-                try:
-                    on_line(line)
-                except Exception:  # pragma: no cover — callback must not kill us
-                    log.exception("model_server.pipeline.on_line_failed")
-        proc.wait(timeout=timeout_seconds)
+        with pipeline_log.open("a", encoding="utf-8", buffering=1) as log_file:
+            for raw in proc.stdout:
+                line = raw.rstrip()
+                print(line, file=log_file)
+                if on_line is not None:
+                    try:
+                        on_line(line)
+                    except Exception:  # pragma: no cover — callback must not kill us
+                        log.exception("model_server.pipeline.on_line_failed")
+        if timeout_seconds is not None and timeout_seconds > 0:
+            proc.wait(timeout=timeout_seconds)
+        else:
+            proc.wait()
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.wait()

@@ -14,7 +14,15 @@ Usage:
 
 import os
 os.environ["DS_BUILD_OPS"] = "0"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"  # avoid fork warnings
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")  # avoid fork warnings
+
+# Vast containers often report far more logical CPUs than the process should
+# actually use. Leaving BLAS/OpenMP unbounded triggers 90+ thread storms inside
+# diarization/clustering and can stall the pipeline for minutes.
+os.environ.setdefault("OMP_NUM_THREADS", "4")
+os.environ.setdefault("MKL_NUM_THREADS", "4")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "4")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "4")
 
 import sys
 
@@ -64,6 +72,31 @@ sys.path.insert(0, str(PROJECT_ROOT / "skill_implementation"))
 
 # ── Layer 1 helpers (reused from run_pipeline.py) ────────────────────────────
 
+# OPT-A4: SNR gate — skip resemble-enhance on already-clean telephony audio.
+# Tuned via empirical spectral-flatness probe: clean telephony recordings
+# typically score ≥ 18 dB. Anything below gets the full denoise pass.
+_SNR_SKIP_THRESHOLD_DB = 18.0
+
+
+def _estimate_snr_db(audio_path: str) -> float:
+    """
+    Quick SNR proxy via spectral flatness. Returns dB-like value where higher
+    = cleaner audio (more tonal/voiced, less noise-like).
+
+    Reads only the first 10 s of audio for speed (~50–100 ms total).
+    Returns 0.0 on any failure so the gate fails safe → enhancement still runs.
+    """
+    try:
+        import librosa
+        import numpy as np
+        y, _sr = librosa.load(audio_path, sr=None, mono=True, duration=10.0)
+        flatness = librosa.feature.spectral_flatness(y=y)
+        mean_flat = float(np.mean(flatness))
+        return float(-10.0 * np.log10(max(mean_flat, 1e-6)))
+    except Exception:
+        return 0.0
+
+
 def denoise_audio(input_path: str, mode: str = "denoise") -> str:
     """
     Process audio before transcription.
@@ -72,6 +105,9 @@ def denoise_audio(input_path: str, mode: str = "denoise") -> str:
       "none"    — skip processing, return original path
       "denoise" — noise removal only (default, faster)
       "enhance" — full enhancement: denoise + super-resolution (slower)
+
+    OPT-A4: an SNR gate skips resemble-enhance entirely when input audio is
+    already clean (SNR proxy ≥ 18 dB). Saves 15–20 s for clean telephony.
     """
     import torch
     import torch.nn.functional as F
@@ -84,14 +120,25 @@ def denoise_audio(input_path: str, mode: str = "denoise") -> str:
         print(f"{'='*70}")
         return input_path
 
+    # OPT-A4: SNR gate — return original path if audio is already clean.
+    snr_db = _estimate_snr_db(input_path)
+    if snr_db >= _SNR_SKIP_THRESHOLD_DB:
+        print(f"\n{'='*70}")
+        print("LAYER 1 — STEP 1: AUDIO ENHANCEMENT SKIPPED (SNR gate)")
+        print(f"{'='*70}")
+        print(f"Input:    {input_path}")
+        print(f"SNR est.: {snr_db:.1f} dB (threshold: {_SNR_SKIP_THRESHOLD_DB} dB) — clean audio, skipping resemble-enhance")
+        return input_path
+
     from resemble_enhance.enhancer.inference import denoise, enhance as _enhance
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\n{'='*70}")
     print("LAYER 1 — STEP 1: DENOISING")
     print(f"{'='*70}")
-    print(f"Input:  {input_path}")
-    print(f"Device: {device}\n")
+    print(f"Input:    {input_path}")
+    print(f"Device:   {device}")
+    print(f"SNR est.: {snr_db:.1f} dB (threshold: {_SNR_SKIP_THRESHOLD_DB} dB) — running enhancement\n")
 
     dwav_np, sr = sf.read(input_path)
     original_length = len(dwav_np)
@@ -175,25 +222,86 @@ def run_emotion_detection(audio_path: str, json_path: str) -> tuple[str, str]:
 
 # ── Layer 2 ──────────────────────────────────────────────────────────────────
 
+# OPT-A2: skip the LAYER 1 VRAM purge entirely on large GPUs (≥40 GB).
+# A100 80 GB and similar can hold LAYER 1 models (~3.4 GB) + Qwen3-8B Q4_K_M
+# (~5 GB) simultaneously, so reloading wastes 5–8 s per call.
+_LARGE_VRAM_GB_THRESHOLD = 40.0
+_KEEP_LAYER1_RESIDENT_MIN_FREE_GB = 55.0
+
+
+def _gpu_total_vram_gb() -> float:
+    """Total VRAM in GB for the first CUDA device (0.0 if no GPU)."""
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            return 0.0
+        return torch.cuda.get_device_properties(0).total_memory / 1024 ** 3
+    except Exception:
+        return 0.0
+
+
+def _gpu_free_vram_gb() -> float:
+    """
+    Real free VRAM in GB for the first CUDA device.
+
+    Uses the CUDA driver's global view via ``torch.cuda.mem_get_info`` so we
+    account for non-PyTorch allocations too (onnxruntime, llama.cpp, cuDNN
+    workspaces). This is more accurate than ``memory_reserved`` which only sees
+    PyTorch's allocator.
+    """
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            return 0.0
+        free_bytes, _total_bytes = torch.cuda.mem_get_info(0)
+        return free_bytes / 1024 ** 3
+    except Exception:
+        return 0.0
+
+
 def _free_layer1_vram() -> None:
     """
     Release VRAM held by Layer 1 models (Whisper, pyannote, ONNX emotion detector)
     before loading the Layer 2 LLM.
 
+    On GPUs with ≥40 GB VRAM (e.g. A100 80 GB), this is a no-op — there's
+    enough headroom to keep LAYER 1 resident while LAYER 2 loads, saving the
+    5–8 s reload cost per call (OPT-A2). Smaller GPUs (RTX 30/40-series with
+    8–24 GB) still get the full purge to avoid OOM.
+
     PyTorch's allocator keeps reserved blocks invisible to llama.cpp's CUDA
     allocator.  Nulling the module-level caches + calling empty_cache() returns
-    those blocks to the driver so LLaMA 3.1 8B Q8_0 (~8.5 GB) can load.
+    those blocks to the driver so the LLM can load.
 
     This function is safe to call even if Layer 1 was never run in this process.
     """
     import gc
     import torch
 
+    total_gb = _gpu_total_vram_gb()
+    free_gb = _gpu_free_vram_gb()
+    if (
+        total_gb >= _LARGE_VRAM_GB_THRESHOLD
+        and free_gb >= _KEEP_LAYER1_RESIDENT_MIN_FREE_GB
+    ):
+        print(
+            f"  [VRAM] {total_gb:.0f} GB GPU detected, {free_gb:.0f} GB free "
+            f"— keeping LAYER 1 resident (OPT-A2)"
+        )
+        return
+    if total_gb >= _LARGE_VRAM_GB_THRESHOLD:
+        print(
+            f"  [VRAM] {total_gb:.0f} GB GPU detected but only {free_gb:.0f} GB free "
+            f"(< {_KEEP_LAYER1_RESIDENT_MIN_FREE_GB:.0f} GB) — freeing LAYER 1 before LAYER 2"
+        )
+
     # Clear Whisper + pyannote caches (transcribe_diarize.py module globals)
     try:
         import transcribe_diarize as _td
         _td._WHISPER_MODEL     = None
         _td._PYANNOTE_PIPELINE = None
+        if hasattr(_td, "_SENSEVOICE_MODEL"):
+            _td._SENSEVOICE_MODEL = None
     except Exception:
         pass
 
@@ -342,7 +450,16 @@ def main():
         help="Prompt injection scan mode: 'llm' (default) = static + LLM detector, "
              "'static' = regex only (faster), 'off' = disabled (not recommended).",
     )
+    parser.add_argument(
+        "--asr", choices=["fasterwhisper", "sensevoice"], default=None,
+        help="ASR engine to use. Default = fasterwhisper (also via CALLTONE_ASR env). "
+             "Set 'sensevoice' to use Alibaba/FunASR SenseVoiceSmall.",
+    )
     args = parser.parse_args()
+
+    # Propagate --asr to transcribe_diarize via env var (subprocess-safe).
+    if args.asr:
+        os.environ["CALLTONE_ASR"] = args.asr
 
     audio_file = args.audio_file
     if not os.path.exists(audio_file):
@@ -372,11 +489,23 @@ def main():
     if args.skip_layer1:
         # Reuse existing Layer 1 outputs — locate them next to the audio file
         base = os.path.splitext(audio_file)[0]
-        denoised_path = f"{base}_denoised.wav"
-        # Prefer the emotion-enhanced JSON/TXT if it exists, fall back to plain diarized
-        json_path = (f"{base}_denoised_diarized_with_emotions.json"
-                     if os.path.exists(f"{base}_denoised_diarized_with_emotions.json")
-                     else f"{base}_denoised_diarized.json")
+        # Denoise may have been skipped by the SNR gate, in which case the
+        # original audio path is the effective "denoised" input.
+        denoised_path = (
+            f"{base}_denoised.wav"
+            if os.path.exists(f"{base}_denoised.wav")
+            else audio_file
+        )
+        # Support both cache layouts:
+        #   - denoise ran       → *_denoised_diarized(_with_emotions).json
+        #   - denoise skipped   → *_diarized(_with_emotions).json
+        json_candidates = [
+            f"{base}_denoised_diarized_with_emotions.json",
+            f"{base}_diarized_with_emotions.json",
+            f"{base}_denoised_diarized.json",
+            f"{base}_diarized.json",
+        ]
+        json_path = next((p for p in json_candidates if os.path.exists(p)), json_candidates[0])
         txt_path  = json_path.replace(".json", ".txt")
         for p in [denoised_path, json_path, txt_path]:
             if not os.path.exists(p):

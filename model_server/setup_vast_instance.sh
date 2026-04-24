@@ -33,6 +33,11 @@ err() { echo "${LOG_PREFIX} ERROR: $*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] || err "must run as root (Vast's default user is root)"
 [[ -f "${REPO_DIR}/model_server/main.py" ]] || err "REPO_DIR does not look like the grad-project repo: ${REPO_DIR}"
 
+if ! command -v systemctl >/dev/null 2>&1 || [[ ! -d /run/systemd/system ]]; then
+    log "systemd not available — delegating to container bootstrap"
+    exec bash "${REPO_DIR}/model_server/setup_vast_container.sh"
+fi
+
 # ── 1. System deps ────────────────────────────────────────────────────────
 log "installing system packages"
 export DEBIAN_FRONTEND=noninteractive
@@ -62,12 +67,30 @@ pip install \
     "torch==2.4.1+cu121" "torchaudio==2.4.1+cu121" >/dev/null
 
 CMAKE_ARGS="-DGGML_CUDA=on" pip install --no-binary=llama-cpp-python \
-    "llama-cpp-python==0.3.2" >/dev/null
+    "llama-cpp-python==0.3.20" >/dev/null
 
 pip install \
+    "huggingface_hub==0.25.2" \
     "pyannote.audio==3.3.2" \
     "funasr==1.1.14" \
+    "modelscope" \
+    "faster-whisper>=1.0.3" \
     "onnxruntime-gpu==1.19.2" >/dev/null
+
+# Some transitive deps pull in CPU-only ``onnxruntime``, which shadows the GPU
+# wheel and makes Audio2Emotion run on CPU for long calls. Remove it
+# aggressively, then force-reinstall the GPU wheel and verify CUDA is visible.
+pip uninstall -y onnxruntime >/dev/null 2>&1 || true
+pip install --force-reinstall "onnxruntime-gpu==1.19.2" >/dev/null
+python - <<'PY'
+import onnxruntime as ort
+providers = set(ort.get_available_providers())
+assert "CUDAExecutionProvider" in providers, (
+    f"onnxruntime-gpu installed but CUDAExecutionProvider missing; "
+    f"providers={sorted(providers)}"
+)
+print("onnxruntime providers:", sorted(providers))
+PY
 
 # resemble-enhance is fetched from Git — pinned commit lives next to the LAYER_1 code.
 if ! python -c "import resemble_enhance" 2>/dev/null; then
@@ -86,8 +109,17 @@ if [[ -z "${HF_TOKEN:-}" ]]; then
     err "HF_TOKEN is not set — required for pyannote downloads. Set it in ${ENV_FILE} or export it."
 fi
 
-log "downloading model weights (~12.5 GB; skipped if already present)"
+log "downloading model weights (~10 GB Qwen3-8B + LAYER 1 deps; skipped if already present)"
 python "${REPO_DIR}/models/download_models.py" --hf-token "${HF_TOKEN}"
+
+PYANNOTE_CFG="${REPO_DIR}/models/LAYER_1/models/pyannote/speaker-diarization-3.1/config.yaml"
+if [[ -f "${PYANNOTE_CFG}" ]]; then
+    log "rewriting pyannote config.yaml for local Linux paths"
+    sed -i \
+        -e "s|\(embedding: ${REPO_DIR}/models/LAYER_1/models/pyannote/wespeaker-voxceleb-resnet34-LM\)\$|\1/pytorch_model.bin|" \
+        -e "s|\(segmentation: ${REPO_DIR}/models/LAYER_1/models/pyannote/segmentation-3.0\)\$|\1/pytorch_model.bin|" \
+        "${PYANNOTE_CFG}"
+fi
 
 # ── 5. MODEL_SERVER_TOKEN ─────────────────────────────────────────────────
 if [[ ! -f "${ENV_FILE}" ]]; then

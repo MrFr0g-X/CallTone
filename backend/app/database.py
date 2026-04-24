@@ -22,7 +22,12 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "http://localhost:8080"
     CORS_ORIGINS: str = ""  # comma-separated extra origins, e.g. "http://gpu-server:3000"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # extra="ignore" lets us put non-Settings vars (MODEL_SERVER_URL, etc.,
+    # consumed via os.getenv elsewhere) into the same .env without pydantic
+    # raising on the unknown keys.
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     @property
     def use_sqlite(self) -> bool:

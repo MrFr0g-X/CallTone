@@ -7,6 +7,7 @@ in call transcripts and replace generic SPEAKER_A/SPEAKER_B labels.
 
 import sys
 import json
+import re
 from pathlib import Path
 
 # Add skill runtime and skills to path
@@ -23,6 +24,9 @@ except ImportError as e:
     print(f"Error importing required modules: {e}")
     print(f"Make sure llama-cpp-python is installed in the calltone environment")
     raise
+
+
+_THINK_BLOCK_RE = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 
 
 def run_skill_simple(bundle: dict, input_text: str) -> str:
@@ -58,16 +62,20 @@ def run_skill_simple(bundle: dict, input_text: str) -> str:
     
     # Generate
     decoding = bundle['decoding']
+    stop_tokens = list(
+        dict.fromkeys((decoding.get('stop') or []) + ["<|im_end|>", "<|endoftext|>"])
+    )
+
     response = llm.create_chat_completion(
         messages=messages,
         temperature=decoding.get('temperature', 0.0),
         top_p=decoding.get('top_p', 1.0),
         max_tokens=decoding.get('max_tokens', 1024),
-        stop=decoding.get('stop'),
+        stop=stop_tokens,
     )
     
     output = response['choices'][0]['message']['content']
-    return output.strip()
+    return _THINK_BLOCK_RE.sub("", output).strip()
 
 
 def format_transcript_for_skill(json_data: dict, max_segments: int = 30) -> str:

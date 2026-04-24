@@ -32,7 +32,8 @@ def _fake_pipeline_factory(
         output_dir: Path,
         speakers=None,
         report_mode="both",
-        timeout_seconds=600,
+        asr_engine="fasterwhisper",
+        timeout_seconds=None,
         on_line=None,
     ) -> int:
         if on_line is not None:

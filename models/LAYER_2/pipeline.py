@@ -24,6 +24,7 @@ This pipeline uses the skill-based architecture for deterministic evaluation:
 
 import json
 import sys
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -71,6 +72,17 @@ CRITERION_WEIGHTS = {
     "issue_resolution": 0.05,
     "overall_severity": 0.05,
 }
+
+
+# OPT-A9: cache the context graph per (company, version) so repeat calls on
+# the same company skip the rebuild (ingest → builder → graph). Keyed by
+# version so context updates invalidate the entry automatically.
+@lru_cache(maxsize=32)
+def _build_cached_context_graph(company_name: str, context_version: str) -> "ContextGraph":
+    store = ContextStore()
+    context_dict = store.load_raw(company_name)
+    builder = GraphBuilder()
+    return builder.build_from_context(context_dict)
 
 
 def format_transcript_for_rating(layer1_output: dict) -> str:
@@ -158,19 +170,153 @@ def build_criterion_input(
     return "\n".join(parts)
 
 
+# ── OPT-A5: Parallel LAYER 2 skill dispatch ────────────────────────────────
+# Each thread needs its own LlamaCppBackend (llama-cpp-python is not
+# thread-safe). Qwen3-8B Q4_K_M is ~5 GB per instance. 7 instances ≈ 35 GB
+# fits comfortably on A100 80 GB with LAYER 1 still resident.
+_PARALLEL_VRAM_THRESHOLD_GB = 50.0
+
+
+def _gpu_free_vram_gb() -> float:
+    """
+    Real free VRAM in GB on first CUDA device (0.0 if no GPU).
+
+    Uses the CUDA driver's global view so we account for allocations outside
+    PyTorch too (onnxruntime, llama.cpp, cuDNN workspaces).
+    """
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            return 0.0
+        free_bytes, _total_bytes = torch.cuda.mem_get_info(0)
+        return free_bytes / 1024 ** 3
+    except Exception:
+        return 0.0
+
+
+def _should_use_parallel_skills() -> tuple[bool, float]:
+    """Return (use_parallel, free_vram_gb)."""
+    free_gb = _gpu_free_vram_gb()
+    return free_gb >= _PARALLEL_VRAM_THRESHOLD_GB, free_gb
+
+
+def _score_one_criterion(
+    criterion: str,
+    bundle: dict,
+    transcript_text: str,
+    raw_transcript: str,
+    retriever,
+    runner,
+    use_consensus: bool,
+) -> tuple[str, dict]:
+    """Run one criterion's rating skill and return (criterion, enriched_result)."""
+    criterion_input = build_criterion_input(
+        criterion=criterion,
+        transcript_text=transcript_text,
+        retriever=retriever,
+        raw_transcript=raw_transcript,
+    )
+    if use_consensus:
+        result, confidence = runner.run_consensus(bundle, criterion_input)
+    else:
+        result = runner.run_single(bundle, criterion_input)
+        ev_count = len(result.get("evidence", []) or [])
+        confidence = round(min(1.0, ev_count / 3.0), 2)
+    result["weight"] = CRITERION_WEIGHTS[criterion]
+    result["consensus_confidence"] = confidence
+    return criterion, result
+
+
+def _run_skills_sequential(
+    *,
+    skill_bundles: dict,
+    transcript_text: str,
+    raw_transcript: str,
+    retriever,
+    use_consensus: bool,
+) -> dict:
+    """Original path: shared ConsensusRunner, one criterion at a time."""
+    runner = ConsensusRunner()
+    results: dict = {}
+    for criterion, bundle in skill_bundles.items():
+        _, result = _score_one_criterion(
+            criterion=criterion,
+            bundle=bundle,
+            transcript_text=transcript_text,
+            raw_transcript=raw_transcript,
+            retriever=retriever,
+            runner=runner,
+            use_consensus=use_consensus,
+        )
+        results[criterion] = result
+    return results
+
+
+def _run_skills_parallel(
+    *,
+    skill_bundles: dict,
+    transcript_text: str,
+    raw_transcript: str,
+    retriever,
+    use_consensus: bool,
+) -> dict:
+    """
+    Parallel path: dedicated LlamaCppBackend per criterion (one thread each).
+
+    llama-cpp-python is not thread-safe across calls, so we instantiate a
+    fresh backend per criterion. With Qwen3-8B Q4_K_M (~5 GB per instance)
+    this fits A100 80 GB comfortably.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from skill_runtime.backends.llama_cpp_backend import LlamaCppBackend
+
+    # Build a per-criterion runner with its own backend instance.
+    # Reuses the same model GGUF file → only the in-memory KV cache + sampler
+    # state are independent. The on-disk weights are mmap-shared by the OS.
+    criterion_runners: dict = {}
+    for criterion, bundle in skill_bundles.items():
+        backend = LlamaCppBackend(bundle["model_dir"])
+        criterion_runners[criterion] = ConsensusRunner(backend=backend)
+
+    results: dict = {}
+    with ThreadPoolExecutor(max_workers=len(skill_bundles)) as pool:
+        futures = {
+            pool.submit(
+                _score_one_criterion,
+                criterion,
+                bundle,
+                transcript_text,
+                raw_transcript,
+                retriever,
+                criterion_runners[criterion],
+                use_consensus,
+            ): criterion
+            for criterion, bundle in skill_bundles.items()
+        }
+        for future in as_completed(futures):
+            criterion, result = future.result()
+            results[criterion] = result
+    return results
+
+
 def run_layer2_pipeline(
-    layer1_json_path: str,
-    company_name: str,
+    layer1_json_path: Optional[str] = None,
+    company_name: str = "",
     use_consensus: bool = False,
     context_graph_path: Optional[str] = None,
     output_path: Optional[str] = None,
     injection_scan_mode: str = "llm",
+    layer1_dict: Optional[dict] = None,
 ) -> dict:
     """
     Run the complete Layer 2 rating pipeline.
 
     Args:
         layer1_json_path:    Path to the Layer 1 output JSON file
+        layer1_dict:         OPT-A7: in-memory Layer 1 output (alternative to
+                             layer1_json_path — skips disk read/write between
+                             layers when both run in the same process). When
+                             provided, layer1_json_path is ignored.
         company_name:        Name of the company (must have context saved)
         use_consensus:       Whether to use consensus voting for extra reliability
         context_graph_path:  Optional path to pre-built context graph
@@ -184,9 +330,16 @@ def run_layer2_pipeline(
         Complete rating results dict. If injection is detected and blocked,
         raises InjectionBlockedError.
     """
-    # 1. Load Layer 1 output
-    with open(layer1_json_path, "r", encoding="utf-8") as f:
-        layer1_output = json.load(f)
+    # 1. Load Layer 1 output (in-memory dict preferred — OPT-A7).
+    if layer1_dict is not None:
+        layer1_output = layer1_dict
+    elif layer1_json_path:
+        with open(layer1_json_path, "r", encoding="utf-8") as f:
+            layer1_output = json.load(f)
+    else:
+        raise ValueError(
+            "run_layer2_pipeline requires either layer1_json_path or layer1_dict"
+        )
 
     # 2. Format transcript
     transcript_text = format_transcript_for_rating(layer1_output)
@@ -212,19 +365,21 @@ def run_layer2_pipeline(
             print(f"[Security] WARNING — suspicious content detected. "
                   f"Proceeding with sandboxed transcript. Review report for details.")
 
-    # 4. Load or build context graph
+    # 4. Load or build context graph (OPT-A9: in-process LRU cache).
+    # Cache key includes context version so updates invalidate stale entries.
     if context_graph_path and Path(context_graph_path).exists():
         graph = ContextGraph.load(context_graph_path)
     else:
-        # Load company context and build graph.
-        # Use load_raw to preserve the "atomic_nodes" key written by Pass 5 of
-        # text_ingestion — CompanyContextSchema.to_dict() would silently drop it.
-        store = ContextStore()
-        context_dict = store.load_raw(company_name)
-        builder = GraphBuilder()
-        graph = builder.build_from_context(context_dict)
+        # Pull just the version field for cache keying (cheap read).
+        try:
+            _store_for_ver = ContextStore()
+            _ver = (_store_for_ver.load_raw(company_name) or {}).get("version", "1.0.0")
+        except Exception:
+            _ver = "1.0.0"
 
-        # Save the graph for reuse
+        graph = _build_cached_context_graph(company_name, _ver)
+
+        # Save the graph for on-disk reuse (idempotent — overwriting is safe).
         graph_save_path = context_graph_path or str(
             Path(__file__).parent / "company_context" / "contexts" /
             f"{company_name.lower().replace(' ', '_')}_graph.json"
@@ -239,29 +394,44 @@ def run_layer2_pipeline(
     for criterion, skill_name in CRITERION_SKILLS.items():
         skill_bundles[criterion] = load_skill(skill_name)
 
-    # 6. Run consensus runner
-    runner = ConsensusRunner()
-    results = {}
-
-    for criterion, bundle in skill_bundles.items():
-        # Build criterion-specific input
-        criterion_input = build_criterion_input(
-            criterion=criterion,
+    # 6. Run skills (parallel on big GPU, sequential otherwise — OPT-A5)
+    use_parallel, vram_free_gb = _should_use_parallel_skills()
+    if use_parallel:
+        print(f"[LAYER 2] Parallel mode: {vram_free_gb:.0f} GB VRAM free → 7 concurrent runners")
+        try:
+            results = _run_skills_parallel(
+                skill_bundles=skill_bundles,
+                transcript_text=transcript_text,
+                raw_transcript=raw_transcript,
+                retriever=retriever,
+                use_consensus=use_consensus,
+            )
+        except Exception as exc:
+            print(f"[LAYER 2] Parallel startup failed ({exc}) — retrying sequential mode")
+            try:
+                import gc
+                gc.collect()
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
+            results = _run_skills_sequential(
+                skill_bundles=skill_bundles,
+                transcript_text=transcript_text,
+                raw_transcript=raw_transcript,
+                retriever=retriever,
+                use_consensus=use_consensus,
+            )
+    else:
+        print(f"[LAYER 2] Sequential mode: {vram_free_gb:.0f} GB VRAM free (need ≥{_PARALLEL_VRAM_THRESHOLD_GB} GB for parallel)")
+        results = _run_skills_sequential(
+            skill_bundles=skill_bundles,
             transcript_text=transcript_text,
-            retriever=retriever,
             raw_transcript=raw_transcript,
+            retriever=retriever,
+            use_consensus=use_consensus,
         )
-
-        # Run skill
-        if use_consensus:
-            result, confidence = runner.run_consensus(bundle, criterion_input)
-        else:
-            result = runner.run_single(bundle, criterion_input)
-            confidence = None
-
-        result["weight"] = CRITERION_WEIGHTS[criterion]
-        result["consensus_confidence"] = confidence
-        results[criterion] = result
 
     # 7. Calculate overall weighted score
     weighted_sum = 0

@@ -17,6 +17,7 @@ pipeline progresses through its stages.
 from __future__ import annotations
 
 import logging
+import os
 import shutil
 import tempfile
 import threading
@@ -52,8 +53,28 @@ ALLOWED_AUDIO_CTYPES = {
 
 # Guard rails — keep the service from being used as a generic file store.
 MAX_UPLOAD_BYTES = 200 * 1024 * 1024  # 200 MB (≈ 60-min WAV at 16-bit mono 44.1k)
-PIPELINE_TIMEOUT_SECONDS = 900  # 15 minutes — well above the 3-min SLA
-ETA_SECONDS = 180  # rough estimate surfaced to clients
+
+
+def _env_timeout_seconds(name: str) -> int | None:
+    """
+    Parse an optional timeout env var.
+
+    Unset, empty, zero, or negative means "no hard timeout". This lets long
+    calls finish instead of being killed by an arbitrary server-side cap.
+    """
+    raw = str(os.getenv(name, "")).strip()
+    if not raw:
+        return None
+    try:
+        value = int(raw)
+    except ValueError:
+        log.warning("invalid timeout env %s=%r; disabling hard timeout", name, raw)
+        return None
+    return value if value > 0 else None
+
+
+PIPELINE_TIMEOUT_SECONDS = _env_timeout_seconds("MODEL_SERVER_PIPELINE_TIMEOUT_SECONDS")
+ETA_SECONDS = int(os.getenv("MODEL_SERVER_ETA_SECONDS", "180"))  # rough estimate surfaced to clients
 
 
 # ── dispatch ───────────────────────────────────────────────────────────────
@@ -67,8 +88,15 @@ def _worker(
     company: str,
     speakers: int | None,
     output_dir: Path,
+    report_mode: str = "none",
+    asr_engine: str = "fasterwhisper",
 ) -> None:
-    """Run the pipeline and funnel progress into the store."""
+    """Run the pipeline and funnel progress into the store.
+
+    OPT-A8: report_mode defaults to "none" so LAYER 3 (narrative renderer)
+    is skipped in the API path. The frontend gets the structured LAYER 2
+    JSON directly. Pass report_mode="both" to opt back in.
+    """
 
     def on_line(line: str) -> None:
         hit = classify_line(line)
@@ -86,6 +114,8 @@ def _worker(
             company=company,
             output_dir=output_dir,
             speakers=speakers,
+            report_mode=report_mode,
+            asr_engine=asr_engine,
             timeout_seconds=PIPELINE_TIMEOUT_SECONDS,
             on_line=on_line,
         )
@@ -126,8 +156,13 @@ async def analyze(
     audio: UploadFile = File(...),
     company: str = Form(...),
     speakers: int | None = Form(None),
+    asr_engine: str = Form("fasterwhisper"),
 ):
     store: JobStore = request.app.state.jobs
+
+    asr_engine = str(asr_engine or "fasterwhisper").strip().lower()
+    if asr_engine not in {"fasterwhisper", "sensevoice"}:
+        raise HTTPException(status_code=400, detail="asr_engine must be fasterwhisper|sensevoice")
 
     if audio.content_type and audio.content_type not in ALLOWED_AUDIO_CTYPES:
         raise HTTPException(
@@ -163,6 +198,7 @@ async def analyze(
         "filename": audio.filename or "unknown",
         "bytes": total,
         "company": company,
+        "asr_engine": asr_engine,
     }
     job: Job | None = store.acquire_slot(meta=meta)
     if job is None:
@@ -180,6 +216,7 @@ async def analyze(
             "upload_filename": meta["filename"],
             "upload_bytes": meta["bytes"],
             "company": meta["company"],
+            "asr_engine": meta["asr_engine"],
         },
     )
 
@@ -196,6 +233,7 @@ async def analyze(
             "company": company,
             "speakers": speakers,
             "output_dir": output_dir,
+            "asr_engine": asr_engine,
         },
         daemon=True,
         name=f"calltone-pipeline-{job.id[:8]}",
