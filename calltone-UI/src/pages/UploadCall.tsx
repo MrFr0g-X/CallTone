@@ -7,8 +7,8 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { callsApi } from "@/services/api";
-import type { AsrEngine } from "@/services/api";
+import { callsApi, contextApi, pipelineApi } from "@/services/api";
+import type { AsrEngine, CompanyContextSummary } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type UploadStage = "idle" | "uploading" | "processing" | "completed" | "error";
@@ -42,6 +42,9 @@ const UploadCall = () => {
   const [currentStep, setCurrentStep] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [asrEngine, setAsrEngine] = useState<AsrEngine>("fasterwhisper");
+  const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
+  const [companyName, setCompanyName] = useState("");
+  const [companyLoadError, setCompanyLoadError] = useState("");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = () => {
@@ -112,7 +115,7 @@ const UploadCall = () => {
     setErrorMsg("");
 
     try {
-      const res = await callsApi.upload(file, undefined, asrEngine);
+      const res = await callsApi.upload(file, undefined, asrEngine, companyName);
       const { callId: id } = res.data;
       setCallId(id);
       setStage("processing");
@@ -128,7 +131,27 @@ const UploadCall = () => {
   };
 
   useEffect(() => {
+    let cancelled = false;
+    const loadCompanyContext = async () => {
+      try {
+        const [settingsRes, companiesRes] = await Promise.all([
+          pipelineApi.getSettings(),
+          contextApi.listCompanies(),
+        ]);
+        if (cancelled) return;
+        const list = companiesRes.data.companies || [];
+        setCompanies(list);
+        const configured = settingsRes.data.companyName;
+        const first = list[0]?.name || "";
+        setCompanyName(list.some((c) => c.name === configured) ? configured : first);
+        setCompanyLoadError(list.length ? "" : "No company contexts found. Upload a context before scoring.");
+      } catch {
+        if (!cancelled) setCompanyLoadError("Could not load company contexts.");
+      }
+    };
+    loadCompanyContext();
     return () => {
+      cancelled = true;
       if (pollRef.current) clearInterval(pollRef.current);
     };
   }, []);
@@ -228,7 +251,33 @@ const UploadCall = () => {
 
           {file && (stage === "idle" || stage === "error") && (
             <GlassCard className="p-5">
-              <div className="space-y-3">
+              <div className="space-y-5">
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Company Context
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      QA scores are evaluated against this company's scripts, policies, and rules.
+                    </p>
+                  </div>
+                  <select
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    disabled={!companies.length}
+                    className="w-full rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                  >
+                    {companies.map((company) => (
+                      <option key={company.file || company.name} value={company.name}>
+                        {company.name}
+                      </option>
+                    ))}
+                  </select>
+                  {companyLoadError && (
+                    <p className="text-xs text-destructive">{companyLoadError}</p>
+                  )}
+                </div>
+
                 <div>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     ASR Engine
@@ -287,10 +336,11 @@ const UploadCall = () => {
           {file && (stage === "idle" || stage === "error") && (
             <motion.button
               onClick={handleUpload}
+              disabled={!companyName}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium text-sm
-                         hover:bg-primary/90 transition-colors"
+                         hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Upload & Analyze
             </motion.button>

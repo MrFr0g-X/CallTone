@@ -773,6 +773,7 @@ def build_json(
     segments: list[dict],
     spk_pitch_summary: dict[str, list[float]],
     roles: dict[str, str] | None = None,
+    audio_duration_seconds: float | None = None,
 ) -> dict:
     """Build structured JSON for the downstream QA rating layer."""
     speaker_ids = sorted({s["speaker"] for s in segments})
@@ -813,7 +814,8 @@ def build_json(
     return {
         "call_metadata": {
             "file":             os.path.basename(audio_path),
-            "duration_seconds": round(total_dur, 2),
+            "duration_seconds": round(audio_duration_seconds if audio_duration_seconds else total_dur, 2),
+            "speech_time_seconds": round(total_dur, 2),
             "num_speakers":     len(speaker_ids),
             "total_segments":   len(segments),
         },
@@ -1094,7 +1096,13 @@ def main():
         f.write(report)
     print(f"\nText  → {out_path}")
 
-    json_data = build_json(audio_path, segments, spk_pitch_summary, roles)
+    json_data = build_json(
+        audio_path,
+        segments,
+        spk_pitch_summary,
+        roles,
+        audio_duration_seconds=audio_duration,
+    )
     json_path = base + "_diarized.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)

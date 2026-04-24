@@ -99,8 +99,12 @@ except Exception:
     pass
 
 
+def _context_slug(company_name: str) -> str:
+    return str(company_name or "").strip().lower().replace(" ", "_")
+
+
 def _context_path(company_name: str) -> Path:
-    return CONTEXTS_DIR / f"{str(company_name or '').strip().lower().replace(' ', '_')}.json"
+    return CONTEXTS_DIR / f"{_context_slug(company_name)}.json"
 
 
 def _available_company_contexts() -> list[str]:
@@ -127,33 +131,64 @@ def _default_pipeline_company() -> str:
     return available[0] if available else "metroboost"
 
 
+def _read_company_context_payload(company_name: str) -> dict | None:
+    import json as _json
+
+    path = _context_path(company_name)
+    if not path.exists():
+        return None
+    try:
+        payload = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise FileNotFoundError(f"Could not read context for {company_name}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise FileNotFoundError(f"Context for {company_name} is not a JSON object.")
+    return payload
+
+
+def _sync_company_context_to_model_server(company_name: str) -> bool:
+    """Mirror a local context JSON to the GPU model server if remote mode is on."""
+    if not os.getenv("MODEL_SERVER_URL"):
+        return False
+    payload = _read_company_context_payload(company_name)
+    if payload is None:
+        return False
+    try:
+        from app import model_client
+        model_client.put_context(company_name, payload)
+        return True
+    except Exception as exc:
+        log.warning(
+            "model_server.context_sync_failed",
+            extra={"event": "context_sync_failed", "company": company_name, "err": str(exc)},
+        )
+        return False
+
+
 def _ensure_known_company_context(company_name: str) -> str:
     company_name = str(company_name or "").strip()
     if not company_name:
         raise FileNotFoundError("No company context configured for QA scoring.")
     if _context_path(company_name).exists():
+        _sync_company_context_to_model_server(company_name)
         return company_name
 
     available = _available_company_contexts()
-    # In the split 3-server deployment, the authoritative company-context store
-    # lives on the GPU model server. The backend may have an empty local
-    # contexts dir after a fresh deploy, so do not reject valid uploads just
-    # because this host is missing mirrored JSON files.
     if os.getenv("MODEL_SERVER_URL"):
-        if available:
-            log.warning(
-                "Local backend context missing for '%s'; trusting remote model "
-                "server context store. Local contexts currently available: %s",
-                company_name,
-                ", ".join(available),
-            )
-        else:
-            log.warning(
-                "Local backend context store is empty; trusting remote model "
-                "server to resolve '%s'.",
-                company_name,
-            )
-        return company_name
+        try:
+            from app import model_client
+            if model_client.context_exists(company_name):
+                return company_name
+            remote = ", ".join(c.get("name", "") for c in model_client.list_contexts()) or "none"
+        except Exception as exc:
+            raise FileNotFoundError(
+                f"Cannot verify model-server context for {company_name}: {exc}"
+            ) from exc
+        raise FileNotFoundError(
+            "No context found for company: "
+            f"{company_name}. Backend contexts: {', '.join(available) or 'none'}. "
+            f"Model-server contexts: {remote}."
+        )
 
     if available:
         raise FileNotFoundError(
@@ -183,8 +218,12 @@ def _run_startup_migrations():
     # Ensure the singleton pipeline settings row exists
     db = SessionLocal()
     try:
-        if not db.query(PipelineSettings).filter(PipelineSettings.id == 1).first():
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        if not ps:
             db.add(PipelineSettings(id=1, company_name=_default_pipeline_company()))
+            db.commit()
+        elif ps.report_mode == "none":
+            ps.report_mode = "narrative"
             db.commit()
     finally:
         db.close()
@@ -287,6 +326,65 @@ def _extract_evidence_row(ev: dict, speaker_turns: list[dict]) -> dict:
             else:
                 reason = str(rule)
     return {"quote": quote, "speaker": speaker, "reason": reason}
+
+
+def _iter_criterion_evidence(criterion: str, info: dict) -> list[dict]:
+    """Return evidence-like rows from all skill-specific output shapes."""
+    rows: list[dict] = []
+    raw_evidence = info.get("evidence")
+    if isinstance(raw_evidence, list):
+        rows.extend(ev for ev in raw_evidence if isinstance(ev, dict))
+
+    def _append(values, quote_keys: tuple[str, ...], reason_keys: tuple[str, ...], default_reason: str):
+        if not isinstance(values, list):
+            return
+        for item in values:
+            if not isinstance(item, dict):
+                continue
+            quote = next((str(item.get(k, "")).strip() for k in quote_keys if item.get(k)), "")
+            reason = next((str(item.get(k, "")).strip() for k in reason_keys if item.get(k)), "")
+            if quote or reason:
+                rows.append({"quote": quote, "reason": reason or default_reason})
+
+    _append(info.get("claims"), ("quote", "statement", "claim"), ("assessment", "reason", "status"), "Factual claim reviewed")
+    _append(info.get("emotional_moments"), ("quote", "customer_quote", "agent_quote"), ("assessment", "reason", "emotion"), "Empathy signal")
+    _append(info.get("conflicts_detected"), ("quote", "customer_quote", "agent_quote", "description"), ("assessment", "reason", "severity"), "Conflict signal")
+    _append(info.get("resolution_steps"), ("quote", "agent_quote", "step", "description"), ("assessment", "reason", "status"), "Resolution step")
+    _append(info.get("issues_found"), ("quote", "description", "issue"), ("assessment", "reason", "severity"), "Severity issue")
+    _append(info.get("positive_examples"), ("quote", "agent_quote", "example"), ("assessment", "reason"), "Positive example")
+    _append(info.get("negative_examples"), ("quote", "agent_quote", "example"), ("assessment", "reason"), "Negative example")
+
+    if not rows:
+        summary = str(info.get("summary") or "").strip()
+        if summary:
+            rows.append({"quote": "", "reason": f"{criterion.replace('_', ' ').title()}: {summary}"})
+    return rows
+
+
+def _effective_report_mode(ps: PipelineSettings | None) -> str:
+    mode = str(ps.report_mode if ps else "narrative").strip().lower()
+    return mode if mode in {"simple", "narrative", "both"} else "narrative"
+
+
+def _audio_duration_metadata(audio_path: str | Path) -> tuple[float | None, int | None, int | None]:
+    """Return real file duration/sample-rate/channels when cheaply available."""
+    path = Path(audio_path)
+    try:
+        import soundfile as sf
+        info = sf.info(str(path))
+        duration = float(info.frames) / float(info.samplerate) if info.samplerate else None
+        return duration, int(info.samplerate) if info.samplerate else None, int(info.channels) if info.channels else None
+    except Exception:
+        pass
+    try:
+        import wave
+        with wave.open(str(path), "rb") as wf:
+            rate = wf.getframerate()
+            frames = wf.getnframes()
+            channels = wf.getnchannels()
+            return (frames / rate if rate else None), rate or None, channels or None
+    except Exception:
+        return None, None, None
 
 
 def _sanitize_filename(name: str | None) -> str:
@@ -1226,7 +1324,7 @@ def _asr_metadata(asr_engine: str | None) -> tuple[str, str]:
 def _run_real_pipeline(
     call_id: str,
     audio_path: str,
-    company: str = "BankServ Global",
+    company: str | None = None,
     asr_engine: str = "fasterwhisper",
 ):
     """
@@ -1271,9 +1369,10 @@ def _run_real_pipeline(
         audio_mode      = ps.audio_mode      if ps else "denoise"
         injection_scan  = ps.injection_scan  if ps else "static"
         num_speakers    = ps.num_speakers    if ps else None
-        report_mode     = ps.report_mode     if ps else "simple"
+        report_mode     = _effective_report_mode(ps)
         use_consensus   = ps.use_consensus   if ps else False
-        _company        = _ensure_known_company_context(ps.company_name if ps else company)
+        _requested_company = company or (ps.company_name if ps else _default_pipeline_company())
+        _company        = _ensure_known_company_context(_requested_company)
 
         asr_engine = _normalize_asr_engine(asr_engine)
         asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
@@ -1346,7 +1445,9 @@ def _run_real_pipeline(
         )
         db.add(transcript)
         call.current_step = "scoring"
-        call.duration_seconds = round(duration, 3) if duration else None
+        if duration:
+            existing_duration = float(call.duration_seconds or 0)
+            call.duration_seconds = round(max(existing_duration, float(duration)), 3)
         db.commit()
 
         # ── Free Layer 1 VRAM before loading the Layer 2 LLM ───────────
@@ -1387,7 +1488,11 @@ def _run_real_pipeline(
 
         from run_full_pipeline import run_layer2
         l2_result = run_layer2(
-            json_path, _company, rating_output, injection_scan_mode=injection_scan,
+            json_path,
+            _company,
+            rating_output,
+            injection_scan_mode=injection_scan,
+            use_consensus=use_consensus,
         )
 
         overall_score = l2_result.get("overall_weighted_score", 0)
@@ -1404,7 +1509,7 @@ def _run_real_pipeline(
             dim_reports[crit] = info.get("summary", "")
             cc = info.get("consensus_confidence")
             confidence_scores[crit] = cc if cc is not None else info.get("confidence")
-            for ev in info.get("evidence", []):
+            for ev in _iter_criterion_evidence(crit, info):
                 row = _extract_evidence_row(ev, speaker_turns)
                 evidence.append({"dimension": crit, **row})
 
@@ -1429,7 +1534,7 @@ def _run_real_pipeline(
                     weaknesses.append(f"{label}: {info.get('summary', 'Needs improvement')}")
             report_json = {
                 "summary": f"Call scored {overall_score}/100 overall. "
-                           f"Rated by CallTone AI pipeline against {company} quality standards.",
+                           f"Rated by CallTone AI pipeline against {_company} quality standards.",
                 "strengths": strengths or ["Overall adequate performance"],
                 "weaknesses": weaknesses or ["No major issues detected"],
                 "recommended_actions": [
@@ -1497,7 +1602,7 @@ def _run_real_pipeline(
 def _run_remote_pipeline(
     call_id: str,
     audio_path: str,
-    company: str = "BankServ Global",
+    company: str | None = None,
     asr_engine: str = "fasterwhisper",
 ):
     """Delegate pipeline execution to the Tier-3 model server.
@@ -1532,7 +1637,10 @@ def _run_remote_pipeline(
 
         ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
         num_speakers = ps.num_speakers if ps else None
-        _company = _ensure_known_company_context(ps.company_name if ps else company)
+        report_mode = _effective_report_mode(ps)
+        use_consensus = ps.use_consensus if ps else False
+        _requested_company = company or (ps.company_name if ps else _default_pipeline_company())
+        _company = _ensure_known_company_context(_requested_company)
 
         call.status = "PROCESSING"
         call.current_step = "queued"
@@ -1542,6 +1650,8 @@ def _run_remote_pipeline(
             audio_path, company=_company, speakers=num_speakers,
             filename=call.original_filename,
             asr_engine=asr_engine,
+            report_mode=report_mode,
+            use_consensus=use_consensus,
         )
 
         # Poll until terminal. By default there is no backend-side hard cap;
@@ -1604,7 +1714,9 @@ def _run_remote_pipeline(
             avg_confidence=None,
         )
         db.add(transcript)
-        call.duration_seconds = round(duration, 3) if duration else None
+        if duration:
+            existing_duration = float(call.duration_seconds or 0)
+            call.duration_seconds = round(max(existing_duration, float(duration)), 3)
         db.commit()
 
         # ── QaReport row (mirrors local path) ─────────────────────────────
@@ -1618,7 +1730,7 @@ def _run_remote_pipeline(
             dim_reports[crit] = info.get("summary", "")
             cc = info.get("consensus_confidence")
             confidence_scores[crit] = cc if cc is not None else info.get("confidence")
-            for ev in info.get("evidence", []):
+            for ev in _iter_criterion_evidence(crit, info):
                 row = _extract_evidence_row(ev, speaker_turns)
                 evidence.append({"dimension": crit, **row})
 
@@ -1649,7 +1761,7 @@ def _run_remote_pipeline(
             for c, info in criteria.items():
                 if (info.get("score") or 0) >= 70:
                     continue
-                for ev in info.get("evidence", [])[:2]:
+                for ev in _iter_criterion_evidence(c, info)[:2]:
                     rule = ev.get("rule") or ev.get("policy") or ev.get("guideline")
                     if ev.get("met") is False and rule:
                         actions.append(f"{_label(c)}: enforce '{rule}'.")
@@ -1702,7 +1814,12 @@ def _run_remote_pipeline(
         db.close()
 
 
-def _run_pipeline(call_id: str, audio_path: str, asr_engine: str = "fasterwhisper"):
+def _run_pipeline(
+    call_id: str,
+    audio_path: str,
+    asr_engine: str = "fasterwhisper",
+    company_name: str | None = None,
+):
     """
     Dispatch: remote model server (if MODEL_SERVER_URL set) or local pipeline.
     Errors from either path are persisted to the Call record.
@@ -1710,9 +1827,9 @@ def _run_pipeline(call_id: str, audio_path: str, asr_engine: str = "fasterwhispe
     try:
         from app import model_client
         if model_client.configured():
-            _run_remote_pipeline(call_id, audio_path, asr_engine=asr_engine)
+            _run_remote_pipeline(call_id, audio_path, company=company_name, asr_engine=asr_engine)
         else:
-            _run_real_pipeline(call_id, audio_path, asr_engine=asr_engine)
+            _run_real_pipeline(call_id, audio_path, company=company_name, asr_engine=asr_engine)
     except Exception as exc:
         db = SessionLocal()
         try:
@@ -1731,6 +1848,7 @@ async def upload_call(
     file: UploadFile = File(...),
     agent_id: str = Form(default=""),
     asr_engine: str = Form(default="fasterwhisper"),
+    company_name: str = Form(default=""),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -1746,6 +1864,14 @@ async def upload_call(
     try:
         asr_engine = _normalize_asr_engine(asr_engine)
     except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    try:
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        selected_company = _ensure_known_company_context(
+            company_name or (ps.company_name if ps else _default_pipeline_company())
+        )
+    except FileNotFoundError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
     content = await file.read()
@@ -1764,6 +1890,7 @@ async def upload_call(
 
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
     dest.write_bytes(content)
+    duration_seconds, sample_rate_hz, channels = _audio_duration_metadata(dest)
 
     # Resolve agent employee record
     # Priority: explicit agent_id > current user's linked employee > first agent in DB
@@ -1796,6 +1923,9 @@ async def upload_call(
         storage_path=str(dest),
         size_bytes=len(content),
         sha256=sha256,
+        duration_seconds=round(duration_seconds, 3) if duration_seconds else None,
+        sample_rate_hz=sample_rate_hz,
+        channels=channels,
         status="PENDING",
         current_step="uploaded",
         call_time=datetime.now(timezone.utc),
@@ -1810,7 +1940,7 @@ async def upload_call(
     import multiprocessing
     ctx = multiprocessing.get_context("spawn")
     p = ctx.Process(
-        target=_run_pipeline, args=(call_id, str(dest), asr_engine),
+        target=_run_pipeline, args=(call_id, str(dest), asr_engine, selected_company),
         name=f"pipeline-{call_id[:8]}", daemon=True,
     )
     p.start()
@@ -1903,8 +2033,8 @@ def update_pipeline_settings(
         val = payload["numSpeakers"]
         ps.num_speakers = int(val) if val else None
     if "reportMode" in payload:
-        if payload["reportMode"] not in ("none", "simple", "narrative"):
-            raise HTTPException(status_code=400, detail="reportMode must be none|simple|narrative")
+        if payload["reportMode"] not in ("none", "simple", "narrative", "both"):
+            raise HTTPException(status_code=400, detail="reportMode must be none|simple|narrative|both")
         ps.report_mode = payload["reportMode"]
     if "useConsensus" in payload:
         ps.use_consensus = bool(payload["useConsensus"])
@@ -1939,14 +2069,17 @@ _INGEST_JOBS: dict = {}
 def list_companies(current_user: User = Depends(get_current_user)):
     import json as _json
     companies = []
+    seen_slugs: set[str] = set()
     if CONTEXTS_DIR.exists():
         for f in sorted(CONTEXTS_DIR.glob("*.json")):
             if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
                 continue
             try:
                 data = _json.loads(f.read_text(encoding="utf-8"))
+                seen_slugs.add(f.stem)
                 companies.append({
                     "name":    data.get("company_name", f.stem),
+                    "slug":    f.stem,
                     "version": data.get("context_version", "1.0.0"),
                     "updated": data.get("last_updated", ""),
                     "file":    f.name,
@@ -1958,6 +2091,19 @@ def list_companies(current_user: User = Depends(get_current_user)):
                 })
             except Exception:
                 pass
+    if os.getenv("MODEL_SERVER_URL"):
+        try:
+            from app import model_client
+            for item in model_client.list_contexts():
+                slug = str(item.get("slug") or item.get("file", "")).replace(".json", "")
+                if slug and slug in seen_slugs:
+                    continue
+                companies.append(item)
+        except Exception as exc:
+            log.warning(
+                "model_server.context_list_failed",
+                extra={"event": "context_list_failed", "err": str(exc)},
+            )
     return {"companies": companies}
 
 
@@ -1966,6 +2112,14 @@ def get_company_context(name: str, current_user: User = Depends(get_current_user
     import json as _json
     path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
     if not path.exists():
+        if os.getenv("MODEL_SERVER_URL"):
+            try:
+                from app import model_client
+                remote = model_client.get_context(name)
+            except Exception as exc:
+                raise HTTPException(status_code=502, detail=str(exc))
+            if remote is not None:
+                return remote
         raise HTTPException(status_code=404, detail="Company context not found")
     try:
         data = _json.loads(path.read_text(encoding="utf-8"))
@@ -1989,6 +2143,7 @@ def _run_ingest_job(job_id: str, tmp_path: Path, company_name: str):
             contexts_dir=str(CONTEXTS_DIR),
             progress_callback=lambda msg: _INGEST_JOBS[job_id].update({"progress": msg}),
         )
+        synced = _sync_company_context_to_model_server(company_name)
         tmp_path.unlink(missing_ok=True)
         _INGEST_JOBS[job_id].update({
             "status":   "completed",
@@ -2000,6 +2155,7 @@ def _run_ingest_job(job_id: str, tmp_path: Path, company_name: str):
                 "atomicNodesCount": result.get("atomic_nodes_count", 0),
                 "validation":       result.get("validation"),
                 "schema":           result.get("schema"),
+                "syncedToModelServer": synced,
             },
         })
     except Exception as e:
