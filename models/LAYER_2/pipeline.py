@@ -23,7 +23,10 @@ This pipeline uses the skill-based architecture for deterministic evaluation:
 """
 
 import json
+import os
+import re
 import sys
+from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
@@ -71,6 +74,16 @@ CRITERION_WEIGHTS = {
     "conflict_detection": 0.15,
     "issue_resolution": 0.05,
     "overall_severity": 0.05,
+}
+
+THINKING_CRITERIA = {
+    "script_compliance",
+    "factual_accuracy",
+    "politeness_tone",
+    "empathy",
+    "conflict_detection",
+    "issue_resolution",
+    "overall_severity",
 }
 
 
@@ -153,6 +166,12 @@ def build_criterion_input(
 
     # Format context
     context_text = retriever.format_context_for_prompt(nodes)
+    if not nodes:
+        context_text = (
+            "NO RELEVANT COMPANY CONTEXT NODES WERE RETRIEVED. "
+            "Do not assume undocumented rules, products, policies, or scripts are correct. "
+            "Mark claims as unverifiable when the company context does not support them."
+        )
 
     # Wrap transcript in structural sandbox delimiters (Layer 3 defense-in-depth).
     # The rating LLM sees clear markers that the transcript content is DATA,
@@ -168,6 +187,56 @@ def build_criterion_input(
     parts.append(sandboxed_transcript)
 
     return "\n".join(parts)
+
+
+def _criterion_evidence_count(result: dict, criterion: str) -> int:
+    keys_by_criterion = {
+        "empathy": ["evidence", "emotional_moments", "missed_opportunities"],
+        "factual_accuracy": ["evidence", "claims", "inaccuracies"],
+        "conflict_detection": ["evidence", "conflicts_detected", "escalation_signals"],
+        "issue_resolution": ["evidence", "resolution_steps", "unresolved_issues"],
+        "overall_severity": ["evidence", "issues_found", "severity_factors"],
+        "politeness_tone": ["evidence", "positive_examples", "negative_examples"],
+        "script_compliance": ["evidence", "violations", "required_steps"],
+    }
+    count = 0
+    for key in keys_by_criterion.get(criterion, ["evidence"]):
+        value = result.get(key)
+        if isinstance(value, list):
+            count += len(value)
+        elif value:
+            count += 1
+    return count
+
+
+def _prepare_bundle_for_scoring(criterion: str, bundle: dict) -> dict:
+    """Force scoring skills to think against the company context reference."""
+    prepared = deepcopy(bundle)
+    system_prompt = str(prepared.get("system_prompt") or "")
+    system_prompt = re.sub(r"\n/(?:no_)?think\s*$", "", system_prompt.strip(), flags=re.I)
+
+    mode = os.getenv("CALLTONE_L2_THINKING", "all").strip().lower()
+    should_think = mode != "off" and (
+        mode == "all" or criterion in THINKING_CRITERIA
+    )
+    directive = "/think" if should_think else "/no_think"
+    context_rule = (
+        "\n\nCRITICAL COMPANY-CONTEXT RULE:\n"
+        "- Treat COMPANY CONTEXT as the scoring reference, not general intuition.\n"
+        "- Use transcript evidence plus retrieved context nodes before assigning a score.\n"
+        "- If the company context does not support a script, policy, product, or factual claim, mark it unverifiable instead of assuming it is correct.\n"
+    )
+    prepared["system_prompt"] = f"{system_prompt}{context_rule}\n{directive}"
+
+    decoding = dict(prepared.get("decoding") or {})
+    existing_tokens = int(decoding.get("max_tokens") or 0)
+    # Qwen3 thinking can spend hundreds of tokens before the JSON. The old
+    # generic "\n\n\n" stop marker cut valid JSON early, so only stop on model
+    # chat/end tokens here.
+    decoding["max_tokens"] = max(existing_tokens, 2200 if should_think else 800)
+    decoding["stop"] = ["<|im_end|>", "<|endoftext|>"]
+    prepared["decoding"] = decoding
+    return prepared
 
 
 # ── OPT-A5: Parallel LAYER 2 skill dispatch ────────────────────────────────
@@ -220,7 +289,7 @@ def _score_one_criterion(
         result, confidence = runner.run_consensus(bundle, criterion_input)
     else:
         result = runner.run_single(bundle, criterion_input)
-        ev_count = len(result.get("evidence", []) or [])
+        ev_count = _criterion_evidence_count(result, criterion)
         confidence = round(min(1.0, ev_count / 3.0), 2)
     result["weight"] = CRITERION_WEIGHTS[criterion]
     result["consensus_confidence"] = confidence
@@ -386,13 +455,23 @@ def run_layer2_pipeline(
         )
         graph.save(graph_save_path)
 
+    graph_stats = graph.stats()
+    if int(graph_stats.get("active_nodes", graph_stats.get("total_nodes", 0)) or 0) == 0:
+        raise RuntimeError(
+            f"Company context graph is empty for '{company_name}'. "
+            "Upload/sync a valid company context before scoring."
+        )
+
     # 4. Create retriever
     retriever = GraphRetriever(graph)
 
     # 5. Load all rating skills
     skill_bundles = {}
     for criterion, skill_name in CRITERION_SKILLS.items():
-        skill_bundles[criterion] = load_skill(skill_name)
+        skill_bundles[criterion] = _prepare_bundle_for_scoring(
+            criterion,
+            load_skill(skill_name),
+        )
 
     # 6. Run skills (parallel on big GPU, sequential otherwise — OPT-A5)
     use_parallel, vram_free_gb = _should_use_parallel_skills()
@@ -452,7 +531,7 @@ def run_layer2_pipeline(
         "scoring_method": "consensus" if use_consensus else "single_run",
         "overall_weighted_score": round(overall_score, 1),
         "criteria_ratings": results,
-        "graph_stats": graph.stats(),
+        "graph_stats": graph_stats,
         "security": scan_result.to_dict() if scan_result else {"injection_scan": "disabled"},
     }
 

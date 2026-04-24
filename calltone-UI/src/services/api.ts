@@ -248,14 +248,20 @@ export interface CallStatusResponse {
 }
 
 export const callsApi = {
-  upload: (file: File, agentId?: string, asrEngine: AsrEngine = "fasterwhisper") => {
+  upload: (
+    file: File,
+    agentId?: string,
+    asrEngine: AsrEngine = "fasterwhisper",
+    companyName?: string,
+  ) => {
     const formData = new FormData();
     formData.append("file", file);
     if (agentId) formData.append("agent_id", agentId);
     formData.append("asr_engine", asrEngine);
+    if (companyName) formData.append("company_name", companyName);
     return apiClient.post<UploadCallResponse>("/calls/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
-      timeout: 120000,
+      timeout: 600000,
     });
   },
 
@@ -352,7 +358,7 @@ export interface PipelineSettingsResponse {
   audioMode:     "none" | "denoise" | "enhance";
   injectionScan: "static" | "llm";
   numSpeakers:   number | null;
-  reportMode:    "none" | "simple" | "narrative";
+  reportMode:    "none" | "simple" | "narrative" | "both";
   useConsensus:  boolean;
   companyName:   string;
 }

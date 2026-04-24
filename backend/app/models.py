@@ -95,7 +95,7 @@ class PipelineSettings(Base):
     audio_mode = Column(String(20), nullable=False, default="denoise")    # none | denoise | enhance
     injection_scan = Column(String(20), nullable=False, default="static") # static | llm
     num_speakers = Column(Integer, nullable=True)                          # None = auto-detect
-    report_mode = Column(String(20), nullable=False, default="simple")    # none | simple | narrative
+    report_mode = Column(String(20), nullable=False, default="narrative") # none | simple | narrative | both
     use_consensus = Column(Boolean, nullable=False, default=False)
     company_name = Column(String(150), nullable=False, default="metroboost")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

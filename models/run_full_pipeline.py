@@ -335,7 +335,8 @@ def _free_layer1_vram() -> None:
 
 
 def run_layer2(layer1_json: str, company_name: str, output_path: str,
-               injection_scan_mode: str = "llm") -> dict:
+               injection_scan_mode: str = "llm",
+               use_consensus: bool = False) -> dict:
     print(f"\n{'='*70}")
     print("LAYER 2 — CALL QUALITY RATING")
     print(f"{'='*70}")
@@ -343,6 +344,7 @@ def run_layer2(layer1_json: str, company_name: str, output_path: str,
     print(f"Company:          {company_name}")
     print(f"Output:           {output_path}")
     print(f"Injection scan:   {injection_scan_mode}\n")
+    print(f"Consensus:        {use_consensus}\n")
 
     # Free VRAM used by Layer 1 models so the Layer 2 LLM has room to load.
     # This is a no-op when Layer 1 was not run in the same process.
@@ -353,7 +355,7 @@ def run_layer2(layer1_json: str, company_name: str, output_path: str,
         result = run_layer2_pipeline(
             layer1_json_path=layer1_json,
             company_name=company_name,
-            use_consensus=False,
+            use_consensus=use_consensus,
             output_path=output_path,
             injection_scan_mode=injection_scan_mode,
         )
@@ -455,6 +457,10 @@ def main():
         help="ASR engine to use. Default = fasterwhisper (also via CALLTONE_ASR env). "
              "Set 'sensevoice' to use Alibaba/FunASR SenseVoiceSmall.",
     )
+    parser.add_argument(
+        "--use-consensus", action="store_true",
+        help="Run 3-pass consensus scoring for Layer 2 instead of one deterministic pass.",
+    )
     args = parser.parse_args()
 
     # Propagate --asr to transcribe_diarize via env var (subprocess-safe).
@@ -554,7 +560,8 @@ def main():
     rating_output = str(output_dir / "layer2_ratings.json")
     try:
         result = run_layer2(json_path, args.company, rating_output,
-                            injection_scan_mode=args.injection_scan)
+                            injection_scan_mode=args.injection_scan,
+                            use_consensus=args.use_consensus)
         print_rating_summary(result)
     except Exception as e:
         import traceback

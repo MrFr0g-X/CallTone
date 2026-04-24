@@ -33,6 +33,7 @@ def _fake_pipeline_factory(
         speakers=None,
         report_mode="both",
         asr_engine="fasterwhisper",
+        use_consensus=False,
         timeout_seconds=None,
         on_line=None,
     ) -> int:
@@ -58,6 +59,16 @@ def _wait_until(predicate, *, timeout=5.0, interval=0.05):
     return False
 
 
+def _allow_acme_context(monkeypatch):
+    from model_server import endpoints
+
+    monkeypatch.setattr(
+        endpoints,
+        "_load_context",
+        lambda company: {"company_name": company} if company == "Acme" else None,
+    )
+
+
 def test_analyze_rejects_unsupported_content_type(client, auth_headers):
     r = client.post(
         "/v1/analyze",
@@ -81,6 +92,7 @@ def test_analyze_rejects_empty_upload(client, auth_headers):
 def test_analyze_happy_path(client, auth_headers, monkeypatch):
     from model_server import endpoints
 
+    _allow_acme_context(monkeypatch)
     monkeypatch.setattr(
         endpoints, "run_pipeline_blocking", _fake_pipeline_factory()
     )
@@ -118,6 +130,7 @@ def test_analyze_happy_path(client, auth_headers, monkeypatch):
 def test_analyze_second_call_while_busy_returns_409(client, auth_headers, monkeypatch):
     from model_server import endpoints
 
+    _allow_acme_context(monkeypatch)
     # Worker sleeps so the slot stays held while we submit the second call.
     def slow_pipeline(**kwargs):
         on_line = kwargs.get("on_line")
@@ -155,6 +168,7 @@ def test_analyze_second_call_while_busy_returns_409(client, auth_headers, monkey
 def test_result_before_done_returns_409(client, auth_headers, monkeypatch):
     from model_server import endpoints
 
+    _allow_acme_context(monkeypatch)
     def slow_pipeline(**kwargs):
         time.sleep(0.5)
         output_dir: Path = kwargs["output_dir"]
@@ -185,6 +199,7 @@ def test_unknown_job_returns_404(client, auth_headers):
 def test_pipeline_failure_marks_job_failed(client, auth_headers, monkeypatch):
     from model_server import endpoints
 
+    _allow_acme_context(monkeypatch)
     monkeypatch.setattr(
         endpoints,
         "run_pipeline_blocking",
@@ -208,6 +223,17 @@ def test_pipeline_failure_marks_job_failed(client, auth_headers, monkeypatch):
     status = client.get(f"/v1/jobs/{job_id}", headers=auth_headers).json()
     assert status["status"] == "failed"
     assert "pipeline exited" in (status["error"] or "")
+
+
+def test_analyze_rejects_unknown_company_context(client, auth_headers):
+    r = client.post(
+        "/v1/analyze",
+        headers=auth_headers,
+        files={"audio": ("a.wav", b"RIFFDATA", "audio/wav")},
+        data={"company": "MissingCo"},
+    )
+    assert r.status_code == 400
+    assert "unknown company context" in r.json()["detail"]
 
 
 def test_classify_line_recognises_stage_markers():

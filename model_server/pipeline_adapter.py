@@ -72,6 +72,7 @@ def build_command(
     speakers: int | None = None,
     report_mode: str = "both",
     asr_engine: str = "fasterwhisper",
+    use_consensus: bool = False,
 ) -> list[str]:
     # QA calls are agent + customer = 2 speakers. Letting pyannote auto-detect
     # over-segments short calls into 3+ clusters, leaving the extra cluster
@@ -93,6 +94,8 @@ def build_command(
         "--speakers",
         str(effective_speakers),
     ]
+    if use_consensus:
+        cmd.append("--use-consensus")
     return cmd
 
 
@@ -104,6 +107,7 @@ def run_pipeline_blocking(
     speakers: int | None = None,
     report_mode: str = "both",
     asr_engine: str = "fasterwhisper",
+    use_consensus: bool = False,
     timeout_seconds: int | None = None,
     on_line: Callable[[str], None] | None = None,
 ) -> int:
@@ -124,6 +128,7 @@ def run_pipeline_blocking(
         speakers=speakers,
         report_mode=report_mode,
         asr_engine=asr_engine,
+        use_consensus=use_consensus,
     )
     log.info(
         "model_server.pipeline.start",
@@ -184,6 +189,47 @@ def _load_json(path: Path) -> dict | None:
         return None
 
 
+def _layer3_report_json(layer2: dict | None, summary: dict | None, output_dir: Path) -> dict:
+    layer2 = layer2 or {}
+    criteria = layer2.get("criteria_ratings", {}) if isinstance(layer2, dict) else {}
+    overall = layer2.get("overall_weighted_score", 0)
+    strengths: list[str] = []
+    weaknesses: list[str] = []
+    actions: list[str] = []
+
+    for criterion, info in criteria.items():
+        if not isinstance(info, dict):
+            continue
+        label = criterion.replace("_", " ").title()
+        score = info.get("score", 0) or 0
+        summary_text = (info.get("summary") or "").strip()
+        line = f"{label} ({score}/100): {summary_text or 'No summary returned.'}"
+        if score >= 70:
+            strengths.append(line)
+        else:
+            weaknesses.append(line)
+        rec = (info.get("recommendation") or info.get("recommended_action") or "").strip()
+        if rec:
+            actions.append(f"{label}: {rec}")
+
+    outputs = []
+    if isinstance(summary, dict):
+        outputs = summary.get("layer3", {}).get("outputs", []) or []
+    if not outputs:
+        outputs = [p.name for p in sorted(output_dir.glob("*report.*"))]
+
+    return {
+        "summary": (
+            f"Layer 3 report generated for a call scoring {overall}/100. "
+            f"Artifacts: {', '.join(outputs) if outputs else 'none'}."
+        ),
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "recommended_actions": actions or ["Review the lowest scoring dimensions with the agent."],
+        "artifacts": outputs,
+    }
+
+
 def load_result_json(output_dir: Path) -> dict | None:
     """Collect the files that ``run_full_pipeline.py`` wrote into *output_dir*
     and bundle them for the backend.
@@ -208,12 +254,28 @@ def load_result_json(output_dir: Path) -> dict | None:
         bundle["layer2"] = _load_json(l2)
 
     summary = output_dir / "pipeline_summary.json"
-    if summary.is_file():
-        bundle["summary"] = _load_json(summary)
+    summary_obj = _load_json(summary) if summary.is_file() else None
+    if summary_obj is not None:
+        bundle["summary"] = summary_obj
 
     # Fallback path (tests): a single ``call_rating.json`` with the whole report.
     cr = output_dir / "call_rating.json"
     if cr.is_file():
         bundle["call_rating"] = _load_json(cr)
+
+    layer2_obj = bundle.get("layer2")
+    layer3_outputs = []
+    if isinstance(summary_obj, dict):
+        layer3_outputs = summary_obj.get("layer3", {}).get("outputs", []) or []
+    report_files = [p.name for p in sorted(output_dir.glob("*report.*"))]
+    if layer3_outputs or report_files:
+        bundle["layer3"] = {
+            "outputs": layer3_outputs or report_files,
+            "report_json": _layer3_report_json(
+                layer2_obj if isinstance(layer2_obj, dict) else None,
+                summary_obj,
+                output_dir,
+            ),
+        }
 
     return bundle or None

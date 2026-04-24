@@ -18,12 +18,13 @@ from __future__ import annotations
 
 import logging
 import os
+import json
 import shutil
 import tempfile
 import threading
 from pathlib import Path
 
-from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Body, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from .jobs import Job, JobStore
@@ -36,6 +37,10 @@ from .pipeline_adapter import (
 log = logging.getLogger("calltone.model_server.endpoints")
 
 router = APIRouter(prefix="/v1")
+
+_MODEL_SERVER_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _MODEL_SERVER_DIR.parent
+CONTEXTS_DIR = _REPO_ROOT / "models" / "LAYER_2" / "company_context" / "contexts"
 
 # Accept the audio formats LAYER 1 supports. Kept as a set so we can reject
 # early instead of booting the pipeline on a PDF someone uploaded by mistake.
@@ -77,6 +82,67 @@ PIPELINE_TIMEOUT_SECONDS = _env_timeout_seconds("MODEL_SERVER_PIPELINE_TIMEOUT_S
 ETA_SECONDS = int(os.getenv("MODEL_SERVER_ETA_SECONDS", "180"))  # rough estimate surfaced to clients
 
 
+def _context_slug(company: str) -> str:
+    return str(company or "").strip().lower().replace(" ", "_")
+
+
+def _context_path(company: str) -> Path:
+    return CONTEXTS_DIR / f"{_context_slug(company)}.json"
+
+
+def _load_context(company: str) -> dict | None:
+    path = _context_path(company)
+    if not path.is_file():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _list_contexts() -> list[dict]:
+    contexts: list[dict] = []
+    if not CONTEXTS_DIR.is_dir():
+        return contexts
+    for path in sorted(CONTEXTS_DIR.glob("*.json")):
+        if path.stem.endswith("_graph") or path.stem.endswith("_backup"):
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        field_count = sum(
+            1
+            for value in data.values()
+            if isinstance(value, str) and value.strip()
+        )
+        for section in ("script_compliance", "factual_accuracy", "behavioral"):
+            if isinstance(data.get(section), dict):
+                field_count += sum(1 for v in data[section].values() if isinstance(v, str) and v.strip())
+        contexts.append(
+            {
+                "name": data.get("company_name") or path.stem,
+                "slug": path.stem,
+                "version": data.get("context_version") or data.get("version") or "1.0.0",
+                "updated": data.get("last_updated", ""),
+                "file": path.name,
+                "fieldCount": field_count,
+            }
+        )
+    return contexts
+
+
+def _assert_context_exists(company: str) -> dict:
+    context = _load_context(company)
+    if context is None:
+        available = ", ".join(c["name"] for c in _list_contexts()) or "none"
+        raise HTTPException(
+            status_code=400,
+            detail=f"unknown company context: {company}. Available contexts: {available}",
+        )
+    return context
+
+
 # ── dispatch ───────────────────────────────────────────────────────────────
 
 
@@ -88,14 +154,14 @@ def _worker(
     company: str,
     speakers: int | None,
     output_dir: Path,
-    report_mode: str = "none",
+    report_mode: str = "narrative",
     asr_engine: str = "fasterwhisper",
+    use_consensus: bool = False,
 ) -> None:
     """Run the pipeline and funnel progress into the store.
 
-    OPT-A8: report_mode defaults to "none" so LAYER 3 (narrative renderer)
-    is skipped in the API path. The frontend gets the structured LAYER 2
-    JSON directly. Pass report_mode="both" to opt back in.
+    Layer 3 defaults to narrative so completed calls always carry report
+    artifacts. The backend still synthesizes UI JSON if rendering fails.
     """
 
     def on_line(line: str) -> None:
@@ -116,6 +182,7 @@ def _worker(
             speakers=speakers,
             report_mode=report_mode,
             asr_engine=asr_engine,
+            use_consensus=use_consensus,
             timeout_seconds=PIPELINE_TIMEOUT_SECONDS,
             on_line=on_line,
         )
@@ -157,18 +224,26 @@ async def analyze(
     company: str = Form(...),
     speakers: int | None = Form(None),
     asr_engine: str = Form("fasterwhisper"),
+    report_mode: str = Form("narrative"),
+    use_consensus: bool = Form(False),
 ):
     store: JobStore = request.app.state.jobs
 
     asr_engine = str(asr_engine or "fasterwhisper").strip().lower()
     if asr_engine not in {"fasterwhisper", "sensevoice"}:
         raise HTTPException(status_code=400, detail="asr_engine must be fasterwhisper|sensevoice")
+    report_mode = str(report_mode or "narrative").strip().lower()
+    if report_mode not in {"none", "simple", "narrative", "both"}:
+        raise HTTPException(status_code=400, detail="report_mode must be none|simple|narrative|both")
 
     if audio.content_type and audio.content_type not in ALLOWED_AUDIO_CTYPES:
         raise HTTPException(
             status_code=415,
             detail=f"unsupported content-type: {audio.content_type}",
         )
+    company = str(company or "").strip()
+    if not company:
+        raise HTTPException(status_code=400, detail="company is required")
 
     # Save upload to a dedicated tempdir we fully own — pipeline wants a
     # real filesystem path, and we also need to garbage-collect it later.
@@ -194,11 +269,15 @@ async def analyze(
         shutil.rmtree(workdir, ignore_errors=True)
         raise HTTPException(status_code=400, detail="empty upload")
 
+    _assert_context_exists(company)
+
     meta = {
         "filename": audio.filename or "unknown",
         "bytes": total,
         "company": company,
         "asr_engine": asr_engine,
+        "report_mode": report_mode,
+        "use_consensus": bool(use_consensus),
     }
     job: Job | None = store.acquire_slot(meta=meta)
     if job is None:
@@ -217,6 +296,8 @@ async def analyze(
             "upload_bytes": meta["bytes"],
             "company": meta["company"],
             "asr_engine": meta["asr_engine"],
+            "report_mode": meta["report_mode"],
+            "use_consensus": meta["use_consensus"],
         },
     )
 
@@ -234,12 +315,48 @@ async def analyze(
             "speakers": speakers,
             "output_dir": output_dir,
             "asr_engine": asr_engine,
+            "report_mode": report_mode,
+            "use_consensus": bool(use_consensus),
         },
         daemon=True,
         name=f"calltone-pipeline-{job.id[:8]}",
     ).start()
 
     return {"job_id": job.id, "eta_seconds": ETA_SECONDS}
+
+
+@router.get("/contexts")
+def list_contexts():
+    return {"contexts": _list_contexts()}
+
+
+@router.get("/contexts/{company}")
+def get_context(company: str):
+    context = _load_context(company)
+    if context is None:
+        raise HTTPException(status_code=404, detail="company context not found")
+    return context
+
+
+@router.put("/contexts/{company}")
+def put_context(company: str, payload: dict = Body(...)):
+    company = str(company or "").strip()
+    if not company:
+        raise HTTPException(status_code=400, detail="company is required")
+    payload_company = str(payload.get("company_name") or company).strip()
+    if _context_slug(payload_company) != _context_slug(company):
+        raise HTTPException(
+            status_code=400,
+            detail="payload company_name does not match URL company",
+        )
+    CONTEXTS_DIR.mkdir(parents=True, exist_ok=True)
+    path = _context_path(company)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+    # Invalidate graph cache for this context. It will be rebuilt with the new
+    # version/content on the next score request.
+    graph_path = path.with_name(f"{path.stem}_graph.json")
+    graph_path.unlink(missing_ok=True)
+    return {"ok": True, "company": payload_company, "file": path.name}
 
 
 @router.get("/jobs/{job_id}")

@@ -19,6 +19,7 @@ import os
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -76,6 +77,8 @@ def submit(
     speakers: int | None = None,
     filename: str | None = None,
     asr_engine: str = "fasterwhisper",
+    report_mode: str = "narrative",
+    use_consensus: bool = False,
 ) -> str:
     """Upload audio to /v1/analyze and return the job_id."""
     path = Path(audio_path)
@@ -85,7 +88,12 @@ def submit(
     url = f"{_base_url()}/v1/analyze"
     display_name = filename or path.name
 
-    data: dict[str, Any] = {"company": company, "asr_engine": asr_engine}
+    data: dict[str, Any] = {
+        "company": company,
+        "asr_engine": asr_engine,
+        "report_mode": report_mode,
+        "use_consensus": "true" if use_consensus else "false",
+    }
     if speakers is not None:
         data["speakers"] = str(speakers)
 
@@ -133,6 +141,48 @@ def submit(
         return job_id
 
     raise ModelServerError(f"submit exhausted retries: {last_err}")
+
+
+def list_contexts() -> list[dict[str, Any]]:
+    """Return company contexts known by the Tier-3 model server."""
+    url = f"{_base_url()}/v1/contexts"
+    r = httpx.get(url, headers=_auth_headers(), timeout=POLL_READ_TIMEOUT_SECONDS)
+    if r.status_code >= 400:
+        raise ModelServerError(f"list_contexts failed: HTTP {r.status_code} {r.text[:400]}")
+    body = r.json()
+    contexts = body.get("contexts", [])
+    return contexts if isinstance(contexts, list) else []
+
+
+def get_context(company: str) -> dict[str, Any] | None:
+    """Fetch one model-server context. Returns None when missing."""
+    url = f"{_base_url()}/v1/contexts/{quote(company, safe='')}"
+    r = httpx.get(url, headers=_auth_headers(), timeout=POLL_READ_TIMEOUT_SECONDS)
+    if r.status_code == 404:
+        return None
+    if r.status_code >= 400:
+        raise ModelServerError(f"get_context failed: HTTP {r.status_code} {r.text[:400]}")
+    body = r.json()
+    return body if isinstance(body, dict) else None
+
+
+def context_exists(company: str) -> bool:
+    return get_context(company) is not None
+
+
+def put_context(company: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Mirror a backend context JSON to the Tier-3 model server."""
+    url = f"{_base_url()}/v1/contexts/{quote(company, safe='')}"
+    r = httpx.put(
+        url,
+        headers={**_auth_headers(), "Content-Type": "application/json"},
+        json=payload,
+        timeout=POLL_READ_TIMEOUT_SECONDS,
+    )
+    if r.status_code >= 400:
+        raise ModelServerError(f"put_context failed: HTTP {r.status_code} {r.text[:400]}")
+    body = r.json()
+    return body if isinstance(body, dict) else {"ok": True}
 
 
 def poll(job_id: str) -> dict[str, Any]:
