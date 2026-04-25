@@ -118,6 +118,28 @@ Actions:
 - Run the configured backend restart command.
 - Smoke-test frontend and backend health URLs.
 
+Current staging deployment:
+
+| Layer | Value |
+|---|---|
+| Frontend URL | `https://staging.calltone.tech` |
+| Frontend path | `/usr/home/gsx8iy/public_html/staging/` |
+| Backend URL | `https://api-staging.calltone.tech` |
+| Backend path | `/opt/calltone-backend-staging` |
+| Backend service | `calltone-backend-staging` |
+| Backend local port | `127.0.0.1:8001` |
+| Database | `calltone_staging_db` |
+
+Staging frontend/backend live on the same physical servers as production, but with separate directories, service name, backend port, database, upload path, and GitHub deploy keys.
+
+Verified on 2026-04-25:
+
+- `staging.calltone.tech` resolves through public DNS (`1.1.1.1`, `8.8.8.8`) and the authoritative OrderBox nameserver.
+- SSL is active for `https://staging.calltone.tech`.
+- `https://api-staging.calltone.tech/api/health/detailed` returns `status=ok`.
+- GitHub Deploy run `24927626622` passed staging frontend deploy, staging backend deploy, and smoke checks.
+- `scripts/ci/smoke_http.sh` retries frontend/backend checks to survive the short backend restart window during deployment.
+
 Current guard:
 
 - If `STAGING_WEBSPACE_*`, `STAGING_BACKEND_*`, or staging smoke-test variables are not configured yet, the deploy job exits successfully with GitHub notices and skips only the missing deployment/smoke sections.
@@ -203,7 +225,7 @@ Never commit these values.
 | `STAGING_API_BASE_URL` | `https://api-staging.calltone.tech` |
 | `STAGING_FRONTEND_URL` | `https://staging.calltone.tech` |
 | `STAGING_BACKEND_HEALTH_URL` | `https://api-staging.calltone.tech/api/health/detailed` |
-| `STAGING_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+| `STAGING_BACKEND_RESTART_CMD` | `/opt/calltone-backend-staging/venv/bin/pip install -r requirements.txt && systemctl restart calltone-backend-staging` |
 
 ### Production
 
@@ -212,7 +234,7 @@ Never commit these values.
 | `PROD_API_BASE_URL` | `https://api.calltone.tech` |
 | `PROD_FRONTEND_URL` | `https://calltone.tech` |
 | `PROD_BACKEND_HEALTH_URL` | `https://api.calltone.tech/api/health/detailed` |
-| `PROD_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+| `PROD_BACKEND_RESTART_CMD` | `/opt/calltone-backend/venv/bin/pip install -r requirements.txt && systemctl restart calltone-backend` |
 
 ## GPU Server Policy
 
@@ -271,6 +293,6 @@ For the graduation implementation/testing report, keep:
 - OpenAPI artifact from the CI run.
 - Screenshot of protected `main` branch settings.
 - Screenshot of `staging` and `production` GitHub environments.
-- Screenshot of deployment workflow run.
+- Screenshot of deployment workflow run `24927626622` showing staging deploy and smoke passing.
 - Screenshot or JSON output from `/api/health/detailed`.
 - One live GPU smoke result only when the GPU instance is available.

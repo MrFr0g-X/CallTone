@@ -30,16 +30,16 @@ GitHub repo -> Settings -> Secrets and variables -> Actions -> Variables
 | `PROD_API_BASE_URL` | `https://api.calltone.tech` |
 | `PROD_FRONTEND_URL` | `https://calltone.tech` |
 | `PROD_BACKEND_HEALTH_URL` | `https://api.calltone.tech/api/health/detailed` |
-| `PROD_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+| `PROD_BACKEND_RESTART_CMD` | `/opt/calltone-backend/venv/bin/pip install -r requirements.txt && systemctl restart calltone-backend` |
 
-Optional staging variables, if a staging domain/VPS is created:
+Staging variables currently configured:
 
-| Variable | Example |
+| Variable | Value |
 |---|---|
 | `STAGING_API_BASE_URL` | `https://api-staging.calltone.tech` |
 | `STAGING_FRONTEND_URL` | `https://staging.calltone.tech` |
 | `STAGING_BACKEND_HEALTH_URL` | `https://api-staging.calltone.tech/api/health/detailed` |
-| `STAGING_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+| `STAGING_BACKEND_RESTART_CMD` | `/opt/calltone-backend-staging/venv/bin/pip install -r requirements.txt && systemctl restart calltone-backend-staging` |
 
 ## Repository Secrets
 
@@ -75,8 +75,7 @@ These deploy the contents of the repository `backend/` directory to the Hetzner 
 
 ### Staging
 
-Only add staging secrets after a separate staging webspace/VPS is provisioned.
-Until these values exist, the deploy workflow builds the frontend and then skips staging deploy/smoke steps with GitHub notices instead of failing. This keeps protected `main` green while making the missing infrastructure explicit.
+Staging is provisioned on the same physical servers as production, but with separate frontend/backend paths, service, port, and database. These secrets are already configured and verified.
 
 | Secret | Meaning |
 |---|---|
@@ -107,6 +106,34 @@ These are non-secret identifiers only.
 | GPU model-server port | `8081` |
 
 The actual passwords and private keys were intentionally not written here.
+
+## Staging Values Known From Current Deployment
+
+These are non-secret identifiers only.
+
+| Field | Value |
+|---|---|
+| Frontend domain | `https://staging.calltone.tech` |
+| Frontend host | `www686.your-server.de` |
+| Frontend SSH port | `222` |
+| Frontend path | `/usr/home/gsx8iy/public_html/staging/` |
+| Backend public domain | `https://api-staging.calltone.tech` |
+| Backend VPS IP | `91.99.208.254` |
+| Backend path | `/opt/calltone-backend-staging` |
+| Backend service | `calltone-backend-staging` |
+| Backend local port | `127.0.0.1:8001` |
+| Database | `calltone_staging_db` |
+| Uploads path | `/opt/calltone-backend-staging/uploads` |
+
+Staging deploy was verified on 2026-04-25 after SSL activation. GitHub Actions run `24927626622` passed frontend deploy, backend deploy, and smoke checks.
+
+The local Windows DNS resolver may still temporarily fail to resolve `staging.calltone.tech`; public resolvers and the authoritative nameserver resolve it correctly:
+
+```bash
+nslookup staging.calltone.tech 1.1.1.1
+nslookup staging.calltone.tech 8.8.8.8
+nslookup staging.calltone.tech tech-domains.earth.orderbox-dns.com
+```
 
 ## How To Create Deploy SSH Keys
 
@@ -142,6 +169,17 @@ version_tag=v1.0.0
 ```
 
 The workflow validates that the tag matches `vX.Y.Z` and that CI passed for that tag's commit before deploying. This manual workflow dispatch is the current production approval gate because GitHub rejected environment reviewer/wait-timer rules on the repository plan.
+
+## Staging Verification Procedure
+
+Staging deploys automatically after `main` CI passes. To verify manually:
+
+```bash
+curl -I https://staging.calltone.tech
+curl https://api-staging.calltone.tech/api/health/detailed
+```
+
+The backend health payload may report `model_server` unreachable when the disposable GPU server is stopped. That is acceptable for CI/CD staging because model execution is not required for every frontend/backend deploy. Live call analysis requires restoring a GPU instance and reconnecting the autossh tunnel.
 
 ## What The Workflow Never Uploads
 
