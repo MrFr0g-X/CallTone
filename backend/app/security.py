@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from passlib.context import CryptContext
+from passlib.exc import UnknownHashError
 
 from app.database import settings
 
@@ -12,7 +13,12 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except (UnknownHashError, ValueError):
+        # Invited accounts intentionally carry a non-bcrypt placeholder until
+        # activation. Treat that as a failed credential check, not a 500.
+        return False
 
 
 def create_access_token(user_id: int) -> str:
