@@ -28,8 +28,6 @@ jobs:
       DB_HOST: ""
       SECRET_KEY: "ci-secret-not-for-production"
       PIPELINE_QUEUE_AUTOSTART: "0"
-      MODEL_SERVER_URL: "http://127.0.0.1:8090"
-      MODEL_SERVER_TOKEN: "ci-model-token"
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +45,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run backend tests
-        run: pytest backend/tests/ -v --no-cov
+        run: pytest backend/tests/ -v
 
       - name: Export OpenAPI artifact
         run: |
@@ -94,7 +92,7 @@ jobs:
           pip install -r model_server/requirements.txt
 
       - name: Run model-server tests
-        run: pytest model_server/tests/ -v --no-cov
+        run: pytest model_server/tests/ -v
 
   skills-and-security:
     name: Layer 2 skills/security (pytest)
@@ -116,12 +114,12 @@ jobs:
           pip install pytest pyyaml
 
       - name: Run skill validation tests
-        run: pytest models/skill_implementation/tests/ -v --no-cov
+        run: pytest models/skill_implementation/tests/ -v
 
       - name: Run Layer 2 security tests
         env:
           PYTHONPATH: models:models/skill_implementation:scripts/security
-        run: pytest models/LAYER_2/security/tests/ -v --no-cov
+        run: pytest models/LAYER_2/security/tests/ -v
 
   frontend:
     name: frontend (vitest + build)
