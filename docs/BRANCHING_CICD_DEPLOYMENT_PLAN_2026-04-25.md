@@ -118,6 +118,12 @@ Actions:
 - Run the configured backend restart command.
 - Smoke-test frontend and backend health URLs.
 
+Current guard:
+
+- If `STAGING_WEBSPACE_*`, `STAGING_BACKEND_*`, or staging smoke-test variables are not configured yet, the deploy job exits successfully with GitHub notices and skips only the missing deployment/smoke sections.
+- This prevents a protected `main` merge from showing a failed release only because staging infrastructure has not been provisioned yet.
+- Once staging webspace/VPS secrets are added, the same workflow starts deploying automatically without code changes.
+
 ### Production
 
 Trigger:
