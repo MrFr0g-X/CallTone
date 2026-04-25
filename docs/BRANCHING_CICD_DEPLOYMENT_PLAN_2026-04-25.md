@@ -114,7 +114,7 @@ Actions:
 
 - Build frontend with `VITE_API_BASE_URL=${{ vars.STAGING_API_BASE_URL }}`.
 - Rsync `calltone-UI/dist/` to staging webspace.
-- Rsync repository source to staging backend VPS while excluding secrets, uploads, model weights, caches, and generated files.
+- Rsync the repository `backend/` directory to the staging backend service path while preserving remote `.env`, `venv/`, uploads, DB files, and runtime data.
 - Run the configured backend restart command.
 - Smoke-test frontend and backend health URLs.
 
@@ -140,7 +140,7 @@ Actions:
 
 - Build frontend with `VITE_API_BASE_URL=${{ vars.PROD_API_BASE_URL }}`.
 - Rsync frontend to production webspace.
-- Rsync backend/source to production VPS with strict excludes.
+- Rsync the repository `backend/` directory to the production backend service path with strict runtime-data excludes.
 - Restart backend through the configured command.
 - Smoke-test public frontend and backend health.
 
