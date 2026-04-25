@@ -7,10 +7,12 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AgentDashboard from "./pages/AgentDashboard";
 import QADashboard from "./pages/QADashboard";
 import AdminLayout from "./components/AdminLayout";
+import AdminClients from "./pages/AdminClients";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTeam from "./pages/AdminTeam";
 import AdminActivity from "./pages/AdminActivity";
@@ -29,8 +31,8 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Public routes — root redirects straight to /login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Public routes */}
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
@@ -49,7 +51,7 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/qa/call/:callId" element={
-          <ProtectedRoute allowedRoles={["qa"]}>
+          <ProtectedRoute allowedRoles={["qa", "agent", "admin", "super_admin"]}>
             <CallDetail />
           </ProtectedRoute>
         } />
@@ -71,9 +73,14 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         }>
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="clients" element={<AdminClients />} />
           <Route path="team" element={<AdminTeam />} />
           <Route path="activity" element={<AdminActivity />} />
-          <Route path="settings" element={<AdminSettings />} />
+          <Route path="settings" element={
+            <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+              <AdminSettings />
+            </ProtectedRoute>
+          } />
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
 

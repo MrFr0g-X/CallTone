@@ -75,6 +75,12 @@ node_modules/
 .claude/
 
 # ============================================================
+# Local deployment secrets and one-off deploy artifacts
+# ============================================================
+deployment/ssh-keys/
+*.tgz
+
+# ============================================================
 # Windows Zone.Identifier metadata files (WSL artifact)
 # ============================================================
 *:Zone.Identifier

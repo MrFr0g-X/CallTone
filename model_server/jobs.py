@@ -90,6 +90,22 @@ class JobStore:
         with self._lock:
             return self._active_id is not None
 
+    def snapshot(self) -> dict[str, Any]:
+        """Return safe public scheduler state for capacity/ops endpoints."""
+        with self._lock:
+            self._sweep_locked()
+            active = self._jobs.get(self._active_id) if self._active_id else None
+            terminal = [j for j in self._jobs.values() if j.status in _TERMINAL]
+            return {
+                "busy": self._active_id is not None,
+                "activeJobId": self._active_id,
+                "activeStatus": active.status if active else None,
+                "activeProgressPct": active.progress_pct if active else None,
+                "activeMeta": dict(active.meta) if active else None,
+                "knownJobs": len(self._jobs),
+                "terminalJobs": len(terminal),
+            }
+
     # ── state updates ──────────────────────────────────────────────────
     def update(
         self,

@@ -3,16 +3,18 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  LayoutDashboard, Users, Settings, LogOut,
+  Building2, LayoutDashboard, Users, Settings, LogOut,
   Menu, X, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { roleConfig } from "@/data/adminMockData";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
+import { canManageAdminUsers } from "@/lib/roles";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+  { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
@@ -26,6 +28,13 @@ const AdminMobileNav = () => {
   const adminRole = (user?.role ?? "viewer") as keyof typeof roleConfig;
   const role = roleConfig[adminRole] ?? roleConfig.viewer;
   const userName = user?.name ?? "Admin";
+  const visibleNavItems = navItems.filter((item) => item.to !== "/admin/settings" || canManageAdminUsers(user?.role));
+
+  const handleLogout = async () => {
+    setOpen(false);
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <nav className="bg-background/60 backdrop-blur-2xl border-b border-border/50">
@@ -65,7 +74,7 @@ const AdminMobileNav = () => {
             className="overflow-hidden border-t border-border/50 bg-background/80 backdrop-blur-2xl"
           >
             <div className="px-5 py-5 space-y-1.5">
-              {navItems.map((item, i) => (
+              {visibleNavItems.map((item, i) => (
                 <motion.div
                   key={item.to}
                   initial={{ opacity: 0, x: -16 }}
@@ -105,7 +114,7 @@ const AdminMobileNav = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => { setOpen(false); logout(); navigate("/login"); }}
+                  onClick={handleLogout}
                   className="p-2 rounded-xl text-muted-foreground hover:text-foreground transition-all"
                   aria-label="Sign out"
                 >

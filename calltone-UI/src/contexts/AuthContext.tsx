@@ -97,14 +97,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = useCallback(async () => {
+    localStorage.removeItem("calltone_token");
+    localStorage.removeItem("calltone_user");
+    setUser(null);
+
     try {
       await authApi.logout();
     } catch {
-      // ignore logout API failures for now
-    } finally {
-      localStorage.removeItem("calltone_token");
-      localStorage.removeItem("calltone_user");
-      setUser(null);
+      // Local logout is already complete; the API call is best-effort only.
     }
   }, []);
 

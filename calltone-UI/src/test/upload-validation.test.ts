@@ -25,9 +25,9 @@ describe("upload validation (pre-POST checks)", () => {
     ).toEqual({ ok: false, reason: "type" });
   });
 
-  it("rejects >100 MB files", () => {
+  it("rejects >200 MB files", () => {
     expect(
-      validateUpload({ name: "big.wav", type: "audio/wav", size: 150 * 1024 * 1024 }),
+      validateUpload({ name: "big.wav", type: "audio/wav", size: 250 * 1024 * 1024 }),
     ).toEqual({ ok: false, reason: "size" });
   });
 

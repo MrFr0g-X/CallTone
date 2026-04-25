@@ -2,7 +2,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  LayoutDashboard, Users, Settings, LogOut,
+  Building2, LayoutDashboard, Users, Settings, LogOut,
   ChevronLeft, ChevronRight, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,10 +10,12 @@ import { roleConfig } from "@/data/adminMockData";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
 import calltoneLogo from "@/assets/calltone-logo.png";
+import { canManageAdminUsers } from "@/lib/roles";
 import { useState } from "react";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+  { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
@@ -27,6 +29,12 @@ const AdminSidebar = () => {
   const adminRole = (user?.role ?? "viewer") as keyof typeof roleConfig;
   const role = roleConfig[adminRole] ?? roleConfig.viewer;
   const userName = user?.name ?? "Admin";
+  const visibleNavItems = navItems.filter((item) => item.to !== "/admin/settings" || canManageAdminUsers(user?.role));
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <aside
@@ -55,7 +63,7 @@ const AdminSidebar = () => {
 
       {/* Nav */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = location.pathname === item.to;
           return (
             <Link
@@ -112,7 +120,7 @@ const AdminSidebar = () => {
           )}
           {!collapsed && (
             <button
-              onClick={() => { logout(); navigate("/login"); }}
+              onClick={handleLogout}
               className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
               aria-label="Sign out"
             >

@@ -9,7 +9,7 @@ import calltoneLogo from "@/assets/calltone-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 interface NavbarProps {
   userName: string;
-  userRole: "agent" | "qa";
+  userRole: "agent" | "qa" | "admin";
 }
 
 const Navbar = ({ userName, userRole }: NavbarProps) => {
@@ -19,9 +19,9 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
   const navId = useId();
   const { logout } = useAuth();
 
-  const handleSignOut = () => {
-    logout();
-    navigate("/login");
+  const handleSignOut = async () => {
+    await logout();
+    navigate("/login", { replace: true });
   };
 
   const agentLinks = [
@@ -34,13 +34,21 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
     { to: "/qa/context",   label: "Context",   icon: Building2 },
   ];
 
-  const links = userRole === "agent" ? agentLinks : qaLinks;
+  const adminLinks = [
+    { to: "/admin/dashboard", label: "Admin", icon: BarChart3 },
+    { to: "/qa/upload",       label: "Upload", icon: Upload },
+    { to: "/qa/context",      label: "Context", icon: Building2 },
+  ];
+
+  const links = userRole === "agent" ? agentLinks : userRole === "admin" ? adminLinks : qaLinks;
+  const homePath = userRole === "agent" ? "/agent/dashboard" : userRole === "admin" ? "/admin/dashboard" : "/qa/dashboard";
+  const roleLabel = userRole === "agent" ? "Agent" : userRole === "admin" ? "Admin" : "QA Analyst";
 
   return (
     <nav className="sticky top-0 z-50 bg-background/60 backdrop-blur-2xl border-b border-border/50">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
         {/* Logo */}
-        <Link to={userRole === "agent" ? "/agent/dashboard" : "/qa/dashboard"} className="flex items-center gap-2">
+        <Link to={homePath} className="flex items-center gap-2">
           <img src={calltoneIcon} alt="CallTone" className="w-28 h-28 -my-8 md:hidden" />
           <img src={calltoneLogo} alt="CallTone" className="hidden md:block h-36 -my-12" />
         </Link>
@@ -82,7 +90,7 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
           <div className="w-px h-6 bg-border/50" />
           <div className="text-right">
             <p className="text-[13px] font-medium text-foreground">{userName}</p>
-            <p className="text-[11px] text-muted-foreground capitalize">{userRole === "qa" ? "QA Analyst" : "Agent"}</p>
+            <p className="text-[11px] text-muted-foreground capitalize">{roleLabel}</p>
           </div>
           <motion.button
             onClick={handleSignOut}
@@ -162,7 +170,7 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
               >
                 <div>
                   <p className="text-sm font-medium text-foreground">{userName}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{userRole === "qa" ? "QA Analyst" : "Agent"}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{roleLabel}</p>
                 </div>
                 <motion.button
                   onClick={() => { setMobileOpen(false); handleSignOut(); }}
