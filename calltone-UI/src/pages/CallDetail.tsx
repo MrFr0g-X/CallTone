@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import apiClient from "@/services/api";
 import {
@@ -7,10 +7,8 @@ import {
   ArrowLeft,
   Download,
   FileText,
-  Loader2,
-  Radio,
+  Pause,
   Shield,
-  ExternalLink,
   PlayCircle,
 } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
@@ -50,6 +48,161 @@ const buildAudioSrc = (audioUrl?: string | null) => {
   return `${base.replace(/\/$/, "")}/${audioUrl.replace(/^\//, "")}`;
 };
 
+const formatAudioTime = (seconds: number) => {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
+  const total = Math.floor(seconds);
+  const minutes = Math.floor(total / 60);
+  const remainder = String(total % 60).padStart(2, "0");
+  return `${minutes}:${remainder}`;
+};
+
+type CallAudioPlayerProps = {
+  audioSrc: string | null;
+  drivePreviewUrl?: string | null;
+  driveDownloadUrl?: string | null;
+};
+
+const CallAudioPlayer = ({
+  audioSrc,
+  drivePreviewUrl,
+  driveDownloadUrl,
+}: CallAudioPlayerProps) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressRef = useRef<HTMLDivElement | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setDuration(0);
+    setCurrentTime(0);
+    setIsPlaying(false);
+    setHasError(false);
+  }, [audioSrc]);
+
+  const progress = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
+
+  const seekToPointer = (clientX: number) => {
+    const audio = audioRef.current;
+    const track = progressRef.current;
+    if (!audio || !track || !duration) return;
+
+    const bounds = track.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - bounds.left) / bounds.width));
+    audio.currentTime = ratio * duration;
+  };
+
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch {
+        setHasError(true);
+      }
+    } else {
+      audio.pause();
+    }
+  };
+
+  if (!audioSrc && drivePreviewUrl) {
+    return (
+      <iframe
+        src={drivePreviewUrl}
+        width="100%"
+        height="86"
+        allow="autoplay"
+        className="w-full rounded-2xl border border-border/70"
+        title="Call audio preview"
+      />
+    );
+  }
+
+  if (!audioSrc) {
+    return <p className="text-sm text-muted-foreground">No audio preview available for this call.</p>;
+  }
+
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card/80 px-4 py-3 shadow-sm">
+      <audio
+        ref={audioRef}
+        preload="metadata"
+        src={audioSrc}
+        onLoadedMetadata={(event) => {
+          setDuration(event.currentTarget.duration || 0);
+        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        onError={() => {
+          setHasError(true);
+        }}
+      />
+
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={togglePlayback}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground shadow-sm transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+          aria-label={isPlaying ? "Pause call audio" : "Play call audio"}
+        >
+          {isPlaying ? <Pause className="h-4 w-4" /> : <PlayCircle className="h-4 w-4" />}
+        </button>
+
+        <span className="w-[76px] shrink-0 text-xs tabular-nums text-muted-foreground">
+          {formatAudioTime(currentTime)} / {formatAudioTime(duration)}
+        </span>
+
+        <div
+          ref={progressRef}
+          className="relative h-2 flex-1 cursor-pointer rounded-full bg-muted"
+          role="slider"
+          aria-label="Call audio progress"
+          aria-valuemin={0}
+          aria-valuemax={Math.max(0, Math.floor(duration))}
+          aria-valuenow={Math.floor(currentTime)}
+          tabIndex={0}
+          onClick={(event) => seekToPointer(event.clientX)}
+          onKeyDown={(event) => {
+            const audio = audioRef.current;
+            if (!audio || !duration) return;
+            if (event.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - 5);
+            if (event.key === "ArrowRight") audio.currentTime = Math.min(duration, audio.currentTime + 5);
+          }}
+        >
+          <div
+            className="absolute left-0 top-0 h-full rounded-full bg-accent transition-[width]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        {(driveDownloadUrl || audioSrc) && (
+          <a
+            href={driveDownloadUrl || audioSrc}
+            target="_blank"
+            rel="noreferrer"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-background/70 text-muted-foreground transition-colors hover:text-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+            aria-label="Open call audio"
+            title="Open audio"
+          >
+            <Download className="h-4 w-4" />
+          </a>
+        )}
+      </div>
+
+      {hasError && (
+        <p className="mt-3 text-xs text-destructive">
+          Audio stream could not be loaded. Refresh the page to renew the media link.
+        </p>
+      )}
+    </div>
+  );
+};
+
 const CallDetailPage = () => {
   const { callId } = useParams();
   const { user } = useAuth();
@@ -65,11 +218,6 @@ const CallDetailPage = () => {
   });
 
   const audioSrc = buildAudioSrc(call?.audioUrl);
-  const [audioStatus, setAudioStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
-
-  useEffect(() => {
-    setAudioStatus(audioSrc ? "loading" : "idle");
-  }, [audioSrc]);
 
   return (
     <PageTransition>
@@ -140,107 +288,16 @@ const CallDetailPage = () => {
               </motion.div>
             ) : null}
 
-            <GlassCard className="relative overflow-hidden p-0">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(34,211,238,0.14),transparent_32%),linear-gradient(135deg,rgba(15,23,42,0.94),rgba(2,6,23,0.78))]" />
-              <div className="relative p-5 sm:p-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent/80 flex items-center gap-2">
-                      <Radio className="h-4 w-4" /> Secure Stream
-                    </p>
-                    <h2 className="mt-2 text-lg font-semibold text-foreground flex items-center gap-2">
-                      <PlayCircle className="h-5 w-5 text-accent" /> Call Audio
-                    </h2>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Browser-native streaming with range requests. Playback starts from metadata instead of downloading the full file first.
-                    </p>
-                  </div>
+            <GlassCard className="p-5 sm:p-6">
+              <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <PlayCircle className="w-4 h-4" /> Call Audio
+              </h2>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    {audioStatus === "loading" && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-medium text-accent">
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Preparing audio
-                      </span>
-                    )}
-                    {audioStatus === "ready" && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-3 py-1 text-[11px] font-medium text-success">
-                        Stream ready
-                      </span>
-                    )}
-                    {call.driveDownloadUrl && (
-                      <a
-                        href={call.driveDownloadUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-accent/30 hover:text-accent"
-                      >
-                        Drive <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {audioSrc && (
-                      <a
-                        href={audioSrc}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-accent/30 hover:text-accent"
-                      >
-                        Open <Download className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-5 rounded-3xl border border-white/[0.08] bg-black/25 p-3 shadow-2xl shadow-black/20">
-                  <div className="mb-3 flex h-12 items-end gap-1.5 overflow-hidden rounded-2xl bg-gradient-to-r from-accent/10 via-primary/10 to-success/10 px-3 py-2">
-                    {Array.from({ length: 44 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={cn(
-                          "w-full rounded-full bg-accent/50 transition-all",
-                          audioStatus === "ready" ? "animate-pulse" : "opacity-40"
-                        )}
-                        style={{
-                          height: `${18 + ((i * 17) % 31)}px`,
-                          animationDelay: `${i * 35}ms`,
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {audioSrc ? (
-                    <audio
-                      controls
-                      preload="metadata"
-                      className="w-full accent-cyan-400"
-                      src={audioSrc}
-                      onLoadedMetadata={() => setAudioStatus("ready")}
-                      onCanPlay={() => setAudioStatus("ready")}
-                      onError={() => setAudioStatus("error")}
-                    >
-                      Your browser does not support the audio element.
-                    </audio>
-                  ) : call.drivePreviewUrl ? (
-                    <iframe
-                      src={call.drivePreviewUrl}
-                      width="100%"
-                      height="120"
-                      allow="autoplay"
-                      className="w-full rounded-2xl"
-                      title="Call audio preview"
-                    />
-                  ) : (
-                    <p className="px-2 py-3 text-sm text-muted-foreground">
-                      No audio preview available for this call.
-                    </p>
-                  )}
-                </div>
-
-                {audioStatus === "error" && (
-                  <p className="mt-3 rounded-2xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                    Audio stream could not be loaded. Use the Drive fallback or refresh the page to renew the media token.
-                  </p>
-                )}
-              </div>
+              <CallAudioPlayer
+                audioSrc={audioSrc}
+                drivePreviewUrl={call.drivePreviewUrl}
+                driveDownloadUrl={call.driveDownloadUrl}
+              />
             </GlassCard>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
