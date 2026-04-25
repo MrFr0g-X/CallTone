@@ -76,6 +76,7 @@ These deploy backend/source code to the Hetzner VPS. The workflow preserves remo
 ### Staging
 
 Only add staging secrets after a separate staging webspace/VPS is provisioned.
+Until these values exist, the deploy workflow builds the frontend and then skips staging deploy/smoke steps with GitHub notices instead of failing. This keeps protected `main` green while making the missing infrastructure explicit.
 
 | Secret | Meaning |
 |---|---|

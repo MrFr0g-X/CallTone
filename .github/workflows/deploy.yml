@@ -74,7 +74,53 @@ jobs:
           npm ci
           npm run build
 
+      - name: Check staging deployment config
+        id: staging_config
+        env:
+          FRONTEND_SSH_KEY: ${{ secrets.STAGING_WEBSPACE_SSH_KEY }}
+          FRONTEND_HOST: ${{ secrets.STAGING_WEBSPACE_HOST }}
+          FRONTEND_USER: ${{ secrets.STAGING_WEBSPACE_USER }}
+          FRONTEND_PORT: ${{ secrets.STAGING_WEBSPACE_PORT }}
+          FRONTEND_PATH: ${{ secrets.STAGING_WEBSPACE_PATH }}
+          BACKEND_SSH_KEY: ${{ secrets.STAGING_BACKEND_SSH_KEY }}
+          BACKEND_HOST: ${{ secrets.STAGING_BACKEND_HOST }}
+          BACKEND_USER: ${{ secrets.STAGING_BACKEND_USER }}
+          BACKEND_PORT: ${{ secrets.STAGING_BACKEND_PORT }}
+          BACKEND_PATH: ${{ secrets.STAGING_BACKEND_PATH }}
+          FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
+          BACKEND_HEALTH_URL: ${{ vars.STAGING_BACKEND_HEALTH_URL }}
+        run: |
+          frontend_ready=true
+          for name in FRONTEND_SSH_KEY FRONTEND_HOST FRONTEND_USER FRONTEND_PORT FRONTEND_PATH; do
+            if [ -z "${!name}" ]; then frontend_ready=false; fi
+          done
+
+          backend_ready=true
+          for name in BACKEND_SSH_KEY BACKEND_HOST BACKEND_USER BACKEND_PORT BACKEND_PATH; do
+            if [ -z "${!name}" ]; then backend_ready=false; fi
+          done
+
+          smoke_ready=true
+          for name in FRONTEND_URL BACKEND_HEALTH_URL; do
+            if [ -z "${!name}" ]; then smoke_ready=false; fi
+          done
+
+          echo "frontend_ready=${frontend_ready}" >> "$GITHUB_OUTPUT"
+          echo "backend_ready=${backend_ready}" >> "$GITHUB_OUTPUT"
+          echo "smoke_ready=${smoke_ready}" >> "$GITHUB_OUTPUT"
+
+          if [ "${frontend_ready}" != "true" ]; then
+            echo "::notice::Skipping staging frontend deploy because STAGING_WEBSPACE_* secrets are not fully configured."
+          fi
+          if [ "${backend_ready}" != "true" ]; then
+            echo "::notice::Skipping staging backend deploy because STAGING_BACKEND_* secrets are not fully configured."
+          fi
+          if [ "${smoke_ready}" != "true" ]; then
+            echo "::notice::Skipping staging smoke test because STAGING_FRONTEND_URL and/or STAGING_BACKEND_HEALTH_URL variables are not configured."
+          fi
+
       - name: Deploy frontend to staging webspace
+        if: steps.staging_config.outputs.frontend_ready == 'true'
         env:
           SSH_KEY: ${{ secrets.STAGING_WEBSPACE_SSH_KEY }}
           HOST: ${{ secrets.STAGING_WEBSPACE_HOST }}
@@ -84,6 +130,7 @@ jobs:
         run: bash scripts/ci/rsync_dir.sh calltone-UI/dist/ "$USER@$HOST:$PATH_REMOTE" "$PORT" "$SSH_KEY"
 
       - name: Deploy backend to staging VPS
+        if: steps.staging_config.outputs.backend_ready == 'true'
         env:
           SSH_KEY: ${{ secrets.STAGING_BACKEND_SSH_KEY }}
           HOST: ${{ secrets.STAGING_BACKEND_HOST }}
@@ -96,6 +143,7 @@ jobs:
           bash scripts/ci/remote_exec.sh "$USER@$HOST" "$PORT" "$SSH_KEY" "cd '$PATH_REMOTE' && ${RESTART_CMD}"
 
       - name: Smoke staging
+        if: steps.staging_config.outputs.smoke_ready == 'true'
         env:
           FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
           BACKEND_HEALTH_URL: ${{ vars.STAGING_BACKEND_HEALTH_URL }}
