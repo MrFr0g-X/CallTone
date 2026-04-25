@@ -286,6 +286,7 @@ app.add_middleware(
 app.add_middleware(SecurityHeadersMiddleware)
 
 bearer_scheme = HTTPBearer()
+optional_bearer_scheme = HTTPBearer(auto_error=False)
 
 
 # ── Upload filename sanitization (C-4) ──────────────────────────────────────
@@ -432,11 +433,7 @@ def _sanitize_filename(name: str | None) -> str:
     return cleaned or _FILENAME_FALLBACK
 
 
-def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
-    db: Session = Depends(get_db),
-):
-    token = credentials.credentials
+def _user_from_access_token(token: str, db: Session) -> User:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id = payload.get("sub")
@@ -445,10 +442,62 @@ def get_current_user(
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
-    user = db.query(User).filter(User.id == int(user_id), User.is_active == True).first()
+    try:
+        user_pk = int(user_id)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid media token")
+
+    user = db.query(User).filter(User.id == user_pk, User.is_active == True).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found or inactive")
 
+    return user
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    db: Session = Depends(get_db),
+):
+    return _user_from_access_token(credentials.credentials, db)
+
+
+def _create_call_media_token(call_id: str, user_id: int) -> str:
+    """Short-lived signed token for native browser media requests.
+
+    Native <audio> cannot attach the normal Authorization header. A scoped
+    token lets the browser stream/range-request one call's audio without
+    exposing the full session JWT in the URL.
+    """
+    expires = datetime.now(timezone.utc) + timedelta(minutes=60)
+    payload = {
+        "sub": str(user_id),
+        "call_id": call_id,
+        "scope": "call_audio",
+        "exp": expires,
+    }
+    return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def _user_from_call_media_token(token: str, call_id: str, db: Session) -> User:
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid media token")
+
+    if payload.get("scope") != "call_audio" or payload.get("call_id") != call_id:
+        raise HTTPException(status_code=401, detail="Invalid media token scope")
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid media token")
+
+    try:
+        user_pk = int(user_id)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid media token")
+
+    user = db.query(User).filter(User.id == user_pk, User.is_active == True).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found or inactive")
     return user
 
 
@@ -1219,8 +1268,9 @@ def get_qa_calls(
 @app.get(f"{settings.API_V1_PREFIX}/qa/calls/{{call_id}}/audio")
 def get_qa_call_audio(
     call_id: str,
+    media_token: str | None = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials | None = Depends(optional_bearer_scheme),
 ):
     from fastapi.responses import FileResponse
     import mimetypes
@@ -1228,6 +1278,14 @@ def get_qa_call_audio(
     call = db.query(Call).filter(Call.id == call_id).first()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
+
+    if credentials:
+        current_user = _user_from_access_token(credentials.credentials, db)
+    elif media_token:
+        current_user = _user_from_call_media_token(media_token, call_id, db)
+    else:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
     _ensure_call_visible_to_user(call, current_user, db)
     if not call.storage_path:
         raise HTTPException(status_code=404, detail="No stored audio for this call")
@@ -1244,7 +1302,12 @@ def get_qa_call_audio(
         str(path),
         media_type=media_type,
         filename=call.original_filename or path.name,
-        headers={"Accept-Ranges": "bytes", "Cache-Control": "private, max-age=300"},
+        headers={
+            "Accept-Ranges": "bytes",
+            "Cache-Control": "private, max-age=300",
+            "Cross-Origin-Resource-Policy": "cross-origin",
+        },
+        content_disposition_type="inline",
     )
 
 
@@ -1278,10 +1341,10 @@ def get_qa_call_detail(
         f"https://drive.google.com/uc?export=download&id={drive_file_id}"
         if drive_file_id else None
     )
-    audio_url = (
-        f"{settings.API_V1_PREFIX}/qa/calls/{call.id}/audio"
-        if call.storage_path and Path(call.storage_path).is_file() else None
-    )
+    audio_url = None
+    if call.storage_path and Path(call.storage_path).is_file():
+        media_token = _create_call_media_token(call.id, current_user.id)
+        audio_url = f"{settings.API_V1_PREFIX}/qa/calls/{call.id}/audio?media_token={media_token}"
 
     return {
         "callId": call.id,
