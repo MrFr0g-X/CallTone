@@ -20,14 +20,15 @@ import { qaApi } from "@/services/api";
 import type { QaCallItem } from "@/services/api";
 import { cn } from "@/lib/utils";
 import AnimatedNumber from "@/components/AnimatedNumber";
+import { isDateInDashboardRange, type DashboardRange } from "@/lib/timeRange";
 
-const timeRanges = ["Weekly", "Monthly", "Quarterly", "Yearly"];
+const timeRanges: DashboardRange[] = ["Weekly", "Monthly", "Quarterly", "Yearly"];
 
 const QADashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [selectedRange, setSelectedRange] = useState("Monthly");
+  const [selectedRange, setSelectedRange] = useState<DashboardRange>("Monthly");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"time" | "rating">("time");
 
@@ -39,11 +40,12 @@ const QADashboard = () => {
     },
   });
 
-  const calls = data?.calls ?? [];
+  const calls = useMemo(() => data?.calls ?? [], [data?.calls]);
 
   const filteredCalls = useMemo(() => {
     let filtered = calls.filter((call) => {
       const q = search.toLowerCase();
+      if (!isDateInDashboardRange(call.callTime, selectedRange)) return false;
       return (
         call.filename.toLowerCase().includes(q) ||
         call.agentName.toLowerCase().includes(q) ||
@@ -64,16 +66,20 @@ const QADashboard = () => {
     }
 
     return filtered;
-  }, [calls, search, sortBy]);
+  }, [calls, search, selectedRange, sortBy]);
 
-  const totalCalls = calls.length;
+  const rangeCalls = useMemo(
+    () => calls.filter((call) => isDateInDashboardRange(call.callTime, selectedRange)),
+    [calls, selectedRange],
+  );
+  const totalCalls = rangeCalls.length;
   const avgScore =
-    calls.length > 0
+    rangeCalls.length > 0
       ? Math.round(
-          calls.reduce((sum, c) => sum + (c.overallScore ?? 0), 0) / calls.length
+          rangeCalls.reduce((sum, c) => sum + (c.overallScore ?? 0), 0) / rangeCalls.length
         )
       : 0;
-  const flaggedCalls = calls.filter(
+  const flaggedCalls = rangeCalls.filter(
     (c) =>
       (c.overallScore ?? 100) < 70 ||
       (c.severity ?? "").toLowerCase() === "major" ||
@@ -167,7 +173,7 @@ const QADashboard = () => {
             <BubbleToggle
               options={timeRanges}
               value={selectedRange}
-              onChange={setSelectedRange}
+              onChange={(value) => setSelectedRange(value as DashboardRange)}
             />
 
             <div className="flex flex-col sm:flex-row gap-2">

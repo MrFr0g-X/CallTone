@@ -9,10 +9,10 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { contextApi } from "@/services/api";
+import { apiErrorMessage, contextApi } from "@/services/api";
 import type { CompanyContextSummary, ContextTicket, IngestResult, IngestJobStatus } from "@/services/api";
 import { cn } from "@/lib/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 type Tab = "companies" | "upload" | "tickets";
@@ -294,14 +294,32 @@ const UploadTab = () => {
 // ─── Tickets Tab ──────────────────────────────────────────────────────────────
 const TicketsTab = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ companyName: "", fieldName: "", oldText: "", newText: "", reason: "" });
   const [creating, setCreating] = useState(false);
+  const canReviewTickets = user?.role === "admin" || user?.role === "super_admin";
 
   const { data, isLoading } = useQuery({
     queryKey: ["context-tickets"],
     queryFn: () => contextApi.listTickets().then(r => r.data.tickets),
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: ({ ticketId, status, note }: { ticketId: string; status: "approved" | "rejected"; note?: string }) =>
+      contextApi.updateTicket(ticketId, status, note),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["context-tickets"] });
+      toast({ title: `Ticket ${variables.status}`, description: "Change request status updated." });
+    },
+    onError: (error: unknown) => {
+      toast({
+        title: "Ticket update failed",
+        description: apiErrorMessage(error, "Could not update this change request."),
+        variant: "destructive",
+      });
+    },
   });
 
   const handleCreate = async () => {
@@ -321,6 +339,11 @@ const TicketsTab = () => {
     } finally {
       setCreating(false);
     }
+  };
+
+  const reviewTicket = (ticketId: string, status: "approved" | "rejected") => {
+    const note = window.prompt(`Optional review note for ${status}:`) || undefined;
+    reviewMutation.mutate({ ticketId, status, note });
   };
 
   return (
@@ -435,6 +458,24 @@ const TicketsTab = () => {
                   )}
                 </div>
               </div>
+              {canReviewTickets && t.status === "pending" && (
+                <div className="mt-4 flex flex-wrap gap-2 border-t border-border/40 pt-3">
+                  <button
+                    onClick={() => reviewTicket(t.ticket_id, "approved")}
+                    disabled={reviewMutation.isPending}
+                    className="rounded-xl bg-success/10 px-3 py-1.5 text-xs font-semibold text-success transition-colors hover:bg-success/20 disabled:opacity-50"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => reviewTicket(t.ticket_id, "rejected")}
+                    disabled={reviewMutation.isPending}
+                    className="rounded-xl bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
               <p className="text-[10px] text-muted-foreground/60 mt-3">
                 By {t.submitted_by} · {new Date(t.submitted_at).toLocaleDateString()}
                 {t.reviewed_by && ` · Reviewed by ${t.reviewed_by}`}
@@ -451,6 +492,7 @@ const TicketsTab = () => {
 const CompanyContext = () => {
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>("companies");
+  const userRole = user?.role === "qa" ? "qa" : "admin";
 
   const { data: companiesData, isLoading: companiesLoading } = useQuery({
     queryKey: ["context-companies"],
@@ -467,7 +509,7 @@ const CompanyContext = () => {
     <PageTransition>
       <div className="min-h-screen relative">
         <AnimatedBackground />
-        <Navbar userName={user?.name ?? ""} userRole="qa" />
+        <Navbar userName={user?.name ?? ""} userRole={userRole} />
 
         <main className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-8">
           <header>

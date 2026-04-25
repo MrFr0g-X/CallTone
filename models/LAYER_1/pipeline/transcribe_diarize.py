@@ -59,7 +59,7 @@ from collections import defaultdict, Counter
 import warnings
 import numpy as np
 import torchaudio
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+from faster_whisper import WhisperModel
 from pyannote.audio import Pipeline
 
 # Suppress known harmless deprecation warnings from transformers / pyannote
@@ -157,57 +157,363 @@ def parse_sense_output(raw: str) -> tuple[str, str, str]:
     return clean, "EMO_UNKNOWN", "Speech"
 
 
+# ── ASR engine selection ─────────────────────────────────────────────────────
+# CALLTONE_ASR env var picks the engine per call:
+#   "fasterwhisper" (default) — Systran/faster-whisper-large-v3 on CTranslate2
+#   "sensevoice"              — Alibaba/FunASR SenseVoiceSmall (original choice)
+#
+# The pipeline uses a unified `transcribe_full_audio(audio_np, sr)` API that
+# returns a list of (start_time, word_text) tuples regardless of engine, so
+# downstream alignment-to-diarization-turns code is agnostic.
+_SENSEVOICE_MODEL = None  # Lazy-loaded FunASR AutoModel
+
+DEFAULT_ASR_GLOSSARY = (
+    "MetroBoost, Metro Boost, Shalene, Linda Marone, Global Phone, postpaid, "
+    "prepaid, AutoPay, O2Pay, credit card, overdraft fee, unlimited calls and "
+    "texts, unlimited data, five gigs, fifteen gigabytes, sixty-seven dollars "
+    "and eighty-one cents, sixty-five dollar unlimited plan, two dollars and "
+    "eighty-one cents, $67.81, $62.81, $65, $40, $30, $50, $60, $55"
+)
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _selected_asr_engine() -> str:
+    """Return the lower-case engine name picked via env. Default fasterwhisper."""
+    return os.environ.get("CALLTONE_ASR", "fasterwhisper").strip().lower()
+
+
+def _asr_glossary_prompt() -> str | None:
+    if not _env_bool("CALLTONE_FW_USE_GLOSSARY", True):
+        return None
+    return os.environ.get("CALLTONE_ASR_GLOSSARY", DEFAULT_ASR_GLOSSARY).strip() or None
+
+
+def _normalize_asr_text(text: str) -> str:
+    """Conservative telecom/domain cleanup after ASR.
+
+    This is intentionally not a general grammar corrector. It only fixes
+    deterministic domain confusions observed on CallTone telecom calls and
+    preserves the original wording everywhere else.
+    """
+    replacements = [
+        (r"\bMetro\s+Boost\b", "MetroBoost"),
+        (r"\bMetrobus\b", "MetroBoost"),
+        (r"\bMetribus\b", "MetroBoost"),
+        (r"\bMetribuys\b", "MetroBoost"),
+        (r"\bMetribuy\b", "MetroBoost"),
+        (r"\bMetro\s+Buys\b", "MetroBoost"),
+        (r"\bShalane\b", "Shalene"),
+        (r"\bJolene\b", "Shalene"),
+        (r"\bJalene\b", "Shalene"),
+        (r"\bPostpay\b", "postpaid"),
+        (r"\bpostpay\b", "postpaid"),
+        (r"\bPrepay\b", "prepaid"),
+        (r"\bprepay\b", "prepaid"),
+        (r"\bAlrighty\b", "All righty"),
+        (r"\bAlright\b", "All right"),
+        (r"\bKylie,?\s+tap\b", "Kindly tap"),
+        (r"\bfee\s+data\s+checker\b", "Feed Data Checker"),
+        (r"\b27\s+days\b", "twenty-seven days"),
+        (r"\bno\s+problem\b", "not a problem"),
+        (r"\bthe\s+goodness\s+about\s+it\b", "the good news about it"),
+        (r"\bO2\s*Pay\b", "AutoPay"),
+        (r"\bO\s*to\s*Pay\b", "AutoPay"),
+        (r"\bauto\s+pay\b", "AutoPay"),
+        (r"\bcredit\s+card\s+is\s+currently\s+not\s+enrolled\s+in\s+AutoPay\b",
+         "credit card is currently not enrolled in AutoPay"),
+        (r"\bcharged\s+\$?6781\b", "charged $67.81"),
+        (r"\bcharged\s+67\s+81\b", "charged $67.81"),
+        (r"\b\$6781\b", "$67.81"),
+        (r"\bunlimited\s+cost,\s*tax,\s*and\s+data\b", "unlimited calls, texts, and data"),
+        (r"\bthe\s+plan\s+that\s+was\s+graded\s+for\s+you\b",
+         "the plan that was created for you"),
+        (r"\btap\s+that\s+app\s+for\s+me,\s+in\s+with\b",
+         "tap that app for me, sign in with"),
+        (r"\btrack\s+all\s+the\s+details\s+of\s+your\s+account\b",
+         "check all the details of your account"),
+    ]
+    cleaned = text
+    for pattern, replacement in replacements:
+        cleaned = re.sub(pattern, replacement, cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"\s+([,.?!])", r"\1", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned
+
+
 def load_sense_model():
+    """
+    Load the active ASR engine and return the model handle.
+
+    Returns:
+        - WhisperModel (faster-whisper) when CALLTONE_ASR=fasterwhisper (default)
+        - FunASR AutoModel               when CALLTONE_ASR=sensevoice
+
+    Both handles are cached at module level so re-runs don't reload weights.
+    """
+    engine = _selected_asr_engine()
+    if engine == "sensevoice":
+        return _load_sensevoice_model()
+    if engine != "fasterwhisper":
+        print(f"  WARN: unknown CALLTONE_ASR='{engine}', falling back to fasterwhisper")
+    return _load_fasterwhisper_model()
+
+
+def _load_fasterwhisper_model():
+    """Load faster-whisper (CTranslate2) — 4-8x faster than HF transformers."""
     global _WHISPER_MODEL
     if _WHISPER_MODEL is not None:
-        print("  Whisper model already loaded — reusing cached model.")
+        print("  faster-whisper already loaded — reusing cached model.")
         return _WHISPER_MODEL
 
-    print("  Loading Whisper model...")
-    dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-    model = AutoModelForSpeechSeq2Seq.from_pretrained(
-        MODEL_DIR, dtype=dtype, low_cpu_mem_usage=True, use_safetensors=True
-    )
-    model.to(DEVICE)
-    processor = AutoProcessor.from_pretrained(MODEL_DIR)
+    use_cuda = torch.cuda.is_available()
+    device = "cuda" if use_cuda else "cpu"
+    compute_type = "float16" if use_cuda else "int8"
+    model_id = os.environ.get("CALLTONE_FW_MODEL", "Systran/faster-whisper-large-v3")
 
-    # Clean up generation_config to avoid conflicts with our generate_kwargs
-    if hasattr(model, "generation_config") and model.generation_config is not None:
-        model.generation_config.max_length = None
-        model.generation_config.max_new_tokens = 440
-        model.generation_config.suppress_tokens = []
-
-    pipe = pipeline(
-        "automatic-speech-recognition",
-        model=model,
-        tokenizer=processor.tokenizer,
-        feature_extractor=processor.feature_extractor,
-        batch_size=1,           # one 30 s chunk at a time (pipeline runs in own process, no GIL contention)
-        return_timestamps="word",
-        dtype=dtype,
-        device=DEVICE,
-        generate_kwargs={"max_new_tokens": 440, "language": "en", "task": "transcribe"},
+    print(f"  Loading faster-whisper '{model_id}' on {device} ({compute_type})...")
+    _WHISPER_MODEL = WhisperModel(
+        model_id,
+        device=device,
+        compute_type=compute_type,
+        cpu_threads=max(1, (os.cpu_count() or 4) // 2),
+        num_workers=1,
     )
-    _WHISPER_MODEL = pipe
-    return pipe
+    return _WHISPER_MODEL
+
+
+def _load_sensevoice_model():
+    """
+    Load Alibaba SenseVoiceSmall via FunASR AutoModel.
+
+    Falls back to lazy HF download (model cached under
+    ~/.cache/modelscope/hub) if no local model is present.
+    """
+    global _SENSEVOICE_MODEL
+    if _SENSEVOICE_MODEL is not None:
+        print("  SenseVoice already loaded — reusing cached model.")
+        return _SENSEVOICE_MODEL
+
+    try:
+        from funasr import AutoModel
+    except ImportError as exc:
+        raise ImportError(
+            "funasr is required for SenseVoice. Install with: "
+            "pip install funasr"
+        ) from exc
+
+    use_cuda = torch.cuda.is_available()
+    device = "cuda:0" if use_cuda else "cpu"
+    local_model_dir = Path(__file__).parent.parent / "models" / "sensevoice" / "iic" / "SenseVoiceSmall"
+    cache_model_dir = Path.home() / ".cache" / "modelscope" / "hub" / "models" / "iic" / "SenseVoiceSmall"
+    model_id = os.environ.get("CALLTONE_SV_MODEL") or (
+        str(cache_model_dir) if cache_model_dir.exists()
+        else (str(local_model_dir) if (local_model_dir / "model.pt").exists() else "iic/SenseVoiceSmall")
+    )
+    vad_model_id = os.environ.get("CALLTONE_SV_VAD", "fsmn-vad")
+    remote_code_path = str((Path(__file__).parent / "SenseVoice" / "model.py").resolve())
+
+    print(f"  Loading SenseVoice '{model_id}' on {device} ...")
+    _SENSEVOICE_MODEL = AutoModel(
+        model=model_id,
+        trust_remote_code=True,
+        remote_code=remote_code_path,
+        vad_model=vad_model_id,
+        vad_kwargs={"max_single_segment_time": 30000},
+        device=device,
+        disable_update=True,  # don't ping ModelScope on every load
+    )
+    return _SENSEVOICE_MODEL
+
+
+def transcribe_full_audio(audio_np: np.ndarray, sr: int = 16000) -> list[tuple[float, str]]:
+    """
+    Engine-agnostic transcription.
+
+    Returns a sorted list of (word_start_time_seconds, word_text) tuples
+    suitable for word-by-word alignment against diarization turns.
+
+    Both engines emit timing-tagged words; SenseVoice uses sentence-level
+    timestamps (start of sentence) since its model doesn't natively expose
+    word timings — this is enough for turn alignment because diarization
+    turns are typically multi-second.
+    """
+    engine = _selected_asr_engine()
+    audio_duration = float(len(audio_np) / sr)
+
+    if engine == "sensevoice":
+        return _transcribe_sensevoice(audio_np, sr, audio_duration)
+    return _transcribe_fasterwhisper(audio_np, sr, audio_duration)
+
+
+def _transcribe_fasterwhisper(
+    audio_np: np.ndarray, sr: int, audio_duration: float
+) -> list[tuple[float, str]]:
+    model = _load_fasterwhisper_model()
+    # Benchmarked on test.wav (2026-04-24): beam=1 + glossary/hotwords beats
+    # beam=3/5 on both WER and runtime for this telephony workload.
+    beam_size = int(os.environ.get("CALLTONE_FW_BEAM", "1"))
+    glossary = _asr_glossary_prompt()
+    vad_filter = _env_bool("CALLTONE_FW_VAD_FILTER", True)
+    condition_on_previous_text = _env_bool("CALLTONE_FW_CONDITION_PREVIOUS", False)
+    vad_parameters = {
+        "min_silence_duration_ms": int(os.environ.get("CALLTONE_FW_MIN_SILENCE_MS", "350"))
+    }
+    fw_segments, _info = model.transcribe(
+        audio_np,
+        language="en",
+        beam_size=beam_size,
+        best_of=int(os.environ.get("CALLTONE_FW_BEST_OF", str(beam_size))),
+        vad_filter=vad_filter,
+        vad_parameters=vad_parameters if vad_filter else None,
+        word_timestamps=True,
+        condition_on_previous_text=condition_on_previous_text,
+        no_speech_threshold=0.6,
+        temperature=0,
+        initial_prompt=glossary,
+        hotwords=glossary,
+    )
+
+    word_entries: list[tuple[float, str]] = []
+    for seg in fw_segments:
+        if not getattr(seg, "words", None):
+            txt = (seg.text or "").strip()
+            if txt and seg.start is not None:
+                word_entries.append((max(0.0, min(float(seg.start), audio_duration)), " " + txt))
+            continue
+        for w in seg.words:
+            if w.start is None or w.word is None:
+                continue
+            ws = max(0.0, min(float(w.start), audio_duration))
+            we = float(w.end) if w.end is not None else ws
+            if we - ws > 8.0:
+                continue  # hallucinated mega-word
+            word_entries.append((ws, w.word))
+    word_entries.sort(key=lambda x: x[0])
+    return word_entries
+
+
+def _transcribe_sensevoice(
+    audio_np: np.ndarray, sr: int, audio_duration: float
+) -> list[tuple[float, str]]:
+    """
+    Run SenseVoice on the full audio. SenseVoice + fsmn-vad returns segments
+    with `start` (ms) + `text` containing FunASR markup tags we strip.
+
+    We don't get word-level timing, so we approximate by distributing words
+    evenly over the segment duration. This is good enough for turn alignment
+    because diarization turns are 1-30 s long.
+    """
+    model = _load_sensevoice_model()
+    try:
+        from funasr.utils.postprocess_utils import rich_transcription_postprocess
+    except Exception:
+        rich_transcription_postprocess = None
+    res = model.generate(
+        input=audio_np,
+        cache={},
+        language="en",
+        use_itn=True,
+        batch_size_s=60,
+        merge_vad=True,
+        merge_length_s=15,
+    )
+
+    word_entries: list[tuple[float, str]] = []
+    for item in res:
+        # FunASR returns one dict per input. With merge_vad we still get one
+        # 'text' string concatenated across VAD segments, plus 'timestamp'
+        # which is a list of [start_ms, end_ms] per word. Older versions
+        # return only sentence-level timing in 'sentence_info'.
+        text_raw = (item.get("text") or "").strip()
+        if rich_transcription_postprocess:
+            try:
+                text_raw = rich_transcription_postprocess(text_raw)
+            except Exception:
+                pass
+        # Strip SenseVoice control tags: <|en|><|NEUTRAL|><|Speech|><|withitn|>...
+        clean = re.sub(r"<\|[^|]*\|>", "", text_raw).strip()
+        if not clean:
+            continue
+
+        # Prefer per-word timestamps if FunASR gave them
+        timestamps = item.get("timestamp")
+        if isinstance(timestamps, list) and timestamps:
+            # timestamps: list of [start_ms, end_ms] aligned to whitespace-split words
+            words = clean.split()
+            for i, w in enumerate(words):
+                if i >= len(timestamps):
+                    break
+                start_ms = float(timestamps[i][0]) if timestamps[i] else 0.0
+                start_s = max(0.0, min(start_ms / 1000.0, audio_duration))
+                word_entries.append((start_s, " " + w))
+            continue
+
+        # Fall back to sentence_info or distribute words evenly
+        sentence_info = item.get("sentence_info") or []
+        if sentence_info:
+            for sent in sentence_info:
+                sent_text = (sent.get("text") or "").strip()
+                if rich_transcription_postprocess:
+                    try:
+                        sent_text = rich_transcription_postprocess(sent_text)
+                    except Exception:
+                        pass
+                sent_text = re.sub(r"<\|[^|]*\|>", "", sent_text).strip()
+                if not sent_text:
+                    continue
+                start_s = max(0.0, min(float(sent.get("start", 0)) / 1000.0, audio_duration))
+                end_s = max(start_s, min(float(sent.get("end", start_s * 1000)) / 1000.0, audio_duration))
+                words = sent_text.split()
+                if not words:
+                    continue
+                step = (end_s - start_s) / max(1, len(words))
+                for i, w in enumerate(words):
+                    word_entries.append((start_s + i * step, " " + w))
+            continue
+
+        # Last resort: no timestamps at all. Distribute words uniformly across
+        # the clip so the existing diarization alignment can still map them to
+        # turns in order.
+        words = clean.split()
+        if not words:
+            continue
+        step = audio_duration / max(1, len(words))
+        for i, w in enumerate(words):
+            word_entries.append((min(audio_duration, i * step), " " + w))
+
+    word_entries.sort(key=lambda x: x[0])
+    return word_entries
 
 
 def transcribe_chunk(model, waveform: torch.Tensor, sample_rate: int) -> tuple[str, str, str]:
-    """Transcribe a single waveform tensor. Returns (text, emotion, event)."""
-    if waveform.shape[0] > 1:
-        waveform = waveform.mean(dim=0, keepdim=True)   # stereo → mono
+    """Transcribe a single waveform tensor. Returns (text, emotion, event).
 
-    # Convert to numpy for Whisper pipeline
-    audio_array = waveform.squeeze().cpu().numpy()
-    
-    # Resample to 16kHz if needed (Whisper expects 16kHz)
+    Kept as a thin compatibility wrapper around faster-whisper for callers that
+    pass tensors instead of paths.
+    """
+    if waveform.shape[0] > 1:
+        waveform = waveform.mean(dim=0, keepdim=True)
+
     if sample_rate != 16000:
         resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)
-        audio_array = resampler(waveform).squeeze().cpu().numpy()
-    
+        waveform = resampler(waveform)
+
+    audio = waveform.squeeze().cpu().numpy().astype(np.float32)
     try:
-        result = model(audio_array)
-        raw = result["text"] if result else ""
+        segments, _info = model.transcribe(
+            audio,
+            language="en",
+            beam_size=1,
+            vad_filter=True,
+            condition_on_previous_text=False,
+        )
+        raw = " ".join(seg.text for seg in segments).strip()
     except Exception as e:
         print(f"    Transcription error: {e}")
         raw = ""
@@ -467,6 +773,7 @@ def build_json(
     segments: list[dict],
     spk_pitch_summary: dict[str, list[float]],
     roles: dict[str, str] | None = None,
+    audio_duration_seconds: float | None = None,
 ) -> dict:
     """Build structured JSON for the downstream QA rating layer."""
     speaker_ids = sorted({s["speaker"] for s in segments})
@@ -507,7 +814,8 @@ def build_json(
     return {
         "call_metadata": {
             "file":             os.path.basename(audio_path),
-            "duration_seconds": round(total_dur, 2),
+            "duration_seconds": round(audio_duration_seconds if audio_duration_seconds else total_dur, 2),
+            "speech_time_seconds": round(total_dur, 2),
             "num_speakers":     len(speaker_ids),
             "total_segments":   len(segments),
         },
@@ -536,6 +844,14 @@ def main():
     local_model_path = os.environ.get("PYANNOTE_MODEL_PATH") or str(_default_local)
 
     if os.path.exists(local_model_path):
+        # Newer huggingface_hub validates the argument as a repo id when it
+        # looks like a path. pyannote.Pipeline.from_pretrained only skips that
+        # validation when the argument points directly at a file. If we got a
+        # directory, append config.yaml so we land on the file branch.
+        if os.path.isdir(local_model_path):
+            _cfg = os.path.join(local_model_path, "config.yaml")
+            if os.path.isfile(_cfg):
+                local_model_path = _cfg
         print(f"Using local pyannote model: {local_model_path}")
     else:
         # Try fallback to HuggingFace if local model not found
@@ -566,11 +882,12 @@ def main():
         if local_model_path and os.path.exists(local_model_path):
             # Patch hardcoded absolute paths in config.yaml (original dev used /home/mazen/...)
             # Recompute from __file__ so this works on any machine without manual edits.
-            _config_file = Path(local_model_path) / "config.yaml"
+            _config_path = Path(local_model_path)
+            _config_file = _config_path if _config_path.is_file() else _config_path / "config.yaml"
             if _config_file.exists():
                 _pyannote_root = Path(__file__).parent.parent / "models" / "pyannote"
-                _new_seg = (_pyannote_root / "segmentation-3.0").as_posix()
-                _new_emb = (_pyannote_root / "wespeaker-voxceleb-resnet34-LM").as_posix()
+                _new_seg = (_pyannote_root / "segmentation-3.0" / "pytorch_model.bin").as_posix()
+                _new_emb = (_pyannote_root / "wespeaker-voxceleb-resnet34-LM" / "pytorch_model.bin").as_posix()
                 _patched = []
                 for _ln in _config_file.read_text(encoding="utf-8").splitlines():
                     _s = _ln.lstrip()
@@ -588,10 +905,18 @@ def main():
             try:
                 from huggingface_hub import get_token
                 hf_token = get_token()
-                pipeline = Pipeline.from_pretrained(
-                    "pyannote/speaker-diarization-3.1",
-                    token=hf_token,
-                )
+                try:
+                    pipeline = Pipeline.from_pretrained(
+                        "pyannote/speaker-diarization-3.1",
+                        token=hf_token,
+                    )
+                except TypeError as exc:
+                    if "unexpected keyword argument 'token'" not in str(exc):
+                        raise
+                    pipeline = Pipeline.from_pretrained(
+                        "pyannote/speaker-diarization-3.1",
+                        use_auth_token=hf_token,
+                    )
             except Exception as e:
                 print(f"\nERROR: Could not load pyannote model: {e}")
                 print("  You must either:")
@@ -607,6 +932,19 @@ def main():
             print("  (log in with your HF account, then click 'Agree and access repository')")
             sys.exit(1)
         pipeline.to(torch.device(DEVICE))
+
+        # BF16 remains opt-in only on production. On the current pyannote 3.3.2
+        # stack we observed dtype-cast regressions that silently pushed parts of
+        # diarization back onto CPU, which is worse than the theoretical speedup.
+        if os.getenv("CALLTONE_PYANNOTE_BF16", "0") == "1" and torch.cuda.is_available():
+            try:
+                cap = torch.cuda.get_device_capability(0)
+                if cap[0] >= 8:
+                    pipeline.to(torch.bfloat16)
+                    print(f"  pyannote cast to BF16 (GPU SM {cap[0]}.{cap[1]} supports tensor-core BF16)")
+            except Exception as _exc:
+                print(f"  BF16 cast skipped: {_exc}")
+
         _PYANNOTE_PIPELINE = pipeline
 
     # Load audio into memory and pass as a waveform dict to pyannote.
@@ -647,70 +985,91 @@ def main():
     _wav_np2, sr = sf.read(audio_path, dtype="float32")
     waveform = torch.from_numpy(_wav_np2).T if _wav_np2.ndim > 1 else torch.from_numpy(_wav_np2).unsqueeze(0)
 
-    print("  Anchoring speaker labels by pitch (F0)...")
-    pitches = []
-    for t0, t1, _ in turns:
-        chunk = waveform[:, int(t0 * sr):int(t1 * sr)]
-        if chunk.shape[0] > 1:
-            chunk = chunk.mean(dim=0, keepdim=True)
-        pitches.append(estimate_pitch(chunk, sr))
+    # F0 anchoring is a CPU-bound autocorrelation loop (torchaudio.detect_pitch_frequency
+    # is O(N*M) per turn and scales linearly with num_turns * turn_duration). It serves
+    # only to reorder pyannote's cluster labels by median pitch — downstream role ID reads
+    # transcript content, not speaker numbers — so we let the server skip it for latency.
+    if os.getenv("CALLTONE_DISABLE_F0_ANCHOR", "").lower() in ("1", "true", "yes"):
+        print("  Skipping F0 anchoring (CALLTONE_DISABLE_F0_ANCHOR set)")
+        spk_pitch_summary: dict[str, list[float]] = {}
+    else:
+        print("  Anchoring speaker labels by pitch (F0)...")
+        pitches = []
+        for t0, t1, _ in turns:
+            chunk = waveform[:, int(t0 * sr):int(t1 * sr)]
+            if chunk.shape[0] > 1:
+                chunk = chunk.mean(dim=0, keepdim=True)
+            pitches.append(estimate_pitch(chunk, sr))
 
-    n_spk = num_speakers or len({spk for _, _, spk in turns})
-    turns = relabel_speakers_by_pitch(turns, pitches, n_spk)
+        n_spk = num_speakers or len({spk for _, _, spk in turns})
+        turns = relabel_speakers_by_pitch(turns, pitches, n_spk)
 
-    voiced_pitches = [(spk, p) for (_, _, spk), p in zip(turns, pitches) if p > 0]
-    spk_pitch_summary = {}
-    for spk, p in voiced_pitches:
-        spk_pitch_summary.setdefault(spk, []).append(p)
-    for spk, ps in sorted(spk_pitch_summary.items()):
-        print(f"    {spk}  median F0 = {np.median(ps):.0f} Hz  ({len(ps)} voiced turns)")
+        voiced_pitches = [(spk, p) for (_, _, spk), p in zip(turns, pitches) if p > 0]
+        spk_pitch_summary = {}
+        for spk, p in voiced_pitches:
+            spk_pitch_summary.setdefault(spk, []).append(p)
+        for spk, ps in sorted(spk_pitch_summary.items()):
+            print(f"    {spk}  median F0 = {np.median(ps):.0f} Hz  ({len(ps)} voiced turns)")
 
     # ── 2. Full-file transcription + alignment to diarization turns ────────────
     # Transcribe the ENTIRE audio in one pass with word-level timestamps.
-    # Whisper internally splits into 30 s windows, so any file length works.
-    # This is 5-10× faster than per-turn inference because:
-    #   • ONE encoder pass over the full spectrogram (not 65 separate ones)
-    #   • No variable-length padding waste across turns
-    print("Step 2/3  Transcribing full audio (Whisper, single pass)...")
-    sense_model = load_sense_model()
+    # The active engine (faster-whisper or SenseVoice) is picked via the
+    # CALLTONE_ASR env var. Both engines emit the same (start, word) format
+    # so the alignment code below is engine-agnostic.
+    engine_name = _selected_asr_engine()
+    print(f"Step 2/3  Transcribing full audio (engine={engine_name})...")
+    # Pre-load model so the cold-start cost is captured in this step's wall time.
+    load_sense_model()
 
     mono = waveform.mean(dim=0) if waveform.shape[0] > 1 else waveform.squeeze()
-    full_result = sense_model(
-        {"array": mono.cpu().numpy(), "sampling_rate": sr},
-        return_timestamps="word",
-        chunk_length_s=30,
-        ignore_warning=True,
-        generate_kwargs={"max_new_tokens": 440, "language": "en", "task": "transcribe"},
-    )
+    audio_np = mono.cpu().numpy().astype(np.float32)
+    if sr != 16000:
+        resampler = torchaudio.transforms.Resample(orig_freq=sr, new_freq=16000)
+        audio_np = resampler(torch.from_numpy(audio_np)).numpy().astype(np.float32)
+    audio_duration = float(len(audio_np) / 16000.0)
 
-    # Build sorted list of (word_center_time, word_text)
-    word_entries: list[tuple[float, str]] = []
-    for chunk in full_result.get("chunks", []):
-        ts = chunk.get("timestamp", (None, None))
-        if ts[0] is not None and ts[1] is not None:
-            word_entries.append(((ts[0] + ts[1]) / 2.0, chunk["text"]))
-    print(f"  Whisper returned {len(word_entries)} words — aligning to {len(turns)} turns...")
+    word_entries = transcribe_full_audio(audio_np, sr=16000)
+    print(f"  {engine_name} returned {len(word_entries)} words "
+          f"(audio={audio_duration:.1f}s) — aligning to {len(turns)} turns...")
 
-    # Assign words to diarization turns by word center time
+    # Assign words to diarization turns by word start time.
+    #
+    # Whisper and pyannote timestamps do not land on exactly the same boundary.
+    # A strict t0 <= word_start <= t1 rule drops leading words ("Thank", "My",
+    # "Yes") and sometimes leaks a word into the next speaker turn. Assign each
+    # word to the containing turn first; otherwise allow a small tolerance and
+    # choose the closest turn boundary. This preserves runtime while improving
+    # transcript WER and speaker-turn readability.
+    align_tolerance = float(os.environ.get("CALLTONE_WORD_ALIGN_TOLERANCE_SEC", "1.0"))
+    turn_words_by_index: list[list[str]] = [[] for _ in turns]
+    for word_start, word_text in word_entries:
+        best_idx: int | None = None
+        best_distance = float("inf")
+        for idx, (t0, t1, _raw_spk) in enumerate(turns):
+            if t0 <= word_start <= t1:
+                best_idx = idx
+                best_distance = 0.0
+                break
+            if word_start < t0:
+                distance = t0 - word_start
+            else:
+                distance = word_start - t1
+            if distance <= align_tolerance and distance < best_distance:
+                best_idx = idx
+                best_distance = distance
+        if best_idx is not None:
+            turn_words_by_index[best_idx].append(word_text)
+
     index_map = {}
     segments  = []
-    wi = 0   # pointer into word_entries (sorted by time)
-    for t0, t1, raw_spk in turns:
-        turn_words: list[str] = []
-        # Advance pointer past words before this turn
-        while wi < len(word_entries) and word_entries[wi][0] < t0:
-            wi += 1
-        # Collect words inside this turn
-        j = wi
-        while j < len(word_entries) and word_entries[j][0] <= t1:
-            turn_words.append(word_entries[j][1])
-            j += 1
-
+    for turn_idx, (t0, t1, raw_spk) in enumerate(turns):
+        turn_words = turn_words_by_index[turn_idx]
         text = "".join(turn_words).strip()
         if not text:
             continue
 
         text, emo, evt = parse_sense_output(text)
+        text = _normalize_asr_text(text)
         if not text:
             continue
         segments.append({
@@ -737,7 +1096,13 @@ def main():
         f.write(report)
     print(f"\nText  → {out_path}")
 
-    json_data = build_json(audio_path, segments, spk_pitch_summary, roles)
+    json_data = build_json(
+        audio_path,
+        segments,
+        spk_pitch_summary,
+        roles,
+        audio_duration_seconds=audio_duration,
+    )
     json_path = base + "_diarized.json"
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)

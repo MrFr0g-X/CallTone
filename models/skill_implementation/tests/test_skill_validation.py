@@ -67,7 +67,8 @@ def get_test_invalid_skill_bundle():
         assert not is_valid, "Skill with for loop should fail validation"
         
         # Check error message mentions the forbidden keyword
-        assert any("for " in err for err in errors), f"Error should mention 'for' loop: {errors}"
+        assert any("'for'" in err or "for " in err for err in errors), \
+            f"Error should mention 'for' loop: {errors}"
         
         print("✓ Forbidden keyword detection test passed")
 

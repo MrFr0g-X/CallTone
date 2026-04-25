@@ -22,7 +22,12 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "http://localhost:8080"
     CORS_ORIGINS: str = ""  # comma-separated extra origins, e.g. "http://gpu-server:3000"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # extra="ignore" lets us put non-Settings vars (MODEL_SERVER_URL, etc.,
+    # consumed via os.getenv elsewhere) into the same .env without pydantic
+    # raising on the unknown keys.
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     @property
     def use_sqlite(self) -> bool:
@@ -40,6 +45,20 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+# ── Production SECRET_KEY guard ──────────────────────────────────────────────
+# When DEBUG=false the JWT signing key MUST NOT be the dev default.
+# Refusing to boot is intentional — a warning would be ignored and the
+# resulting deploy would be trivially compromised (anyone can forge
+# tokens against the well-known default).
+_DEV_SECRET_KEY_DEFAULT = "dev-secret-key-change-in-production"
+if not settings.DEBUG and settings.SECRET_KEY == _DEV_SECRET_KEY_DEFAULT:
+    raise RuntimeError(
+        "SECRET_KEY is the development default but DEBUG=false. "
+        "Set SECRET_KEY in .env.prod via `openssl rand -hex 32` before "
+        "starting the production server."
+    )
 
 connect_args = {"check_same_thread": False} if settings.use_sqlite else {}
 engine = create_engine(

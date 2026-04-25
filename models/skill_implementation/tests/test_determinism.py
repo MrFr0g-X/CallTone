@@ -5,10 +5,25 @@ Test that skills produce deterministic output.
 import sys
 from pathlib import Path
 
+import pytest
+
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from skill_runtime import load_skill, run_skill
+
+# These tests load the real Llama 3.1 8B GGUF (~8 GB). Skip when the
+# weights aren't present (CI, fresh clones) so the suite stays useful
+# without forcing a model download.
+_QWEN3_GGUF = (
+    Path(__file__).parent.parent
+    / "models"
+    / "Qwen3-8B-Q4_K_M.gguf"
+)
+pytestmark = pytest.mark.skipif(
+    not _QWEN3_GGUF.exists(),
+    reason=f"Qwen3 GGUF not present at {_QWEN3_GGUF}; run download_models.py",
+)
 
 
 def test_determinism_identify_call_roles():

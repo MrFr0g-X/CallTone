@@ -1,58 +1,123 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Settings, Globe, Lock, Bell, Database, Save, Cpu, Loader2 } from "lucide-react";
+import { ArchiveX, Cpu, Loader2, RefreshCw, RotateCcw, Save, ShieldCheck } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { pipelineApi } from "@/services/api";
-import type { PipelineSettingsResponse } from "@/services/api";
+import { apiErrorMessage, contextApi, pipelineApi } from "@/services/api";
+import type { CompanyContextSummary, PipelineJobResponse, PipelineQueueResponse, PipelineSettingsResponse } from "@/services/api";
 
 const AdminSettings = () => {
   const { toast } = useToast();
-  const [settings, setSettings] = useState({
-    platformName: "CallTone",
-    supportEmail: "support@calltone.ai",
-    enforceSSO: false,
-    require2FA: true,
-    sessionTimeout: 30,
-    emailNotifications: true,
-    slackIntegration: false,
-    dataRetention: 90,
-    autoBackup: true,
-  });
-
   const [pipeline, setPipeline] = useState<PipelineSettingsResponse>({
     audioMode: "denoise",
     injectionScan: "static",
     numSpeakers: null,
-    reportMode: "simple",
+    reportMode: "narrative",
     useConsensus: false,
-    companyName: "BankServ Global",
+    companyName: "",
   });
-  const [pipelineLoading, setPipelineLoading] = useState(true);
-  const [pipelineSaving, setPipelineSaving] = useState(false);
+  const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
+  const [queue, setQueue] = useState<PipelineQueueResponse | null>(null);
+  const [jobs, setJobs] = useState<PipelineJobResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [queueLoading, setQueueLoading] = useState(false);
+  const [jobActionCallId, setJobActionCallId] = useState<string | null>(null);
 
-  useEffect(() => {
-    pipelineApi.getSettings()
-      .then(r => setPipeline(r.data))
-      .catch(() => {})
-      .finally(() => setPipelineLoading(false));
-  }, []);
-
-  const handleSave = () => {
-    toast({ title: "Settings saved", description: "Platform settings have been updated." });
+  const loadQueueState = async () => {
+    setQueueLoading(true);
+    try {
+      const [queueRes, jobsRes] = await Promise.all([
+        pipelineApi.getQueue(),
+        pipelineApi.getJobs(undefined, 20),
+      ]);
+      setQueue(queueRes.data);
+      setJobs(jobsRes.data.jobs);
+    } catch (error: unknown) {
+      toast({
+        title: "Queue unavailable",
+        description: apiErrorMessage(error, "Could not load pipeline queue."),
+        variant: "destructive",
+      });
+    } finally {
+      setQueueLoading(false);
+    }
   };
 
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([pipelineApi.getSettings(), contextApi.listCompanies(), pipelineApi.getQueue(), pipelineApi.getJobs(undefined, 20)])
+      .then(([settingsRes, companiesRes, queueRes, jobsRes]) => {
+        if (cancelled) return;
+        setPipeline(settingsRes.data);
+        setCompanies(companiesRes.data.companies || []);
+        setQueue(queueRes.data);
+        setJobs(jobsRes.data.jobs);
+      })
+      .catch(() => {
+        toast({
+          title: "Settings unavailable",
+          description: "Could not load live pipeline configuration.",
+          variant: "destructive",
+        });
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [toast]);
+
   const handlePipelineSave = async () => {
-    setPipelineSaving(true);
+    setSaving(true);
     try {
-      const r = await pipelineApi.updateSettings(pipeline);
-      setPipeline(r.data);
-      toast({ title: "Pipeline settings saved", description: "AI pipeline configuration updated." });
-    } catch {
-      toast({ title: "Save failed", description: "Could not save pipeline settings.", variant: "destructive" });
+      const response = await pipelineApi.updateSettings(pipeline);
+      setPipeline(response.data);
+      toast({ title: "Pipeline settings saved", description: "Future uploads will use this configuration." });
+    } catch (error: unknown) {
+      toast({
+        title: "Save failed",
+        description: apiErrorMessage(error, "Could not save pipeline settings."),
+        variant: "destructive",
+      });
     } finally {
-      setPipelineSaving(false);
+      setSaving(false);
+    }
+  };
+
+  const handleRetryJob = async (callId: string) => {
+    setJobActionCallId(callId);
+    try {
+      await pipelineApi.retryJob(callId);
+      await loadQueueState();
+      toast({ title: "Job requeued", description: `Call ${callId} is back in the GPU queue.` });
+    } catch (error: unknown) {
+      toast({
+        title: "Retry failed",
+        description: apiErrorMessage(error, "Could not retry this pipeline job."),
+        variant: "destructive",
+      });
+    } finally {
+      setJobActionCallId(null);
+    }
+  };
+
+  const handleDeadLetterJob = async (callId: string) => {
+    setJobActionCallId(callId);
+    try {
+      await pipelineApi.deadLetterJob(callId);
+      await loadQueueState();
+      toast({ title: "Job dead-lettered", description: `Call ${callId} will not be retried automatically.` });
+    } catch (error: unknown) {
+      toast({
+        title: "Dead-letter failed",
+        description: apiErrorMessage(error, "Could not dead-letter this pipeline job."),
+        variant: "destructive",
+      });
+    } finally {
+      setJobActionCallId(null);
     }
   };
 
@@ -62,296 +127,278 @@ const AdminSettings = () => {
         <h1 className="text-3xl sm:text-4xl font-light text-foreground">
           Platform <span className="font-bold gradient-text">Settings</span>
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">Configure global platform preferences</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Only live, backend-backed settings are shown here.
+        </p>
       </header>
 
-      <div className="grid gap-6">
-        {/* General */}
-        <GlassCard className="rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Globe className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">General</h2>
+      <GlassCard className="rounded-2xl p-6">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="mt-0.5 h-5 w-5 text-success" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">Admin-only control surface</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              User management and pipeline changes are server-enforced for admin and super admin accounts only.
+              Manager and viewer accounts can inspect platform data but cannot mutate system settings.
+            </p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Platform Name</label>
-              <input
-                type="text"
-                value={settings.platformName}
-                onChange={(e) => setSettings({ ...settings, platformName: e.target.value })}
-                className="w-full h-10 px-4 rounded-xl glass-input text-sm"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Support Email</label>
-              <input
-                type="email"
-                value={settings.supportEmail}
-                onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
-                className="w-full h-10 px-4 rounded-xl glass-input text-sm"
-              />
-            </div>
-          </div>
-        </GlassCard>
+        </div>
+      </GlassCard>
 
-        {/* Security */}
-        <GlassCard className="rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Lock className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Security</h2>
+      <GlassCard className="rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-5">
+          <Cpu className="w-4 h-4 text-accent" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">AI Pipeline</h2>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading pipeline settings...
           </div>
-          <div className="space-y-4">
-            {[
-              { key: "enforceSSO", label: "Enforce SSO", description: "Require all admins to sign in via SSO provider" },
-              { key: "require2FA", label: "Require 2FA", description: "Enforce two-factor authentication for all admin accounts" },
-            ].map(item => (
-              <div key={item.key} className="flex items-center justify-between py-2">
-                <div>
-                  <p className="text-sm font-medium">{item.label}</p>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
-                </div>
-                <button
-                  onClick={() => setSettings(s => ({ ...s, [item.key]: !s[item.key as keyof typeof s] }))}
-                  className={cn(
-                    "w-10 h-6 rounded-full transition-colors flex items-center px-0.5",
-                    settings[item.key as keyof typeof settings] ? "bg-success justify-end" : "bg-muted-foreground/20 justify-start"
-                  )}
-                >
-                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
-                </button>
+        ) : (
+          <div className="space-y-5">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Default Company Context
+              </label>
+              <select
+                value={pipeline.companyName}
+                onChange={(event) => setPipeline((p) => ({ ...p, companyName: event.target.value }))}
+                className="w-full max-w-sm h-10 px-4 rounded-xl glass-input text-sm"
+              >
+                {companies.length === 0 ? (
+                  <option value={pipeline.companyName}>{pipeline.companyName || "No company contexts found"}</option>
+                ) : (
+                  companies.map((company) => (
+                    <option key={company.file || company.name} value={company.name}>
+                      {company.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                The selected context is synced to the GPU model server before scoring.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Audio Processing
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {(["none", "denoise", "enhance"] as const).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => setPipeline((p) => ({ ...p, audioMode: option }))}
+                    className={cn(
+                      "px-4 py-2 rounded-xl text-xs font-medium border transition-all capitalize",
+                      pipeline.audioMode === option
+                        ? "bg-accent/20 border-accent text-accent"
+                        : "border-border/50 text-muted-foreground hover:border-accent/50",
+                    )}
+                  >
+                    {option === "none" ? "Skip" : option === "denoise" ? "Denoise" : "Enhance"}
+                  </button>
+                ))}
               </div>
-            ))}
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Session Timeout (minutes)</label>
-              <input
-                type="number"
-                value={settings.sessionTimeout}
-                onChange={(e) => setSettings({ ...settings, sessionTimeout: parseInt(e.target.value) || 30 })}
-                className="w-full max-w-[200px] h-10 px-4 rounded-xl glass-input text-sm"
-              />
             </div>
-          </div>
-        </GlassCard>
 
-        {/* Notifications */}
-        <GlassCard className="rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Bell className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Notifications</h2>
-          </div>
-          <div className="space-y-4">
-            {[
-              { key: "emailNotifications", label: "Email Notifications", description: "Send email alerts for critical platform events" },
-              { key: "slackIntegration", label: "Slack Integration", description: "Post notifications to a Slack channel" },
-            ].map(item => (
-              <div key={item.key} className="flex items-center justify-between py-2">
-                <div>
-                  <p className="text-sm font-medium">{item.label}</p>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
-                </div>
-                <button
-                  onClick={() => setSettings(s => ({ ...s, [item.key]: !s[item.key as keyof typeof s] }))}
-                  className={cn(
-                    "w-10 h-6 rounded-full transition-colors flex items-center px-0.5",
-                    settings[item.key as keyof typeof settings] ? "bg-success justify-end" : "bg-muted-foreground/20 justify-start"
-                  )}
-                >
-                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
-                </button>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Prompt Injection Scan
+              </label>
+              <div className="flex gap-2">
+                {(["static", "llm"] as const).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => setPipeline((p) => ({ ...p, injectionScan: option }))}
+                    className={cn(
+                      "px-4 py-2 rounded-xl text-xs font-medium border transition-all uppercase",
+                      pipeline.injectionScan === option
+                        ? "bg-accent/20 border-accent text-accent"
+                        : "border-border/50 text-muted-foreground hover:border-accent/50",
+                    )}
+                  >
+                    {option === "static" ? "Static" : "LLM"}
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
-        </GlassCard>
-
-        {/* Data */}
-        <GlassCard className="rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Database className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Data Management</h2>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Data Retention (days)</label>
-              <input
-                type="number"
-                value={settings.dataRetention}
-                onChange={(e) => setSettings({ ...settings, dataRetention: parseInt(e.target.value) || 90 })}
-                className="w-full max-w-[200px] h-10 px-4 rounded-xl glass-input text-sm"
-              />
             </div>
-            <div className="flex items-center justify-between py-2">
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Speaker Count
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {[null, 2, 3, 4].map((count) => (
+                  <button
+                    key={String(count)}
+                    onClick={() => setPipeline((p) => ({ ...p, numSpeakers: count }))}
+                    className={cn(
+                      "px-4 py-2 rounded-xl text-xs font-medium border transition-all",
+                      pipeline.numSpeakers === count
+                        ? "bg-accent/20 border-accent text-accent"
+                        : "border-border/50 text-muted-foreground hover:border-accent/50",
+                    )}
+                  >
+                    {count === null ? "Auto-detect" : `${count} Speakers`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                Report Generation
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {(["none", "simple", "narrative", "both"] as const).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => setPipeline((p) => ({ ...p, reportMode: option }))}
+                    className={cn(
+                      "px-4 py-2 rounded-xl text-xs font-medium border transition-all capitalize",
+                      pipeline.reportMode === option
+                        ? "bg-accent/20 border-accent text-accent"
+                        : "border-border/50 text-muted-foreground hover:border-accent/50",
+                    )}
+                  >
+                    {option === "none" ? "Skip" : option === "both" ? "Both" : option}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 py-2">
               <div>
-                <p className="text-sm font-medium">Automatic Backups</p>
-                <p className="text-xs text-muted-foreground">Daily automated database backups</p>
+                <p className="text-sm font-medium">Consensus Scoring</p>
+                <p className="text-xs text-muted-foreground">
+                  Runs each QA criterion multiple times and stores median confidence; slower but more stable.
+                </p>
               </div>
               <button
-                onClick={() => setSettings(s => ({ ...s, autoBackup: !s.autoBackup }))}
+                onClick={() => setPipeline((p) => ({ ...p, useConsensus: !p.useConsensus }))}
                 className={cn(
-                  "w-10 h-6 rounded-full transition-colors flex items-center px-0.5",
-                  settings.autoBackup ? "bg-success justify-end" : "bg-muted-foreground/20 justify-start"
+                  "w-10 h-6 rounded-full transition-colors flex items-center px-0.5 shrink-0",
+                  pipeline.useConsensus ? "bg-success justify-end" : "bg-muted-foreground/20 justify-start",
                 )}
+                aria-label="Toggle consensus scoring"
               >
                 <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
               </button>
             </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handlePipelineSave}
+              disabled={saving}
+              className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all disabled:opacity-60"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              Save Pipeline Settings
+            </motion.button>
           </div>
-        </GlassCard>
+        )}
+      </GlassCard>
 
-        {/* AI Pipeline */}
-        <GlassCard className="rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Cpu className="w-4 h-4 text-accent" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">AI Pipeline</h2>
+      <GlassCard className="rounded-2xl p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-accent" />
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              GPU Queue Operations
+            </h2>
           </div>
-          {pipelineLoading ? (
-            <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading pipeline settings...
+          <button
+            onClick={loadQueueState}
+            disabled={queueLoading}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 text-xs text-muted-foreground hover:text-foreground hover:border-accent/50 disabled:opacity-60"
+          >
+            {queueLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+            Refresh
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+          {[
+            ["Active", queue?.activeCallId ? "1" : "0"],
+            ["Queued", String(queue?.queuedCount ?? 0)],
+            ["Running", String(queue?.runningCallIds?.length ?? 0)],
+            ["Failed", String(queue?.failedCount ?? 0)],
+            ["Drain ETA", `${Math.ceil((queue?.estimatedDrainSeconds ?? 0) / 60)}m`],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-border/50 bg-muted/10 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+              <p className="mt-1 text-lg font-semibold text-foreground">{value}</p>
             </div>
-          ) : (
-            <div className="space-y-5">
-              {/* Company Name */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Default Company Context</label>
-                <input
-                  type="text"
-                  value={pipeline.companyName}
-                  onChange={e => setPipeline(p => ({ ...p, companyName: e.target.value }))}
-                  className="w-full max-w-xs h-10 px-4 rounded-xl glass-input text-sm"
-                  placeholder="e.g. BankServ Global"
-                />
-                <p className="text-[11px] text-muted-foreground mt-1">Company policy used when scoring calls.</p>
-              </div>
+          ))}
+        </div>
 
-              {/* Audio Mode */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Audio Processing</label>
-                <div className="flex flex-wrap gap-2">
-                  {(["none", "denoise", "enhance"] as const).map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setPipeline(p => ({ ...p, audioMode: opt }))}
-                      className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-medium border transition-all capitalize",
-                        pipeline.audioMode === opt
-                          ? "bg-accent/20 border-accent text-accent"
-                          : "border-border/50 text-muted-foreground hover:border-accent/50"
-                      )}
-                    >{opt === "none" ? "Skip (Fastest)" : opt === "denoise" ? "Denoise Only" : "Full Enhance"}</button>
-                  ))}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  None = skip, Denoise = noise removal only, Enhance = denoise + super-resolution.
-                </p>
-              </div>
-
-              {/* Injection Scan */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Prompt Injection Scan</label>
-                <div className="flex gap-2">
-                  {(["static", "llm"] as const).map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setPipeline(p => ({ ...p, injectionScan: opt }))}
-                      className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-medium border transition-all uppercase",
-                        pipeline.injectionScan === opt
-                          ? "bg-accent/20 border-accent text-accent"
-                          : "border-border/50 text-muted-foreground hover:border-accent/50"
-                      )}
-                    >{opt === "static" ? "Static (Fast)" : "LLM (Thorough)"}</button>
-                  ))}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Static = regex patterns only. LLM = uses Llama to verify, slower but catches novel attacks.
-                </p>
-              </div>
-
-              {/* Num Speakers */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Speaker Count</label>
-                <div className="flex gap-2 flex-wrap">
-                  {[null, 2, 3, 4].map(n => (
-                    <button
-                      key={String(n)}
-                      onClick={() => setPipeline(p => ({ ...p, numSpeakers: n }))}
-                      className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-medium border transition-all",
-                        pipeline.numSpeakers === n
-                          ? "bg-accent/20 border-accent text-accent"
-                          : "border-border/50 text-muted-foreground hover:border-accent/50"
-                      )}
-                    >{n === null ? "Auto-detect" : `${n} Speakers`}</button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Report Mode */}
-              <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">Report Generation</label>
-                <div className="flex gap-2 flex-wrap">
-                  {(["none", "simple", "narrative"] as const).map(opt => (
-                    <button
-                      key={opt}
-                      onClick={() => setPipeline(p => ({ ...p, reportMode: opt }))}
-                      className={cn(
-                        "px-4 py-2 rounded-xl text-xs font-medium border transition-all capitalize",
-                        pipeline.reportMode === opt
-                          ? "bg-accent/20 border-accent text-accent"
-                          : "border-border/50 text-muted-foreground hover:border-accent/50"
-                      )}
-                    >{opt === "none" ? "Skip" : opt === "simple" ? "Simple (Table)" : "Narrative (LLM)"}</button>
-                  ))}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-1">LaTeX report format. Narrative uses Llama and is slower.</p>
-              </div>
-
-              {/* Use Consensus */}
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="text-sm font-medium">Consensus Scoring</p>
-                  <p className="text-xs text-muted-foreground">Run each criterion 3 times and take the median — more accurate but 3× slower.</p>
-                </div>
-                <button
-                  onClick={() => setPipeline(p => ({ ...p, useConsensus: !p.useConsensus }))}
-                  className={cn(
-                    "w-10 h-6 rounded-full transition-colors flex items-center px-0.5",
-                    pipeline.useConsensus ? "bg-success justify-end" : "bg-muted-foreground/20 justify-start"
-                  )}
-                >
-                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
-                </button>
-              </div>
-
-              {/* Save pipeline */}
-              <div className="pt-2">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handlePipelineSave}
-                  disabled={pipelineSaving}
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all disabled:opacity-60"
-                >
-                  {pipelineSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Save Pipeline Settings
-                </motion.button>
-              </div>
-            </div>
-          )}
-        </GlassCard>
-      </div>
-
-      {/* Save */}
-      <div className="flex justify-end">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleSave}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
-        >
-          <Save className="w-4 h-4" />
-          Save Settings
-        </motion.button>
-      </div>
+        <div className="overflow-x-auto rounded-xl border border-border/50">
+          <table className="min-w-full text-sm">
+            <thead className="bg-muted/20 text-[11px] uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2 text-left">Call</th>
+                <th className="px-3 py-2 text-left">Status</th>
+                <th className="px-3 py-2 text-left">Attempts</th>
+                <th className="px-3 py-2 text-left">Engine</th>
+                <th className="px-3 py-2 text-left">Company</th>
+                <th className="px-3 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {jobs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-3 py-5 text-center text-muted-foreground">
+                    No pipeline jobs found.
+                  </td>
+                </tr>
+              ) : (
+                jobs.map((job) => (
+                  <tr key={job.id} className="border-t border-border/40">
+                    <td className="px-3 py-2 font-mono text-xs">{job.callId.slice(0, 8)}...</td>
+                    <td className="px-3 py-2">
+                      <span className={cn(
+                        "rounded-full px-2 py-1 text-[11px] font-semibold uppercase",
+                        job.status === "completed" && "bg-success/15 text-success",
+                        job.status === "failed" && "bg-destructive/15 text-destructive",
+                        job.status === "running" && "bg-accent/15 text-accent",
+                        job.status === "queued" && "bg-muted/30 text-muted-foreground",
+                      )}>
+                        {job.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-muted-foreground">{job.attempts}/{job.maxAttempts}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{job.asrEngine}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{job.companyName || "-"}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleRetryJob(job.callId)}
+                          disabled={job.status === "running" || job.status === "completed" || jobActionCallId === job.callId}
+                          className="inline-flex items-center gap-1 rounded-lg border border-border/50 px-2 py-1 text-[11px] hover:border-accent/60 disabled:opacity-40"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          Retry
+                        </button>
+                        <button
+                          onClick={() => handleDeadLetterJob(job.callId)}
+                          disabled={job.status === "running" || job.status === "completed" || jobActionCallId === job.callId}
+                          className="inline-flex items-center gap-1 rounded-lg border border-border/50 px-2 py-1 text-[11px] hover:border-destructive/60 disabled:opacity-40"
+                        >
+                          <ArchiveX className="w-3 h-3" />
+                          Dead-letter
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
     </div>
   );
 };

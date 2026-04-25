@@ -29,6 +29,37 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Accepted audio MIME types for the /api/calls/upload endpoint.
+// Kept in sync with backend ALLOWED_AUDIO_TYPES.
+export const ACCEPTED_AUDIO_TYPES = [
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/mp3",
+  "audio/flac",
+  "audio/ogg",
+  "audio/webm",
+] as const;
+
+export const MAX_UPLOAD_SIZE_BYTES = 200 * 1024 * 1024;
+
+/** Pure predicate: does the file look like a supported audio upload? */
+export function isAudioFile(file: Pick<File, "name" | "type">): boolean {
+  if (file.type && (ACCEPTED_AUDIO_TYPES as readonly string[]).includes(file.type)) {
+    return true;
+  }
+  const ext = file.name.toLowerCase().split(".").pop() ?? "";
+  return ["wav", "mp3", "mpeg", "flac", "ogg", "webm", "m4a"].includes(ext);
+}
+
+export function apiErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === "object" && "response" in error) {
+    const response = (error as { response?: { data?: { detail?: unknown } } }).response;
+    if (typeof response?.data?.detail === "string") return response.data.detail;
+  }
+  return fallback;
+}
+
 export type ApiUserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
 
 export interface AuthApiUser {
@@ -211,7 +242,11 @@ export interface UploadCallResponse {
   filename: string;
   status: string;
   message: string;
+  queuePosition?: number | null;
+  etaSeconds?: number | null;
 }
+
+export type AsrEngine = "fasterwhisper" | "sensevoice";
 
 export interface CallStatusResponse {
   callId: string;
@@ -220,16 +255,26 @@ export interface CallStatusResponse {
   hasTranscript: boolean;
   hasReport: boolean;
   error: string | null;
+  queuePosition?: number | null;
+  queuedCount?: number | null;
+  etaSeconds?: number | null;
 }
 
 export const callsApi = {
-  upload: (file: File, agentId?: string) => {
+  upload: (
+    file: File,
+    agentId?: string,
+    asrEngine: AsrEngine = "fasterwhisper",
+    companyName?: string,
+  ) => {
     const formData = new FormData();
     formData.append("file", file);
     if (agentId) formData.append("agent_id", agentId);
+    formData.append("asr_engine", asrEngine);
+    if (companyName) formData.append("company_name", companyName);
     return apiClient.post<UploadCallResponse>("/calls/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
-      timeout: 120000,
+      timeout: 600000,
     });
   },
 
@@ -278,6 +323,7 @@ export interface QaCallDetailResponse {
   driveFileId: string;
   drivePreviewUrl: string | null;
   driveDownloadUrl: string | null;
+  audioUrl: string | null;
   callTime: string | null;
   durationSeconds: number | null;
   status: string;
@@ -325,9 +371,42 @@ export interface PipelineSettingsResponse {
   audioMode:     "none" | "denoise" | "enhance";
   injectionScan: "static" | "llm";
   numSpeakers:   number | null;
-  reportMode:    "none" | "simple" | "narrative";
+  reportMode:    "none" | "simple" | "narrative" | "both";
   useConsensus:  boolean;
   companyName:   string;
+}
+
+export interface PipelineQueueResponse {
+  activeCallId: string | null;
+  queuedCount: number;
+  queuedCallIds: string[];
+  runningCallIds: string[];
+  failedCount: number;
+  failedCallIds: string[];
+  etaSecondsPerJob: number;
+  estimatedDrainSeconds: number;
+}
+
+export interface PipelineJobResponse {
+  id: string;
+  callId: string;
+  audioPath: string;
+  asrEngine: AsrEngine;
+  companyName: string | null;
+  status: "queued" | "running" | "completed" | "failed";
+  priority: number;
+  attempts: number;
+  maxAttempts: number;
+  errorMessage: string | null;
+  lockedAt: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface PipelineJobsResponse {
+  jobs: PipelineJobResponse[];
 }
 
 export const pipelineApi = {
@@ -335,6 +414,16 @@ export const pipelineApi = {
     apiClient.get<PipelineSettingsResponse>("/settings/pipeline"),
   updateSettings: (payload: Partial<PipelineSettingsResponse>) =>
     apiClient.put<PipelineSettingsResponse>("/settings/pipeline", payload),
+  getQueue: () =>
+    apiClient.get<PipelineQueueResponse>("/pipeline/queue"),
+  getJobs: (statusFilter?: PipelineJobResponse["status"], limit = 50) =>
+    apiClient.get<PipelineJobsResponse>("/pipeline/jobs", {
+      params: { status_filter: statusFilter, limit },
+    }),
+  retryJob: (callId: string) =>
+    apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/retry`),
+  deadLetterJob: (callId: string) =>
+    apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/dead-letter`),
 };
 
 // ── Company Context ────────────────────────────────────────────────────────

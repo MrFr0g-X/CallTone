@@ -10,7 +10,6 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import BubbleToggle from "@/components/BubbleToggle";
 import PageTransition from "@/components/PageTransition";
-import SplitText from "@/components/SplitText";
 import DateRangePicker from "@/components/DateRangePicker";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -36,7 +35,7 @@ const AgentDashboard = () => {
     queryFn: () => agentApi.getCalls({ range: selectedRange }).then(r => r.data),
   });
 
-  const agentCalls: QaCallItem[] = callsData?.calls ?? [];
+  const agentCalls: QaCallItem[] = useMemo(() => callsData?.calls ?? [], [callsData?.calls]);
   const trendData = dashData?.trend ?? [];
 
   const greeting = useMemo(() => {
@@ -83,25 +82,10 @@ const AgentDashboard = () => {
           {/* Header */}
           <header>
             <h1 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
-              <SplitText
-                text={`${greeting}, `}
-                splitType="chars"
-                delay={40}
-                duration={0.8}
-                from={{ opacity: 0, y: 30 }}
-                to={{ opacity: 1, y: 0 }}
-              >
-                <span className="font-semibold gradient-text">
-                  <SplitText
-                    text={(user?.name ?? "").split(" ")[0]}
-                    splitType="chars"
-                    delay={40}
-                    duration={0.8}
-                    from={{ opacity: 0, y: 30 }}
-                    to={{ opacity: 1, y: 0 }}
-                  />
-                </span>
-              </SplitText>
+              {greeting},{" "}
+              <span className="font-semibold gradient-text">
+                {(user?.name ?? "").split(" ")[0]}
+              </span>
             </h1>
             <motion.p
               className="text-muted-foreground mt-2 text-sm font-light"

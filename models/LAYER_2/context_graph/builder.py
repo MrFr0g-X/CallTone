@@ -230,8 +230,51 @@ class GraphBuilder:
     # Legacy path (unchanged from original, kept for backward compatibility)
     # -----------------------------------------------------------------------
 
+    def _normalize_legacy_context(self, context_dict: dict) -> dict:
+        """Map old flat demo JSONs into the nested schema the legacy builder expects."""
+        if any(isinstance(context_dict.get(k), dict) for k in ("script_compliance", "factual_accuracy", "behavioral")):
+            return context_dict
+
+        def _join(*keys: str) -> str:
+            values = []
+            for key in keys:
+                value = context_dict.get(key)
+                if isinstance(value, list):
+                    value = "\n".join(str(v) for v in value if v)
+                if isinstance(value, str) and value.strip():
+                    values.append(value.strip())
+            return "\n".join(values)
+
+        normalized = dict(context_dict)
+        normalized["script_compliance"] = {
+            "greeting_script": _join("opening_greeting", "greeting_script"),
+            "closing_script": _join("closing_phrase", "closing_script"),
+            "required_verification_steps": _join("verification_steps", "required_verification_steps"),
+            "hold_procedure": _join("hold_procedure"),
+            "transfer_procedure": _join("transfer_procedure"),
+            "escalation_procedure": _join("escalation_policy", "escalation_procedure"),
+            "mandatory_disclosures": _join("mandatory_disclosures", "compliance_notes"),
+            "prohibited_phrases": _join("prohibited_language", "prohibited_phrases"),
+        }
+        normalized["factual_accuracy"] = {
+            "products_and_services": _join("products_services", "products_and_services"),
+            "current_promotions": _join("current_promotions", "offers"),
+            "policies": _join("pricing_policies", "policy_documents", "policies", "common_facts"),
+            "common_troubleshooting": _join("troubleshooting_steps", "common_troubleshooting"),
+            "contact_information": _join("contact_information", "support_channels"),
+            "frequently_asked_questions": _join("faq", "frequently_asked_questions"),
+        }
+        normalized["behavioral"] = {
+            "tone_guidelines": _join("tone_guidelines", "politeness_guidelines"),
+            "empathy_guidelines": _join("empathy_phrases", "empathy_guidelines"),
+            "conflict_resolution_guidelines": _join("conflict_handling", "conflict_resolution_guidelines"),
+            "resolution_expectations": _join("resolution_definition", "follow_up_requirements", "resolution_expectations"),
+        }
+        return normalized
+
     def _build_from_context_legacy(self, context_dict: dict) -> ContextGraph:
         """Original keyword-based builder. Used when atomic_nodes is absent."""
+        context_dict = self._normalize_legacy_context(context_dict)
         graph = ContextGraph()
         company = context_dict.get("company_name", "Unknown")
 

@@ -1,4 +1,5 @@
 import re
+import os
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
@@ -8,15 +9,21 @@ from psycopg2.extras import Json
 
 
 DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "calltone_db",
-    "user": "postgres",
-    "password": "nahmutf850",
+    "host": os.getenv("CALLTONE_DB_HOST", "localhost"),
+    "port": int(os.getenv("CALLTONE_DB_PORT", "5432")),
+    "dbname": os.getenv("CALLTONE_DB_NAME", "calltone_db"),
+    "user": os.getenv("CALLTONE_DB_USER", "postgres"),
+    "password": os.getenv("CALLTONE_DB_PASSWORD", ""),
 }
 
-TRANSCRIPT_FILE = r"D:\grad project\call center\code\CallTone\backend\data\TXT\G201-1.txt"
-GOOGLE_DRIVE_LINK = "https://drive.google.com/file/d/1A0jVNyNHpEkNdI38kUB04_q1k3RSAXoO/view?usp=sharing"
+TRANSCRIPT_FILE = os.getenv(
+    "CALLTONE_MOCK_TRANSCRIPT_FILE",
+    str(Path(__file__).resolve().parent.parent / "data" / "TXT" / "G201-1.txt"),
+)
+GOOGLE_DRIVE_LINK = os.getenv(
+    "CALLTONE_MOCK_DRIVE_LINK",
+    "https://drive.google.com/file/d/1A0jVNyNHpEkNdI38kUB04_q1k3RSAXoO/view?usp=sharing",
+)
 ORIGINAL_FILENAME = "G201-1.wav"
 CALL_TIME = datetime.now(timezone.utc)
 
@@ -198,6 +205,12 @@ def build_mock_report(speaker_turns):
 
 
 def insert_mock_call():
+    if not DB_CONFIG["password"]:
+        raise RuntimeError(
+            "CALLTONE_DB_PASSWORD is required for mock_call_loader.py; "
+            "do not hardcode database credentials in source."
+        )
+
     drive_file_id = extract_drive_file_id(GOOGLE_DRIVE_LINK)
     full_text, speaker_turns = parse_transcript_file(TRANSCRIPT_FILE)
     mock_report = build_mock_report(speaker_turns)

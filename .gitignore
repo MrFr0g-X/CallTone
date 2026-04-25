@@ -47,6 +47,11 @@ build/
 # ============================================================
 test_outputs/
 *.test.txt
+.pytest_cache/
+.coverage
+htmlcov/
+docs/coverage_backend/
+docs/coverage_skills/
 
 # ============================================================
 # IDE & OS
@@ -68,6 +73,20 @@ node_modules/
 # Claude Code (local settings)
 # ============================================================
 .claude/
+
+# ============================================================
+# Local deployment secrets and one-off deploy artifacts
+# ============================================================
+deployment/
+*.tgz
+
+# Generated LaTeX/report build artefacts
+docs/*.aux
+docs/*.out
+docs/*.toc
+docs/*.log
+docs/*.fls
+docs/*.fdb_latexmk
 
 # ============================================================
 # Windows Zone.Identifier metadata files (WSL artifact)
@@ -110,6 +129,8 @@ build/
 # Environment
 .env
 .env.*
+!.env.example
+!.env.demo.example
 
 # IDE
 .vscode/

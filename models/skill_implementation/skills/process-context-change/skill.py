@@ -16,7 +16,7 @@ def get_process_context_change_skill_bundle():
     return {
         "name": "process-context-change",
 
-        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"),
+        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Qwen3-8B-Q4_K_M.gguf"),
 
         "system_prompt": """You are a precise JSON-only assistant that compares two versions of a company rule or protocol.
 
@@ -31,7 +31,9 @@ CRITICAL RULES:
 5. Common equivalent rewrites: active/passive voice, synonym substitution, reordering clauses
 6. NOT equivalent: adding new requirements, removing requirements, changing thresholds, changing scope
 
-Output the JSON immediately with no preamble.""",
+Output the JSON immediately with no preamble.
+
+/no_think""",
 
         "user_prompt_template": """Compare these two versions of a company rule and determine if they are semantically equivalent.
 

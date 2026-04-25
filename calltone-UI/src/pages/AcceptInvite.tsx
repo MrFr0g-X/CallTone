@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams, Navigate, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff } from "lucide-react";
-import { authApi } from "@/services/api";
+import { apiErrorMessage, authApi } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import PageTransition from "@/components/PageTransition";
 import AnimatedBackground from "@/components/AnimatedBackground";
@@ -43,12 +43,10 @@ const AcceptInvite = () => {
       });
       navigate("/login");
     },
-    onError: (err: any) => {
-      const message =
-        err?.response?.data?.detail || "Failed to activate account.";
+    onError: (err: unknown) => {
       toast({
         title: "Activation failed",
-        description: message,
+        description: apiErrorMessage(err, "Failed to activate account."),
         variant: "destructive",
       });
     },
@@ -98,7 +96,7 @@ const AcceptInvite = () => {
 
           {isError && (
             <div className="text-destructive text-sm">
-              {(error as any)?.response?.data?.detail || "Invalid or expired invitation."}
+              {apiErrorMessage(error, "Invalid or expired invitation.")}
             </div>
           )}
 

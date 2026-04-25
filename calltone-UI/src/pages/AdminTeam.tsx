@@ -14,11 +14,13 @@ import {
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AdminTeamUser } from "@/services/api";
-import { adminApi } from "@/services/api";
+import { adminApi, apiErrorMessage } from "@/services/api";
 import GlassCard from "@/components/GlassCard";
 import BubbleToggle from "@/components/BubbleToggle";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { canManageAdminUsers } from "@/lib/roles";
 
 type AdminRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 
@@ -74,7 +76,9 @@ const roleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const;
 
 const AdminTeam = () => {
   const { toast } = useToast();
+  const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
+  const canMutateUsers = canManageAdminUsers(currentUser?.role);
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
@@ -122,13 +126,10 @@ const AdminTeam = () => {
       setInviteForm({ name: "", email: "", role: "viewer" });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.detail || "Failed to create invitation.";
-
+    onError: (error: unknown) => {
       toast({
         title: "Invite failed",
-        description: message,
+        description: apiErrorMessage(error, "Failed to create invitation."),
         variant: "destructive",
       });
     },
@@ -148,10 +149,10 @@ const AdminTeam = () => {
       toast({ title: "Role updated" });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Role update failed",
-        description: error?.response?.data?.detail || "Failed to update role.",
+        description: apiErrorMessage(error, "Failed to update role."),
         variant: "destructive",
       });
     },
@@ -171,10 +172,10 @@ const AdminTeam = () => {
       toast({ title: "User status updated" });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Status update failed",
-        description: error?.response?.data?.detail || "Failed to update status.",
+        description: apiErrorMessage(error, "Failed to update status."),
         variant: "destructive",
       });
     },
@@ -199,10 +200,10 @@ const AdminTeam = () => {
         });
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Copy failed",
-        description: error?.response?.data?.detail || "Failed to get invite link.",
+        description: apiErrorMessage(error, "Failed to get invite link."),
         variant: "destructive",
       });
     },
@@ -221,10 +222,10 @@ const AdminTeam = () => {
       });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Delete failed",
-        description: error?.response?.data?.detail || "Failed to delete.",
+        description: apiErrorMessage(error, "Failed to delete."),
         variant: "destructive",
       });
     },
@@ -316,15 +317,21 @@ const AdminTeam = () => {
           </p>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowInviteModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          Invite Member
-        </motion.button>
+        {canMutateUsers ? (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowInviteModal(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            Invite Member
+          </motion.button>
+        ) : (
+          <span className="rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs font-medium text-muted-foreground">
+            Read-only access
+          </span>
+        )}
       </header>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -420,6 +427,7 @@ const AdminTeam = () => {
                       </p>
                     </div>
 
+                    {canMutateUsers && (
                     <div className="flex flex-wrap items-center gap-1">
                       {user.status === "invited" ? (
                         <>
@@ -483,6 +491,7 @@ const AdminTeam = () => {
                         </>
                       )}
                     </div>
+                    )}
                   </div>
                 </div>
               </GlassCard>

@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import hashlib
+import os
 import secrets
 import uuid
 import threading
@@ -19,28 +20,72 @@ try:
 except Exception:
     pass
 
-from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, HTTPException, status, Depends, Body, UploadFile, File, Form, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from app.database import Base, engine, get_db, settings, SessionLocal
 from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
-    PipelineSettings,
+    PipelineJob, PipelineSettings,
     _compute_grade,
 )
 from app.schemas import LoginRequest, TokenResponse
 from app.security import create_access_token, verify_password, hash_password
+from app.security_headers import SecurityHeadersMiddleware
+from app.rate_limit import login_limiter, invite_accept_limiter, client_key
+from app.logging_config import configure_logging, get_logger
 import app.models  # noqa
 
-UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
+configure_logging()
+log = get_logger("calltone.api")
+
+APP_DIR = Path(__file__).resolve().parent
+BACKEND_DIR = APP_DIR.parent
+REPO_DIR_CANDIDATES = [
+    BACKEND_DIR.parent,  # repo root in local dev: <repo>/backend/app/main.py
+    BACKEND_DIR,         # deployed backend root: <deploy>/app/main.py
+]
+
+
+def _resolve_models_dir() -> Path:
+    for base in REPO_DIR_CANDIDATES:
+        candidate = base / "models"
+        if candidate.exists():
+            return candidate
+    # Default to the deployed-backend layout if no models dir exists yet.
+    return BACKEND_DIR / "models"
+
+
+def _env_timeout_seconds(name: str) -> int | None:
+    """
+    Parse an optional timeout env var.
+
+    Unset, empty, zero, or negative disables the backend-side deadline so the
+    remote GPU pipeline can run as long as needed.
+    """
+    raw = str(os.getenv(name, "")).strip()
+    if not raw:
+        return None
+    try:
+        value = int(raw)
+    except ValueError:
+        log.warning("invalid timeout env %s=%r; disabling backend deadline", name, raw)
+        return None
+    return value if value > 0 else None
+
+
+UPLOAD_DIR = BACKEND_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
-MODELS_DIR = Path(__file__).resolve().parent.parent.parent / "models"
+MODELS_DIR = _resolve_models_dir()
+CONTEXTS_DIR = MODELS_DIR / "LAYER_2" / "company_context" / "contexts"
+TICKETS_DIR  = MODELS_DIR / "LAYER_2" / "change_management" / "tickets"
+REMOTE_PIPELINE_DEADLINE_SECONDS = _env_timeout_seconds("REMOTE_PIPELINE_DEADLINE_SECONDS")
 
 Base.metadata.create_all(bind=engine)
 
@@ -54,6 +99,107 @@ except Exception:
     pass
 
 
+def _context_slug(company_name: str) -> str:
+    return str(company_name or "").strip().lower().replace(" ", "_")
+
+
+def _context_path(company_name: str) -> Path:
+    return CONTEXTS_DIR / f"{_context_slug(company_name)}.json"
+
+
+def _available_company_contexts() -> list[str]:
+    import json as _json
+
+    names: list[str] = []
+    if CONTEXTS_DIR.exists():
+        for f in sorted(CONTEXTS_DIR.glob("*.json")):
+            if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
+                continue
+            try:
+                data = _json.loads(f.read_text(encoding="utf-8"))
+                names.append(str(data.get("company_name") or f.stem))
+            except Exception:
+                names.append(f.stem)
+    return names
+
+
+def _default_pipeline_company() -> str:
+    available = _available_company_contexts()
+    for candidate in available:
+        if str(candidate).strip().lower() == "metroboost":
+            return candidate
+    return available[0] if available else "metroboost"
+
+
+def _read_company_context_payload(company_name: str) -> dict | None:
+    import json as _json
+
+    path = _context_path(company_name)
+    if not path.exists():
+        return None
+    try:
+        payload = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise FileNotFoundError(f"Could not read context for {company_name}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise FileNotFoundError(f"Context for {company_name} is not a JSON object.")
+    return payload
+
+
+def _sync_company_context_to_model_server(company_name: str) -> bool:
+    """Mirror a local context JSON to the GPU model server if remote mode is on."""
+    if not os.getenv("MODEL_SERVER_URL"):
+        return False
+    payload = _read_company_context_payload(company_name)
+    if payload is None:
+        return False
+    try:
+        from app import model_client
+        model_client.put_context(company_name, payload)
+        return True
+    except Exception as exc:
+        log.warning(
+            "model_server.context_sync_failed",
+            extra={"event": "context_sync_failed", "company": company_name, "err": str(exc)},
+        )
+        return False
+
+
+def _ensure_known_company_context(company_name: str) -> str:
+    company_name = str(company_name or "").strip()
+    if not company_name:
+        raise FileNotFoundError("No company context configured for QA scoring.")
+    if _context_path(company_name).exists():
+        _sync_company_context_to_model_server(company_name)
+        return company_name
+
+    available = _available_company_contexts()
+    if os.getenv("MODEL_SERVER_URL"):
+        try:
+            from app import model_client
+            if model_client.context_exists(company_name):
+                return company_name
+            remote = ", ".join(c.get("name", "") for c in model_client.list_contexts()) or "none"
+        except Exception as exc:
+            raise FileNotFoundError(
+                f"Cannot verify model-server context for {company_name}: {exc}"
+            ) from exc
+        raise FileNotFoundError(
+            "No context found for company: "
+            f"{company_name}. Backend contexts: {', '.join(available) or 'none'}. "
+            f"Model-server contexts: {remote}."
+        )
+
+    if available:
+        raise FileNotFoundError(
+            "No context found for company: "
+            f"{company_name}. Available contexts: {', '.join(available)}"
+        )
+    raise FileNotFoundError(
+        f"No context found for company: {company_name}. No contexts are available."
+    )
+
+
 def _run_startup_migrations():
     """Add columns to existing tables that were added after initial create_all."""
     from sqlalchemy import text, inspect
@@ -64,11 +210,20 @@ def _run_startup_migrations():
             conn.execute(text("ALTER TABLE employees ADD COLUMN user_id INTEGER REFERENCES users(id)"))
             conn.commit()
 
+        call_cols = [c["name"] for c in inspector.get_columns("calls")]
+        if "storage_path" not in call_cols:
+            conn.execute(text("ALTER TABLE calls ADD COLUMN storage_path VARCHAR(512)"))
+            conn.commit()
+
     # Ensure the singleton pipeline settings row exists
     db = SessionLocal()
     try:
-        if not db.query(PipelineSettings).filter(PipelineSettings.id == 1).first():
-            db.add(PipelineSettings(id=1))
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        if not ps:
+            db.add(PipelineSettings(id=1, company_name=_default_pipeline_company()))
+            db.commit()
+        elif ps.report_mode == "none":
+            ps.report_mode = "narrative"
             db.commit()
     finally:
         db.close()
@@ -97,7 +252,157 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Security-headers middleware. Added AFTER CORS so it wraps the outer
+# response — Starlette runs middleware in reverse-add order, so the
+# last add() runs first on the way out (and last on the way in). CORS
+# stays innermost so its preflight handling is unaffected.
+app.add_middleware(SecurityHeadersMiddleware)
+
 bearer_scheme = HTTPBearer()
+
+
+# ── Upload filename sanitization (C-4) ──────────────────────────────────────
+# Defangs path-traversal in user-supplied filenames before they reach the
+# disk. UUID prefixing alone is not enough — `f"{uuid}_../../etc/passwd"`
+# still resolves outside UPLOAD_DIR on most filesystems.
+import os as _os_for_sanitize
+import re as _re_for_sanitize
+
+_FILENAME_SAFE_RE = _re_for_sanitize.compile(r"[^A-Za-z0-9._-]")
+_FILENAME_FALLBACK = "upload.bin"
+_FILENAME_MAX_LEN = 80
+
+
+def _extract_evidence_row(ev: dict, speaker_turns: list[dict]) -> dict:
+    """Normalize one Layer-2 evidence dict into the UI's row shape.
+
+    The skill's evidence schema varies per criterion (quote vs customer_quote
+    vs agent_quote, reason vs rationale vs assessment, ...). We try every
+    known key and, if speaker is still missing, infer it by substring-matching
+    the quote against transcript turns.
+    """
+    quote = (ev.get("quote")
+             or ev.get("customer_quote")
+             or ev.get("agent_quote")
+             or ev.get("agent_utterance")
+             or ev.get("statement")
+             or ev.get("description", ""))
+    speaker = (ev.get("speaker", "")
+               or ("Customer" if ev.get("customer_quote") else "")
+               or ("Customer Service Agent" if ev.get("agent_quote") or ev.get("agent_utterance") else ""))
+    # The L2 skill embeds the speaker as a "Speaker: text" prefix in `quote`.
+    # Strip it into the dedicated speaker field so the UI can render both.
+    if quote and ":" in quote and not speaker:
+        head, sep, rest = quote.partition(":")
+        head = head.strip()
+        if head in ("Customer Service Agent", "Customer", "Agent"):
+            speaker = head
+            quote = rest.strip()
+    if not speaker and quote and speaker_turns:
+        # Substring lookup: cheap O(N) scan; transcripts are <100 turns.
+        snippet = quote.strip()[:40]
+        for turn in speaker_turns:
+            text = turn.get("text", "") or ""
+            if snippet and snippet in text:
+                speaker = turn.get("role") or turn.get("speaker", "")
+                break
+    reason = (ev.get("reason")
+              or ev.get("rationale")
+              or ev.get("explanation")
+              or ev.get("justification")
+              or ev.get("note")
+              or ev.get("assessment")
+              or ev.get("severity_contribution", ""))
+    # script_compliance evidence carries `rule` + `met` instead of a free-text
+    # reason; synthesize a human sentence so the UI has something to show.
+    if not reason:
+        rule = ev.get("rule") or ev.get("policy") or ev.get("guideline")
+        if rule is not None:
+            met = ev.get("met")
+            if met is True:
+                reason = f"Followed: {rule}"
+            elif met is False:
+                reason = f"Missed: {rule}"
+            else:
+                reason = str(rule)
+    return {"quote": quote, "speaker": speaker, "reason": reason}
+
+
+def _iter_criterion_evidence(criterion: str, info: dict) -> list[dict]:
+    """Return evidence-like rows from all skill-specific output shapes."""
+    rows: list[dict] = []
+    raw_evidence = info.get("evidence")
+    if isinstance(raw_evidence, list):
+        rows.extend(ev for ev in raw_evidence if isinstance(ev, dict))
+
+    def _append(values, quote_keys: tuple[str, ...], reason_keys: tuple[str, ...], default_reason: str):
+        if not isinstance(values, list):
+            return
+        for item in values:
+            if not isinstance(item, dict):
+                continue
+            quote = next((str(item.get(k, "")).strip() for k in quote_keys if item.get(k)), "")
+            reason = next((str(item.get(k, "")).strip() for k in reason_keys if item.get(k)), "")
+            if quote or reason:
+                rows.append({"quote": quote, "reason": reason or default_reason})
+
+    _append(info.get("claims"), ("quote", "statement", "claim"), ("assessment", "reason", "status"), "Factual claim reviewed")
+    _append(info.get("emotional_moments"), ("quote", "customer_quote", "agent_quote"), ("assessment", "reason", "emotion"), "Empathy signal")
+    _append(info.get("conflicts_detected"), ("quote", "customer_quote", "agent_quote", "description"), ("assessment", "reason", "severity"), "Conflict signal")
+    _append(info.get("resolution_steps"), ("quote", "agent_quote", "step", "description"), ("assessment", "reason", "status"), "Resolution step")
+    _append(info.get("issues_found"), ("quote", "description", "issue"), ("assessment", "reason", "severity"), "Severity issue")
+    _append(info.get("positive_examples"), ("quote", "agent_quote", "example"), ("assessment", "reason"), "Positive example")
+    _append(info.get("negative_examples"), ("quote", "agent_quote", "example"), ("assessment", "reason"), "Negative example")
+
+    if not rows:
+        summary = str(info.get("summary") or "").strip()
+        if summary:
+            rows.append({"quote": "", "reason": f"{criterion.replace('_', ' ').title()}: {summary}"})
+    return rows
+
+
+def _effective_report_mode(ps: PipelineSettings | None) -> str:
+    mode = str(ps.report_mode if ps else "narrative").strip().lower()
+    return mode if mode in {"simple", "narrative", "both"} else "narrative"
+
+
+def _audio_duration_metadata(audio_path: str | Path) -> tuple[float | None, int | None, int | None]:
+    """Return real file duration/sample-rate/channels when cheaply available."""
+    path = Path(audio_path)
+    try:
+        import soundfile as sf
+        info = sf.info(str(path))
+        duration = float(info.frames) / float(info.samplerate) if info.samplerate else None
+        return duration, int(info.samplerate) if info.samplerate else None, int(info.channels) if info.channels else None
+    except Exception:
+        pass
+    try:
+        import wave
+        with wave.open(str(path), "rb") as wf:
+            rate = wf.getframerate()
+            frames = wf.getnframes()
+            channels = wf.getnchannels()
+            return (frames / rate if rate else None), rate or None, channels or None
+    except Exception:
+        return None, None, None
+
+
+def _sanitize_filename(name: str | None) -> str:
+    """Return a safe basename suitable for joining with UPLOAD_DIR."""
+    if not name:
+        return _FILENAME_FALLBACK
+    base = _os_for_sanitize.path.basename(name.replace("\\", "/"))
+    cleaned = _FILENAME_SAFE_RE.sub("_", base)
+    cleaned = cleaned.lstrip(".")  # forbid leading dots (hidden files / traversal)
+    if len(cleaned) > _FILENAME_MAX_LEN:
+        # Preserve extension when truncating
+        stem, dot, ext = cleaned.rpartition(".")
+        if dot and len(ext) <= 8:
+            keep = _FILENAME_MAX_LEN - len(ext) - 1
+            cleaned = (stem[:keep] if keep > 0 else stem[: _FILENAME_MAX_LEN]) + dot + ext
+        else:
+            cleaned = cleaned[:_FILENAME_MAX_LEN]
+    return cleaned or _FILENAME_FALLBACK
 
 
 def get_current_user(
@@ -120,22 +425,163 @@ def get_current_user(
     return user
 
 
+def _role_name(user: User) -> str:
+    return user.role.name if user.role else ""
+
+
+def _require_role(user: User, allowed: set[str] | tuple[str, ...] | list[str], detail: str = "Not authorized") -> str:
+    role = _role_name(user)
+    if role not in allowed:
+        raise HTTPException(status_code=403, detail=detail)
+    return role
+
+
+def _agent_employee_id(user: User, db: Session) -> str | None:
+    employee = db.query(Employee).filter(Employee.user_id == user.id).first()
+    return employee.id if employee else None
+
+
+def _ensure_call_visible_to_user(call: Call, user: User, db: Session) -> None:
+    role = _role_name(user)
+    if role in ("qa", "admin", "super_admin"):
+        return
+    if role == "agent":
+        employee_id = _agent_employee_id(user, db)
+        if employee_id and call.employee_id == employee_id:
+            return
+    raise HTTPException(status_code=403, detail="Not authorized to access this call")
+
+
 @app.get("/")
 def root():
+    from pathlib import Path as _P
+    from fastapi.responses import FileResponse as _FR
+    _idx = _P(__file__).resolve().parent.parent / "static" / "index.html"
+    if _idx.is_file():
+        return _FR(_idx)
     return {"message": "CallTone API is running"}
 
 
+CALLTONE_VERSION = "0.9.0"
+_STARTED_AT = datetime.now(timezone.utc)
+
+
+@app.get("/api/health")
+def health_basic():
+    """Liveness probe — cheap, no DB, no disk, used by load balancers."""
+    return {"status": "ok"}
+
+
+@app.get("/api/health/detailed")
+def health_detailed():
+    """Readiness probe — checks DB, model dir, and disk so ops can see
+    *why* the service is unhappy without grepping logs."""
+    import shutil
+
+    checks: dict = {}
+    overall_ok = True
+
+    # DB connectivity
+    try:
+        with engine.connect() as conn:
+            conn.exec_driver_sql("SELECT 1")
+        checks["database"] = {"ok": True}
+    except Exception as exc:
+        overall_ok = False
+        checks["database"] = {"ok": False, "error": str(exc)[:200]}
+
+    # Model presence: in split deployments (MODEL_SERVER_URL set) the weights
+    # live on a separate GPU host reached via the model_server, so the local
+    # /opt/models check is meaningless — skip it. Ping the remote /v1/health
+    # if reachable, but treat unreachable as a soft warning, not a failure:
+    # the backend should still be ready to serve UI, login, history etc. even
+    # when the GPU instance is paused (cost-saving on Vast on-demand).
+    if os.getenv("MODEL_SERVER_URL"):
+        from app.model_client import model_server_health
+        try:
+            remote = model_server_health(timeout=2.0)
+            checks["model_server"] = {"ok": True, "remote": remote}
+        except Exception as exc:
+            checks["model_server"] = {
+                "ok": False,
+                "warning": "remote model server unreachable",
+                "error": str(exc)[:200],
+            }
+            # Intentionally don't flip overall_ok — see comment above.
+    else:
+        try:
+            model_dir_exists = MODELS_DIR.exists()
+            checks["models_dir"] = {
+                "ok": model_dir_exists,
+                "path": str(MODELS_DIR),
+            }
+            if not model_dir_exists:
+                overall_ok = False
+        except Exception as exc:
+            overall_ok = False
+            checks["models_dir"] = {"ok": False, "error": str(exc)[:200]}
+
+    # Upload directory + free disk
+    try:
+        usage = shutil.disk_usage(UPLOAD_DIR)
+        free_gb = round(usage.free / (1024 ** 3), 2)
+        # Soft threshold: warn under 1 GB free, fail under 100 MB
+        disk_ok = usage.free > 100 * 1024 * 1024
+        if not disk_ok:
+            overall_ok = False
+        checks["disk"] = {
+            "ok": disk_ok,
+            "free_gb": free_gb,
+            "upload_dir": str(UPLOAD_DIR),
+        }
+    except Exception as exc:
+        overall_ok = False
+        checks["disk"] = {"ok": False, "error": str(exc)[:200]}
+
+    uptime_s = int((datetime.now(timezone.utc) - _STARTED_AT).total_seconds())
+
+    return {
+        "status": "ok" if overall_ok else "degraded",
+        "version": CALLTONE_VERSION,
+        "uptime_seconds": uptime_s,
+        "started_at": _STARTED_AT.isoformat(),
+        "checks": checks,
+    }
+
+
 @app.post(f"{settings.API_V1_PREFIX}/auth/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
+def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    # C-1: per-IP rate limit; fires before any DB or bcrypt work so a
+    # script cannot exhaust CPU.
+    login_limiter.check(client_key(request))
+
     user = db.query(User).filter(User.email == payload.email).first()
 
     if not user or not verify_password(payload.password, user.password_hash):
+        # C-6: structured security event for log aggregators.
+        log.warning(
+            "login_failed",
+            extra={
+                "event": "login_failed",
+                "email": payload.email,
+                "client_ip": client_key(request),
+            },
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
 
     if not user.is_active:
+        log.warning(
+            "login_inactive_account",
+            extra={
+                "event": "login_inactive_account",
+                "user_id": user.id,
+                "email": payload.email,
+                "client_ip": client_key(request),
+            },
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is inactive",
@@ -410,7 +856,10 @@ def get_invite_details(token: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="Invalid invitation link")
 
-    if not user.invite_expires_at or user.invite_expires_at < datetime.now(timezone.utc):
+    expires_at = user.invite_expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not expires_at or expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Invitation link has expired")
 
     if user.is_active:
@@ -426,9 +875,14 @@ def get_invite_details(token: str, db: Session = Depends(get_db)):
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/invite/accept")
 def accept_invite(
+    request: Request,
     payload: dict = Body(...),
     db: Session = Depends(get_db),
 ):
+    # C-1: rate-limit per IP — token is 256-bit URL-safe, but cheap to
+    # block automated guessing anyway.
+    invite_accept_limiter.check(client_key(request))
+
     token = (payload.get("token") or "").strip()
     password = (payload.get("password") or "").strip()
     confirm_password = (payload.get("confirmPassword") or "").strip()
@@ -442,12 +896,23 @@ def accept_invite(
     if len(password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
 
+    # C-5: bcrypt has a hard 72-byte input ceiling. Reject early so the
+    # error is predictable; bcrypt 5.x raises ValueError otherwise.
+    if len(password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at most 72 bytes (UTF-8). Bcrypt does not store more.",
+        )
+
     user = db.query(User).filter(User.invite_token == token).first()
 
     if not user:
         raise HTTPException(status_code=404, detail="Invalid invitation link")
 
-    if not user.invite_expires_at or user.invite_expires_at < datetime.now(timezone.utc):
+    expires_at = user.invite_expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not expires_at or expires_at < datetime.now(timezone.utc):
         raise HTTPException(status_code=400, detail="Invitation link has expired")
 
     if user.is_active:
@@ -494,9 +959,22 @@ def update_user_role(
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")
 
+    old_role_name = user.role.name if user.role else None
     user.role_id = role.id
     db.commit()
     db.refresh(user)
+
+    # C-6: privilege-change audit line.
+    log.warning(
+        "role_changed",
+        extra={
+            "event": "role_changed",
+            "actor_id": current_user.id,
+            "target_user_id": user.id,
+            "old_role": old_role_name,
+            "new_role": role.name,
+        },
+    )
 
     return {
         "message": "Role updated successfully",
@@ -533,9 +1011,22 @@ def update_user_status(
     if user.invite_token and not user.is_active:
         raise HTTPException(status_code=400, detail="Invited users cannot be enabled/disabled. They must accept the invitation or be deleted.")
 
+    old_status = "active" if user.is_active else "disabled"
     user.is_active = new_status == "active"
     db.commit()
     db.refresh(user)
+
+    # C-6: account-status audit line.
+    log.warning(
+        "status_changed",
+        extra={
+            "event": "status_changed",
+            "actor_id": current_user.id,
+            "target_user_id": user.id,
+            "old_status": old_status,
+            "new_status": new_status,
+        },
+    )
 
     return {
         "message": f"User {new_status} successfully",
@@ -588,9 +1079,23 @@ def delete_user(
 
     was_invited = bool(user.invite_token and not user.is_active)
     user_name = user.full_name
+    target_email = user.email
+    target_id = user.id
 
     db.delete(user)
     db.commit()
+
+    # C-6: deletion audit line.
+    log.warning(
+        "user_deleted",
+        extra={
+            "event": "user_deleted",
+            "actor_id": current_user.id,
+            "target_user_id": target_id,
+            "target_email": target_email,
+            "was_invited": was_invited,
+        },
+    )
 
     return {
         "message": "Invitation deleted successfully" if was_invited else "User deleted successfully",
@@ -605,13 +1110,22 @@ def get_qa_calls(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    rows = (
+    role = _require_role(
+        current_user, ("qa", "admin", "super_admin", "agent"),
+        "QA, Admin, or owning Agent access required",
+    )
+    query = (
         db.query(Call, Employee, QaReport)
         .join(Employee, Call.employee_id == Employee.id)
         .outerjoin(QaReport, Call.id == QaReport.call_id)
-        .order_by(Call.created_at.desc())
-        .all()
     )
+    if role == "agent":
+        employee_id = _agent_employee_id(current_user, db)
+        if not employee_id:
+            return {"calls": []}
+        query = query.filter(Call.employee_id == employee_id)
+
+    rows = query.order_by(Call.created_at.desc()).all()
 
     results = []
     for call, emp, report in rows:
@@ -629,6 +1143,38 @@ def get_qa_calls(
 
 
 ## QA Call detail endpoint
+
+@app.get(f"{settings.API_V1_PREFIX}/qa/calls/{{call_id}}/audio")
+def get_qa_call_audio(
+    call_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    from fastapi.responses import FileResponse
+    import mimetypes
+
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+    _ensure_call_visible_to_user(call, current_user, db)
+    if not call.storage_path:
+        raise HTTPException(status_code=404, detail="No stored audio for this call")
+
+    path = Path(call.storage_path)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Audio file missing on disk")
+
+    media_type, _ = mimetypes.guess_type(str(path))
+    if media_type is None:
+        media_type = "application/octet-stream"
+
+    return FileResponse(
+        str(path),
+        media_type=media_type,
+        filename=call.original_filename or path.name,
+        headers={"Accept-Ranges": "bytes", "Cache-Control": "private, max-age=300"},
+    )
+
 
 @app.get(f"{settings.API_V1_PREFIX}/qa/calls/{{call_id}}")
 def get_qa_call_detail(
@@ -649,6 +1195,7 @@ def get_qa_call_detail(
         raise HTTPException(status_code=404, detail="Call not found")
 
     call, emp, transcript, report = row
+    _ensure_call_visible_to_user(call, current_user, db)
 
     drive_file_id = call.drive_file_id
     drive_preview_url = (
@@ -659,6 +1206,10 @@ def get_qa_call_detail(
         f"https://drive.google.com/uc?export=download&id={drive_file_id}"
         if drive_file_id else None
     )
+    audio_url = (
+        f"{settings.API_V1_PREFIX}/qa/calls/{call.id}/audio"
+        if call.storage_path and Path(call.storage_path).is_file() else None
+    )
 
     return {
         "callId": call.id,
@@ -666,6 +1217,7 @@ def get_qa_call_detail(
         "driveFileId": drive_file_id,
         "drivePreviewUrl": drive_preview_url,
         "driveDownloadUrl": drive_download_url,
+        "audioUrl": audio_url,
         "callTime": call.call_time.isoformat() if call.call_time else None,
         "durationSeconds": call.duration_seconds,
         "status": call.status,
@@ -699,6 +1251,7 @@ def get_agent_dashboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("agent",), "Agent access required")
     employee = _get_agent_employee(current_user, db)
     query = db.query(QaReport).join(Call, QaReport.call_id == Call.id)
     if employee:
@@ -755,6 +1308,7 @@ def get_agent_calls(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("agent",), "Agent access required")
     employee = _get_agent_employee(current_user, db)
     if not employee:
         return {"calls": [], "total": 0}
@@ -791,10 +1345,76 @@ ALLOWED_AUDIO_TYPES = {
     "audio/flac", "audio/ogg", "audio/webm", "audio/mp4",
     "application/octet-stream",
 }
-MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+# Keep backend and Tier-3 model-server limits aligned. The stress-test call is
+# ~89 MB, so buffering many concurrent uploads at the old 100 MB cap caused
+# TLS/write resets before jobs reached the GPU. Uploads are streamed below.
+MAX_FILE_SIZE = 200 * 1024 * 1024  # 200 MB
+UPLOAD_CHUNK_SIZE = 1024 * 1024
+VALID_ASR_ENGINES = {"fasterwhisper", "sensevoice"}
 
 
-def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ Global"):
+def _normalize_asr_engine(asr_engine: str | None) -> str:
+    engine = str(asr_engine or "fasterwhisper").strip().lower()
+    if engine not in VALID_ASR_ENGINES:
+        raise ValueError(
+            f"Unsupported ASR engine: {engine}. Expected one of: "
+            f"{', '.join(sorted(VALID_ASR_ENGINES))}"
+        )
+    return engine
+
+
+def _asr_metadata(asr_engine: str | None) -> tuple[str, str]:
+    engine = _normalize_asr_engine(asr_engine)
+    if engine == "sensevoice":
+        return "sensevoice", "SenseVoiceSmall"
+    return "fasterwhisper", "large-v3"
+
+
+async def _stream_upload_to_disk(file: UploadFile, dest: Path) -> tuple[int, str]:
+    """Stream an uploaded audio file to disk while computing SHA-256.
+
+    This avoids buffering large WAV files in backend RAM. It also removes
+    partial files on oversize/error so failed stress waves do not leave junk
+    behind in the uploads directory.
+    """
+    sha256_hash = hashlib.sha256()
+    total_bytes = 0
+    try:
+        with dest.open("wb") as out:
+            while True:
+                chunk = await file.read(UPLOAD_CHUNK_SIZE)
+                if not chunk:
+                    break
+                total_bytes += len(chunk)
+                if total_bytes > MAX_FILE_SIZE:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"File too large (max {MAX_FILE_SIZE // (1024 * 1024)} MB)",
+                    )
+                sha256_hash.update(chunk)
+                out.write(chunk)
+    except HTTPException:
+        dest.unlink(missing_ok=True)
+        raise
+    except Exception:
+        dest.unlink(missing_ok=True)
+        raise
+    finally:
+        await file.close()
+
+    if total_bytes == 0:
+        dest.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail="Empty file")
+
+    return total_bytes, sha256_hash.hexdigest()
+
+
+def _run_real_pipeline(
+    call_id: str,
+    audio_path: str,
+    company: str | None = None,
+    asr_engine: str = "fasterwhisper",
+):
     """
     Background task: run the real 3-layer AI pipeline on an uploaded audio file.
 
@@ -805,6 +1425,7 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
     If the real pipeline fails (models missing, GPU unavailable, etc.), the
     error is stored on the Call record so the status endpoint reports it.
     """
+    import os as _os
     import sys as _sys
     import json as _json
 
@@ -836,14 +1457,20 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         audio_mode      = ps.audio_mode      if ps else "denoise"
         injection_scan  = ps.injection_scan  if ps else "static"
         num_speakers    = ps.num_speakers    if ps else None
-        report_mode     = ps.report_mode     if ps else "simple"
+        report_mode     = _effective_report_mode(ps)
         use_consensus   = ps.use_consensus   if ps else False
-        _company        = ps.company_name    if ps else company
+        _requested_company = company or (ps.company_name if ps else _default_pipeline_company())
+        _company        = _ensure_known_company_context(_requested_company)
+
+        asr_engine = _normalize_asr_engine(asr_engine)
+        asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
 
         call.status = "PROCESSING"
         _set_step("denoising")
 
         # ── Layer 1: Audio → structured transcript JSON ──────────────────
+        _os.environ["CALLTONE_ASR"] = asr_engine
+
         from run_full_pipeline import (
             denoise_audio, transcribe_diarize,
             run_role_identification, run_emotion_detection,
@@ -898,13 +1525,17 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
             call_id=call_id,
             full_text=full_text,
             speaker_turns=speaker_turns,
-            asr_engine="SenseVoice",
-            asr_model="SenseVoiceSmall",
-            avg_confidence=0.91,
+            asr_engine=asr_engine_db,
+            asr_model=asr_model_db,
+            # Layer 1 doesn't surface per-word probabilities; leave null rather
+            # than fabricate a value. WER eval (T09) is the source of truth.
+            avg_confidence=None,
         )
         db.add(transcript)
         call.current_step = "scoring"
-        call.duration_seconds = round(duration, 3) if duration else None
+        if duration:
+            existing_duration = float(call.duration_seconds or 0)
+            call.duration_seconds = round(max(existing_duration, float(duration)), 3)
         db.commit()
 
         # ── Free Layer 1 VRAM before loading the Layer 2 LLM ───────────
@@ -945,11 +1576,17 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
 
         from run_full_pipeline import run_layer2
         l2_result = run_layer2(
-            json_path, _company, rating_output, injection_scan_mode=injection_scan,
+            json_path,
+            _company,
+            rating_output,
+            injection_scan_mode=injection_scan,
+            use_consensus=use_consensus,
         )
 
         overall_score = l2_result.get("overall_weighted_score", 0)
         criteria = l2_result.get("criteria_ratings", {})
+        if not criteria:
+            raise RuntimeError("Local pipeline completed without Layer 2 QA scores.")
 
         dim_scores = {}
         dim_reports = {}
@@ -960,22 +1597,9 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
             dim_reports[crit] = info.get("summary", "")
             cc = info.get("consensus_confidence")
             confidence_scores[crit] = cc if cc is not None else info.get("confidence")
-            for ev in info.get("evidence", []):
-                quote = (ev.get("quote")
-                         or ev.get("customer_quote")
-                         or ev.get("description", ""))
-                speaker = (ev.get("speaker", "")
-                           or ("Customer" if ev.get("customer_quote") else ""))
-                reason = (ev.get("reason")
-                          or ev.get("note")
-                          or ev.get("assessment")
-                          or ev.get("severity_contribution", ""))
-                evidence.append({
-                    "dimension": crit,
-                    "quote": quote,
-                    "speaker": speaker,
-                    "reason": reason,
-                })
+            for ev in _iter_criterion_evidence(crit, info):
+                row = _extract_evidence_row(ev, speaker_turns)
+                evidence.append({"dimension": crit, **row})
 
         # Determine severity from score
         if overall_score >= 85:
@@ -998,7 +1622,7 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
                     weaknesses.append(f"{label}: {info.get('summary', 'Needs improvement')}")
             report_json = {
                 "summary": f"Call scored {overall_score}/100 overall. "
-                           f"Rated by CallTone AI pipeline against {company} quality standards.",
+                           f"Rated by CallTone AI pipeline against {_company} quality standards.",
                 "strengths": strengths or ["Overall adequate performance"],
                 "weaknesses": weaknesses or ["No major issues detected"],
                 "recommended_actions": [
@@ -1063,13 +1687,237 @@ def _run_real_pipeline(call_id: str, audio_path: str, company: str = "BankServ G
         db.close()
 
 
-def _run_pipeline(call_id: str, audio_path: str):
+def _run_remote_pipeline(
+    call_id: str,
+    audio_path: str,
+    company: str | None = None,
+    asr_engine: str = "fasterwhisper",
+):
+    """Delegate pipeline execution to the Tier-3 model server.
+
+    Polls ``/v1/jobs/{id}`` until terminal, then writes Transcript + QaReport
+    rows matching the local-pipeline contract. The local worker's DB schema
+    is the source of truth — remote path must populate the same columns.
     """
-    Try the real AI pipeline first. If it fails to import (models not
-    installed on this machine), the error is recorded on the Call record.
+    import time as _time
+
+    from app import model_client
+
+    STATUS_TO_STEP = {
+        "queued": "queued",
+        "denoising": "denoising",
+        "diarising": "transcribing",
+        "transcribing": "transcribing",
+        "role_ident": "role_identification",
+        "emotion": "emotion_detection",
+        "scoring": "scoring",
+        "rendering": "report_generation",
+    }
+
+    db = SessionLocal()
+    try:
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if not call:
+            return
+
+        asr_engine = _normalize_asr_engine(asr_engine)
+        asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
+
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        num_speakers = ps.num_speakers if ps else None
+        report_mode = _effective_report_mode(ps)
+        use_consensus = ps.use_consensus if ps else False
+        _requested_company = company or (ps.company_name if ps else _default_pipeline_company())
+        _company = _ensure_known_company_context(_requested_company)
+
+        call.status = "PROCESSING"
+        call.current_step = "queued"
+        db.commit()
+
+        job_id = model_client.submit(
+            audio_path, company=_company, speakers=num_speakers,
+            filename=call.original_filename,
+            asr_engine=asr_engine,
+            report_mode=report_mode,
+            use_consensus=use_consensus,
+        )
+
+        # Poll until terminal. By default there is no backend-side hard cap;
+        # long calls should finish instead of being failed at an arbitrary
+        # wall-clock limit. Set REMOTE_PIPELINE_DEADLINE_SECONDS>0 to restore
+        # a safety deadline if needed during ops/debugging.
+        deadline = (
+            _time.time() + REMOTE_PIPELINE_DEADLINE_SECONDS
+            if REMOTE_PIPELINE_DEADLINE_SECONDS is not None
+            else None
+        )
+        last_step: str | None = None
+        while True:
+            state = model_client.poll(job_id)
+            status = state.get("status", "")
+            step = STATUS_TO_STEP.get(status, status)
+            if step != last_step:
+                call.current_step = step
+                db.commit()
+                last_step = step
+            if status == "done":
+                break
+            if status == "failed":
+                raise RuntimeError(
+                    f"model server reported failure: {state.get('error')}"
+                )
+            if deadline is not None and _time.time() >= deadline:
+                raise TimeoutError(
+                    "model server did not finish before REMOTE_PIPELINE_DEADLINE_SECONDS elapsed"
+                )
+            _time.sleep(2)
+
+        bundle = model_client.fetch_result(job_id)
+        layer1 = bundle.get("layer1") or {}
+        layer2 = bundle.get("layer2") or bundle.get("call_rating") or {}
+        criteria = layer2.get("criteria_ratings", {}) if isinstance(layer2, dict) else {}
+        if not criteria:
+            raise RuntimeError(
+                "Remote pipeline completed without Layer 2 QA scores. "
+                "Check model-server pipeline.log for the underlying failure."
+            )
+
+        # ── Transcript row (mirrors local path) ───────────────────────────
+        speaker_turns = layer1.get("transcript", []) if isinstance(layer1, dict) else []
+        full_text = " ".join(
+            seg.get("text", "") for seg in speaker_turns if seg.get("text")
+        )
+        duration = (
+            layer1.get("call_metadata", {}).get("duration_seconds", 0)
+            if isinstance(layer1, dict) else 0
+        )
+
+        transcript = Transcript(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            full_text=full_text,
+            speaker_turns=speaker_turns,
+            asr_engine=asr_engine_db,
+            asr_model=asr_model_db,
+            avg_confidence=None,
+        )
+        db.add(transcript)
+        if duration:
+            existing_duration = float(call.duration_seconds or 0)
+            call.duration_seconds = round(max(existing_duration, float(duration)), 3)
+        db.commit()
+
+        # ── QaReport row (mirrors local path) ─────────────────────────────
+        overall_score = layer2.get("overall_weighted_score", 0)
+        dim_scores: dict[str, object] = {}
+        dim_reports: dict[str, object] = {}
+        confidence_scores: dict[str, object] = {}
+        evidence: list[dict[str, object]] = []
+        for crit, info in criteria.items():
+            dim_scores[crit] = info.get("score", 0)
+            dim_reports[crit] = info.get("summary", "")
+            cc = info.get("consensus_confidence")
+            confidence_scores[crit] = cc if cc is not None else info.get("confidence")
+            for ev in _iter_criterion_evidence(crit, info):
+                row = _extract_evidence_row(ev, speaker_turns)
+                evidence.append({"dimension": crit, **row})
+
+        if overall_score >= 85:
+            severity = "Minor"
+        elif overall_score >= 65:
+            severity = "Moderate"
+        else:
+            severity = "Major"
+
+        # Prefer LAYER 3's narrative if the model server returned one;
+        # otherwise synthesize a passable AI quality report from LAYER 2's
+        # per-criterion summaries so the UI never has empty bullets.
+        report_json = layer2.get("report_json") or bundle.get("layer3", {}).get("report_json")
+        if not report_json:
+            _label = lambda k: k.replace("_", " ").title()
+            strengths = [
+                f"{_label(c)} ({info.get('score', 0)}/100): {(info.get('summary') or '').strip()}"
+                for c, info in criteria.items()
+                if (info.get("score") or 0) >= 70 and (info.get("summary") or "").strip()
+            ]
+            weaknesses = [
+                f"{_label(c)} ({info.get('score', 0)}/100): {(info.get('summary') or '').strip()}"
+                for c, info in criteria.items()
+                if (info.get("score") or 0) < 70 and (info.get("summary") or "").strip()
+            ]
+            actions: list[str] = []
+            for c, info in criteria.items():
+                if (info.get("score") or 0) >= 70:
+                    continue
+                for ev in _iter_criterion_evidence(c, info)[:2]:
+                    rule = ev.get("rule") or ev.get("policy") or ev.get("guideline")
+                    if ev.get("met") is False and rule:
+                        actions.append(f"{_label(c)}: enforce '{rule}'.")
+                    elif rule:
+                        actions.append(f"{_label(c)}: review '{rule}'.")
+            # Dedupe while preserving order.
+            seen: set[str] = set()
+            actions = [a for a in actions if not (a in seen or seen.add(a))][:6]
+            report_json = {
+                "summary": (
+                    f"Call scored {overall_score}/100 across {len(criteria)} dimensions. "
+                    f"Severity: {severity}. {len(strengths)} dimension(s) above threshold, "
+                    f"{len(weaknesses)} below."
+                ),
+                "strengths": strengths,
+                "weaknesses": weaknesses,
+                "recommended_actions": actions,
+            }
+
+        qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
+        qa_id = qa_emp.id if qa_emp else call.employee_id
+        report = QaReport(
+            id=str(uuid.uuid4()),
+            call_id=call_id,
+            qa_id=qa_id,
+            overall_score=round(overall_score, 1),
+            grade=_compute_grade(overall_score),
+            severity=severity,
+            dimension_scores=dim_scores,
+            dimension_reports=dim_reports,
+            evidence=evidence,
+            confidence_scores=confidence_scores,
+            report_json=report_json,
+        )
+        db.add(report)
+
+        call.current_step = "completed"
+        call.status = "COMPLETED"
+        db.commit()
+
+    except Exception as exc:
+        db.rollback()
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if call and call.status != "COMPLETED":
+            call.status = "FAILED"
+            call.error_message = str(exc)
+            call.current_step = "error"
+            db.commit()
+    finally:
+        db.close()
+
+
+def _run_pipeline(
+    call_id: str,
+    audio_path: str,
+    asr_engine: str = "fasterwhisper",
+    company_name: str | None = None,
+):
+    """
+    Dispatch: remote model server (if MODEL_SERVER_URL set) or local pipeline.
+    Errors from either path are persisted to the Call record.
     """
     try:
-        _run_real_pipeline(call_id, audio_path)
+        from app import model_client
+        if model_client.configured():
+            _run_remote_pipeline(call_id, audio_path, company=company_name, asr_engine=asr_engine)
+        else:
+            _run_real_pipeline(call_id, audio_path, company=company_name, asr_engine=asr_engine)
     except Exception as exc:
         db = SessionLocal()
         try:
@@ -1083,10 +1931,320 @@ def _run_pipeline(call_id: str, audio_path: str):
             db.close()
 
 
+PIPELINE_QUEUE_ETA_SECONDS = int(os.getenv("PIPELINE_QUEUE_ETA_SECONDS", "120"))
+PIPELINE_QUEUE_POLL_SECONDS = float(os.getenv("PIPELINE_QUEUE_POLL_SECONDS", "2"))
+_PIPELINE_QUEUE_LOCK = threading.Lock()
+_PIPELINE_QUEUE_WAKE_EVENT = threading.Event()
+_PIPELINE_ACTIVE_CALL_ID: str | None = None
+_PIPELINE_WORKER_THREAD: threading.Thread | None = None
+_PIPELINE_RECOVERY_DONE = False
+
+
+def _ensure_pipeline_queue_worker_started() -> None:
+    """Start the durable pipeline queue worker if it is not running."""
+    global _PIPELINE_RECOVERY_DONE, _PIPELINE_WORKER_THREAD
+    with _PIPELINE_QUEUE_LOCK:
+        if not _PIPELINE_RECOVERY_DONE:
+            _recover_interrupted_pipeline_jobs()
+            _PIPELINE_RECOVERY_DONE = True
+        if _PIPELINE_WORKER_THREAD is not None and _PIPELINE_WORKER_THREAD.is_alive():
+            return
+        _PIPELINE_WORKER_THREAD = threading.Thread(
+            target=_pipeline_queue_worker_loop,
+            name="calltone-pipeline-queue",
+            daemon=True,
+        )
+        _PIPELINE_WORKER_THREAD.start()
+
+
+def _enqueue_pipeline(
+    call_id: str,
+    audio_path: str,
+    asr_engine: str = "fasterwhisper",
+    company_name: str | None = None,
+) -> int:
+    """Persist one pipeline job and return its 1-based queue position."""
+    _ensure_pipeline_queue_worker_started()
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+        if job is None:
+            job = PipelineJob(
+                call_id=call_id,
+                audio_path=audio_path,
+                asr_engine=asr_engine,
+                company_name=company_name,
+                status="queued",
+                created_at=now,
+                updated_at=now,
+            )
+            db.add(job)
+        elif job.status not in ("running", "completed"):
+            job.audio_path = audio_path
+            job.asr_engine = asr_engine
+            job.company_name = company_name
+            job.status = "queued"
+            job.locked_at = None
+            job.finished_at = None
+            job.updated_at = now
+        db.commit()
+    finally:
+        db.close()
+
+    _PIPELINE_QUEUE_WAKE_EVENT.set()
+    snapshot = _pipeline_queue_snapshot(call_id)
+    return int(snapshot["queuePosition"] or 0)
+
+
+def _queued_pipeline_jobs(db: Session) -> list[PipelineJob]:
+    return (
+        db.query(PipelineJob)
+        .filter(PipelineJob.status == "queued")
+        .order_by(PipelineJob.priority.asc(), PipelineJob.created_at.asc(), PipelineJob.id.asc())
+        .all()
+    )
+
+
+def _pipeline_queue_snapshot(call_id: str | None = None) -> dict[str, int | str | None]:
+    db = SessionLocal()
+    try:
+        queued_jobs = _queued_pipeline_jobs(db)
+        queued = [job.call_id for job in queued_jobs]
+        running = db.query(PipelineJob).filter(PipelineJob.status == "running").first()
+        running_call_id = running.call_id if running else None
+    finally:
+        db.close()
+    with _PIPELINE_QUEUE_LOCK:
+        active_id = _PIPELINE_ACTIVE_CALL_ID
+    active_id = active_id or running_call_id
+    position = None
+    if call_id:
+        if call_id == active_id:
+            position = 0
+        elif call_id in queued:
+            position = queued.index(call_id) + 1
+    eta = None
+    if position is not None:
+        eta = PIPELINE_QUEUE_ETA_SECONDS if position == 0 else position * PIPELINE_QUEUE_ETA_SECONDS
+    return {
+        "activeCallId": active_id,
+        "queuePosition": position,
+        "queuedCount": len(queued),
+        "etaSeconds": eta,
+    }
+
+
+def _pipeline_queue_overview() -> dict[str, int | str | list[str] | None]:
+    db = SessionLocal()
+    try:
+        queued_jobs = _queued_pipeline_jobs(db)
+        queued = [job.call_id for job in queued_jobs]
+        running_jobs = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "running")
+            .order_by(PipelineJob.started_at.asc(), PipelineJob.id.asc())
+            .all()
+        )
+        running = [job.call_id for job in running_jobs]
+        failed_jobs = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "failed")
+            .order_by(PipelineJob.updated_at.desc(), PipelineJob.id.asc())
+            .limit(20)
+            .all()
+        )
+        failed_count = db.query(PipelineJob).filter(PipelineJob.status == "failed").count()
+    finally:
+        db.close()
+    with _PIPELINE_QUEUE_LOCK:
+        active_id = _PIPELINE_ACTIVE_CALL_ID
+    active_id = active_id or (running[0] if running else None)
+    return {
+        "activeCallId": active_id,
+        "queuedCount": len(queued),
+        "queuedCallIds": queued,
+        "runningCallIds": running,
+        "failedCount": failed_count,
+        "failedCallIds": [job.call_id for job in failed_jobs],
+        "etaSecondsPerJob": PIPELINE_QUEUE_ETA_SECONDS,
+        "estimatedDrainSeconds": len(queued) * PIPELINE_QUEUE_ETA_SECONDS,
+    }
+
+
+def _pipeline_job_to_public(job: PipelineJob) -> dict:
+    return {
+        "id": job.id,
+        "callId": job.call_id,
+        "audioPath": job.audio_path,
+        "asrEngine": job.asr_engine,
+        "companyName": job.company_name,
+        "status": job.status,
+        "priority": job.priority,
+        "attempts": job.attempts,
+        "maxAttempts": job.max_attempts,
+        "errorMessage": job.error_message,
+        "lockedAt": job.locked_at.isoformat() if job.locked_at else None,
+        "startedAt": job.started_at.isoformat() if job.started_at else None,
+        "finishedAt": job.finished_at.isoformat() if job.finished_at else None,
+        "createdAt": job.created_at.isoformat() if job.created_at else None,
+        "updatedAt": job.updated_at.isoformat() if job.updated_at else None,
+    }
+
+
+def _recover_interrupted_pipeline_jobs() -> None:
+    """Put jobs that were running during a backend restart back into the queue."""
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        interrupted = db.query(PipelineJob).filter(PipelineJob.status == "running").all()
+        for job in interrupted:
+            job.status = "queued"
+            job.locked_at = None
+            job.updated_at = now
+            call = db.query(Call).filter(Call.id == job.call_id).first()
+            if call and call.status != "COMPLETED":
+                call.status = "PENDING"
+                call.current_step = "queued"
+        db.commit()
+    finally:
+        db.close()
+
+
+def _claim_next_pipeline_job() -> dict[str, str] | None:
+    db = SessionLocal()
+    try:
+        if db.bind and db.bind.dialect.name.startswith("postgres"):
+            got_lock = db.execute(text("SELECT pg_try_advisory_xact_lock(42620260425)")).scalar()
+            if got_lock is not True:
+                return None
+
+        running_exists = db.query(PipelineJob.id).filter(PipelineJob.status == "running").first()
+        if running_exists is not None:
+            return None
+
+        query = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "queued")
+            .order_by(PipelineJob.priority.asc(), PipelineJob.created_at.asc(), PipelineJob.id.asc())
+        )
+        if db.bind and db.bind.dialect.name.startswith("postgres"):
+            query = query.with_for_update(skip_locked=True)
+        job = query.first()
+        if job is None:
+            return None
+
+        now = datetime.now(timezone.utc)
+        job.status = "running"
+        job.attempts = int(job.attempts or 0) + 1
+        job.locked_at = now
+        job.started_at = job.started_at or now
+        job.updated_at = now
+        job.error_message = None
+
+        call = db.query(Call).filter(Call.id == job.call_id).first()
+        if call:
+            call.status = "PENDING"
+            call.current_step = "starting"
+            call.error_message = None
+
+        payload = {
+            "call_id": job.call_id,
+            "audio_path": job.audio_path,
+            "asr_engine": job.asr_engine,
+            "company_name": job.company_name or "",
+        }
+        db.commit()
+        return payload
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+
+def _finish_pipeline_job(call_id: str, worker_error: str | None = None) -> None:
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if job is None:
+            return
+
+        if worker_error:
+            error_message = worker_error
+            call_completed = False
+        else:
+            call_completed = bool(call and call.status == "COMPLETED")
+            error_message = call.error_message if call else "Call record not found after pipeline run"
+
+        if call_completed:
+            job.status = "completed"
+            job.error_message = None
+            job.finished_at = now
+        elif job.attempts < job.max_attempts:
+            job.status = "queued"
+            job.error_message = error_message or "Pipeline failed; queued for retry"
+            job.locked_at = None
+            if call:
+                call.status = "PENDING"
+                call.current_step = "queued"
+            _PIPELINE_QUEUE_WAKE_EVENT.set()
+        else:
+            job.status = "failed"
+            job.error_message = error_message or "Pipeline failed"
+            job.finished_at = now
+            if call and call.status != "COMPLETED":
+                call.status = "FAILED"
+                call.current_step = "error"
+                call.error_message = job.error_message
+
+        job.updated_at = now
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+
+def _pipeline_queue_worker_loop() -> None:
+    global _PIPELINE_ACTIVE_CALL_ID
+    while True:
+        job = _claim_next_pipeline_job()
+        if job is None:
+            _PIPELINE_QUEUE_WAKE_EVENT.wait(PIPELINE_QUEUE_POLL_SECONDS)
+            _PIPELINE_QUEUE_WAKE_EVENT.clear()
+            continue
+
+        call_id = job["call_id"]
+        with _PIPELINE_QUEUE_LOCK:
+            _PIPELINE_ACTIVE_CALL_ID = call_id
+        worker_error = None
+        try:
+            _run_pipeline(call_id, job["audio_path"], job["asr_engine"], job["company_name"] or None)
+        except Exception as exc:
+            worker_error = f"Pipeline worker crashed: {exc}"
+        finally:
+            _finish_pipeline_job(call_id, worker_error=worker_error)
+            with _PIPELINE_QUEUE_LOCK:
+                if _PIPELINE_ACTIVE_CALL_ID == call_id:
+                    _PIPELINE_ACTIVE_CALL_ID = None
+
+
+@app.on_event("startup")
+def _start_pipeline_queue_worker_on_startup() -> None:
+    if os.getenv("PIPELINE_QUEUE_AUTOSTART", "1") != "0":
+        _ensure_pipeline_queue_worker_started()
+
+
 @app.post(f"{settings.API_V1_PREFIX}/calls/upload")
 async def upload_call(
     file: UploadFile = File(...),
     agent_id: str = Form(default=""),
+    asr_engine: str = Form(default="fasterwhisper"),
+    company_name: str = Form(default=""),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -1099,19 +2257,29 @@ async def upload_call(
             detail=f"Unsupported file type: {file.content_type}. Upload an audio file.",
         )
 
-    content = await file.read()
-    if len(content) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File too large (max 100 MB)")
-    if len(content) == 0:
-        raise HTTPException(status_code=400, detail="Empty file")
+    try:
+        asr_engine = _normalize_asr_engine(asr_engine)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
-    sha256 = hashlib.sha256(content).hexdigest()
+    try:
+        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        selected_company = _ensure_known_company_context(
+            company_name or (ps.company_name if ps else _default_pipeline_company())
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
     call_id = str(uuid.uuid4())
-    safe_filename = file.filename or "upload.wav"
+    # C-4: strip any path separators / control chars from the
+    # user-supplied name before joining with UPLOAD_DIR. Without this,
+    # a filename of "../../etc/passwd" escapes the upload directory
+    # despite the UUID prefix.
+    safe_filename = _sanitize_filename(file.filename)
 
-    # Save file to disk
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
-    dest.write_bytes(content)
+    total_bytes, sha256 = await _stream_upload_to_disk(file, dest)
+    duration_seconds, sample_rate_hz, channels = _audio_duration_metadata(dest)
 
     # Resolve agent employee record
     # Priority: explicit agent_id > current user's linked employee > first agent in DB
@@ -1141,32 +2309,28 @@ async def upload_call(
         customer_id=customer.id,
         employee_id=employee.id,
         original_filename=safe_filename,
-        size_bytes=len(content),
+        storage_path=str(dest),
+        size_bytes=total_bytes,
         sha256=sha256,
+        duration_seconds=round(duration_seconds, 3) if duration_seconds else None,
+        sample_rate_hz=sample_rate_hz,
+        channels=channels,
         status="PENDING",
-        current_step="uploaded",
+        current_step="queued",
         call_time=datetime.now(timezone.utc),
     )
     db.add(call)
     db.commit()
 
-    # Run pipeline in a SEPARATE PROCESS so it gets its own GIL.
-    # This eliminates all GIL contention between uvicorn (HTTP handling)
-    # and the GPU pipeline.  Must use 'spawn' (not 'fork') because CUDA
-    # contexts cannot be re-initialized in forked subprocesses.
-    import multiprocessing
-    ctx = multiprocessing.get_context("spawn")
-    p = ctx.Process(
-        target=_run_pipeline, args=(call_id, str(dest)),
-        name=f"pipeline-{call_id[:8]}", daemon=True,
-    )
-    p.start()
+    queue_position = _enqueue_pipeline(call_id, str(dest), asr_engine, selected_company)
 
     return {
         "callId": call_id,
         "filename": safe_filename,
-        "status": "PENDING",
-        "message": "Call uploaded successfully. Processing started.",
+        "status": "QUEUED",
+        "queuePosition": queue_position,
+        "etaSeconds": queue_position * PIPELINE_QUEUE_ETA_SECONDS,
+        "message": "Call uploaded successfully. Processing queued.",
     }
 
 
@@ -1181,9 +2345,11 @@ def get_call_status(
     call = db.query(Call).filter(Call.id == call_id).first()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
+    _ensure_call_visible_to_user(call, current_user, db)
 
     has_transcript = db.query(Transcript).filter(Transcript.call_id == call_id).first() is not None
     has_report = db.query(QaReport).filter(QaReport.call_id == call_id).first() is not None
+    queue_state = _pipeline_queue_snapshot(call_id)
 
     return {
         "callId": call.id,
@@ -1192,7 +2358,111 @@ def get_call_status(
         "hasTranscript": has_transcript,
         "hasReport": has_report,
         "error": call.error_message,
+        "queuePosition": queue_state["queuePosition"],
+        "queuedCount": queue_state["queuedCount"],
+        "etaSeconds": queue_state["etaSeconds"],
     }
+
+
+@app.get(f"{settings.API_V1_PREFIX}/pipeline/queue")
+def get_pipeline_queue(
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+        raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline queue")
+    return _pipeline_queue_overview()
+
+
+@app.get(f"{settings.API_V1_PREFIX}/pipeline/jobs")
+def list_pipeline_jobs(
+    status_filter: str | None = None,
+    limit: int = 50,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+        raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline jobs")
+    limit = max(1, min(int(limit or 50), 200))
+    query = db.query(PipelineJob)
+    if status_filter:
+        allowed = {"queued", "running", "completed", "failed"}
+        if status_filter not in allowed:
+            raise HTTPException(status_code=400, detail=f"status_filter must be one of {', '.join(sorted(allowed))}")
+        query = query.filter(PipelineJob.status == status_filter)
+    jobs = (
+        query.order_by(PipelineJob.created_at.desc(), PipelineJob.id.asc())
+        .limit(limit)
+        .all()
+    )
+    return {"jobs": [_pipeline_job_to_public(job) for job in jobs]}
+
+
+@app.post(f"{settings.API_V1_PREFIX}/pipeline/jobs/{{call_id}}/retry")
+def retry_pipeline_job(
+    call_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if job.status == "running":
+        raise HTTPException(status_code=409, detail="Cannot retry a running job")
+    if job.status == "completed":
+        raise HTTPException(status_code=409, detail="Completed jobs cannot be retried")
+
+    now = datetime.now(timezone.utc)
+    job.status = "queued"
+    job.attempts = 0
+    job.error_message = None
+    job.locked_at = None
+    job.started_at = None
+    job.finished_at = None
+    job.updated_at = now
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if call and call.status != "COMPLETED":
+        call.status = "PENDING"
+        call.current_step = "queued"
+        call.error_message = None
+    db.commit()
+    db.refresh(job)
+    _PIPELINE_QUEUE_WAKE_EVENT.set()
+    return {"ok": True, "job": _pipeline_job_to_public(job)}
+
+
+@app.post(f"{settings.API_V1_PREFIX}/pipeline/jobs/{{call_id}}/dead-letter")
+def dead_letter_pipeline_job(
+    call_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if job.status == "running":
+        raise HTTPException(status_code=409, detail="Cannot dead-letter a running job")
+    if job.status == "completed":
+        raise HTTPException(status_code=409, detail="Completed jobs cannot be dead-lettered")
+
+    now = datetime.now(timezone.utc)
+    job.status = "failed"
+    job.max_attempts = max(job.max_attempts, job.attempts)
+    job.error_message = job.error_message or "Manually dead-lettered by admin"
+    job.locked_at = None
+    job.finished_at = now
+    job.updated_at = now
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if call and call.status != "COMPLETED":
+        call.status = "FAILED"
+        call.current_step = "error"
+        call.error_message = job.error_message
+    db.commit()
+    db.refresh(job)
+    return {"ok": True, "job": _pipeline_job_to_public(job)}
 
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/logout")
@@ -1207,9 +2477,10 @@ def get_pipeline_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
-        ps = PipelineSettings(id=1)
+        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
         db.add(ps)
         db.commit()
         db.refresh(ps)
@@ -1235,7 +2506,7 @@ def update_pipeline_settings(
 
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
-        ps = PipelineSettings(id=1)
+        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
         db.add(ps)
 
     if "audioMode" in payload:
@@ -1250,13 +2521,16 @@ def update_pipeline_settings(
         val = payload["numSpeakers"]
         ps.num_speakers = int(val) if val else None
     if "reportMode" in payload:
-        if payload["reportMode"] not in ("none", "simple", "narrative"):
-            raise HTTPException(status_code=400, detail="reportMode must be none|simple|narrative")
+        if payload["reportMode"] not in ("none", "simple", "narrative", "both"):
+            raise HTTPException(status_code=400, detail="reportMode must be none|simple|narrative|both")
         ps.report_mode = payload["reportMode"]
     if "useConsensus" in payload:
         ps.use_consensus = bool(payload["useConsensus"])
     if "companyName" in payload:
-        ps.company_name = str(payload["companyName"])
+        try:
+            ps.company_name = _ensure_known_company_context(payload["companyName"])
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
 
     from datetime import datetime, timezone
     ps.updated_at = datetime.now(timezone.utc)
@@ -1274,9 +2548,6 @@ def update_pipeline_settings(
 
 # ── Company Context endpoints ─────────────────────────────────────────────────
 
-CONTEXTS_DIR = MODELS_DIR / "LAYER_2" / "company_context" / "contexts"
-TICKETS_DIR  = MODELS_DIR / "LAYER_2" / "change_management" / "tickets"
-
 # In-memory store for background ingest jobs
 # { job_id: { "status": "running"|"completed"|"failed", "progress": str, "result": dict|None, "error": str|None } }
 _INGEST_JOBS: dict = {}
@@ -1284,16 +2555,20 @@ _INGEST_JOBS: dict = {}
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies")
 def list_companies(current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     companies = []
+    seen_slugs: set[str] = set()
     if CONTEXTS_DIR.exists():
         for f in sorted(CONTEXTS_DIR.glob("*.json")):
             if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
                 continue
             try:
                 data = _json.loads(f.read_text(encoding="utf-8"))
+                seen_slugs.add(f.stem)
                 companies.append({
                     "name":    data.get("company_name", f.stem),
+                    "slug":    f.stem,
                     "version": data.get("context_version", "1.0.0"),
                     "updated": data.get("last_updated", ""),
                     "file":    f.name,
@@ -1305,14 +2580,36 @@ def list_companies(current_user: User = Depends(get_current_user)):
                 })
             except Exception:
                 pass
+    if os.getenv("MODEL_SERVER_URL"):
+        try:
+            from app import model_client
+            for item in model_client.list_contexts():
+                slug = str(item.get("slug") or item.get("file", "")).replace(".json", "")
+                if slug and slug in seen_slugs:
+                    continue
+                companies.append(item)
+        except Exception as exc:
+            log.warning(
+                "model_server.context_list_failed",
+                extra={"event": "context_list_failed", "err": str(exc)},
+            )
     return {"companies": companies}
 
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies/{'{name}'}")
 def get_company_context(name: str, current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
     if not path.exists():
+        if os.getenv("MODEL_SERVER_URL"):
+            try:
+                from app import model_client
+                remote = model_client.get_context(name)
+            except Exception as exc:
+                raise HTTPException(status_code=502, detail=str(exc))
+            if remote is not None:
+                return remote
         raise HTTPException(status_code=404, detail="Company context not found")
     try:
         data = _json.loads(path.read_text(encoding="utf-8"))
@@ -1336,6 +2633,7 @@ def _run_ingest_job(job_id: str, tmp_path: Path, company_name: str):
             contexts_dir=str(CONTEXTS_DIR),
             progress_callback=lambda msg: _INGEST_JOBS[job_id].update({"progress": msg}),
         )
+        synced = _sync_company_context_to_model_server(company_name)
         tmp_path.unlink(missing_ok=True)
         _INGEST_JOBS[job_id].update({
             "status":   "completed",
@@ -1347,6 +2645,7 @@ def _run_ingest_job(job_id: str, tmp_path: Path, company_name: str):
                 "atomicNodesCount": result.get("atomic_nodes_count", 0),
                 "validation":       result.get("validation"),
                 "schema":           result.get("schema"),
+                "syncedToModelServer": synced,
             },
         })
     except Exception as e:
@@ -1397,6 +2696,7 @@ def ingest_job_status(
     job_id: str,
     current_user: User = Depends(get_current_user),
 ):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     job = _INGEST_JOBS.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -1405,6 +2705,7 @@ def ingest_job_status(
 
 @app.get(f"{settings.API_V1_PREFIX}/context/tickets")
 def list_tickets(current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     tickets = []
     if TICKETS_DIR.exists():

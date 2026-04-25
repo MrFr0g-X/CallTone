@@ -7,12 +7,14 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { callsApi } from "@/services/api";
+import { callsApi, contextApi, isAudioFile, MAX_UPLOAD_SIZE_BYTES, pipelineApi } from "@/services/api";
+import type { AsrEngine, CompanyContextSummary } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type UploadStage = "idle" | "uploading" | "processing" | "completed" | "error";
 
 const STEP_LABELS: Record<string, string> = {
+  queued: "Queued for GPU processing...",
   uploaded: "File received",
   denoising: "Enhancing audio quality...",
   transcribing: "Transcribing & diarizing...",
@@ -40,6 +42,12 @@ const UploadCall = () => {
   const [callId, setCallId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [queuePosition, setQueuePosition] = useState<number | null>(null);
+  const [etaSeconds, setEtaSeconds] = useState<number | null>(null);
+  const [asrEngine, setAsrEngine] = useState<AsrEngine>("fasterwhisper");
+  const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
+  const [companyName, setCompanyName] = useState("");
+  const [companyLoadError, setCompanyLoadError] = useState("");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = () => {
@@ -48,12 +56,19 @@ const UploadCall = () => {
     setCallId(null);
     setCurrentStep("");
     setErrorMsg("");
+    setQueuePosition(null);
+    setEtaSeconds(null);
     if (pollRef.current) clearInterval(pollRef.current);
   };
 
   const handleFile = useCallback((f: File) => {
-    if (f.size > 100 * 1024 * 1024) {
-      setErrorMsg("File too large (max 100 MB)");
+    if (!isAudioFile(f)) {
+      setErrorMsg("Unsupported file type. Upload WAV, MP3, FLAC, OGG, or WebM audio.");
+      setStage("error");
+      return;
+    }
+    if (f.size > MAX_UPLOAD_SIZE_BYTES) {
+      setErrorMsg("File too large (max 200 MB)");
       setStage("error");
       return;
     }
@@ -87,6 +102,8 @@ const UploadCall = () => {
           const res = await callsApi.getStatus(id);
           const d = res.data;
           setCurrentStep(d.currentStep);
+          setQueuePosition(d.queuePosition ?? null);
+          setEtaSeconds(d.etaSeconds ?? null);
 
           if (d.status === "COMPLETED") {
             setStage("completed");
@@ -110,9 +127,12 @@ const UploadCall = () => {
     setErrorMsg("");
 
     try {
-      const res = await callsApi.upload(file);
-      const { callId: id } = res.data;
+      const res = await callsApi.upload(file, undefined, asrEngine, companyName);
+      const { callId: id, queuePosition: pos, etaSeconds: eta } = res.data;
       setCallId(id);
+      setCurrentStep("queued");
+      setQueuePosition(pos ?? null);
+      setEtaSeconds(eta ?? null);
       setStage("processing");
       pollStatus(id);
     } catch (err: unknown) {
@@ -126,7 +146,27 @@ const UploadCall = () => {
   };
 
   useEffect(() => {
+    let cancelled = false;
+    const loadCompanyContext = async () => {
+      try {
+        const [settingsRes, companiesRes] = await Promise.all([
+          pipelineApi.getSettings(),
+          contextApi.listCompanies(),
+        ]);
+        if (cancelled) return;
+        const list = companiesRes.data.companies || [];
+        setCompanies(list);
+        const configured = settingsRes.data.companyName;
+        const first = list[0]?.name || "";
+        setCompanyName(list.some((c) => c.name === configured) ? configured : first);
+        setCompanyLoadError(list.length ? "" : "No company contexts found. Upload a context before scoring.");
+      } catch {
+        if (!cancelled) setCompanyLoadError("Could not load company contexts.");
+      }
+    };
+    loadCompanyContext();
     return () => {
+      cancelled = true;
       if (pollRef.current) clearInterval(pollRef.current);
     };
   }, []);
@@ -188,7 +228,7 @@ const UploadCall = () => {
                     : "Drag & drop an audio file, or click to browse"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  MP3, WAV, FLAC, OGG, WebM — up to 100 MB
+                  MP3, WAV, FLAC, OGG, WebM — up to 200 MB
                 </p>
               </div>
             </GlassCard>
@@ -224,6 +264,79 @@ const UploadCall = () => {
             </GlassCard>
           )}
 
+          {file && (stage === "idle" || stage === "error") && (
+            <GlassCard className="p-5">
+              <div className="space-y-5">
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Company Context
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      QA scores are evaluated against this company's scripts, policies, and rules.
+                    </p>
+                  </div>
+                  <select
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    disabled={!companies.length}
+                    className="w-full rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                  >
+                    {companies.map((company) => (
+                      <option key={company.file || company.name} value={company.name}>
+                        {company.name}
+                      </option>
+                    ))}
+                  </select>
+                  {companyLoadError && (
+                    <p className="text-xs text-destructive">{companyLoadError}</p>
+                  )}
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    ASR Engine
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Test transcript quality using the current fast engine or the original SenseVoice path.
+                  </p>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAsrEngine("fasterwhisper")}
+                    className={cn(
+                      "text-left rounded-2xl border p-4 transition-all",
+                      asrEngine === "fasterwhisper"
+                        ? "border-primary bg-primary/10"
+                        : "border-border/50 hover:border-primary/40"
+                    )}
+                  >
+                    <p className="text-sm font-medium text-foreground">Faster-Whisper</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Current default. Faster, lower latency, best for quick testing.
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAsrEngine("sensevoice")}
+                    className={cn(
+                      "text-left rounded-2xl border p-4 transition-all",
+                      asrEngine === "sensevoice"
+                        ? "border-primary bg-primary/10"
+                        : "border-border/50 hover:border-primary/40"
+                    )}
+                  >
+                    <p className="text-sm font-medium text-foreground">SenseVoice</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Original path. Better for A/B transcript checks, usually slower.
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </GlassCard>
+          )}
+
           {/* Error Message */}
           {stage === "error" && errorMsg && (
             <GlassCard className="p-5 border-destructive/20 bg-destructive/[0.03]">
@@ -238,10 +351,11 @@ const UploadCall = () => {
           {file && (stage === "idle" || stage === "error") && (
             <motion.button
               onClick={handleUpload}
+              disabled={!companyName}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium text-sm
-                         hover:bg-primary/90 transition-colors"
+                         hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Upload & Analyze
             </motion.button>
@@ -257,7 +371,9 @@ const UploadCall = () => {
                   : STEP_LABELS[currentStep] || "Processing..."}
               </p>
               <p className="text-xs text-muted-foreground mt-2">
-                This may take a moment
+                {currentStep === "queued" && queuePosition != null
+                  ? `Queue position ${queuePosition}${etaSeconds ? ` · ETA ~${Math.ceil(etaSeconds / 60)} min` : ""}`
+                  : "This may take a moment"}
               </p>
             </GlassCard>
           )}

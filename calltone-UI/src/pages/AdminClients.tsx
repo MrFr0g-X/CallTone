@@ -1,67 +1,29 @@
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Building2,
-  Search,
-  ChevronRight,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  AlertTriangle,
-  Users,
-  Phone,
-  DollarSign,
-} from "lucide-react";
+import { Building2, Phone, Search, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { AdminClientItem } from "@/services/api";
-import { adminApi } from "@/services/api";
-import GlassCard from "@/components/GlassCard";
 import AnimatedNumber from "@/components/AnimatedNumber";
-import BubbleToggle from "@/components/BubbleToggle";
+import GlassCard from "@/components/GlassCard";
+import { adminApi } from "@/services/api";
 import { cn } from "@/lib/utils";
-
-const statusConfig = {
-  active: { label: "Active", icon: CheckCircle2, color: "text-success", bg: "bg-success/10" },
-  trial: { label: "Trial", icon: Clock, color: "text-warning", bg: "bg-warning/10" },
-  churned: { label: "Churned", icon: XCircle, color: "text-destructive", bg: "bg-destructive/10" },
-  suspended: { label: "Suspended", icon: AlertTriangle, color: "text-muted-foreground", bg: "bg-muted/40" },
-};
-
-const planColors: Record<string, string> = {
-  starter: "text-muted-foreground",
-  professional: "text-accent",
-  enterprise: "text-primary",
-};
 
 const AdminClients = () => {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-clients"],
-    queryFn: async () => {
-      const response = await adminApi.getClients();
-      return response.data;
-    },
+    queryFn: () => adminApi.getClients().then((response) => response.data),
   });
 
   const filteredClients = useMemo(() => {
-    if (!data) return [];
-
-    return data.clients
-      .filter((c) => {
-        if (statusFilter !== "All" && c.status !== statusFilter.toLowerCase()) return false;
-        if (
-          search &&
-          !c.name.toLowerCase().includes(search.toLowerCase()) &&
-          !c.industry.toLowerCase().includes(search.toLowerCase())
-        ) {
-          return false;
-        }
-        return true;
-      })
-      .sort((a, b) => b.mrr - a.mrr);
-  }, [data, search, statusFilter]);
+    const query = search.trim().toLowerCase();
+    if (!data || !query) return data?.clients ?? [];
+    return data.clients.filter((client) =>
+      [client.name, client.industry, client.status, client.plan]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [data, search]);
 
   if (isLoading) {
     return (
@@ -77,147 +39,94 @@ const AdminClients = () => {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl sm:text-4xl font-light text-foreground">
-          Client <span className="font-bold gradient-text">Management</span>
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {data.summary.totalClients} total clients · {data.summary.activeClients} active
-        </p>
-      </header>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          {
-            icon: Building2,
-            label: "ACTIVE CLIENTS",
-            value: data.summary.activeClients,
-            suffix: data.summary.trialClients > 0 ? ` (+${data.summary.trialClients} trial)` : "",
-          },
-          { icon: Users, label: "TOTAL AGENTS", value: data.summary.totalAgents },
-          { icon: Phone, label: "CALLS THIS MONTH", value: data.summary.totalCalls },
-          { icon: DollarSign, label: "TOTAL MRR", value: data.summary.totalMRR, prefix: "$" },
-        ].map((kpi) => (
-          <GlassCard key={kpi.label} className="rounded-2xl p-5">
-            <div className="w-8 h-8 rounded-xl bg-accent/10 flex items-center justify-center mb-2">
-              <kpi.icon className="w-4 h-4 text-accent" />
-            </div>
-            <p className="text-xl font-bold">
-              {kpi.prefix || ""}
-              <AnimatedNumber value={kpi.value} />
-            </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
-              {kpi.label}
-              {kpi.suffix || ""}
-            </p>
-          </GlassCard>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <div className="relative flex-1 max-w-xs">
+      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-light text-foreground">
+            Client <span className="font-bold gradient-text">Directory</span>
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Read-only tenant and staffing overview from the backend database.
+          </p>
+        </div>
+        <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <input
-            type="text"
-            placeholder="Search clients..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 pl-9 pr-4 rounded-xl text-sm glass-input w-full"
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search clients..."
+            className="h-10 w-full rounded-xl glass-input pl-9 pr-4 text-sm"
           />
         </div>
-        <BubbleToggle
-          options={["All", "Active", "Trial", "Churned"]}
-          value={statusFilter}
-          onChange={setStatusFilter}
-        />
-      </div>
+      </header>
 
-      <div className="space-y-3">
-        {filteredClients.map((client: AdminClientItem, i) => {
-          const status = statusConfig[client.status];
-          return (
-            <motion.div
-              key={client.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03, duration: 0.3 }}
-              whileHover={{ y: -2, scale: 1.005 }}
-              whileTap={{ scale: 0.995 }}
-              className="cursor-pointer"
-            >
-              <GlassCard className="rounded-2xl p-5 hover:border-accent/20 transition-colors">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Building2 className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold truncate">{client.name}</h3>
-                        <span
-                          className={cn(
-                            "text-[11px] font-medium capitalize",
-                            planColors[client.plan] || "text-muted-foreground"
-                          )}
-                        >
-                          {client.plan}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {client.industry} · {client.agents} agents ·{" "}
-                        {client.callsThisMonth.toLocaleString()} calls/mo
-                      </p>
-                    </div>
-                  </div>
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Total Clients", value: data.summary.totalClients, icon: Building2 },
+          { label: "Active Clients", value: data.summary.activeClients, icon: Building2 },
+          { label: "Total Agents", value: data.summary.totalAgents, icon: Users },
+          { label: "Total Calls", value: data.summary.totalCalls, icon: Phone },
+        ].map((item) => (
+          <GlassCard key={item.label} className="rounded-2xl p-5">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10">
+              <item.icon className="h-4 w-4 text-accent" />
+            </div>
+            <p className="text-2xl font-bold">
+              <AnimatedNumber value={item.value} />
+            </p>
+            <p className="mt-1 text-[11px] uppercase tracking-wider text-muted-foreground">{item.label}</p>
+          </GlassCard>
+        ))}
+      </section>
 
-                  <div className="flex items-center gap-5 sm:gap-8">
-                    {client.avgScore > 0 && (
-                      <div className="text-right">
-                        <p
-                          className={cn(
-                            "text-lg font-bold",
-                            client.avgScore >= 85
-                              ? "text-success"
-                              : client.avgScore >= 70
-                              ? "text-warning"
-                              : "text-destructive"
-                          )}
-                        >
-                          {client.avgScore}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground uppercase">Avg Score</p>
-                      </div>
-                    )}
-
-                    <div className="text-right">
-                      <p className="text-lg font-bold">${client.mrr.toLocaleString()}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">MRR</p>
-                    </div>
-
-                    <div
+      <section className="space-y-3">
+        {filteredClients.length === 0 ? (
+          <GlassCard className="p-10 text-center text-sm text-muted-foreground">
+            No clients match your search.
+          </GlassCard>
+        ) : (
+          filteredClients.map((client) => (
+            <GlassCard key={client.id} className="rounded-2xl p-5">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-sm font-semibold text-foreground">{client.name}</h2>
+                    <span
                       className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
-                        status.bg
+                        "rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize",
+                        client.status === "active" && "bg-success/10 text-success",
+                        client.status === "trial" && "bg-warning/10 text-warning",
+                        client.status === "suspended" && "bg-destructive/10 text-destructive",
+                        client.status === "churned" && "bg-muted/40 text-muted-foreground",
                       )}
                     >
-                      <status.icon className={cn("w-3 h-3", status.color)} />
-                      <span className={status.color}>{status.label}</span>
-                    </div>
+                      {client.status}
+                    </span>
+                    <span className="rounded-full bg-muted/40 px-2 py-0.5 text-[10px] font-semibold capitalize text-muted-foreground">
+                      {client.plan}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">{client.industry}</p>
+                </div>
 
-                    <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block" />
+                <div className="grid grid-cols-3 gap-3 text-right sm:min-w-[320px]">
+                  <div>
+                    <p className="text-sm font-semibold">{client.agents}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Agents</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{client.qaCount}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">QA</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{client.callsThisMonth}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Calls</p>
                   </div>
                 </div>
-              </GlassCard>
-            </motion.div>
-          );
-        })}
-
-        {filteredClients.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground text-sm">
-            No clients match your search.
-          </div>
+              </div>
+            </GlassCard>
+          ))
         )}
-      </div>
+      </section>
     </div>
   );
 };

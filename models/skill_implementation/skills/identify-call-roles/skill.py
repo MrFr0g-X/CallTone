@@ -18,7 +18,7 @@ def get_identify_call_roles_skill_bundle():
     return {
         "name": "identify-call-roles",
         
-        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Meta-Llama-3.1-8B-Instruct-Q8_0.gguf"),
+        "model_dir": str(Path(__file__).parent.parent.parent / "models" / "Qwen3-8B-Q4_K_M.gguf"),
         
         "system_prompt": """You are a precise JSON-only assistant that analyzes call center transcripts.
 
@@ -35,7 +35,9 @@ Key indicators to consider:
 - Agent: professional greeting, offers help, asks questions, provides solutions, uses company language
 - Customer: describes problems, asks help, expresses frustration or satisfaction
 
-Output the JSON immediately with no preamble.""",
+Output the JSON immediately with no preamble.
+
+/no_think""",
         
         "user_prompt_template": """Analyze this call transcript and identify speaker roles.
 

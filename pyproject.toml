@@ -1,0 +1,19 @@
+[tool.pytest.ini_options]
+testpaths = [
+    "backend/tests",
+    "models/skill_implementation/tests",
+    "models/LAYER_2/security/tests",
+]
+pythonpath = [
+    "backend",
+    "models",
+    "models/skill_implementation",
+]
+
+[tool.coverage.run]
+source = ["backend/app", "models/skill_implementation/skill_runtime"]
+omit = ["**/__pycache__/*", "**/tests/*"]
+
+[tool.coverage.report]
+fail_under = 40
+show_missing = true
