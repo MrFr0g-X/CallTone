@@ -17,7 +17,7 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navId = useId();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleSignOut = async () => {
     await logout();
@@ -28,16 +28,19 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
     { to: "/agent/dashboard", label: "Dashboard", icon: BarChart3 },
   ];
 
+  const canUploadCalls = Boolean(user?.capabilities?.canUploadCalls);
+  const canManageContext = Boolean(user?.capabilities?.canManageContext);
+
   const qaLinks = [
     { to: "/qa/dashboard", label: "Dashboard", icon: Users },
-    { to: "/qa/upload",    label: "Upload",    icon: Upload },
-    { to: "/qa/context",   label: "Context",   icon: Building2 },
+    ...(canUploadCalls ? [{ to: "/qa/upload", label: "Upload", icon: Upload }] : []),
+    ...(canManageContext ? [{ to: "/qa/context", label: "Context", icon: Building2 }] : []),
   ];
 
   const adminLinks = [
     { to: "/admin/dashboard", label: "Admin", icon: BarChart3 },
-    { to: "/qa/upload",       label: "Upload", icon: Upload },
-    { to: "/qa/context",      label: "Context", icon: Building2 },
+    ...(canUploadCalls ? [{ to: "/qa/upload", label: "Upload", icon: Upload }] : []),
+    ...(canManageContext ? [{ to: "/qa/context", label: "Context", icon: Building2 }] : []),
   ];
 
   const links = userRole === "agent" ? agentLinks : userRole === "admin" ? adminLinks : qaLinks;

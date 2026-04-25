@@ -7,8 +7,8 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { callsApi, contextApi, isAudioFile, MAX_UPLOAD_SIZE_BYTES, pipelineApi } from "@/services/api";
-import type { AsrEngine, CompanyContextSummary } from "@/services/api";
+import { adminApi, agentsApi, callsApi, isAudioFile, MAX_UPLOAD_SIZE_BYTES } from "@/services/api";
+import type { AdminClientItem, AsrEngine, UploadAgent } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type UploadStage = "idle" | "uploading" | "processing" | "completed" | "error";
@@ -45,10 +45,16 @@ const UploadCall = () => {
   const [queuePosition, setQueuePosition] = useState<number | null>(null);
   const [etaSeconds, setEtaSeconds] = useState<number | null>(null);
   const [asrEngine, setAsrEngine] = useState<AsrEngine>("fasterwhisper");
-  const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
+  const [clients, setClients] = useState<AdminClientItem[]>([]);
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const [companyName, setCompanyName] = useState("");
+  const [agents, setAgents] = useState<UploadAgent[]>([]);
+  const [selectedAgentId, setSelectedAgentId] = useState("");
   const [companyLoadError, setCompanyLoadError] = useState("");
+  const [agentLoadError, setAgentLoadError] = useState("");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const platformScope = user?.roleScope === "platform";
+  const canUseTestingControls = platformScope;
 
   const reset = () => {
     setStage("idle");
@@ -127,7 +133,12 @@ const UploadCall = () => {
     setErrorMsg("");
 
     try {
-      const res = await callsApi.upload(file, undefined, asrEngine, companyName);
+      const res = await callsApi.upload(
+        file,
+        selectedAgentId,
+        canUseTestingControls ? asrEngine : "fasterwhisper",
+        canUseTestingControls ? companyName : undefined,
+      );
       const { callId: id, queuePosition: pos, etaSeconds: eta } = res.data;
       setCallId(id);
       setCurrentStep("queued");
@@ -149,19 +160,21 @@ const UploadCall = () => {
     let cancelled = false;
     const loadCompanyContext = async () => {
       try {
-        const [settingsRes, companiesRes] = await Promise.all([
-          pipelineApi.getSettings(),
-          contextApi.listCompanies(),
-        ]);
+        if (!platformScope) {
+          setCompanyName(user?.clientName || "");
+          setCompanyLoadError(user?.clientName ? "" : "Your account is not assigned to a company.");
+          return;
+        }
+        const clientsRes = await adminApi.getClients();
         if (cancelled) return;
-        const list = companiesRes.data.companies || [];
-        setCompanies(list);
-        const configured = settingsRes.data.companyName;
-        const first = list[0]?.name || "";
-        setCompanyName(list.some((c) => c.name === configured) ? configured : first);
-        setCompanyLoadError(list.length ? "" : "No company contexts found. Upload a context before scoring.");
+        const list = clientsRes.data.clients || [];
+        setClients(list);
+        const first = list[0];
+        setSelectedClientId(first?.id ?? null);
+        setCompanyName(first?.name ?? "");
+        setCompanyLoadError(list.length ? "" : "No clients found. Create a client before uploading calls.");
       } catch {
-        if (!cancelled) setCompanyLoadError("Could not load company contexts.");
+        if (!cancelled) setCompanyLoadError("Could not load company list.");
       }
     };
     loadCompanyContext();
@@ -169,7 +182,32 @@ const UploadCall = () => {
       cancelled = true;
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, []);
+  }, [platformScope, user?.clientName]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadAgents = async () => {
+      if (platformScope && !selectedClientId) {
+        setAgents([]);
+        setSelectedAgentId("");
+        return;
+      }
+      try {
+        const response = await agentsApi.list(platformScope ? selectedClientId : undefined);
+        if (cancelled) return;
+        const list = response.data.agents || [];
+        setAgents(list);
+        setSelectedAgentId((current) => (list.some((agent) => agent.id === current) ? current : ""));
+        setAgentLoadError(list.length ? "" : "No agents found for this company. Invite an agent first.");
+      } catch {
+        if (!cancelled) setAgentLoadError("Could not load agents.");
+      }
+    };
+    loadAgents();
+    return () => {
+      cancelled = true;
+    };
+  }, [platformScope, selectedClientId]);
 
   const userRole = user?.role === "qa" ? "qa" : "admin";
 
@@ -270,69 +308,111 @@ const UploadCall = () => {
                 <div className="space-y-3">
                   <div>
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Company Context
+                      {platformScope ? "Client / Company" : "Company"}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      QA scores are evaluated against this company's scripts, policies, and rules.
+                      QA scores are evaluated against the selected agent's assigned company context.
                     </p>
                   </div>
-                  <select
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    disabled={!companies.length}
-                    className="w-full rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary"
-                  >
-                    {companies.map((company) => (
-                      <option key={company.file || company.name} value={company.name}>
-                        {company.name}
-                      </option>
-                    ))}
-                  </select>
+                  {platformScope ? (
+                    <select
+                      value={selectedClientId ?? ""}
+                      onChange={(e) => {
+                        const nextClientId = e.target.value ? Number(e.target.value) : null;
+                        const nextClient = clients.find((client) => client.id === nextClientId);
+                        setSelectedClientId(nextClientId);
+                        setCompanyName(nextClient?.name ?? "");
+                      }}
+                      disabled={!clients.length}
+                      className="w-full rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                    >
+                      {clients.map((client) => (
+                        <option key={client.id} value={client.id}>
+                          {client.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="rounded-2xl border border-border/50 bg-muted/30 px-4 py-3 text-sm text-foreground">
+                      {companyName || "No company assigned"}
+                    </div>
+                  )}
                   {companyLoadError && (
                     <p className="text-xs text-destructive">{companyLoadError}</p>
                   )}
                 </div>
 
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    ASR Engine
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Test transcript quality using the current fast engine or the original SenseVoice path.
-                  </p>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setAsrEngine("fasterwhisper")}
-                    className={cn(
-                      "text-left rounded-2xl border p-4 transition-all",
-                      asrEngine === "fasterwhisper"
-                        ? "border-primary bg-primary/10"
-                        : "border-border/50 hover:border-primary/40"
-                    )}
-                  >
-                    <p className="text-sm font-medium text-foreground">Faster-Whisper</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Current default. Faster, lower latency, best for quick testing.
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Call Agent
                     </p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAsrEngine("sensevoice")}
-                    className={cn(
-                      "text-left rounded-2xl border p-4 transition-all",
-                      asrEngine === "sensevoice"
-                        ? "border-primary bg-primary/10"
-                        : "border-border/50 hover:border-primary/40"
-                    )}
-                  >
-                    <p className="text-sm font-medium text-foreground">SenseVoice</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Original path. Better for A/B transcript checks, usually slower.
+                      Select the agent who handled this call. This controls attribution and tenant isolation.
                     </p>
-                  </button>
+                  </div>
+                  <select
+                    value={selectedAgentId}
+                    onChange={(e) => setSelectedAgentId(e.target.value)}
+                    disabled={!agents.length}
+                    className="w-full rounded-2xl border border-border/50 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                  >
+                    <option value="">Select agent...</option>
+                    {agents.map((agent) => (
+                      <option key={agent.id} value={agent.id}>
+                        {agent.name}{agent.email ? ` (${agent.email})` : ""}
+                      </option>
+                    ))}
+                  </select>
+                  {agentLoadError && (
+                    <p className="text-xs text-destructive">{agentLoadError}</p>
+                  )}
                 </div>
+
+                {canUseTestingControls && (
+                  <>
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        ASR Engine
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Platform testing control. Tenant QA/admin uploads use the production default.
+                      </p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setAsrEngine("fasterwhisper")}
+                        className={cn(
+                          "text-left rounded-2xl border p-4 transition-all",
+                          asrEngine === "fasterwhisper"
+                            ? "border-primary bg-primary/10"
+                            : "border-border/50 hover:border-primary/40"
+                        )}
+                      >
+                        <p className="text-sm font-medium text-foreground">Faster-Whisper</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Current default. Faster, lower latency, best for quick testing.
+                        </p>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAsrEngine("sensevoice")}
+                        className={cn(
+                          "text-left rounded-2xl border p-4 transition-all",
+                          asrEngine === "sensevoice"
+                            ? "border-primary bg-primary/10"
+                            : "border-border/50 hover:border-primary/40"
+                        )}
+                      >
+                        <p className="text-sm font-medium text-foreground">SenseVoice</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Original path. Better for A/B transcript checks, usually slower.
+                        </p>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </GlassCard>
           )}
@@ -351,7 +431,7 @@ const UploadCall = () => {
           {file && (stage === "idle" || stage === "error") && (
             <motion.button
               onClick={handleUpload}
-              disabled={!companyName}
+              disabled={!companyName || !selectedAgentId}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3.5 rounded-2xl bg-primary text-primary-foreground font-medium text-sm

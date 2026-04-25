@@ -157,6 +157,46 @@ def _can_manage_client_policy(user: User) -> bool:
     return role == "admin" and user.client_id is not None
 
 
+def _employee_role_for_user_role(role_name: str) -> str | None:
+    """Map platform auth roles to QA-domain employee roles.
+
+    Uploads are tied to `employees`, not directly to `users`. Every invited
+    tenant agent/QA user therefore needs a linked Employee row so calls can be
+    attributed to the real call handler and QA workflows can resolve reviewers.
+    """
+    if role_name == "agent":
+        return "AGENT"
+    if role_name == "qa":
+        return "QA"
+    return None
+
+
+def _ensure_employee_profile_for_user(db: Session, user: User) -> Employee | None:
+    employee_role = _employee_role_for_user_role(_role_name(user))
+    if not employee_role or user.client_id is None:
+        return None
+
+    existing = db.query(Employee).filter(Employee.user_id == user.id).first()
+    if existing:
+        if existing.client_id is None:
+            existing.client_id = user.client_id
+        if existing.role != employee_role:
+            existing.role = employee_role
+        if not existing.full_name:
+            existing.full_name = user.full_name
+        return existing
+
+    employee = Employee(
+        client_id=user.client_id,
+        employee_code=f"USR-{user.id}",
+        full_name=user.full_name,
+        role=employee_role,
+        user_id=user.id,
+    )
+    db.add(employee)
+    return employee
+
+
 APP_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = APP_DIR.parent
 REPO_DIR_CANDIDATES = [
@@ -410,6 +450,18 @@ def _run_startup_migrations():
                 next_pipeline_settings_id += 1
             if not db.query(ClientPolicy).filter(ClientPolicy.client_id == client.id).first():
                 db.add(ClientPolicy(client_id=client.id))
+
+        # Inviting a tenant agent/QA creates an auth user. The QA/call domain
+        # still needs a linked Employee row because uploads and reports are
+        # attributed to employees. Backfill legacy invites so upload does not
+        # fail with "No agent found in database" after accepting an invite.
+        for user in (
+            db.query(User)
+            .join(User.role)
+            .filter(User.client_id.isnot(None), Role.name.in_(["agent", "qa"]))
+            .all()
+        ):
+            _ensure_employee_profile_for_user(db, user)
 
         db.commit()
     finally:
@@ -1258,6 +1310,84 @@ def get_admin_clients(
     }
 
 
+@app.post(f"{settings.API_V1_PREFIX}/admin/clients")
+def create_admin_client(
+    payload: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _is_platform_user(current_user) or _role_name(current_user) not in ADMIN_MUTATION_ROLES:
+        raise HTTPException(status_code=403, detail="Platform admin access required to create clients")
+
+    name = str(payload.get("name") or "").strip()
+    industry = str(payload.get("industry") or "").strip() or None
+    status = str(payload.get("status") or "trial").strip().lower()
+    plan = str(payload.get("plan") or "trial").strip().lower()
+
+    if not name:
+        raise HTTPException(status_code=400, detail="Client name is required")
+    if status not in ("active", "trial", "suspended", "churned"):
+        raise HTTPException(status_code=400, detail="status must be active|trial|suspended|churned")
+    if db.query(Client).filter(func.lower(Client.name) == name.lower()).first():
+        raise HTTPException(status_code=409, detail="A client with this name already exists")
+
+    client = Client(name=name, industry=industry, status=status, plan=plan)
+    db.add(client)
+    db.flush()
+
+    db.add(PipelineSettings(client_id=client.id, company_name=name))
+    db.add(ClientPolicy(client_id=client.id))
+    db.commit()
+    db.refresh(client)
+
+    return {
+        "client": {
+            "id": client.id,
+            "name": client.name,
+            "industry": client.industry or "Unknown",
+            "status": client.status,
+            "plan": client.plan,
+            "agents": 0,
+            "qaCount": 0,
+            "callsThisMonth": 0,
+            "mrr": 0,
+            "avgScore": 0,
+        }
+    }
+
+
+@app.get(f"{settings.API_V1_PREFIX}/agents")
+def list_upload_agents(
+    client_id: int | None = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+
+    query = db.query(Employee).filter(Employee.role == "AGENT")
+    if _is_platform_user(current_user):
+        if client_id is not None:
+            query = query.filter(Employee.client_id == int(client_id))
+    else:
+        query = query.filter(Employee.client_id == _tenant_client_id(current_user))
+
+    agents = query.order_by(Employee.full_name.asc()).all()
+    return {
+        "agents": [
+            {
+                "id": agent.id,
+                "name": agent.full_name,
+                "clientId": agent.client_id,
+                "clientName": agent.client.name if agent.client else None,
+                "userId": agent.user_id,
+                "email": agent.user.email if agent.user else None,
+            }
+            for agent in agents
+        ]
+    }
+
+
 @app.get(f"{settings.API_V1_PREFIX}/admin/client-policy")
 def get_admin_client_policy(
     client_id: int | None = None,
@@ -1412,6 +1542,8 @@ def invite_admin_user(
     )
 
     db.add(invited_user)
+    db.flush()
+    _ensure_employee_profile_for_user(db, invited_user)
     db.commit()
     db.refresh(invited_user)
 
@@ -1558,6 +1690,12 @@ def update_user_role(
 
     old_role_name = user.role.name if user.role else None
     user.role_id = role.id
+    user.role = role
+    if _employee_role_for_user_role(role.name):
+        _ensure_employee_profile_for_user(db, user)
+    else:
+        for employee in db.query(Employee).filter(Employee.user_id == user.id).all():
+            employee.user_id = None
     db.commit()
     db.refresh(user)
     email_service.send_role_changed_email(
@@ -3012,10 +3150,39 @@ async def upload_call(
         asr_engine = _normalize_asr_engine(asr_engine)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    if _is_tenant_user(current_user) and asr_engine != "fasterwhisper":
+        raise HTTPException(status_code=403, detail="ASR engine selection is restricted to platform admins")
+
+    # Resolve agent employee record before selecting context. Upload attribution
+    # must be explicit: QA/admin users choose the real agent who handled the
+    # call. Falling back to the first database agent causes wrong reports.
+    employee_query = db.query(Employee).filter(Employee.role == "AGENT")
+    if _is_tenant_user(current_user):
+        employee_query = employee_query.filter(Employee.client_id == _tenant_client_id(current_user))
+    if not agent_id:
+        raise HTTPException(status_code=400, detail="Select the agent who handled this call")
+    employee = employee_query.filter(Employee.id == agent_id).first()
+    if not employee:
+        raise HTTPException(status_code=400, detail="Selected agent is not available for your company")
+
+    upload_client_id = employee.client_id
+    if _is_tenant_user(current_user):
+        upload_client_id = _tenant_client_id(current_user)
+        if employee.client_id != upload_client_id:
+            raise HTTPException(status_code=403, detail="Cannot upload calls for another company's agent")
 
     try:
-        ps = _pipeline_settings_for_user(db, current_user, create=True)
-        requested_company = company_name or (ps.company_name if ps else _default_pipeline_company())
+        ps = _pipeline_settings_for_client(db, upload_client_id, create=True)
+        client = db.query(Client).filter(Client.id == upload_client_id).first() if upload_client_id is not None else None
+        default_context_name = (ps.company_name if ps and ps.company_name else "") or (client.name if client else "")
+        allowed_context_aliases = {
+            value.strip().lower()
+            for value in (client.name if client else "", default_context_name)
+            if value and value.strip()
+        }
+        if client and company_name and company_name.strip().lower() not in allowed_context_aliases:
+            raise HTTPException(status_code=400, detail="Selected context must match the selected agent's company")
+        requested_company = default_context_name or company_name or _default_pipeline_company()
         requested_company = _ensure_company_allowed_for_user(db, current_user, requested_company)
         selected_company = _ensure_known_company_context(requested_company)
     except FileNotFoundError as exc:
@@ -3031,31 +3198,6 @@ async def upload_call(
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
     total_bytes, sha256 = await _stream_upload_to_disk(file, dest)
     duration_seconds, sample_rate_hz, channels = _audio_duration_metadata(dest)
-
-    # Resolve agent employee record
-    # Priority: explicit agent_id > current user's linked employee > first scoped agent.
-    employee = None
-    employee_query = db.query(Employee).filter(Employee.role == "AGENT")
-    if _is_tenant_user(current_user):
-        employee_query = employee_query.filter(Employee.client_id == _tenant_client_id(current_user))
-    if agent_id:
-        employee = employee_query.filter(Employee.id == agent_id).first()
-        if not employee:
-            raise HTTPException(status_code=400, detail="Selected agent is not available for your company")
-    if not employee:
-        linked_employee_query = db.query(Employee).filter(Employee.user_id == current_user.id)
-        if _is_tenant_user(current_user):
-            linked_employee_query = linked_employee_query.filter(Employee.client_id == _tenant_client_id(current_user))
-        employee = linked_employee_query.first()
-    if not employee:
-        employee = employee_query.order_by(Employee.full_name.asc()).first()
-    if not employee:
-        raise HTTPException(status_code=400, detail="No agent found in database")
-    upload_client_id = employee.client_id
-    if _is_tenant_user(current_user):
-        upload_client_id = _tenant_client_id(current_user)
-        if employee.client_id != upload_client_id:
-            raise HTTPException(status_code=403, detail="Cannot upload calls for another company's agent")
 
     # Resolve or create customer
     customer_query = db.query(Customer)

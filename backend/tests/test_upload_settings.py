@@ -21,6 +21,24 @@ def _bankserv_client_id():
         db.close()
 
 
+def _bankserv_agent_id():
+    from app.database import SessionLocal
+    from app.models import Employee
+
+    db = SessionLocal()
+    try:
+        agent = (
+            db.query(Employee)
+            .filter(Employee.client_id == _bankserv_client_id(), Employee.role == "AGENT")
+            .order_by(Employee.full_name.asc())
+            .first()
+        )
+        assert agent is not None
+        return agent.id
+    finally:
+        db.close()
+
+
 def test_upload_rejects_non_audio_content_type(client, qa_token):
     files = {
         "file": (
@@ -134,7 +152,7 @@ def test_upload_enqueues_pipeline_instead_of_starting_immediate_process(
     r = client.post(
         "/api/calls/upload",
         files=files,
-        data={"company_name": "BankServ Global", "asr_engine": "fasterwhisper"},
+        data={"company_name": "BankServ Global", "asr_engine": "fasterwhisper", "agent_id": _bankserv_agent_id()},
         headers=_auth(qa_token),
     )
 
@@ -148,6 +166,33 @@ def test_upload_enqueues_pipeline_instead_of_starting_immediate_process(
     assert captured["company_name"] == "BankServ Global"
     assert captured["client_id"] == _bankserv_client_id()
     assert (tmp_path / f"{body['callId']}_sample.wav").read_bytes() == b"RIFFsmall"
+
+
+def test_upload_requires_explicit_agent_selection(client, qa_token, tmp_path, monkeypatch):
+    from app import main as app_main
+
+    monkeypatch.setattr(app_main, "UPLOAD_DIR", tmp_path)
+    monkeypatch.setattr(app_main, "_ensure_known_company_context", lambda name: name)
+
+    files = {"file": ("sample.wav", io.BytesIO(b"RIFFsmall"), "audio/wav")}
+    r = client.post(
+        "/api/calls/upload",
+        files=files,
+        data={"company_name": "BankServ Global", "asr_engine": "fasterwhisper"},
+        headers=_auth(qa_token),
+    )
+
+    assert r.status_code == 400
+    assert "Select the agent" in r.json()["detail"]
+
+
+def test_agents_endpoint_returns_same_company_agents(client, qa_token):
+    r = client.get("/api/agents", headers=_auth(qa_token))
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["agents"]
+    assert all(agent["clientId"] == _bankserv_client_id() for agent in body["agents"])
+    assert any(agent["id"] == _bankserv_agent_id() for agent in body["agents"])
 
 
 def test_enqueue_pipeline_persists_durable_job(monkeypatch):
