@@ -93,6 +93,24 @@ def test_invite_requires_admin_role(client, qa_token):
     assert r.status_code == 403
 
 
+def test_invited_user_login_does_not_500(client, admin_token):
+    """Invited accounts have a placeholder password hash until activation."""
+    new_email = f"invited_login_{secrets.token_hex(4)}@calltone.ai"
+
+    invite = client.post(
+        "/api/admin/users/invite",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"name": "Invited Login Probe", "email": new_email, "role": "viewer"},
+    )
+    assert invite.status_code == 200, invite.text
+
+    login = client.post(
+        "/api/auth/login",
+        json={"email": new_email, "password": "WhateverPass123!"},
+    )
+    assert login.status_code == 401, login.text
+
+
 def test_delete_user_detaches_employee_link(client, admin_token):
     """Deleting a user must preserve employee/call history by unlinking Employee.user_id."""
     new_email = f"delete_linked_{secrets.token_hex(4)}@calltone.ai"
