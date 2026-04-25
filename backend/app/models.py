@@ -226,7 +226,7 @@ class EmailEvent(Base):
     id = Column(String(36), primary_key=True, default=_uuid_str)
     event_type = Column(String(100), nullable=False, index=True)
     recipient_email = Column(String(255), nullable=False, index=True)
-    recipient_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    recipient_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     subject = Column(String(255), nullable=False)
     status = Column(String(20), nullable=False, default="queued", index=True)
     provider = Column(String(50), nullable=False, default="null")
