@@ -454,6 +454,11 @@ def _ensure_call_visible_to_user(call: Call, user: User, db: Session) -> None:
 
 @app.get("/")
 def root():
+    from pathlib import Path as _P
+    from fastapi.responses import FileResponse as _FR
+    _idx = _P(__file__).resolve().parent.parent / "static" / "index.html"
+    if _idx.is_file():
+        return _FR(_idx)
     return {"message": "CallTone API is running"}
 
 
