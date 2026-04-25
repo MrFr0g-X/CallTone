@@ -32,7 +32,7 @@ from app.database import Base, engine, get_db, settings, SessionLocal
 from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
-    PipelineJob, PipelineSettings,
+    PipelineJob, PipelineSettings, EmailEvent, EmailPreference,
     _compute_grade,
 )
 from app.email import service as email_service
@@ -1142,6 +1142,16 @@ def delete_user(
     for employee in linked_employees:
         employee.user_id = None
 
+    # Keep the outbound-mail audit trail, but detach it from the deleted user.
+    # Otherwise PostgreSQL rejects the delete because email_events records invite
+    # and activation attempts against recipient_user_id.
+    detached_email_events = (
+        db.query(EmailEvent)
+        .filter(EmailEvent.recipient_user_id == user.id)
+        .update({EmailEvent.recipient_user_id: None}, synchronize_session=False)
+    )
+    db.query(EmailPreference).filter(EmailPreference.user_id == user.id).delete(synchronize_session=False)
+
     db.delete(user)
     db.commit()
 
@@ -1155,6 +1165,7 @@ def delete_user(
             "target_email": target_email,
             "was_invited": was_invited,
             "detached_employee_ids": [employee.id for employee in linked_employees],
+            "detached_email_events": detached_email_events,
         },
     )
 
@@ -1314,9 +1325,20 @@ def get_agent_dashboard(
 ):
     _require_role(current_user, ("agent",), "Agent access required")
     employee = _get_agent_employee(current_user, db)
+    if not employee:
+        return {
+            "scores": {
+                "overall": 0,
+                "politeness": 0,
+                "empathy": 0,
+                "conflictRate": 0,
+                "resolutionRate": 0,
+            },
+            "trend": [],
+        }
+
     query = db.query(QaReport).join(Call, QaReport.call_id == Call.id)
-    if employee:
-        query = query.filter(Call.employee_id == employee.id)
+    query = query.filter(Call.employee_id == employee.id)
     reports = query.order_by(Call.created_at.desc()).limit(50).all()
 
     if reports:

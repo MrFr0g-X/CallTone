@@ -1,7 +1,8 @@
 import secrets
+from datetime import datetime, timezone
 
 from app.database import SessionLocal
-from app.models import Role, User
+from app.models import Call, Client, EmailEvent, Employee, QaReport, Role, User
 from app.security import hash_password
 
 
@@ -34,6 +35,73 @@ def _login(client, email: str, password: str = "OwnerTest123!") -> str:
     response = client.post("/api/auth/login", json={"email": email, "password": password})
     assert response.status_code == 200, response.text
     return response.json()["access_token"]
+
+
+def _create_email_event(user_id: int, email: str) -> str:
+    db = SessionLocal()
+    try:
+        event = EmailEvent(
+            event_type="account.invite",
+            recipient_email=email,
+            recipient_user_id=user_id,
+            subject="Invitation",
+            status="sent",
+            provider="null",
+            provider_message_id="test-message",
+            metadata_json={"test": True},
+        )
+        db.add(event)
+        db.commit()
+        db.refresh(event)
+        return event.id
+    finally:
+        db.close()
+
+
+def _create_other_agent_report(score: float = 91.0) -> None:
+    db = SessionLocal()
+    try:
+        client = Client(
+            name=f"Leak Test Client {secrets.token_hex(4)}",
+            industry="QA",
+            status="active",
+            plan="trial",
+        )
+        db.add(client)
+        agent = Employee(
+            employee_code=f"AG-{secrets.token_hex(4)}",
+            full_name="Linked Agent With Reports",
+            role="AGENT",
+        )
+        qa = Employee(
+            employee_code=f"QA-{secrets.token_hex(4)}",
+            full_name="QA Reviewer",
+            role="QA",
+        )
+        db.add_all([agent, qa])
+        db.flush()
+        call = Call(
+            employee_id=agent.id,
+            original_filename="leak-test.wav",
+            status="COMPLETED",
+            call_time=datetime.now(timezone.utc),
+        )
+        db.add(call)
+        db.flush()
+        db.add(
+            QaReport(
+                call_id=call.id,
+                qa_id=qa.id,
+                overall_score=score,
+                grade="A",
+                severity="Minor",
+                dimension_scores={"politeness_tone": score, "empathy": score, "issue_resolution": score},
+                report_json={"summary": "security regression fixture"},
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
 
 
 def test_owner_can_invite_super_admin(client):
@@ -110,3 +178,43 @@ def test_owner_can_demote_and_delete_super_admin(client):
         headers=_auth(owner_token),
     )
     assert delete_response.status_code == 200, delete_response.text
+
+
+def test_owner_can_delete_user_with_email_audit_events(client):
+    owner_email = f"owner_delete_email_{secrets.token_hex(4)}@calltone.ai"
+    _create_user(owner_email, "owner")
+    owner_token = _login(client, owner_email)
+
+    target_email = f"delete_email_event_{secrets.token_hex(4)}@calltone.ai"
+    target_id = _create_user(target_email, "viewer")
+    event_id = _create_email_event(target_id, target_email)
+
+    delete_response = client.delete(
+        f"/api/admin/users/{target_id}",
+        headers=_auth(owner_token),
+    )
+
+    assert delete_response.status_code == 200, delete_response.text
+
+    db = SessionLocal()
+    try:
+        detached_event = db.query(EmailEvent).filter(EmailEvent.id == event_id).first()
+        assert detached_event is not None
+        assert detached_event.recipient_user_id is None
+        assert detached_event.recipient_email == target_email
+    finally:
+        db.close()
+
+
+def test_unlinked_agent_dashboard_does_not_leak_global_scores(client):
+    _create_other_agent_report(score=97.0)
+    agent_email = f"unlinked_agent_{secrets.token_hex(4)}@calltone.ai"
+    _create_user(agent_email, "agent")
+    agent_token = _login(client, agent_email)
+
+    response = client.get("/api/agent/dashboard", headers=_auth(agent_token))
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["scores"]["overall"] == 0
+    assert body["trend"] == []
