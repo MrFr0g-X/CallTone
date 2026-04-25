@@ -23,9 +23,14 @@ import random
 
 from locust import HttpUser, between, task
 
-# Default credentials match the seed data; override via env if needed.
-QA_EMAIL = os.environ.get("LOAD_QA_EMAIL", "qa@calltone.ai")
-QA_PASSWORD = os.environ.get("LOAD_QA_PASSWORD", "QApass123!")
+QA_EMAIL = os.environ.get("LOAD_QA_EMAIL")
+QA_PASSWORD = os.environ.get("LOAD_QA_PASSWORD")
+
+if not QA_EMAIL or not QA_PASSWORD:
+    raise RuntimeError(
+        "Set LOAD_QA_EMAIL and LOAD_QA_PASSWORD before running the load test. "
+        "Load-test credentials must not be hardcoded in source."
+    )
 
 
 class QaPortalUser(HttpUser):

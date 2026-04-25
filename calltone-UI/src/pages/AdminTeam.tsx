@@ -22,12 +22,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { canManageAdminUsers } from "@/lib/roles";
 
-type AdminRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
+type AdminRole = "owner" | "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
+type AssignableRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 
 const roleConfig: Record<
   AdminRole,
   { label: string; color: string; bg: string; rank: number }
 > = {
+  owner: {
+    label: "Owner",
+    color: "text-emerald-300",
+    bg: "bg-emerald-400/10",
+    rank: 0,
+  },
   super_admin: {
     label: "Super Admin",
     color: "text-accent",
@@ -72,21 +79,28 @@ const statusIcons = {
   disabled: { icon: XCircle, color: "text-destructive", label: "Disabled" },
 } as const;
 
-const roleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const;
+const baseRoleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
+const ownerRoleOptions = ["super_admin", ...baseRoleOptions] as const satisfies readonly AssignableRole[];
 
 const AdminTeam = () => {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
   const canMutateUsers = canManageAdminUsers(currentUser?.role);
+  const isOwner = currentUser?.role === "owner";
+  const visibleRoleOptions = isOwner ? ownerRoleOptions : baseRoleOptions;
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Pick<
+    AdminTeamUser,
+    "id" | "name" | "email" | "status"
+  > | null>(null);
   const [inviteForm, setInviteForm] = useState({
     name: "",
     email: "",
-    role: "viewer" as Exclude<AdminRole, "super_admin">,
+    role: "viewer" as AssignableRole,
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -101,7 +115,7 @@ const AdminTeam = () => {
     mutationFn: async (payload: {
       name: string;
       email: string;
-      role: "admin" | "manager" | "viewer" | "qa" | "agent";
+      role: AssignableRole;
     }) => {
       const response = await adminApi.inviteUser(payload);
       return response.data;
@@ -110,13 +124,19 @@ const AdminTeam = () => {
       try {
         await navigator.clipboard.writeText(data.inviteUrl);
         toast({
-          title: "Invitation created",
-          description: "Invite link copied to clipboard.",
+          title: data.emailStatus === "sent" ? "Invitation email sent" : "Invitation created",
+          description:
+            data.emailStatus === "sent"
+              ? "The activation email was sent. The fallback invite link is also copied to clipboard."
+              : "Email is not confirmed as sent; fallback invite link copied to clipboard.",
         });
       } catch {
         toast({
-          title: "Invitation created",
-          description: data.inviteUrl,
+          title: data.emailStatus === "sent" ? "Invitation email sent" : "Invitation created",
+          description:
+            data.emailStatus === "sent"
+              ? "The activation email was sent."
+              : data.inviteUrl,
         });
       }
 
@@ -138,7 +158,7 @@ const AdminTeam = () => {
   const updateRoleMutation = useMutation({
     mutationFn: async (payload: {
       userId: number;
-      role: "admin" | "manager" | "viewer" | "qa" | "agent";
+      role: AssignableRole;
     }) => {
       const response = await adminApi.updateUserRole(payload.userId, {
         role: payload.role,
@@ -220,6 +240,7 @@ const AdminTeam = () => {
           data.deletedType === "invitation" ? "Invitation deleted" : "User deleted",
         description: `${data.name} was removed successfully.`,
       });
+      setDeleteTarget(null);
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (error: unknown) => {
@@ -250,7 +271,7 @@ const AdminTeam = () => {
 
   const handleRoleChange = (
     userId: number,
-    role: "admin" | "manager" | "viewer" | "qa" | "agent"
+    role: AssignableRole
   ) => {
     updateRoleMutation.mutate({ userId, role });
   };
@@ -264,10 +285,9 @@ const AdminTeam = () => {
     copyInviteLinkMutation.mutate(userId);
   };
 
-  const handleDeleteUser = (userId: number, name: string) => {
-    const confirmed = window.confirm(`Are you sure you want to delete ${name}?`);
-    if (!confirmed) return;
-    deleteUserMutation.mutate(userId);
+  const confirmDeleteUser = () => {
+    if (!deleteTarget) return;
+    deleteUserMutation.mutate(deleteTarget.id);
   };
 
   const filteredUsers = useMemo(() => {
@@ -347,11 +367,12 @@ const AdminTeam = () => {
         </div>
 
         <BubbleToggle
-          options={["All", "super_admin", "admin", "manager", "viewer", "qa", "agent"]}
+          options={["All", "owner", "super_admin", "admin", "manager", "viewer", "qa", "agent"]}
           value={roleFilter}
           onChange={setRoleFilter}
           labels={{
             All: "All",
+            owner: "Owner",
             super_admin: "Super Admin",
             admin: "Admin",
             manager: "Manager",
@@ -367,6 +388,11 @@ const AdminTeam = () => {
           const role = roleConfig[user.role];
           const status = statusIcons[user.status];
           const isCurrentUser = user.id === data.currentUserId;
+          const canManageThisUser =
+            canMutateUsers &&
+            !isCurrentUser &&
+            user.role !== "owner" &&
+            (isOwner || user.role !== "super_admin");
 
           return (
             <motion.div
@@ -439,9 +465,9 @@ const AdminTeam = () => {
                             <Copy className="w-3.5 h-3.5" />
                           </button>
 
-                          {!isCurrentUser && (
+                          {canManageThisUser && (
                             <button
-                              onClick={() => handleDeleteUser(user.id, user.name)}
+                              onClick={() => setDeleteTarget(user)}
                               className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
                               title="Delete invitation"
                             >
@@ -451,10 +477,10 @@ const AdminTeam = () => {
                         </>
                       ) : (
                         <>
-                          {user.role !== "super_admin" && !isCurrentUser && (
+                          {canManageThisUser && (
                             <>
                               <div className="flex flex-wrap items-center gap-1">
-                                {roleOptions.map((r) => (
+                                {visibleRoleOptions.map((r) => (
                                   <button
                                     key={r}
                                     onClick={() => handleRoleChange(user.id, r)}
@@ -480,7 +506,7 @@ const AdminTeam = () => {
                               </button>
 
                               <button
-                                onClick={() => handleDeleteUser(user.id, user.name)}
+                                onClick={() => setDeleteTarget(user)}
                                 className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
                                 title="Delete user"
                               >
@@ -507,6 +533,62 @@ const AdminTeam = () => {
       </div>
 
       <AnimatePresence>
+        {deleteTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm p-4"
+            onClick={() => {
+              if (!deleteUserMutation.isPending) setDeleteTarget(null);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="glass-strong rounded-2xl p-6 w-full max-w-md border border-destructive/25 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+                  <Trash2 className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-foreground">
+                    {deleteTarget.status === "invited" ? "Delete invitation?" : "Delete user?"}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    This will permanently remove{" "}
+                    <span className="font-semibold text-foreground">{deleteTarget.name}</span>{" "}
+                    <span className="break-all">({deleteTarget.email})</span>. This action is server-side and cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  disabled={deleteUserMutation.isPending}
+                  onClick={() => setDeleteTarget(null)}
+                  className="rounded-xl border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/40 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={deleteUserMutation.isPending}
+                  onClick={confirmDeleteUser}
+                  className="rounded-xl bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition-colors hover:brightness-110 disabled:opacity-50"
+                >
+                  {deleteUserMutation.isPending ? "Deleting..." : "Delete permanently"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {showInviteModal && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -569,7 +651,7 @@ const AdminTeam = () => {
                     Role
                   </label>
                   <div className="grid grid-cols-2 gap-2">
-                    {roleOptions.map((r) => (
+                    {visibleRoleOptions.map((r) => (
                       <button
                         key={r}
                         onClick={() => setInviteForm({ ...inviteForm, role: r })}

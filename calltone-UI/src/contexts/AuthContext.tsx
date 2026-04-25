@@ -8,7 +8,14 @@ import {
 } from "react";
 import { authApi } from "@/services/api";
 
-export type UserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
+export type UserRole =
+  | "owner"
+  | "agent"
+  | "qa"
+  | "admin"
+  | "super_admin"
+  | "manager"
+  | "viewer";
 
 interface AuthUser {
   id?: number;

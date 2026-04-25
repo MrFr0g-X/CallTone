@@ -35,6 +35,7 @@ from app.models import (
     PipelineJob, PipelineSettings,
     _compute_grade,
 )
+from app.email import service as email_service
 from app.schemas import LoginRequest, TokenResponse
 from app.security import create_access_token, verify_password, hash_password
 from app.security_headers import SecurityHeadersMiddleware
@@ -44,6 +45,32 @@ import app.models  # noqa
 
 configure_logging()
 log = get_logger("calltone.api")
+
+OWNER_ROLE = "owner"
+ADMIN_READ_ROLES = (OWNER_ROLE, "super_admin", "admin", "manager", "viewer")
+ADMIN_MUTATION_ROLES = (OWNER_ROLE, "super_admin", "admin")
+QA_OPERATOR_ROLES = ("qa", OWNER_ROLE, "admin", "super_admin")
+QA_CALL_ROLES = ("qa", OWNER_ROLE, "admin", "super_admin", "agent")
+OWNER_ASSIGNABLE_ROLES = ("super_admin", "admin", "manager", "viewer", "qa", "agent")
+ADMIN_ASSIGNABLE_ROLES = ("admin", "manager", "viewer", "qa", "agent")
+
+
+def _can_mutate_users(user: User) -> bool:
+    return _role_name(user) in ADMIN_MUTATION_ROLES
+
+
+def _assignable_roles_for(user: User) -> tuple[str, ...]:
+    return OWNER_ASSIGNABLE_ROLES if _role_name(user) == OWNER_ROLE else ADMIN_ASSIGNABLE_ROLES
+
+
+def _guard_protected_admin_target(current_user: User, target_user: User, action: str) -> None:
+    actor_role = _role_name(current_user)
+    target_role = _role_name(target_user)
+    if target_role == OWNER_ROLE and actor_role != OWNER_ROLE:
+        raise HTTPException(status_code=403, detail=f"Only the Owner can {action} the Owner account")
+    if target_role == "super_admin" and actor_role != OWNER_ROLE:
+        raise HTTPException(status_code=403, detail=f"Only the Owner can {action} Super Admin accounts")
+
 
 APP_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = APP_DIR.parent
@@ -443,7 +470,7 @@ def _agent_employee_id(user: User, db: Session) -> str | None:
 
 def _ensure_call_visible_to_user(call: Call, user: User, db: Session) -> None:
     role = _role_name(user)
-    if role in ("qa", "admin", "super_admin"):
+    if role in QA_OPERATOR_ROLES:
         return
     if role == "agent":
         employee_id = _agent_employee_id(user, db)
@@ -623,7 +650,7 @@ def get_admin_dashboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "manager", "viewer"]:
+    if _role_name(current_user) not in ADMIN_READ_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     active_clients = db.query(Client).filter(Client.status == "active").count()
@@ -692,7 +719,7 @@ def get_admin_clients(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "manager", "viewer"]:
+    if _role_name(current_user) not in ADMIN_READ_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     clients = db.query(Client).order_by(Client.name.asc()).all()
@@ -752,7 +779,7 @@ def get_admin_users(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "manager", "viewer"]:
+    if _role_name(current_user) not in ADMIN_READ_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     users = (
@@ -791,7 +818,7 @@ def invite_admin_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Not authorized to invite users")
 
     name = (payload.get("name") or "").strip()
@@ -801,9 +828,9 @@ def invite_admin_user(
     if not name or not email or not role_name:
         raise HTTPException(status_code=400, detail="Name, email, and role are required")
 
-    allowed_roles = ["admin", "manager", "viewer", "qa", "agent"]
+    allowed_roles = _assignable_roles_for(current_user)
     if role_name not in allowed_roles:
-        raise HTTPException(status_code=400, detail="Invalid role")
+        raise HTTPException(status_code=400, detail=f"Invalid role. Allowed roles: {', '.join(allowed_roles)}")
 
     existing_user = db.query(User).filter(User.email == email).first()
     if existing_user:
@@ -833,10 +860,22 @@ def invite_admin_user(
     db.refresh(invited_user)
 
     invite_url = f"{settings.FRONTEND_URL}/accept-invite?token={invite_token}"
+    email_event = email_service.send_invite_email(
+        db,
+        user=invited_user,
+        invite_url=invite_url,
+        invited_by=current_user,
+    )
 
     return {
-        "message": "Invitation created successfully",
+        "message": (
+            "Invitation created and email sent"
+            if email_event.status == "sent"
+            else "Invitation created successfully"
+        ),
         "inviteUrl": invite_url,
+        "emailStatus": email_event.status,
+        "emailMessageId": email_event.provider_message_id,
         "user": {
             "id": invited_user.id,
             "name": invited_user.full_name,
@@ -926,6 +965,7 @@ def accept_invite(
 
     db.commit()
     db.refresh(user)
+    email_service.send_account_activated_email(db, user=user)
 
     return {
         "message": "Account activated successfully"
@@ -939,14 +979,14 @@ def update_user_role(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Not authorized")
 
     new_role_name = (payload.get("role") or "").strip()
-    allowed_roles = ["admin", "manager", "viewer", "qa", "agent"]
+    allowed_roles = _assignable_roles_for(current_user)
 
     if new_role_name not in allowed_roles:
-        raise HTTPException(status_code=400, detail="Invalid role")
+        raise HTTPException(status_code=400, detail=f"Invalid role. Allowed roles: {', '.join(allowed_roles)}")
 
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -954,6 +994,7 @@ def update_user_role(
 
     if user.id == current_user.id:
         raise HTTPException(status_code=400, detail="You cannot change your own role")
+    _guard_protected_admin_target(current_user, user, "change")
 
     role = db.query(Role).filter(Role.name == new_role_name).first()
     if not role:
@@ -963,6 +1004,13 @@ def update_user_role(
     user.role_id = role.id
     db.commit()
     db.refresh(user)
+    email_service.send_role_changed_email(
+        db,
+        user=user,
+        old_role=old_role_name,
+        new_role=role.name,
+        actor=current_user,
+    )
 
     # C-6: privilege-change audit line.
     log.warning(
@@ -993,7 +1041,7 @@ def update_user_status(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Not authorized")
 
     new_status = (payload.get("status") or "").strip()
@@ -1007,6 +1055,7 @@ def update_user_status(
 
     if user.id == current_user.id:
         raise HTTPException(status_code=400, detail="You cannot disable your own account")
+    _guard_protected_admin_target(current_user, user, "disable")
 
     if user.invite_token and not user.is_active:
         raise HTTPException(status_code=400, detail="Invited users cannot be enabled/disabled. They must accept the invitation or be deleted.")
@@ -1015,6 +1064,12 @@ def update_user_status(
     user.is_active = new_status == "active"
     db.commit()
     db.refresh(user)
+    email_service.send_status_changed_email(
+        db,
+        user=user,
+        new_status=new_status,
+        actor=current_user,
+    )
 
     # C-6: account-status audit line.
     log.warning(
@@ -1044,7 +1099,7 @@ def get_invite_link(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Not authorized")
 
     user = db.query(User).filter(User.id == user_id).first()
@@ -1067,7 +1122,7 @@ def delete_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Not authorized")
 
     user = db.query(User).filter(User.id == user_id).first()
@@ -1076,11 +1131,16 @@ def delete_user(
 
     if user.id == current_user.id:
         raise HTTPException(status_code=400, detail="You cannot delete your own account")
+    _guard_protected_admin_target(current_user, user, "delete")
 
     was_invited = bool(user.invite_token and not user.is_active)
     user_name = user.full_name
     target_email = user.email
     target_id = user.id
+
+    linked_employees = db.query(Employee).filter(Employee.user_id == user.id).all()
+    for employee in linked_employees:
+        employee.user_id = None
 
     db.delete(user)
     db.commit()
@@ -1094,6 +1154,7 @@ def delete_user(
             "target_user_id": target_id,
             "target_email": target_email,
             "was_invited": was_invited,
+            "detached_employee_ids": [employee.id for employee in linked_employees],
         },
     )
 
@@ -1111,7 +1172,7 @@ def get_qa_calls(
     current_user: User = Depends(get_current_user),
 ):
     role = _require_role(
-        current_user, ("qa", "admin", "super_admin", "agent"),
+        current_user, QA_CALL_ROLES,
         "QA, Admin, or owning Agent access required",
     )
     query = (
@@ -2092,6 +2153,50 @@ def _pipeline_job_to_public(job: PipelineJob) -> dict:
     }
 
 
+def _notify_pipeline_terminal_state(
+    db: Session,
+    *,
+    call: Call | None,
+    job: PipelineJob,
+    completed: bool,
+    error_message: str | None,
+) -> None:
+    """Send terminal pipeline notifications without affecting job state."""
+    if not call:
+        return
+    try:
+        if completed:
+            report = db.query(QaReport).filter(QaReport.call_id == call.id).first()
+            if report and call.employee and call.employee.user and call.employee.user.is_active:
+                email_service.send_call_completed_email(
+                    db,
+                    user=call.employee.user,
+                    call=call,
+                    report=report,
+                )
+            return
+
+        admins = (
+            db.query(User)
+            .join(User.role)
+            .filter(User.is_active == True)
+            .all()
+        )
+        for user in admins:
+            if user.role and user.role.name in ADMIN_MUTATION_ROLES:
+                email_service.send_call_failed_email(
+                    db,
+                    user=user,
+                    call=call,
+                    error=error_message or job.error_message or "Pipeline failed",
+                )
+    except Exception as exc:
+        log.warning(
+            "email.pipeline_notification_failed",
+            extra={"event": "pipeline_notification_failed", "call_id": call.id, "err": str(exc)},
+        )
+
+
 def _recover_interrupted_pipeline_jobs() -> None:
     """Put jobs that were running during a backend restart back into the queue."""
     db = SessionLocal()
@@ -2202,6 +2307,14 @@ def _finish_pipeline_job(call_id: str, worker_error: str | None = None) -> None:
 
         job.updated_at = now
         db.commit()
+        if call_completed or job.status == "failed":
+            _notify_pipeline_terminal_state(
+                db,
+                call=call,
+                job=job,
+                completed=call_completed,
+                error_message=error_message,
+            )
     except Exception:
         db.rollback()
         raise
@@ -2248,7 +2361,7 @@ async def upload_call(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+    if _role_name(current_user) not in QA_OPERATOR_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to upload calls")
 
     if file.content_type and file.content_type not in ALLOWED_AUDIO_TYPES:
@@ -2368,7 +2481,7 @@ def get_call_status(
 def get_pipeline_queue(
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+    if _role_name(current_user) not in QA_OPERATOR_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline queue")
     return _pipeline_queue_overview()
 
@@ -2380,7 +2493,7 @@ def list_pipeline_jobs(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+    if _role_name(current_user) not in QA_OPERATOR_ROLES:
         raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline jobs")
     limit = max(1, min(int(limit or 50), 200))
     query = db.query(PipelineJob)
@@ -2403,7 +2516,7 @@ def retry_pipeline_job(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Admin access required")
     job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
     if not job:
@@ -2438,7 +2551,7 @@ def dead_letter_pipeline_job(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if current_user.role.name not in ["super_admin", "admin"]:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Admin access required")
     job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
     if not job:
@@ -2462,12 +2575,54 @@ def dead_letter_pipeline_job(
         call.error_message = job.error_message
     db.commit()
     db.refresh(job)
+    _notify_pipeline_terminal_state(
+        db,
+        call=call,
+        job=job,
+        completed=False,
+        error_message=job.error_message,
+    )
     return {"ok": True, "job": _pipeline_job_to_public(job)}
 
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/logout")
 def logout():
     return {"message": "Logged out successfully"}
+
+
+# ── Mail Settings endpoints ─────────────────────────────────────────────────
+
+@app.get(f"{settings.API_V1_PREFIX}/settings/mail")
+def get_mail_settings(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _require_role(current_user, ADMIN_READ_ROLES, "Admin access required")
+    return email_service.mail_status(db)
+
+
+@app.post(f"{settings.API_V1_PREFIX}/settings/mail/test")
+def send_mail_test(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _require_role(current_user, ADMIN_MUTATION_ROLES, "Admin access required")
+    event = email_service.send_test_email(db, user=current_user)
+    return {
+        "ok": event.status == "sent",
+        "event": {
+            "id": event.id,
+            "eventType": event.event_type,
+            "recipientEmail": event.recipient_email,
+            "subject": event.subject,
+            "status": event.status,
+            "provider": event.provider,
+            "providerMessageId": event.provider_message_id,
+            "error": event.error,
+            "createdAt": event.created_at,
+            "sentAt": event.sent_at,
+        },
+    }
 
 
 # ── Pipeline Settings endpoints ──────────────────────────────────────────────
@@ -2477,7 +2632,7 @@ def get_pipeline_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
+    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
         ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
@@ -2501,7 +2656,7 @@ def update_pipeline_settings(
     db: Session = Depends(get_db),
 ):
     role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ("admin", "super_admin"):
+    if role_name not in ADMIN_MUTATION_ROLES:
         raise HTTPException(status_code=403, detail="Admin access required")
 
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
@@ -2555,7 +2710,7 @@ _INGEST_JOBS: dict = {}
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies")
 def list_companies(current_user: User = Depends(get_current_user)):
-    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
+    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
     import json as _json
     companies = []
     seen_slugs: set[str] = set()
@@ -2598,7 +2753,7 @@ def list_companies(current_user: User = Depends(get_current_user)):
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies/{'{name}'}")
 def get_company_context(name: str, current_user: User = Depends(get_current_user)):
-    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
+    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
     import json as _json
     path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
     if not path.exists():
@@ -2664,7 +2819,7 @@ async def ingest_company_context(
     current_user: User = Depends(get_current_user),
 ):
     role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ("qa", "admin", "super_admin"):
+    if role_name not in QA_OPERATOR_ROLES:
         raise HTTPException(status_code=403, detail="QA or Admin access required")
 
     content = await file.read()
@@ -2696,7 +2851,7 @@ def ingest_job_status(
     job_id: str,
     current_user: User = Depends(get_current_user),
 ):
-    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
+    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
     job = _INGEST_JOBS.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -2705,7 +2860,7 @@ def ingest_job_status(
 
 @app.get(f"{settings.API_V1_PREFIX}/context/tickets")
 def list_tickets(current_user: User = Depends(get_current_user)):
-    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
+    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
     import json as _json
     tickets = []
     if TICKETS_DIR.exists():
@@ -2722,10 +2877,11 @@ def list_tickets(current_user: User = Depends(get_current_user)):
 def create_ticket(
     payload: dict = Body(...),
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     import json as _json
     role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ("qa", "admin", "super_admin"):
+    if role_name not in QA_OPERATOR_ROLES:
         raise HTTPException(status_code=403, detail="QA or Admin access required")
 
     TICKETS_DIR.mkdir(parents=True, exist_ok=True)
@@ -2747,6 +2903,30 @@ def create_ticket(
 
     out = TICKETS_DIR / f"{ticket_id}.json"
     out.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
+    try:
+        reviewers = (
+            db.query(User)
+            .join(User.role)
+            .filter(User.is_active == True)
+            .all()
+        )
+        for reviewer in reviewers:
+            if reviewer.role and reviewer.role.name in ADMIN_MUTATION_ROLES:
+                email_service.send_context_ticket_email(
+                    db,
+                    recipient=reviewer,
+                    title="New CallTone context ticket",
+                    company=ticket["company_name"],
+                    field=ticket["field_name"],
+                    status="pending",
+                    actor=current_user,
+                    ticket_id=ticket_id,
+                )
+    except Exception as exc:
+        log.warning(
+            "email.context_ticket_notification_failed",
+            extra={"event": "context_ticket_notification_failed", "ticket_id": ticket_id, "err": str(exc)},
+        )
     return ticket
 
 
@@ -2755,10 +2935,11 @@ def update_ticket_status(
     ticket_id: str,
     payload: dict = Body(...),
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     import json as _json
     role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ("admin", "super_admin"):
+    if role_name not in ADMIN_MUTATION_ROLES:
         raise HTTPException(status_code=403, detail="Admin access required to approve/reject tickets")
 
     ticket_file = TICKETS_DIR / f"{ticket_id}.json"
@@ -2776,6 +2957,24 @@ def update_ticket_status(
         ticket["review_note"] = payload["note"]
 
     ticket_file.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
+    try:
+        submitter = db.query(User).filter(User.email == ticket.get("submitted_by", "")).first()
+        if submitter and submitter.is_active:
+            email_service.send_context_ticket_email(
+                db,
+                recipient=submitter,
+                title="CallTone context ticket reviewed",
+                company=ticket.get("company_name", ""),
+                field=ticket.get("field_name", ""),
+                status=new_status,
+                actor=current_user,
+                ticket_id=ticket_id,
+            )
+    except Exception as exc:
+        log.warning(
+            "email.context_ticket_review_notification_failed",
+            extra={"event": "context_ticket_review_notification_failed", "ticket_id": ticket_id, "err": str(exc)},
+        )
     return ticket
 
 

@@ -1,11 +1,17 @@
-"""Seed the database with roles, users, clients, and mock call data."""
+"""Seed the database with roles, users, clients, and mock call data.
 
+Demo user passwords are intentionally not embedded as source constants. Tests
+opt into deterministic values via environment variables; real deployments must
+provide seed passwords explicitly or receive random one-time hashes.
+"""
+
+import os
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from app.database import SessionLocal, Base, engine
+from app.database import SessionLocal, Base, engine, settings
 from app.models import (
     Client, Role, User, Employee, Customer, Call, Transcript, QaReport,
     _compute_grade,
@@ -13,7 +19,21 @@ from app.models import (
 from app.security import hash_password
 
 
+def _seed_credentials(email_env: str, password_env: str) -> tuple[str, str] | None:
+    """Return env-provided seed credentials, or None when not configured.
+
+    This prevents production from silently creating unknown privileged users.
+    Tests set these env vars explicitly in conftest.py.
+    """
+    email = os.getenv(email_env)
+    password = os.getenv(password_env)
+    if email and password:
+        return email.strip().lower(), password
+    return None
+
+
 ROLES = [
+    {"name": "owner", "display_name": "Owner"},
     {"name": "super_admin", "display_name": "Super Admin"},
     {"name": "admin", "display_name": "Admin"},
     {"name": "manager", "display_name": "Manager"},
@@ -30,29 +50,29 @@ CLIENTS = [
 USERS = [
     {
         "full_name": "Sarah Chen",
-        "email": "admin@calltone.ai",
-        "password": "Admin123!",
+        "email_env": "CALLTONE_SEED_SUPER_ADMIN_EMAIL",
+        "password_env": "CALLTONE_SEED_SUPER_ADMIN_PASSWORD",
         "role": "super_admin",
         "client_name": None,
     },
     {
         "full_name": "Maya QA",
-        "email": "qa@calltone.ai",
-        "password": "Qa123456!",
+        "email_env": "CALLTONE_SEED_QA_EMAIL",
+        "password_env": "CALLTONE_SEED_QA_PASSWORD",
         "role": "qa",
         "client_name": "BankServ Global",
     },
     {
         "full_name": "Agent One",
-        "email": "agent1@calltone.ai",
-        "password": "Agent123!",
+        "email_env": "CALLTONE_SEED_AGENT1_EMAIL",
+        "password_env": "CALLTONE_SEED_AGENT1_PASSWORD",
         "role": "agent",
         "client_name": "BankServ Global",
     },
     {
         "full_name": "Agent Two",
-        "email": "agent2@calltone.ai",
-        "password": "Agent123!",
+        "email_env": "CALLTONE_SEED_AGENT2_EMAIL",
+        "password_env": "CALLTONE_SEED_AGENT2_PASSWORD",
         "role": "agent",
         "client_name": "BankServ Global",
     },
@@ -266,8 +286,16 @@ def main():
         db.commit()
 
         # ── Users ──
+        seeded_agent_emails = {}
         for user_data in USERS:
-            if db.query(User).filter(User.email == user_data["email"]).first():
+            credentials = _seed_credentials(user_data["email_env"], user_data["password_env"])
+            if not credentials:
+                continue
+
+            email, password = credentials
+            seeded_agent_emails[user_data["password_env"]] = email
+
+            if db.query(User).filter(User.email == email).first():
                 continue
 
             role = db.query(Role).filter(Role.name == user_data["role"]).first()
@@ -278,8 +306,8 @@ def main():
             db.add(
                 User(
                     full_name=user_data["full_name"],
-                    email=user_data["email"],
-                    password_hash=hash_password(user_data["password"]),
+                    email=email,
+                    password_hash=hash_password(password),
                     role_id=role.id,
                     client_id=client.id if client else None,
                     is_active=True,
@@ -291,7 +319,7 @@ def main():
         if db.query(Employee).count() > 0:
             print("QA data already seeded — skipping.")
         else:
-            _seed_qa_data(db)
+            _seed_qa_data(db, seeded_agent_emails)
 
         print("Seed completed successfully.")
 
@@ -299,7 +327,8 @@ def main():
         db.close()
 
 
-def _seed_qa_data(db):
+def _seed_qa_data(db, seeded_agent_emails=None):
+    seeded_agent_emails = seeded_agent_emails or {}
     # Create QA employee
     qa_emp = Employee(
         id=str(uuid.uuid4()),
@@ -312,7 +341,11 @@ def _seed_qa_data(db):
 
     # Create agents — link to their User records via user_id
     agents = []
-    agent_user_emails = ["agent1@calltone.ai", "agent2@calltone.ai", None]
+    agent_user_emails = [
+        seeded_agent_emails.get("CALLTONE_SEED_AGENT1_PASSWORD"),
+        seeded_agent_emails.get("CALLTONE_SEED_AGENT2_PASSWORD"),
+        None,
+    ]
     agent_names = ["Agent One", "Agent Two", "Rania Mahmoud"]
     for i, (name, email) in enumerate(zip(agent_names, agent_user_emails), start=1):
         user_id = None

@@ -1,8 +1,8 @@
 import type { UserRole } from "@/contexts/AuthContext";
 
-export const ADMIN_AREA_ROLES: UserRole[] = ["super_admin", "admin", "manager", "viewer"];
-export const ADMIN_MUTATION_ROLES: UserRole[] = ["super_admin", "admin"];
-export const QA_TOOL_ROLES: UserRole[] = ["qa", "admin", "super_admin"];
+export const ADMIN_AREA_ROLES: UserRole[] = ["owner", "super_admin", "admin", "manager", "viewer"];
+export const ADMIN_MUTATION_ROLES: UserRole[] = ["owner", "super_admin", "admin"];
+export const QA_TOOL_ROLES: UserRole[] = ["qa", "owner", "admin", "super_admin"];
 
 export function roleHome(role?: UserRole | null): string {
   if (!role) return "/login";

@@ -299,7 +299,8 @@ const TicketsTab = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ companyName: "", fieldName: "", oldText: "", newText: "", reason: "" });
   const [creating, setCreating] = useState(false);
-  const canReviewTickets = user?.role === "admin" || user?.role === "super_admin";
+  const canReviewTickets =
+    user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
 
   const { data, isLoading } = useQuery({
     queryKey: ["context-tickets"],

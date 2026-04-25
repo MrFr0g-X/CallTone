@@ -38,9 +38,10 @@ const scoreClass = (score: number) => {
 const CallDetailPage = () => {
   const { callId } = useParams();
   const { user } = useAuth();
-  const navRole = user?.role === "agent" ? "agent" : user?.role === "admin" || user?.role === "super_admin" ? "admin" : "qa";
-  const backPath = user?.role === "agent" ? "/agent/dashboard" : user?.role === "admin" || user?.role === "super_admin" ? "/admin/dashboard" : "/qa/dashboard";
-  const backLabel = user?.role === "agent" ? "Back to Agent Dashboard" : user?.role === "admin" || user?.role === "super_admin" ? "Back to Admin Dashboard" : "Back to Dashboard";
+  const isAdminAreaRole = user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
+  const navRole = user?.role === "agent" ? "agent" : isAdminAreaRole ? "admin" : "qa";
+  const backPath = user?.role === "agent" ? "/agent/dashboard" : isAdminAreaRole ? "/admin/dashboard" : "/qa/dashboard";
+  const backLabel = user?.role === "agent" ? "Back to Agent Dashboard" : isAdminAreaRole ? "Back to Admin Dashboard" : "Back to Dashboard";
 
   const { data: call, isLoading, isError } = useQuery({
     queryKey: ["call-detail-real", callId],

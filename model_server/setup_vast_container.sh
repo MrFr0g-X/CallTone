@@ -49,8 +49,13 @@ pip install \
     "torch==2.4.1+cu121" "torchaudio==2.4.1+cu121" >/dev/null
 
 log "installing llama-cpp-python with CUDA"
-CMAKE_ARGS="-DGGML_CUDA=on" pip install --no-binary=llama-cpp-python \
-    "llama-cpp-python==0.3.20" >/dev/null
+# Build locally for the active GPU host. Prebuilt CUDA wheels can SIGILL on
+# Vast CPU variants during llama.cpp inference, so production deploys use a
+# source build. Limit CUDA codegen to A100 (SM80) instead of every legacy arch.
+FORCE_CMAKE=1 \
+CMAKE_BUILD_PARALLEL_LEVEL="${CMAKE_BUILD_PARALLEL_LEVEL:-16}" \
+CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=80" \
+    pip install --no-cache-dir --no-binary=llama-cpp-python "llama-cpp-python==0.3.20" >/dev/null
 
 log "installing pyannote + funasr + faster-whisper + onnxruntime-gpu"
 pip install \
