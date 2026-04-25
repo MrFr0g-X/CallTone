@@ -15,4 +15,4 @@ python-multipart
 # dev/test
 pytest>=7
 pytest-cov>=4
-httpx>=0.24
+httpx>=0.28.1
