@@ -15,7 +15,7 @@ GitHub repo -> Settings -> Environments
 | Environment | Purpose | Protection |
 |---|---|---|
 | `staging` | Automatic deploy after `main` CI passes. | No manual approval required. |
-| `production` | Production deploy from `vX.Y.Z` tags. | Require at least one reviewer before deployment. |
+| `production` | Production deploy from `vX.Y.Z` tags. | Manual dispatch is required on the current GitHub plan because reviewer protection is not supported. |
 
 ## Repository Variables
 
@@ -132,7 +132,15 @@ git tag -a v1.0.0 -m "CallTone v1.0.0 graduation demo release"
 git push origin v1.0.0
 ```
 
-The production deploy workflow will start from the tag and wait for approval in the GitHub `production` environment.
+Then manually run:
+
+```text
+GitHub -> Actions -> Deploy -> Run workflow
+target=production
+version_tag=v1.0.0
+```
+
+The workflow validates that the tag matches `vX.Y.Z` and that CI passed for that tag's commit before deploying. This manual workflow dispatch is the current production approval gate because GitHub rejected environment reviewer/wait-timer rules on the repository plan.
 
 ## What The Workflow Never Uploads
 
