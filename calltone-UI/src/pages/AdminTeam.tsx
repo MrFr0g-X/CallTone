@@ -20,7 +20,7 @@ import BubbleToggle from "@/components/BubbleToggle";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { canManageAdminUsers } from "@/lib/roles";
+import { canManageAdminUsers, isPlatformScope } from "@/lib/roles";
 
 type AdminRole = "owner" | "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 type AssignableRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
@@ -81,14 +81,16 @@ const statusIcons = {
 
 const baseRoleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
 const ownerRoleOptions = ["super_admin", ...baseRoleOptions] as const satisfies readonly AssignableRole[];
+const tenantRoleOptions = ["manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
 
 const AdminTeam = () => {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
-  const canMutateUsers = canManageAdminUsers(currentUser?.role);
+  const canMutateUsers = currentUser?.capabilities?.canManageUsers ?? canManageAdminUsers(currentUser?.role);
   const isOwner = currentUser?.role === "owner";
-  const visibleRoleOptions = isOwner ? ownerRoleOptions : baseRoleOptions;
+  const platformScope = isPlatformScope(currentUser);
+  const visibleRoleOptions = platformScope ? (isOwner ? ownerRoleOptions : baseRoleOptions) : tenantRoleOptions;
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
@@ -100,7 +102,8 @@ const AdminTeam = () => {
   const [inviteForm, setInviteForm] = useState({
     name: "",
     email: "",
-    role: "viewer" as AssignableRole,
+    role: (platformScope ? "viewer" : "qa") as AssignableRole,
+    clientId: null as number | null,
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -111,11 +114,21 @@ const AdminTeam = () => {
     },
   });
 
+  const { data: clientsData } = useQuery({
+    queryKey: ["admin-clients-for-invite"],
+    queryFn: async () => {
+      const response = await adminApi.getClients();
+      return response.data;
+    },
+    enabled: canMutateUsers && platformScope,
+  });
+
   const inviteMutation = useMutation({
     mutationFn: async (payload: {
       name: string;
       email: string;
       role: AssignableRole;
+      clientId?: number | null;
     }) => {
       const response = await adminApi.inviteUser(payload);
       return response.data;
@@ -143,7 +156,7 @@ const AdminTeam = () => {
       console.log("Invite URL:", data.inviteUrl);
 
       setShowInviteModal(false);
-      setInviteForm({ name: "", email: "", role: "viewer" });
+      setInviteForm({ name: "", email: "", role: platformScope ? "viewer" : "qa", clientId: null });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (error: unknown) => {
@@ -261,11 +274,20 @@ const AdminTeam = () => {
       });
       return;
     }
+    if (platformScope && inviteForm.role !== "super_admin" && !inviteForm.clientId) {
+      toast({
+        title: "Client required",
+        description: "Select the client/company this user belongs to.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     inviteMutation.mutate({
       name: inviteForm.name,
       email: inviteForm.email,
       role: inviteForm.role,
+      clientId: platformScope && inviteForm.role !== "super_admin" ? inviteForm.clientId : null,
     });
   };
 
@@ -423,6 +445,11 @@ const AdminTeam = () => {
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
+                      {user.clientId ? (
+                        <p className="text-[11px] text-muted-foreground/80">Client #{user.clientId}</p>
+                      ) : (
+                        <p className="text-[11px] text-accent/80">Platform account</p>
+                      )}
                     </div>
                   </div>
 
@@ -654,7 +681,13 @@ const AdminTeam = () => {
                     {visibleRoleOptions.map((r) => (
                       <button
                         key={r}
-                        onClick={() => setInviteForm({ ...inviteForm, role: r })}
+                        onClick={() =>
+                          setInviteForm({
+                            ...inviteForm,
+                            role: r,
+                            clientId: r === "super_admin" ? null : inviteForm.clientId,
+                          })
+                        }
                         className={cn(
                           "px-3 py-2 rounded-xl text-xs font-medium transition-all border",
                           inviteForm.role === r
@@ -667,6 +700,34 @@ const AdminTeam = () => {
                     ))}
                   </div>
                 </div>
+
+                {platformScope && inviteForm.role !== "super_admin" && (
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                      Client / Company
+                    </label>
+                    <select
+                      value={inviteForm.clientId ?? ""}
+                      onChange={(e) =>
+                        setInviteForm({
+                          ...inviteForm,
+                          clientId: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      className="w-full h-10 px-4 rounded-xl glass-input text-sm"
+                    >
+                      <option value="">Select company...</option>
+                      {(clientsData?.clients ?? []).map((client) => (
+                        <option key={client.id} value={client.id}>
+                          {client.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                      Tenant users are isolated to this company. They cannot see or manage other companies' calls, context, or users.
+                    </p>
+                  </div>
+                )}
 
                 <motion.button
                   whileHover={{ scale: 1.01 }}

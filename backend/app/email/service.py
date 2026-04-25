@@ -76,7 +76,12 @@ def send_rendered(
     recipient_user_id: int | None = None,
     metadata: dict[str, Any] | None = None,
 ) -> EmailEvent:
+    client_id = None
+    if recipient_user_id is not None:
+        recipient = db.query(User).filter(User.id == recipient_user_id).first()
+        client_id = recipient.client_id if recipient else None
     event = EmailEvent(
+        client_id=client_id,
         event_type=event_type,
         recipient_email=recipient_email.strip().lower(),
         recipient_user_id=recipient_user_id,
@@ -282,4 +287,3 @@ def notify_admins(db: Session, *, event_type: str, rendered: RenderedEmail, meta
                 )
             )
     return events
-

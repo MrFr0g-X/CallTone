@@ -62,12 +62,32 @@ export function apiErrorMessage(error: unknown, fallback: string): string {
 
 export type ApiUserRole = "owner" | "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
 
+export interface UserCapabilities {
+  canUseAdmin?: boolean;
+  canManageUsers?: boolean;
+  canManageClients?: boolean;
+  canUseQa?: boolean;
+  canUploadCalls?: boolean;
+  canManageContext?: boolean;
+  canViewAgentDashboard?: boolean;
+  canViewAgentCalls?: boolean;
+  canPlayAudio?: boolean;
+  canViewTranscript?: boolean;
+  canViewScores?: boolean;
+  canViewEvidence?: boolean;
+  canViewAiReport?: boolean;
+  canViewTrends?: boolean;
+}
+
 export interface AuthApiUser {
   id: number;
   name: string;
   email: string;
   role: ApiUserRole;
   clientId: number | null;
+  clientName?: string | null;
+  roleScope?: "platform" | "tenant";
+  capabilities?: UserCapabilities;
 }
 
 export interface LoginResponse {
@@ -82,6 +102,9 @@ export interface MeResponse {
   email: string;
   role: ApiUserRole;
   clientId: number | null;
+  clientName?: string | null;
+  roleScope?: "platform" | "tenant";
+  capabilities?: UserCapabilities;
   isActive: boolean;
   lastLoginAt: string | null;
 }
@@ -133,6 +156,29 @@ export interface AdminClientsResponse {
   clients: AdminClientItem[];
 }
 
+export interface ClientPolicy {
+  clientId: number;
+  agentPortalEnabled: boolean;
+  agentCanViewCallList: boolean;
+  agentCanOpenCallDetail: boolean;
+  agentCanPlayAudio: boolean;
+  agentCanViewTranscript: boolean;
+  agentCanViewScores: boolean;
+  agentCanViewEvidence: boolean;
+  agentCanViewAiReport: boolean;
+  agentCanViewTrends: boolean;
+  qaCanUploadCalls: boolean;
+  qaCanManageContextTickets: boolean;
+  qaScope: "company" | "assigned_team" | "own_uploads";
+  tenantAdminCanInviteAdmins: boolean;
+  updatedAt: string | null;
+}
+
+export interface ClientPolicyResponse {
+  client: Pick<AdminClientItem, "id" | "name" | "status" | "plan">;
+  policy: ClientPolicy;
+}
+
 export type AdminTeamRole = "owner" | "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 export type AdminTeamStatus = "active" | "disabled" | "invited";
 
@@ -155,6 +201,7 @@ export interface InviteUserPayload {
   name: string;
   email: string;
   role: "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
+  clientId?: number | null;
 }
 
 export interface InviteUserResponse {
@@ -318,6 +365,12 @@ export const callsApi = {
 export const adminApi = {
   getDashboard: () => apiClient.get<AdminDashboardResponse>("/admin/dashboard"),
   getClients: () => apiClient.get<AdminClientsResponse>("/admin/clients"),
+  getClientPolicy: (clientId?: number | null) =>
+    apiClient.get<ClientPolicyResponse>("/admin/client-policy", {
+      params: clientId ? { client_id: clientId } : undefined,
+    }),
+  updateClientPolicy: (payload: Partial<ClientPolicy> & { clientId?: number | null }) =>
+    apiClient.put<ClientPolicyResponse>("/admin/client-policy", payload),
   getUsers: () => apiClient.get<AdminUsersResponse>("/admin/users"),
   inviteUser: (payload: InviteUserPayload) =>
     apiClient.post<InviteUserResponse>("/admin/users/invite", payload),

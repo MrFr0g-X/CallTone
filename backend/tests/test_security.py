@@ -12,9 +12,19 @@ import pytest
 
 from app.main import _sanitize_filename
 from app.rate_limit import login_limiter, invite_accept_limiter
+from app.database import SessionLocal
+from app.models import Client
 
 
 # ── C-2: HTTP security headers ──────────────────────────────────────────────
+
+
+def _bankserv_client_id() -> int:
+    db = SessionLocal()
+    try:
+        return db.query(Client).filter(Client.name == "BankServ Global").first().id
+    finally:
+        db.close()
 
 
 @pytest.mark.parametrize(
@@ -93,7 +103,7 @@ def test_filename_sanitization_keeps_normal_names():
 def _create_invite(client, admin_token):
     r = client.post(
         "/api/admin/users/invite",
-        json={"name": "Test User", "email": "lengthtest@calltone.ai", "role": "qa"},
+        json={"name": "Test User", "email": "lengthtest@calltone.ai", "role": "qa", "clientId": _bankserv_client_id()},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert r.status_code == 200, r.text
@@ -118,7 +128,7 @@ def test_password_too_short_still_rejected(client, admin_token):
     # Use a brand new email so the invite endpoint is happy
     inv = client.post(
         "/api/admin/users/invite",
-        json={"name": "Short PW", "email": "shortpw@calltone.ai", "role": "qa"},
+        json={"name": "Short PW", "email": "shortpw@calltone.ai", "role": "qa", "clientId": _bankserv_client_id()},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
     assert inv.status_code == 200, inv.text

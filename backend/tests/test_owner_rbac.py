@@ -214,7 +214,4 @@ def test_unlinked_agent_dashboard_does_not_leak_global_scores(client):
 
     response = client.get("/api/agent/dashboard", headers=_auth(agent_token))
 
-    assert response.status_code == 200, response.text
-    body = response.json()
-    assert body["scores"]["overall"] == 0
-    assert body["trend"] == []
+    assert response.status_code == 403, response.text

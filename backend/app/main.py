@@ -26,13 +26,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from sqlalchemy import func, text
+from sqlalchemy import func, text, or_
 
 from app.database import Base, engine, get_db, settings, SessionLocal
 from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
-    PipelineJob, PipelineSettings, EmailEvent, EmailPreference,
+    PipelineJob, PipelineSettings, ClientPolicy, EmailEvent, EmailPreference,
     _compute_grade,
 )
 from app.email import service as email_service
@@ -53,14 +53,86 @@ QA_OPERATOR_ROLES = ("qa", OWNER_ROLE, "admin", "super_admin")
 QA_CALL_ROLES = ("qa", OWNER_ROLE, "admin", "super_admin", "agent")
 OWNER_ASSIGNABLE_ROLES = ("super_admin", "admin", "manager", "viewer", "qa", "agent")
 ADMIN_ASSIGNABLE_ROLES = ("admin", "manager", "viewer", "qa", "agent")
+PLATFORM_ROLES = (OWNER_ROLE, "super_admin")
+TENANT_ADMIN_ROLES = ("admin", "manager", "viewer")
+TENANT_MUTATION_ROLES = ("admin",)
+TENANT_QA_ROLES = ("qa", "admin")
+TENANT_USER_ROLES = ("admin", "manager", "viewer", "qa", "agent")
+CLIENT_POLICY_BOOLEAN_FIELDS = (
+    "agent_portal_enabled",
+    "agent_can_view_call_list",
+    "agent_can_open_call_detail",
+    "agent_can_play_audio",
+    "agent_can_view_transcript",
+    "agent_can_view_scores",
+    "agent_can_view_evidence",
+    "agent_can_view_ai_report",
+    "agent_can_view_trends",
+    "qa_can_upload_calls",
+    "qa_can_manage_context_tickets",
+    "tenant_admin_can_invite_admins",
+)
+CLIENT_POLICY_QA_SCOPES = ("company", "assigned_team", "own_uploads")
+
+
+def _role_name(user: User) -> str:
+    return user.role.name if user.role else ""
+
+
+def _is_platform_user(user: User) -> bool:
+    """CallTone operators. These accounts are not scoped to one client."""
+    role = _role_name(user)
+    if role == OWNER_ROLE:
+        return True
+    if role == "super_admin" and user.client_id is None:
+        return True
+    # Legacy safety: an admin without a client is treated as a platform admin
+    # until the explicit platform_admin role migration is done.
+    if role == "admin" and user.client_id is None:
+        return True
+    return False
+
+
+def _is_tenant_user(user: User) -> bool:
+    return not _is_platform_user(user)
+
+
+def _tenant_client_id(user: User) -> int:
+    if user.client_id is None:
+        raise HTTPException(status_code=403, detail="Tenant user is not assigned to a client")
+    return int(user.client_id)
+
+
+def _can_read_admin_area(user: User) -> bool:
+    role = _role_name(user)
+    return _is_platform_user(user) or role in ADMIN_READ_ROLES
 
 
 def _can_mutate_users(user: User) -> bool:
-    return _role_name(user) in ADMIN_MUTATION_ROLES
+    role = _role_name(user)
+    if _is_platform_user(user):
+        return role in ADMIN_MUTATION_ROLES
+    return role in TENANT_MUTATION_ROLES and user.client_id is not None
+
+
+def _can_use_qa_tools(user: User) -> bool:
+    role = _role_name(user)
+    return _is_platform_user(user) or (role in ("qa", "admin") and user.client_id is not None)
+
+
+def _can_read_qa_calls(user: User) -> bool:
+    role = _role_name(user)
+    return _can_use_qa_tools(user) or role == "agent"
 
 
 def _assignable_roles_for(user: User) -> tuple[str, ...]:
-    return OWNER_ASSIGNABLE_ROLES if _role_name(user) == OWNER_ROLE else ADMIN_ASSIGNABLE_ROLES
+    if _role_name(user) == OWNER_ROLE:
+        return OWNER_ASSIGNABLE_ROLES
+    if _is_platform_user(user):
+        return ADMIN_ASSIGNABLE_ROLES
+    if _role_name(user) == "admin" and user.client_id is not None:
+        return ("qa", "agent", "viewer", "manager")
+    return ()
 
 
 def _guard_protected_admin_target(current_user: User, target_user: User, action: str) -> None:
@@ -70,6 +142,19 @@ def _guard_protected_admin_target(current_user: User, target_user: User, action:
         raise HTTPException(status_code=403, detail=f"Only the Owner can {action} the Owner account")
     if target_role == "super_admin" and actor_role != OWNER_ROLE:
         raise HTTPException(status_code=403, detail=f"Only the Owner can {action} Super Admin accounts")
+    if _is_tenant_user(current_user):
+        actor_client_id = _tenant_client_id(current_user)
+        if target_user.client_id != actor_client_id:
+            raise HTTPException(status_code=403, detail=f"Cannot {action} users outside your company")
+        if target_role in PLATFORM_ROLES or target_user.client_id is None:
+            raise HTTPException(status_code=403, detail=f"Cannot {action} platform users")
+
+
+def _can_manage_client_policy(user: User) -> bool:
+    role = _role_name(user)
+    if _is_platform_user(user):
+        return role in ADMIN_MUTATION_ROLES
+    return role == "admin" and user.client_id is not None
 
 
 APP_DIR = Path(__file__).resolve().parent
@@ -232,26 +317,101 @@ def _run_startup_migrations():
     from sqlalchemy import text, inspect
     with engine.connect() as conn:
         inspector = inspect(engine)
+
+        def _cols(table_name: str) -> list[str]:
+            return [c["name"] for c in inspector.get_columns(table_name)]
+
+        def _add_client_id_if_missing(table_name: str) -> None:
+            if "client_id" not in _cols(table_name):
+                conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN client_id INTEGER REFERENCES clients(id)"))
+                conn.commit()
+
         emp_cols = [c["name"] for c in inspector.get_columns("employees")]
         if "user_id" not in emp_cols:
             conn.execute(text("ALTER TABLE employees ADD COLUMN user_id INTEGER REFERENCES users(id)"))
             conn.commit()
+        _add_client_id_if_missing("employees")
 
         call_cols = [c["name"] for c in inspector.get_columns("calls")]
         if "storage_path" not in call_cols:
             conn.execute(text("ALTER TABLE calls ADD COLUMN storage_path VARCHAR(512)"))
             conn.commit()
+        _add_client_id_if_missing("customers")
+        _add_client_id_if_missing("calls")
+        _add_client_id_if_missing("pipeline_jobs")
+        _add_client_id_if_missing("pipeline_settings")
+        _add_client_id_if_missing("email_events")
 
-    # Ensure the singleton pipeline settings row exists
     db = SessionLocal()
     try:
+        default_client = (
+            db.query(Client)
+            .filter(Client.status.in_(["active", "trial"]))
+            .order_by(Client.id.asc())
+            .first()
+        )
+
+        # Backfill tenant ownership. Existing deployments started as a
+        # single-tenant demo, so safe inference is: employee.user.client_id when
+        # linked, otherwise the first active/trial client.
+        employees = db.query(Employee).all()
+        for employee in employees:
+            if employee.client_id is not None:
+                continue
+            if employee.user and employee.user.client_id is not None:
+                employee.client_id = employee.user.client_id
+            elif default_client is not None:
+                employee.client_id = default_client.id
+
+        customers = db.query(Customer).all()
+        for customer in customers:
+            if customer.client_id is None and default_client is not None:
+                customer.client_id = default_client.id
+
+        calls = db.query(Call).all()
+        for call in calls:
+            if call.client_id is None:
+                if call.employee and call.employee.client_id is not None:
+                    call.client_id = call.employee.client_id
+                elif default_client is not None:
+                    call.client_id = default_client.id
+
+        jobs = db.query(PipelineJob).all()
+        for job in jobs:
+            if job.client_id is None:
+                call = db.query(Call).filter(Call.id == job.call_id).first()
+                if call and call.client_id is not None:
+                    job.client_id = call.client_id
+                elif default_client is not None:
+                    job.client_id = default_client.id
+
+        for event in db.query(EmailEvent).all():
+            if event.client_id is None and event.recipient and event.recipient.client_id is not None:
+                event.client_id = event.recipient.client_id
+
+        # Ensure global fallback row and per-client settings/policies exist.
         ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
         if not ps:
-            db.add(PipelineSettings(id=1, company_name=_default_pipeline_company()))
-            db.commit()
-        elif ps.report_mode == "none":
+            ps = PipelineSettings(id=1, client_id=None, company_name=_default_pipeline_company())
+            db.add(ps)
+        if ps.report_mode == "none":
             ps.report_mode = "narrative"
-            db.commit()
+
+        next_pipeline_settings_id = (db.query(func.max(PipelineSettings.id)).scalar() or 0) + 1
+        for client in db.query(Client).all():
+            if not db.query(PipelineSettings).filter(PipelineSettings.client_id == client.id).first():
+                db.add(
+                    PipelineSettings(
+                        id=next_pipeline_settings_id,
+                        client_id=client.id,
+                        company_name=client.name if _context_path(client.name).exists() else _default_pipeline_company(),
+                    )
+                )
+                next_pipeline_settings_id += 1
+            if not db.query(ClientPolicy).filter(ClientPolicy.client_id == client.id).first():
+                db.add(ClientPolicy(client_id=client.id))
+
+        db.commit()
     finally:
         db.close()
 
@@ -501,15 +661,257 @@ def _user_from_call_media_token(token: str, call_id: str, db: Session) -> User:
     return user
 
 
-def _role_name(user: User) -> str:
-    return user.role.name if user.role else ""
-
-
 def _require_role(user: User, allowed: set[str] | tuple[str, ...] | list[str], detail: str = "Not authorized") -> str:
     role = _role_name(user)
     if role not in allowed:
         raise HTTPException(status_code=403, detail=detail)
     return role
+
+
+def _require_admin_read(current_user: User) -> None:
+    if not _can_read_admin_area(current_user):
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+
+def _require_qa_operator(current_user: User) -> None:
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+
+
+def _get_client_policy(db: Session, client_id: int | None) -> ClientPolicy | None:
+    if client_id is None:
+        return None
+    policy = db.query(ClientPolicy).filter(ClientPolicy.client_id == client_id).first()
+    if not policy:
+        policy = ClientPolicy(client_id=client_id)
+        db.add(policy)
+        db.commit()
+        db.refresh(policy)
+    return policy
+
+
+def _policy_client_id_for_request(current_user: User, client_id: int | None) -> int:
+    if _is_platform_user(current_user):
+        if client_id is None:
+            raise HTTPException(status_code=400, detail="client_id is required for platform users")
+        return int(client_id)
+    return _tenant_client_id(current_user)
+
+
+def _serialize_client_policy(policy: ClientPolicy) -> dict:
+    return {
+        "clientId": policy.client_id,
+        "agentPortalEnabled": bool(policy.agent_portal_enabled),
+        "agentCanViewCallList": bool(policy.agent_can_view_call_list),
+        "agentCanOpenCallDetail": bool(policy.agent_can_open_call_detail),
+        "agentCanPlayAudio": bool(policy.agent_can_play_audio),
+        "agentCanViewTranscript": bool(policy.agent_can_view_transcript),
+        "agentCanViewScores": bool(policy.agent_can_view_scores),
+        "agentCanViewEvidence": bool(policy.agent_can_view_evidence),
+        "agentCanViewAiReport": bool(policy.agent_can_view_ai_report),
+        "agentCanViewTrends": bool(policy.agent_can_view_trends),
+        "qaCanUploadCalls": bool(policy.qa_can_upload_calls),
+        "qaCanManageContextTickets": bool(policy.qa_can_manage_context_tickets),
+        "qaScope": policy.qa_scope,
+        "tenantAdminCanInviteAdmins": bool(policy.tenant_admin_can_invite_admins),
+        "updatedAt": policy.updated_at.isoformat() if policy.updated_at else None,
+    }
+
+
+def _apply_client_policy_payload(policy: ClientPolicy, payload: dict) -> None:
+    field_map = {
+        "agentPortalEnabled": "agent_portal_enabled",
+        "agentCanViewCallList": "agent_can_view_call_list",
+        "agentCanOpenCallDetail": "agent_can_open_call_detail",
+        "agentCanPlayAudio": "agent_can_play_audio",
+        "agentCanViewTranscript": "agent_can_view_transcript",
+        "agentCanViewScores": "agent_can_view_scores",
+        "agentCanViewEvidence": "agent_can_view_evidence",
+        "agentCanViewAiReport": "agent_can_view_ai_report",
+        "agentCanViewTrends": "agent_can_view_trends",
+        "qaCanUploadCalls": "qa_can_upload_calls",
+        "qaCanManageContextTickets": "qa_can_manage_context_tickets",
+        "tenantAdminCanInviteAdmins": "tenant_admin_can_invite_admins",
+    }
+    for api_name, model_name in field_map.items():
+        if api_name in payload:
+            setattr(policy, model_name, bool(payload[api_name]))
+
+    if "qaScope" in payload:
+        qa_scope = str(payload["qaScope"]).strip()
+        if qa_scope not in CLIENT_POLICY_QA_SCOPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"qaScope must be one of: {', '.join(CLIENT_POLICY_QA_SCOPES)}",
+            )
+        policy.qa_scope = qa_scope
+
+    policy.updated_at = datetime.now(timezone.utc)
+
+
+def _client_ids_visible_to_user(current_user: User) -> list[int] | None:
+    """Return None for platform-wide users; otherwise the single tenant id."""
+    if _is_platform_user(current_user):
+        return None
+    return [_tenant_client_id(current_user)]
+
+
+def _scope_users_query(query, current_user: User):
+    if _is_platform_user(current_user):
+        return query
+    return query.filter(User.client_id == _tenant_client_id(current_user))
+
+
+def _scope_employee_query(query, current_user: User):
+    if _is_platform_user(current_user):
+        return query
+    return query.filter(Employee.client_id == _tenant_client_id(current_user))
+
+
+def _scope_call_query(query, current_user: User):
+    if _is_platform_user(current_user):
+        return query
+    client_id = _tenant_client_id(current_user)
+    return query.filter(
+        or_(
+            Call.client_id == client_id,
+            # Backward-compatible fallback for legacy rows created before the
+            # migration where Call.client_id is null but Employee.client_id is set.
+            (Call.client_id.is_(None) & (Employee.client_id == client_id)),
+        )
+    )
+
+
+def _scope_pipeline_job_query(query, current_user: User):
+    if _is_platform_user(current_user):
+        return query
+    return query.filter(PipelineJob.client_id == _tenant_client_id(current_user))
+
+
+def _pipeline_settings_for_client(db: Session, client_id: int | None, create: bool = True) -> PipelineSettings | None:
+    query = db.query(PipelineSettings)
+    if client_id is None:
+        settings_row = query.filter(PipelineSettings.client_id.is_(None)).order_by(PipelineSettings.id.asc()).first()
+    else:
+        settings_row = query.filter(PipelineSettings.client_id == client_id).first()
+    if settings_row or not create:
+        return settings_row
+
+    client = db.query(Client).filter(Client.id == client_id).first() if client_id is not None else None
+    settings_row = PipelineSettings(
+        client_id=client_id,
+        company_name=_default_pipeline_company() if client is None else client.name,
+    )
+    db.add(settings_row)
+    db.commit()
+    db.refresh(settings_row)
+    return settings_row
+
+
+def _pipeline_settings_for_user(db: Session, current_user: User, create: bool = True) -> PipelineSettings | None:
+    return _pipeline_settings_for_client(
+        db,
+        None if _is_platform_user(current_user) else _tenant_client_id(current_user),
+        create=create,
+    )
+
+
+def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bool]:
+    """Return server-enforced UI capabilities for the authenticated user."""
+    if role in PLATFORM_ROLES or policy is None:
+        return {
+            "canUseAdmin": True,
+            "canManageUsers": True,
+            "canManageClients": True,
+            "canUseQa": True,
+            "canUploadCalls": True,
+            "canManageContext": True,
+            "canViewAgentDashboard": True,
+            "canViewAgentCalls": True,
+            "canPlayAudio": True,
+            "canViewTranscript": True,
+            "canViewScores": True,
+            "canViewEvidence": True,
+            "canViewAiReport": True,
+            "canViewTrends": True,
+        }
+    if role in ("admin", "manager", "viewer"):
+        return {
+            "canUseAdmin": True,
+            "canManageUsers": role == "admin",
+            "canManageClients": False,
+            "canUseQa": role == "admin",
+            "canUploadCalls": role == "admin" and policy.qa_can_upload_calls,
+            "canManageContext": role == "admin" and policy.qa_can_manage_context_tickets,
+            "canViewAgentDashboard": False,
+            "canViewAgentCalls": False,
+            "canPlayAudio": True,
+            "canViewTranscript": True,
+            "canViewScores": True,
+            "canViewEvidence": True,
+            "canViewAiReport": True,
+            "canViewTrends": True,
+        }
+    if role == "qa":
+        return {
+            "canUseAdmin": False,
+            "canManageUsers": False,
+            "canManageClients": False,
+            "canUseQa": True,
+            "canUploadCalls": policy.qa_can_upload_calls,
+            "canManageContext": policy.qa_can_manage_context_tickets,
+            "canViewAgentDashboard": False,
+            "canViewAgentCalls": False,
+            "canPlayAudio": True,
+            "canViewTranscript": True,
+            "canViewScores": True,
+            "canViewEvidence": True,
+            "canViewAiReport": True,
+            "canViewTrends": True,
+        }
+    if role == "agent":
+        return {
+            "canUseAdmin": False,
+            "canManageUsers": False,
+            "canManageClients": False,
+            "canUseQa": False,
+            "canUploadCalls": False,
+            "canManageContext": False,
+            "canViewAgentDashboard": policy.agent_portal_enabled,
+            "canViewAgentCalls": policy.agent_portal_enabled and policy.agent_can_view_call_list,
+            "canPlayAudio": policy.agent_portal_enabled and policy.agent_can_play_audio,
+            "canViewTranscript": policy.agent_portal_enabled and policy.agent_can_view_transcript,
+            "canViewScores": policy.agent_portal_enabled and policy.agent_can_view_scores,
+            "canViewEvidence": policy.agent_portal_enabled and policy.agent_can_view_evidence,
+            "canViewAiReport": policy.agent_portal_enabled and policy.agent_can_view_ai_report,
+            "canViewTrends": policy.agent_portal_enabled and policy.agent_can_view_trends,
+        }
+    return {}
+
+
+def _context_names_visible_to_user(db: Session, current_user: User) -> set[str] | None:
+    """Return None for platform scope, otherwise the company/context names allowed."""
+    if _is_platform_user(current_user):
+        return None
+    client_id = _tenant_client_id(current_user)
+    names: set[str] = set()
+    client = db.query(Client).filter(Client.id == client_id).first()
+    if client and client.name:
+        names.add(client.name)
+    ps = _pipeline_settings_for_client(db, client_id, create=True)
+    if ps and ps.company_name:
+        names.add(ps.company_name)
+    return {name.strip().lower() for name in names if name and name.strip()}
+
+
+def _ensure_company_allowed_for_user(db: Session, current_user: User, company_name: str) -> str:
+    company_name = str(company_name or "").strip()
+    if not company_name:
+        raise HTTPException(status_code=400, detail="Company name is required")
+    allowed = _context_names_visible_to_user(db, current_user)
+    if allowed is not None and company_name.lower() not in allowed:
+        raise HTTPException(status_code=403, detail="Cannot access another company's context")
+    return company_name
 
 
 def _agent_employee_id(user: User, db: Session) -> str | None:
@@ -519,9 +921,18 @@ def _agent_employee_id(user: User, db: Session) -> str | None:
 
 def _ensure_call_visible_to_user(call: Call, user: User, db: Session) -> None:
     role = _role_name(user)
-    if role in QA_OPERATOR_ROLES:
+    if _is_platform_user(user):
+        return
+    client_id = _tenant_client_id(user)
+    call_client_id = call.client_id or (call.employee.client_id if call.employee else None)
+    if call_client_id != client_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this call")
+    if role in ("admin", "qa"):
         return
     if role == "agent":
+        policy = _get_client_policy(db, client_id)
+        if policy and not policy.agent_portal_enabled:
+            raise HTTPException(status_code=403, detail="Agent portal is disabled by company policy")
         employee_id = _agent_employee_id(user, db)
         if employee_id and call.employee_id == employee_id:
             return
@@ -668,6 +1079,8 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
     db.refresh(user)
 
     token = create_access_token(user.id)
+    role_name = user.role.name if user.role else ""
+    policy = _get_client_policy(db, user.client_id) if user.client_id else None
 
     return {
         "access_token": token,
@@ -676,20 +1089,31 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
             "id": user.id,
             "name": user.full_name,
             "email": user.email,
-            "role": user.role.name,
+            "role": role_name,
             "clientId": user.client_id,
+            "clientName": user.client.name if user.client else None,
+            "roleScope": "platform" if _is_platform_user(user) else "tenant",
+            "capabilities": _policy_capabilities(policy, role_name),
         },
     }
 
 
 @app.get(f"{settings.API_V1_PREFIX}/auth/me")
-def get_me(current_user: User = Depends(get_current_user)):
+def get_me(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    role_name = current_user.role.name if current_user.role else ""
+    policy = _get_client_policy(db, current_user.client_id) if current_user.client_id else None
     return {
         "id": current_user.id,
         "name": current_user.full_name,
         "email": current_user.email,
-        "role": current_user.role.name,
+        "role": role_name,
         "clientId": current_user.client_id,
+        "clientName": current_user.client.name if current_user.client else None,
+        "roleScope": "platform" if _is_platform_user(current_user) else "tenant",
+        "capabilities": _policy_capabilities(policy, role_name),
         "isActive": current_user.is_active,
         "lastLoginAt": current_user.last_login_at,
     }
@@ -699,37 +1123,45 @@ def get_admin_dashboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in ADMIN_READ_ROLES:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    _require_admin_read(current_user)
+    visible_client_ids = _client_ids_visible_to_user(current_user)
+    client_query = db.query(Client)
+    if visible_client_ids is not None:
+        client_query = client_query.filter(Client.id.in_(visible_client_ids))
 
-    active_clients = db.query(Client).filter(Client.status == "active").count()
-    trial_clients = db.query(Client).filter(Client.status == "trial").count()
-    total_clients = db.query(Client).count()
+    active_clients = client_query.filter(Client.status == "active").count()
+    trial_clients = client_query.filter(Client.status == "trial").count()
+    total_clients = client_query.count()
 
-    total_agents = (
-        db.query(User)
-        .join(User.role)
-        .filter(User.role.has(name="agent"))
-        .count()
-    )
+    user_query = db.query(User).join(User.role)
+    call_query = db.query(Call).join(Employee, Call.employee_id == Employee.id)
+    report_query = db.query(QaReport).join(Call, QaReport.call_id == Call.id).join(Employee, Call.employee_id == Employee.id)
+    if visible_client_ids is not None:
+        user_query = user_query.filter(User.client_id.in_(visible_client_ids))
+        call_query = _scope_call_query(call_query, current_user)
+        report_query = _scope_call_query(report_query, current_user)
+
+    total_agents = user_query.filter(User.role.has(name="agent")).count()
 
     # Compute real stats from call data
-    total_calls = db.query(Call).count()
-    completed_calls = db.query(Call).filter(Call.status == "COMPLETED").count()
+    total_calls = call_query.count()
+    completed_calls = call_query.filter(Call.status == "COMPLETED").count()
 
-    avg_score_row = db.query(func.avg(QaReport.overall_score)).first()
+    avg_score_row = report_query.with_entities(func.avg(QaReport.overall_score)).first()
     avg_quality_score = round(avg_score_row[0], 1) if avg_score_row and avg_score_row[0] else 0
 
     # Build monthly call trend from actual data
-    calls_by_month = (
+    calls_by_month_query = (
         db.query(
             func.extract("month", Call.call_time).label("m"),
             func.count(Call.id).label("cnt"),
         )
+        .join(Employee, Call.employee_id == Employee.id)
         .filter(Call.call_time.isnot(None))
-        .group_by("m")
-        .all()
     )
+    if visible_client_ids is not None:
+        calls_by_month_query = _scope_call_query(calls_by_month_query, current_user)
+    calls_by_month = calls_by_month_query.group_by("m").all()
     month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     month_map = {int(r.m): r.cnt for r in calls_by_month} if calls_by_month else {}
@@ -768,10 +1200,13 @@ def get_admin_clients(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in ADMIN_READ_ROLES:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    _require_admin_read(current_user)
 
-    clients = db.query(Client).order_by(Client.name.asc()).all()
+    clients_query = db.query(Client)
+    visible_client_ids = _client_ids_visible_to_user(current_user)
+    if visible_client_ids is not None:
+        clients_query = clients_query.filter(Client.id.in_(visible_client_ids))
+    clients = clients_query.order_by(Client.name.asc()).all()
 
     result = []
     for client in clients:
@@ -798,7 +1233,7 @@ def get_admin_clients(
                 "plan": client.plan,
                 "agents": agent_count,
                 "qaCount": qa_count,
-                "callsThisMonth": 0,
+                "callsThisMonth": db.query(Call).filter(Call.client_id == client.id).count(),
                 "mrr": 0,
                 "avgScore": 0,
             }
@@ -823,16 +1258,67 @@ def get_admin_clients(
     }
 
 
+@app.get(f"{settings.API_V1_PREFIX}/admin/client-policy")
+def get_admin_client_policy(
+    client_id: int | None = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    _require_admin_read(current_user)
+    resolved_client_id = _policy_client_id_for_request(current_user, client_id)
+    client = db.query(Client).filter(Client.id == resolved_client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    policy = _get_client_policy(db, resolved_client_id)
+    return {
+        "client": {
+            "id": client.id,
+            "name": client.name,
+            "status": client.status,
+            "plan": client.plan,
+        },
+        "policy": _serialize_client_policy(policy),
+    }
+
+
+@app.put(f"{settings.API_V1_PREFIX}/admin/client-policy")
+def update_admin_client_policy(
+    payload: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _can_manage_client_policy(current_user):
+        raise HTTPException(status_code=403, detail="Not authorized to update client policy")
+    client_id = payload.get("clientId") or payload.get("client_id")
+    resolved_client_id = _policy_client_id_for_request(current_user, int(client_id) if client_id else None)
+    client = db.query(Client).filter(Client.id == resolved_client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    policy = _get_client_policy(db, resolved_client_id)
+    _apply_client_policy_payload(policy, payload)
+    db.commit()
+    db.refresh(policy)
+    return {
+        "client": {
+            "id": client.id,
+            "name": client.name,
+            "status": client.status,
+            "plan": client.plan,
+        },
+        "policy": _serialize_client_policy(policy),
+    }
+
+
 @app.get(f"{settings.API_V1_PREFIX}/admin/users")
 def get_admin_users(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in ADMIN_READ_ROLES:
-        raise HTTPException(status_code=403, detail="Not authorized")
+    _require_admin_read(current_user)
 
     users = (
-        db.query(User)
+        _scope_users_query(db.query(User), current_user)
         .join(User.role)
         .order_by(User.created_at.asc())
         .all()
@@ -873,6 +1359,7 @@ def invite_admin_user(
     name = (payload.get("name") or "").strip()
     email = (payload.get("email") or "").strip().lower()
     role_name = (payload.get("role") or "").strip()
+    requested_client_id = payload.get("clientId")
 
     if not name or not email or not role_name:
         raise HTTPException(status_code=400, detail="Name, email, and role are required")
@@ -889,6 +1376,26 @@ def invite_admin_user(
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")
 
+    client_id = None
+    if _is_platform_user(current_user):
+        if role_name in TENANT_USER_ROLES:
+            try:
+                client_id = int(requested_client_id)
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=400, detail="Client is required for tenant users")
+            if not db.query(Client).filter(Client.id == client_id).first():
+                raise HTTPException(status_code=404, detail="Client not found")
+        elif role_name in PLATFORM_ROLES:
+            client_id = None
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported role")
+    else:
+        client_id = _tenant_client_id(current_user)
+        if role_name == "admin":
+            policy = _get_client_policy(db, client_id)
+            if not policy or not policy.tenant_admin_can_invite_admins:
+                raise HTTPException(status_code=403, detail="Company policy does not allow tenant admins to invite admins")
+
     invite_token = secrets.token_urlsafe(32)
     now = datetime.now(timezone.utc)
 
@@ -897,7 +1404,7 @@ def invite_admin_user(
         email=email,
         password_hash="INVITED_ACCOUNT_NO_PASSWORD_YET",
         role_id=role.id,
-        client_id=None,
+        client_id=client_id,
         is_active=False,
         invite_token=invite_token,
         invite_expires_at=now + timedelta(days=7),
@@ -1154,6 +1661,7 @@ def get_invite_link(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    _guard_protected_admin_target(current_user, user, "view invite for")
 
     if not user.invite_token or user.is_active:
         raise HTTPException(status_code=400, detail="This user does not have an active invitation")
@@ -1231,15 +1739,19 @@ def get_qa_calls(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    role = _require_role(
-        current_user, QA_CALL_ROLES,
-        "QA, Admin, or owning Agent access required",
-    )
+    if not _can_read_qa_calls(current_user):
+        raise HTTPException(status_code=403, detail="QA, Admin, or owning Agent access required")
+    role = _role_name(current_user)
+    if role == "agent":
+        policy = _get_client_policy(db, current_user.client_id)
+        if not policy or not policy.agent_portal_enabled or not policy.agent_can_view_call_list:
+            return {"calls": []}
     query = (
         db.query(Call, Employee, QaReport)
         .join(Employee, Call.employee_id == Employee.id)
         .outerjoin(QaReport, Call.id == QaReport.call_id)
     )
+    query = _scope_call_query(query, current_user)
     if role == "agent":
         employee_id = _agent_employee_id(current_user, db)
         if not employee_id:
@@ -1250,14 +1762,15 @@ def get_qa_calls(
 
     results = []
     for call, emp, report in rows:
+        policy = _get_client_policy(db, current_user.client_id) if role == "agent" else None
         results.append({
             "callId": call.id,
             "filename": call.original_filename,
             "callTime": call.call_time.isoformat() if call.call_time else None,
             "status": call.status,
             "agentName": emp.full_name,
-            "overallScore": report.overall_score if report else None,
-            "severity": report.severity if report else None,
+            "overallScore": report.overall_score if report and (role != "agent" or (policy and policy.agent_can_view_scores)) else None,
+            "severity": report.severity if report and (role != "agent" or (policy and policy.agent_can_view_scores)) else None,
         })
 
     return {"calls": results}
@@ -1287,6 +1800,10 @@ def get_qa_call_audio(
         raise HTTPException(status_code=401, detail="Authentication required")
 
     _ensure_call_visible_to_user(call, current_user, db)
+    if _role_name(current_user) == "agent":
+        policy = _get_client_policy(db, current_user.client_id)
+        if not policy or not policy.agent_can_play_audio:
+            raise HTTPException(status_code=403, detail="Audio playback is disabled by company policy")
     if not call.storage_path:
         raise HTTPException(status_code=404, detail="No stored audio for this call")
 
@@ -1331,6 +1848,10 @@ def get_qa_call_detail(
 
     call, emp, transcript, report = row
     _ensure_call_visible_to_user(call, current_user, db)
+    role = _role_name(current_user)
+    policy = _get_client_policy(db, current_user.client_id) if role == "agent" else None
+    if role == "agent" and policy and not policy.agent_can_open_call_detail:
+        raise HTTPException(status_code=403, detail="Call detail is disabled by company policy")
 
     drive_file_id = call.drive_file_id
     drive_preview_url = (
@@ -1342,9 +1863,15 @@ def get_qa_call_detail(
         if drive_file_id else None
     )
     audio_url = None
-    if call.storage_path and Path(call.storage_path).is_file():
+    can_play_audio = role != "agent" or (policy and policy.agent_can_play_audio)
+    if can_play_audio and call.storage_path and Path(call.storage_path).is_file():
         media_token = _create_call_media_token(call.id, current_user.id)
         audio_url = f"{settings.API_V1_PREFIX}/qa/calls/{call.id}/audio?media_token={media_token}"
+
+    can_view_transcript = role != "agent" or (policy and policy.agent_can_view_transcript)
+    can_view_scores = role != "agent" or (policy and policy.agent_can_view_scores)
+    can_view_evidence = role != "agent" or (policy and policy.agent_can_view_evidence)
+    can_view_ai_report = role != "agent" or (policy and policy.agent_can_view_ai_report)
 
     return {
         "callId": call.id,
@@ -1358,18 +1885,18 @@ def get_qa_call_detail(
         "status": call.status,
         "agentName": emp.full_name,
         "transcript": {
-            "fullText": transcript.full_text if transcript else "",
-            "speakerTurns": transcript.speaker_turns or [] if transcript else [],
+            "fullText": transcript.full_text if transcript and can_view_transcript else "",
+            "speakerTurns": transcript.speaker_turns or [] if transcript and can_view_transcript else [],
         },
         "report": {
-            "overallScore": report.overall_score if report else None,
-            "grade": report.grade if report else None,
-            "severity": report.severity if report else None,
-            "dimensionScores": report.dimension_scores or {} if report else {},
-            "dimensionReports": report.dimension_reports or {} if report else {},
-            "evidence": report.evidence or [] if report else [],
-            "confidenceScores": report.confidence_scores or {} if report else {},
-            "reportJson": report.report_json or {} if report else {},
+            "overallScore": report.overall_score if report and can_view_scores else None,
+            "grade": report.grade if report and can_view_scores else None,
+            "severity": report.severity if report and can_view_scores else None,
+            "dimensionScores": report.dimension_scores or {} if report and can_view_scores else {},
+            "dimensionReports": report.dimension_reports or {} if report and can_view_scores else {},
+            "evidence": report.evidence or [] if report and can_view_evidence else [],
+            "confidenceScores": report.confidence_scores or {} if report and can_view_scores else {},
+            "reportJson": report.report_json or {} if report and can_view_ai_report else {},
         },
     }
 
@@ -1387,6 +1914,9 @@ def get_agent_dashboard(
     db: Session = Depends(get_db),
 ):
     _require_role(current_user, ("agent",), "Agent access required")
+    policy = _get_client_policy(db, current_user.client_id)
+    if not policy or not policy.agent_portal_enabled:
+        raise HTTPException(status_code=403, detail="Agent portal is disabled by company policy")
     employee = _get_agent_employee(current_user, db)
     if not employee:
         return {
@@ -1434,16 +1964,17 @@ def get_agent_dashboard(
 
     # Build trend from recent reports
     trend = []
-    for i, r in enumerate(reversed(reports[:12])):
-        trend.append({"name": f"Call {i + 1}", "overall": r.overall_score or 0})
+    if policy.agent_can_view_trends:
+        for i, r in enumerate(reversed(reports[:12])):
+            trend.append({"name": f"Call {i + 1}", "overall": r.overall_score or 0})
 
     return {
         "scores": {
-            "overall": round(avg, 1),
-            "politeness": politeness,
-            "empathy": empathy,
-            "conflictRate": conflict_rate,
-            "resolutionRate": resolution_rate,
+            "overall": round(avg, 1) if policy.agent_can_view_scores else 0,
+            "politeness": politeness if policy.agent_can_view_scores else 0,
+            "empathy": empathy if policy.agent_can_view_scores else 0,
+            "conflictRate": conflict_rate if policy.agent_can_view_scores else 0,
+            "resolutionRate": resolution_rate if policy.agent_can_view_scores else 0,
         },
         "trend": trend,
     }
@@ -1455,6 +1986,9 @@ def get_agent_calls(
     db: Session = Depends(get_db),
 ):
     _require_role(current_user, ("agent",), "Agent access required")
+    policy = _get_client_policy(db, current_user.client_id)
+    if not policy or not policy.agent_portal_enabled or not policy.agent_can_view_call_list:
+        return {"calls": [], "total": 0}
     employee = _get_agent_employee(current_user, db)
     if not employee:
         return {"calls": [], "total": 0}
@@ -1477,8 +2011,8 @@ def get_agent_calls(
             "callTime": call.call_time.isoformat() if call.call_time else None,
             "status": call.status,
             "agentName": emp.full_name,
-            "overallScore": report.overall_score if report else None,
-            "severity": report.severity if report else None,
+            "overallScore": report.overall_score if report and policy.agent_can_view_scores else None,
+            "severity": report.severity if report and policy.agent_can_view_scores else None,
         })
 
     return {"calls": results, "total": len(results)}
@@ -1599,7 +2133,7 @@ def _run_real_pipeline(
             return
 
         # Load pipeline settings (use defaults if row missing)
-        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        ps = _pipeline_settings_for_client(db, call.client_id, create=True)
         audio_mode      = ps.audio_mode      if ps else "denoise"
         injection_scan  = ps.injection_scan  if ps else "static"
         num_speakers    = ps.num_speakers    if ps else None
@@ -1778,7 +2312,10 @@ def _run_real_pipeline(
             }
 
         # Resolve QA employee for report
-        qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
+        qa_emp = db.query(Employee).filter(
+            Employee.role == "QA",
+            Employee.client_id == call.client_id,
+        ).first()
         qa_id = qa_emp.id if qa_emp else call.employee_id
 
         report = QaReport(
@@ -1869,7 +2406,7 @@ def _run_remote_pipeline(
         asr_engine = _normalize_asr_engine(asr_engine)
         asr_engine_db, asr_model_db = _asr_metadata(asr_engine)
 
-        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
+        ps = _pipeline_settings_for_client(db, call.client_id, create=True)
         num_speakers = ps.num_speakers if ps else None
         report_mode = _effective_report_mode(ps)
         use_consensus = ps.use_consensus if ps else False
@@ -2015,7 +2552,10 @@ def _run_remote_pipeline(
                 "recommended_actions": actions,
             }
 
-        qa_emp = db.query(Employee).filter(Employee.role == "QA").first()
+        qa_emp = db.query(Employee).filter(
+            Employee.role == "QA",
+            Employee.client_id == call.client_id,
+        ).first()
         qa_id = qa_emp.id if qa_emp else call.employee_id
         report = QaReport(
             id=str(uuid.uuid4()),
@@ -2108,6 +2648,7 @@ def _enqueue_pipeline(
     audio_path: str,
     asr_engine: str = "fasterwhisper",
     company_name: str | None = None,
+    client_id: int | None = None,
 ) -> int:
     """Persist one pipeline job and return its 1-based queue position."""
     _ensure_pipeline_queue_worker_started()
@@ -2118,6 +2659,7 @@ def _enqueue_pipeline(
         if job is None:
             job = PipelineJob(
                 call_id=call_id,
+                client_id=client_id,
                 audio_path=audio_path,
                 asr_engine=asr_engine,
                 company_name=company_name,
@@ -2130,6 +2672,7 @@ def _enqueue_pipeline(
             job.audio_path = audio_path
             job.asr_engine = asr_engine
             job.company_name = company_name
+            job.client_id = client_id
             job.status = "queued"
             job.locked_at = None
             job.finished_at = None
@@ -2268,6 +2811,12 @@ def _notify_pipeline_terminal_state(
             .all()
         )
         for user in admins:
+            if not user.role or user.role.name not in ADMIN_MUTATION_ROLES:
+                continue
+            if call.client_id is not None and user.client_id not in (None, call.client_id):
+                continue
+            if user.client_id is None and not _is_platform_user(user):
+                continue
             if user.role and user.role.name in ADMIN_MUTATION_ROLES:
                 email_service.send_call_failed_email(
                     db,
@@ -2446,8 +2995,12 @@ async def upload_call(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in QA_OPERATOR_ROLES:
+    if not _can_use_qa_tools(current_user):
         raise HTTPException(status_code=403, detail="Not authorized to upload calls")
+    if _is_tenant_user(current_user):
+        policy = _get_client_policy(db, current_user.client_id)
+        if not policy or not policy.qa_can_upload_calls:
+            raise HTTPException(status_code=403, detail="Call upload is disabled by company policy")
 
     if file.content_type and file.content_type not in ALLOWED_AUDIO_TYPES:
         raise HTTPException(
@@ -2461,10 +3014,10 @@ async def upload_call(
         raise HTTPException(status_code=400, detail=str(exc))
 
     try:
-        ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
-        selected_company = _ensure_known_company_context(
-            company_name or (ps.company_name if ps else _default_pipeline_company())
-        )
+        ps = _pipeline_settings_for_user(db, current_user, create=True)
+        requested_company = company_name or (ps.company_name if ps else _default_pipeline_company())
+        requested_company = _ensure_company_allowed_for_user(db, current_user, requested_company)
+        selected_company = _ensure_known_company_context(requested_company)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
@@ -2480,22 +3033,39 @@ async def upload_call(
     duration_seconds, sample_rate_hz, channels = _audio_duration_metadata(dest)
 
     # Resolve agent employee record
-    # Priority: explicit agent_id > current user's linked employee > first agent in DB
+    # Priority: explicit agent_id > current user's linked employee > first scoped agent.
     employee = None
+    employee_query = db.query(Employee).filter(Employee.role == "AGENT")
+    if _is_tenant_user(current_user):
+        employee_query = employee_query.filter(Employee.client_id == _tenant_client_id(current_user))
     if agent_id:
-        employee = db.query(Employee).filter(Employee.id == agent_id).first()
+        employee = employee_query.filter(Employee.id == agent_id).first()
+        if not employee:
+            raise HTTPException(status_code=400, detail="Selected agent is not available for your company")
     if not employee:
-        employee = db.query(Employee).filter(Employee.user_id == current_user.id).first()
+        linked_employee_query = db.query(Employee).filter(Employee.user_id == current_user.id)
+        if _is_tenant_user(current_user):
+            linked_employee_query = linked_employee_query.filter(Employee.client_id == _tenant_client_id(current_user))
+        employee = linked_employee_query.first()
     if not employee:
-        employee = db.query(Employee).filter(Employee.role == "AGENT").first()
+        employee = employee_query.order_by(Employee.full_name.asc()).first()
     if not employee:
         raise HTTPException(status_code=400, detail="No agent found in database")
+    upload_client_id = employee.client_id
+    if _is_tenant_user(current_user):
+        upload_client_id = _tenant_client_id(current_user)
+        if employee.client_id != upload_client_id:
+            raise HTTPException(status_code=403, detail="Cannot upload calls for another company's agent")
 
     # Resolve or create customer
-    customer = db.query(Customer).first()
+    customer_query = db.query(Customer)
+    if upload_client_id is not None:
+        customer_query = customer_query.filter(Customer.client_id == upload_client_id)
+    customer = customer_query.first()
     if not customer:
         customer = Customer(
             id=str(uuid.uuid4()),
+            client_id=upload_client_id,
             display_name="Uploaded Call Customer",
             phone_hash="upload",
         )
@@ -2504,6 +3074,7 @@ async def upload_call(
 
     call = Call(
         id=call_id,
+        client_id=upload_client_id,
         customer_id=customer.id,
         employee_id=employee.id,
         original_filename=safe_filename,
@@ -2520,7 +3091,7 @@ async def upload_call(
     db.add(call)
     db.commit()
 
-    queue_position = _enqueue_pipeline(call_id, str(dest), asr_engine, selected_company)
+    queue_position = _enqueue_pipeline(call_id, str(dest), asr_engine, selected_company, upload_client_id)
 
     return {
         "callId": call_id,
@@ -2565,9 +3136,25 @@ def get_call_status(
 @app.get(f"{settings.API_V1_PREFIX}/pipeline/queue")
 def get_pipeline_queue(
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in QA_OPERATOR_ROLES:
+    if not _can_use_qa_tools(current_user):
         raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline queue")
+    if _is_tenant_user(current_user):
+        query = _scope_pipeline_job_query(db.query(PipelineJob), current_user)
+        queued = query.filter(PipelineJob.status == "queued").order_by(PipelineJob.created_at.asc()).all()
+        running = query.filter(PipelineJob.status == "running").order_by(PipelineJob.started_at.asc()).all()
+        failed = query.filter(PipelineJob.status == "failed").order_by(PipelineJob.updated_at.desc()).limit(20).all()
+        return {
+            "activeCallId": running[0].call_id if running else None,
+            "queuedCount": len(queued),
+            "queuedCallIds": [job.call_id for job in queued],
+            "runningCallIds": [job.call_id for job in running],
+            "failedCount": query.filter(PipelineJob.status == "failed").count(),
+            "failedCallIds": [job.call_id for job in failed],
+            "etaSecondsPerJob": PIPELINE_QUEUE_ETA_SECONDS,
+            "estimatedDrainSeconds": len(queued) * PIPELINE_QUEUE_ETA_SECONDS,
+        }
     return _pipeline_queue_overview()
 
 
@@ -2578,10 +3165,10 @@ def list_pipeline_jobs(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if _role_name(current_user) not in QA_OPERATOR_ROLES:
+    if not _can_use_qa_tools(current_user):
         raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline jobs")
     limit = max(1, min(int(limit or 50), 200))
-    query = db.query(PipelineJob)
+    query = _scope_pipeline_job_query(db.query(PipelineJob), current_user)
     if status_filter:
         allowed = {"queued", "running", "completed", "failed"}
         if status_filter not in allowed:
@@ -2606,6 +3193,8 @@ def retry_pipeline_job(
     job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if _is_tenant_user(current_user) and job.client_id != _tenant_client_id(current_user):
+        raise HTTPException(status_code=403, detail="Cannot retry another company's job")
     if job.status == "running":
         raise HTTPException(status_code=409, detail="Cannot retry a running job")
     if job.status == "completed":
@@ -2641,6 +3230,8 @@ def dead_letter_pipeline_job(
     job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
     if not job:
         raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if _is_tenant_user(current_user) and job.client_id != _tenant_client_id(current_user):
+        raise HTTPException(status_code=403, detail="Cannot dead-letter another company's job")
     if job.status == "running":
         raise HTTPException(status_code=409, detail="Cannot dead-letter a running job")
     if job.status == "completed":
@@ -2682,7 +3273,8 @@ def get_mail_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    _require_role(current_user, ADMIN_READ_ROLES, "Admin access required")
+    if not _is_platform_user(current_user):
+        raise HTTPException(status_code=403, detail="Platform admin access required")
     return email_service.mail_status(db)
 
 
@@ -2691,7 +3283,8 @@ def send_mail_test(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    _require_role(current_user, ADMIN_MUTATION_ROLES, "Admin access required")
+    if not _is_platform_user(current_user) or _role_name(current_user) not in ADMIN_MUTATION_ROLES:
+        raise HTTPException(status_code=403, detail="Platform admin access required")
     event = email_service.send_test_email(db, user=current_user)
     return {
         "ok": event.status == "sent",
@@ -2717,13 +3310,9 @@ def get_pipeline_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
-    ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
-    if not ps:
-        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
-        db.add(ps)
-        db.commit()
-        db.refresh(ps)
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+    ps = _pipeline_settings_for_user(db, current_user, create=True)
     return {
         "audioMode":     ps.audio_mode,
         "injectionScan": ps.injection_scan,
@@ -2740,14 +3329,10 @@ def update_pipeline_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ADMIN_MUTATION_ROLES:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Admin access required")
 
-    ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
-    if not ps:
-        ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
-        db.add(ps)
+    ps = _pipeline_settings_for_user(db, current_user, create=True)
 
     if "audioMode" in payload:
         if payload["audioMode"] not in ("none", "denoise", "enhance"):
@@ -2768,7 +3353,8 @@ def update_pipeline_settings(
         ps.use_consensus = bool(payload["useConsensus"])
     if "companyName" in payload:
         try:
-            ps.company_name = _ensure_known_company_context(payload["companyName"])
+            requested_company = _ensure_company_allowed_for_user(db, current_user, payload["companyName"])
+            ps.company_name = _ensure_known_company_context(requested_company)
         except FileNotFoundError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
 
@@ -2794,8 +3380,13 @@ _INGEST_JOBS: dict = {}
 
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies")
-def list_companies(current_user: User = Depends(get_current_user)):
-    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
+def list_companies(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+    allowed_names = _context_names_visible_to_user(db, current_user)
     import json as _json
     companies = []
     seen_slugs: set[str] = set()
@@ -2805,9 +3396,12 @@ def list_companies(current_user: User = Depends(get_current_user)):
                 continue
             try:
                 data = _json.loads(f.read_text(encoding="utf-8"))
+                company_name = str(data.get("company_name", f.stem))
+                if allowed_names is not None and company_name.lower() not in allowed_names:
+                    continue
                 seen_slugs.add(f.stem)
                 companies.append({
-                    "name":    data.get("company_name", f.stem),
+                    "name":    company_name,
                     "slug":    f.stem,
                     "version": data.get("context_version", "1.0.0"),
                     "updated": data.get("last_updated", ""),
@@ -2827,6 +3421,9 @@ def list_companies(current_user: User = Depends(get_current_user)):
                 slug = str(item.get("slug") or item.get("file", "")).replace(".json", "")
                 if slug and slug in seen_slugs:
                     continue
+                item_name = str(item.get("name") or slug)
+                if allowed_names is not None and item_name.lower() not in allowed_names:
+                    continue
                 companies.append(item)
         except Exception as exc:
             log.warning(
@@ -2837,8 +3434,14 @@ def list_companies(current_user: User = Depends(get_current_user)):
 
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies/{'{name}'}")
-def get_company_context(name: str, current_user: User = Depends(get_current_user)):
-    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
+def get_company_context(
+    name: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+    name = _ensure_company_allowed_for_user(db, current_user, name)
     import json as _json
     path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
     if not path.exists():
@@ -2902,10 +3505,15 @@ async def ingest_company_context(
     file: UploadFile = File(...),
     company_name: str = Form(...),
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    role_name = current_user.role.name if current_user.role else ""
-    if role_name not in QA_OPERATOR_ROLES:
+    if not _can_use_qa_tools(current_user):
         raise HTTPException(status_code=403, detail="QA or Admin access required")
+    if _is_tenant_user(current_user):
+        policy = _get_client_policy(db, current_user.client_id)
+        if not policy or not policy.qa_can_manage_context_tickets:
+            raise HTTPException(status_code=403, detail="Context management is disabled by company policy")
+    company_name = _ensure_company_allowed_for_user(db, current_user, company_name)
 
     content = await file.read()
     if not content:
@@ -2935,23 +3543,36 @@ async def ingest_company_context(
 def ingest_job_status(
     job_id: str,
     current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
     job = _INGEST_JOBS.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
+    if _is_tenant_user(current_user):
+        allowed = _context_names_visible_to_user(db, current_user)
+        if allowed is not None and str(job.get("company", "")).lower() not in allowed:
+            raise HTTPException(status_code=403, detail="Cannot inspect another company's ingest job")
     return job
 
 
 @app.get(f"{settings.API_V1_PREFIX}/context/tickets")
-def list_tickets(current_user: User = Depends(get_current_user)):
-    _require_role(current_user, QA_OPERATOR_ROLES, "QA or Admin access required")
+def list_tickets(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not _can_use_qa_tools(current_user):
+        raise HTTPException(status_code=403, detail="QA or Admin access required")
+    allowed_names = _context_names_visible_to_user(db, current_user)
     import json as _json
     tickets = []
     if TICKETS_DIR.exists():
         for f in sorted(TICKETS_DIR.glob("*.json"), reverse=True):
             try:
                 t = _json.loads(f.read_text(encoding="utf-8"))
+                if allowed_names is not None and str(t.get("company_name", "")).lower() not in allowed_names:
+                    continue
                 tickets.append(t)
             except Exception:
                 pass
@@ -2965,9 +3586,13 @@ def create_ticket(
     db: Session = Depends(get_db),
 ):
     import json as _json
-    role_name = current_user.role.name if current_user.role else ""
-    if role_name not in QA_OPERATOR_ROLES:
+    if not _can_use_qa_tools(current_user):
         raise HTTPException(status_code=403, detail="QA or Admin access required")
+    if _is_tenant_user(current_user):
+        policy = _get_client_policy(db, current_user.client_id)
+        if not policy or not policy.qa_can_manage_context_tickets:
+            raise HTTPException(status_code=403, detail="Context tickets are disabled by company policy")
+    company_name = _ensure_company_allowed_for_user(db, current_user, payload.get("companyName", ""))
 
     TICKETS_DIR.mkdir(parents=True, exist_ok=True)
     existing = list(TICKETS_DIR.glob("TICKET-*.json"))
@@ -2979,7 +3604,7 @@ def create_ticket(
         "submitted_by": current_user.email,
         "submitted_at": datetime.now(timezone.utc).isoformat(),
         "status":       "pending",
-        "company_name": payload.get("companyName", ""),
+        "company_name": company_name,
         "field_name":   payload.get("fieldName", ""),
         "old_text":     payload.get("oldText", ""),
         "new_text":     payload.get("newText", ""),
@@ -2996,17 +3621,22 @@ def create_ticket(
             .all()
         )
         for reviewer in reviewers:
-            if reviewer.role and reviewer.role.name in ADMIN_MUTATION_ROLES:
-                email_service.send_context_ticket_email(
-                    db,
-                    recipient=reviewer,
-                    title="New CallTone context ticket",
-                    company=ticket["company_name"],
-                    field=ticket["field_name"],
-                    status="pending",
-                    actor=current_user,
-                    ticket_id=ticket_id,
-                )
+            if not reviewer.role or reviewer.role.name not in ADMIN_MUTATION_ROLES:
+                continue
+            if reviewer.client_id is not None:
+                reviewer_allowed = _context_names_visible_to_user(db, reviewer)
+                if reviewer_allowed is not None and ticket["company_name"].lower() not in reviewer_allowed:
+                    continue
+            email_service.send_context_ticket_email(
+                db,
+                recipient=reviewer,
+                title="New CallTone context ticket",
+                company=ticket["company_name"],
+                field=ticket["field_name"],
+                status="pending",
+                actor=current_user,
+                ticket_id=ticket_id,
+            )
     except Exception as exc:
         log.warning(
             "email.context_ticket_notification_failed",
@@ -3023,8 +3653,7 @@ def update_ticket_status(
     db: Session = Depends(get_db),
 ):
     import json as _json
-    role_name = current_user.role.name if current_user.role else ""
-    if role_name not in ADMIN_MUTATION_ROLES:
+    if not _can_mutate_users(current_user):
         raise HTTPException(status_code=403, detail="Admin access required to approve/reject tickets")
 
     ticket_file = TICKETS_DIR / f"{ticket_id}.json"
@@ -3032,6 +3661,7 @@ def update_ticket_status(
         raise HTTPException(status_code=404, detail="Ticket not found")
 
     ticket = _json.loads(ticket_file.read_text(encoding="utf-8"))
+    _ensure_company_allowed_for_user(db, current_user, ticket.get("company_name", ""))
     new_status = payload.get("status", "")
     if new_status not in ("approved", "rejected"):
         raise HTTPException(status_code=400, detail="status must be approved or rejected")

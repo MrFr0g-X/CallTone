@@ -10,6 +10,17 @@ def _auth(token):
     return {"Authorization": f"Bearer {token}"}
 
 
+def _bankserv_client_id():
+    from app.database import SessionLocal
+    from app.models import Client
+
+    db = SessionLocal()
+    try:
+        return db.query(Client).filter(Client.name == "BankServ Global").first().id
+    finally:
+        db.close()
+
+
 def test_upload_rejects_non_audio_content_type(client, qa_token):
     files = {
         "file": (
@@ -102,13 +113,14 @@ def test_upload_enqueues_pipeline_instead_of_starting_immediate_process(
 
     captured = {}
 
-    def fake_enqueue(call_id, audio_path, asr_engine="fasterwhisper", company_name=None):
+    def fake_enqueue(call_id, audio_path, asr_engine="fasterwhisper", company_name=None, client_id=None):
         captured.update(
             {
                 "call_id": call_id,
                 "audio_path": audio_path,
                 "asr_engine": asr_engine,
                 "company_name": company_name,
+                "client_id": client_id,
             }
         )
         return 3
@@ -134,6 +146,7 @@ def test_upload_enqueues_pipeline_instead_of_starting_immediate_process(
     assert captured["call_id"] == body["callId"]
     assert captured["asr_engine"] == "fasterwhisper"
     assert captured["company_name"] == "BankServ Global"
+    assert captured["client_id"] == _bankserv_client_id()
     assert (tmp_path / f"{body['callId']}_sample.wav").read_bytes() == b"RIFFsmall"
 
 
@@ -242,8 +255,9 @@ def test_pipeline_queue_endpoint_is_role_protected(client, qa_token, agent_token
         db.query(PipelineJob).filter(PipelineJob.call_id.in_(["queued-1", "queued-2"])).delete(
             synchronize_session=False
         )
-        db.add(PipelineJob(call_id="queued-1", audio_path="/tmp/1.wav", status="queued", priority=1))
-        db.add(PipelineJob(call_id="queued-2", audio_path="/tmp/2.wav", status="queued", priority=2))
+        client_id = _bankserv_client_id()
+        db.add(PipelineJob(call_id="queued-1", client_id=client_id, audio_path="/tmp/1.wav", status="running", priority=1))
+        db.add(PipelineJob(call_id="queued-2", client_id=client_id, audio_path="/tmp/2.wav", status="queued", priority=2))
         db.commit()
 
         allowed = client.get("/api/pipeline/queue", headers=_auth(qa_token))
@@ -251,10 +265,10 @@ def test_pipeline_queue_endpoint_is_role_protected(client, qa_token, agent_token
 
         assert allowed.status_code == 200
         body = allowed.json()
-        assert body["activeCallId"] == "active-call"
-        assert body["queuedCount"] == 2
-        assert body["queuedCallIds"] == ["queued-1", "queued-2"]
-        assert body["estimatedDrainSeconds"] == 2 * app_main.PIPELINE_QUEUE_ETA_SECONDS
+        assert body["activeCallId"] == "queued-1"
+        assert body["queuedCount"] == 1
+        assert body["queuedCallIds"] == ["queued-2"]
+        assert body["estimatedDrainSeconds"] == app_main.PIPELINE_QUEUE_ETA_SECONDS
         assert denied.status_code in (401, 403)
     finally:
         db.query(PipelineJob).filter(PipelineJob.call_id.in_(["queued-1", "queued-2"])).delete(
@@ -275,9 +289,11 @@ def test_pipeline_jobs_list_retry_and_dead_letter(client, admin_token, qa_token,
         db.query(PipelineJob).filter(PipelineJob.call_id.in_(["failed-job", "queued-job"])).delete(
             synchronize_session=False
         )
+        client_id = _bankserv_client_id()
         db.add(
             PipelineJob(
                 call_id="failed-job",
+                client_id=client_id,
                 audio_path="/tmp/failed.wav",
                 status="failed",
                 attempts=2,
@@ -285,7 +301,7 @@ def test_pipeline_jobs_list_retry_and_dead_letter(client, admin_token, qa_token,
                 error_message="boom",
             )
         )
-        db.add(PipelineJob(call_id="queued-job", audio_path="/tmp/queued.wav", status="queued"))
+        db.add(PipelineJob(call_id="queued-job", client_id=client_id, audio_path="/tmp/queued.wav", status="queued"))
         db.commit()
 
         list_allowed = client.get("/api/pipeline/jobs?status_filter=failed", headers=_auth(qa_token))
