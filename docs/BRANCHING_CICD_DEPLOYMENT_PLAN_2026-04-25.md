@@ -33,7 +33,7 @@ Useful `server` work was ported:
 Rejected/rewritten work:
 
 - `server_setup.sh` from `server` was removed because it was an old all-in-one deployment script and contained a hardcoded token. It is not safe or correct for the current architecture.
-- `deploy` branch workflow was not cherry-picked because it deploys only the frontend from the `deploy` branch. The final workflow deploys from `main`/tags and handles frontend + backend + smoke checks.
+- `deploy` branch workflow was not cherry-picked because it deploys only the frontend from the `deploy` branch. The final workflow deploys staging from `main`, and deploys production only by manually dispatching a version tag.
 
 ## Required Branch Policy
 
@@ -122,14 +122,13 @@ Actions:
 
 Trigger:
 
-- push tag `v*.*.*`,
-- or manual dispatch with `target=production`.
+- manual dispatch with `target=production` and `version_tag=vX.Y.Z`.
 
 Guardrails:
 
-- Requires successful CI for the same commit SHA.
+- Requires successful CI for the selected tag SHA.
 - Uses GitHub `production` environment.
-- Production environment should require manual approval in repository settings.
+- Manual approval is enforced by workflow dispatch because GitHub rejected environment reviewer/wait-timer protection on the current repository plan.
 
 Actions:
 
@@ -153,7 +152,7 @@ Recommended environment protection:
 | Environment | Required reviewers | Deployment branches |
 |---|---:|---|
 | `staging` | 0 | `main` only |
-| `production` | 1+ | tags matching `v*.*.*` only |
+| `production` | Manual dispatch required on current plan | deploy only a `v*.*.*` tag through the workflow input |
 
 ## Required GitHub Secrets
 
@@ -256,7 +255,7 @@ git tag -a v1.0.0 -m "CallTone v1.0.0 graduation demo release"
 git push origin v1.0.0
 ```
 
-Production deployment starts from the tag and waits for GitHub Environment approval.
+Production deployment starts only when the deploy workflow is manually dispatched with `target=production` and `version_tag=v1.0.0`. This is the current manual-approval mechanism because GitHub environment reviewer protection is not available on the repository plan.
 
 ## Verification Evidence to Keep
 
