@@ -63,14 +63,14 @@ These deploy the React `dist/` build to Hetzner shared webspace.
 
 ### Production backend VPS
 
-These deploy backend/source code to the Hetzner VPS. The workflow preserves remote `.env`, PostgreSQL data, uploads, and model-server secrets.
+These deploy the contents of the repository `backend/` directory to the Hetzner VPS backend service path. The workflow preserves the remote `.env`, `venv/`, uploads, local DB files, and runtime data.
 
 | Secret | Meaning |
 |---|---|
 | `PROD_BACKEND_HOST` | Production backend VPS host. |
 | `PROD_BACKEND_USER` | Production backend SSH user. |
 | `PROD_BACKEND_PORT` | Production backend SSH port, usually `22`. |
-| `PROD_BACKEND_PATH` | Remote CallTone repo/source path. |
+| `PROD_BACKEND_PATH` | Remote backend service path, e.g. `/opt/calltone-backend`. |
 | `PROD_BACKEND_SSH_KEY` | Private deploy key with backend SSH access. |
 
 ### Staging
@@ -88,7 +88,7 @@ Until these values exist, the deploy workflow builds the frontend and then skips
 | `STAGING_BACKEND_HOST` | Staging backend VPS host. |
 | `STAGING_BACKEND_USER` | Staging backend SSH user. |
 | `STAGING_BACKEND_PORT` | Staging backend SSH port. |
-| `STAGING_BACKEND_PATH` | Staging backend source path. |
+| `STAGING_BACKEND_PATH` | Staging backend service path, e.g. `/opt/calltone-backend-staging`. |
 | `STAGING_BACKEND_SSH_KEY` | Staging backend deploy key. |
 
 ## Production Values Known From Current Deployment

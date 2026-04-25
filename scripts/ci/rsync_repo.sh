@@ -4,6 +4,12 @@ set -Eeuo pipefail
 DEST="${1:?destination user@host:path required}"
 PORT="${2:?ssh port required}"
 SSH_KEY="${3:?ssh private key secret required}"
+SRC="${4:-backend/}"
+
+if [ ! -d "${SRC}" ]; then
+    echo "source directory does not exist: ${SRC}" >&2
+    exit 1
+fi
 
 KEY_FILE="$(mktemp)"
 cleanup() {
@@ -16,22 +22,14 @@ chmod 600 "${KEY_FILE}"
 
 rsync -az --delete \
     -e "ssh -o StrictHostKeyChecking=no -p ${PORT} -i ${KEY_FILE}" \
-    --exclude='.git/' \
-    --exclude='.github/' \
-    --exclude='deployment/' \
+    --exclude='.env' \
+    --exclude='venv/' \
+    --exclude='uploads/' \
+    --exclude='data/' \
+    --exclude='stress_runs/' \
+    --exclude='calltone.db*' \
     --exclude='**/__pycache__/' \
     --exclude='**/.pytest_cache/' \
-    --exclude='**/node_modules/' \
-    --exclude='calltone-UI/dist/' \
-    --exclude='backend/.env' \
-    --exclude='backend/uploads/' \
-    --exclude='backend/calltone.db*' \
-    --exclude='model_server/.env' \
-    --exclude='*.gguf' \
-    --exclude='*.onnx' \
-    --exclude='*.safetensors' \
-    --exclude='*.pt' \
-    --exclude='*.pth' \
-    --exclude='*.bin' \
-    ./ \
+    --exclude='*.pyc' \
+    "${SRC%/}/" \
     "${DEST}"
