@@ -156,6 +156,30 @@ export interface AdminClientsResponse {
   clients: AdminClientItem[];
 }
 
+export interface CreateClientPayload {
+  name: string;
+  industry?: string;
+  status?: "active" | "trial" | "churned" | "suspended";
+  plan?: "starter" | "professional" | "enterprise" | "trial" | string;
+}
+
+export interface CreateClientResponse {
+  client: AdminClientItem;
+}
+
+export interface UploadAgent {
+  id: string;
+  name: string;
+  clientId: number | null;
+  clientName: string | null;
+  userId: number | null;
+  email: string | null;
+}
+
+export interface UploadAgentsResponse {
+  agents: UploadAgent[];
+}
+
 export interface ClientPolicy {
   clientId: number;
   agentPortalEnabled: boolean;
@@ -365,6 +389,8 @@ export const callsApi = {
 export const adminApi = {
   getDashboard: () => apiClient.get<AdminDashboardResponse>("/admin/dashboard"),
   getClients: () => apiClient.get<AdminClientsResponse>("/admin/clients"),
+  createClient: (payload: CreateClientPayload) =>
+    apiClient.post<CreateClientResponse>("/admin/clients", payload),
   getClientPolicy: (clientId?: number | null) =>
     apiClient.get<ClientPolicyResponse>("/admin/client-policy", {
       params: clientId ? { client_id: clientId } : undefined,
@@ -386,6 +412,13 @@ export const adminApi = {
 
   deleteUser: (userId: number) =>
     apiClient.delete<DeleteUserResponse>(`/admin/users/${userId}`),
+};
+
+export const agentsApi = {
+  list: (clientId?: number | null) =>
+    apiClient.get<UploadAgentsResponse>("/agents", {
+      params: clientId ? { client_id: clientId } : undefined,
+    }),
 };
 
 

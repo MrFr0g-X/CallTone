@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timezone
 
 from app.database import SessionLocal
-from app.models import Call, Client, EmailEvent, Employee, QaReport, Role, User
+from app.models import Call, Client, ClientPolicy, EmailEvent, Employee, PipelineSettings, QaReport, Role, User
 from app.security import hash_password
 
 
@@ -130,6 +130,30 @@ def test_super_admin_cannot_invite_super_admin(client, admin_token):
 
     assert response.status_code == 400, response.text
     assert "Allowed roles" in response.json()["detail"]
+
+
+def test_platform_admin_can_create_client_with_policy_and_settings(client, admin_token):
+    client_name = f"New Company {secrets.token_hex(4)}"
+    response = client.post(
+        "/api/admin/clients",
+        headers=_auth(admin_token),
+        json={"name": client_name, "industry": "Telecom", "status": "trial", "plan": "starter"},
+    )
+
+    assert response.status_code == 200, response.text
+    body = response.json()["client"]
+    assert body["name"] == client_name
+
+    db = SessionLocal()
+    try:
+        created = db.query(Client).filter(Client.name == client_name).first()
+        assert created is not None
+        assert db.query(ClientPolicy).filter(ClientPolicy.client_id == created.id).first() is not None
+        settings = db.query(PipelineSettings).filter(PipelineSettings.client_id == created.id).first()
+        assert settings is not None
+        assert settings.company_name == client_name
+    finally:
+        db.close()
 
 
 def test_super_admin_cannot_mutate_owner(client, admin_token):

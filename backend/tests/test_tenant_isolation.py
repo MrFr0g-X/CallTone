@@ -89,6 +89,21 @@ def test_tenant_admin_sees_only_own_company_users(client):
     assert "admin@calltone.ai" not in emails
 
 
+def test_tenant_admin_cannot_create_platform_clients(client):
+    bank_id = _client_id("BankServ Global")
+    admin_email = f"tenant_client_create_{secrets.token_hex(4)}@calltone.ai"
+    _create_user(admin_email, "admin", bank_id)
+    token = _login(client, admin_email)
+
+    response = client.post(
+        "/api/admin/clients",
+        headers=_auth(token),
+        json={"name": f"Forbidden Client {secrets.token_hex(3)}", "status": "trial", "plan": "starter"},
+    )
+
+    assert response.status_code == 403
+
+
 def test_tenant_admin_invite_is_forced_to_own_company(client):
     bank_id = _client_id("BankServ Global")
     admin_email = f"tenant_inviter_{secrets.token_hex(4)}@calltone.ai"

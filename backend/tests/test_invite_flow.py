@@ -64,6 +64,16 @@ def test_admin_can_invite_qa_who_then_logs_in(client, admin_token):
     assert login.status_code == 200, login.text
     assert login.json()["user"]["role"] == "qa"
 
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.email == new_email).first()
+        employee = db.query(Employee).filter(Employee.user_id == user.id).first()
+        assert employee is not None
+        assert employee.role == "QA"
+        assert employee.client_id == _bankserv_client_id()
+    finally:
+        db.close()
+
 
 def test_invite_token_cannot_be_reused(client, admin_token):
     """Once an invite is accepted, the token must be invalidated."""
@@ -133,16 +143,8 @@ def test_delete_user_detaches_employee_link(client, admin_token):
 
     db = SessionLocal()
     try:
-        employee = Employee(
-            client_id=_bankserv_client_id(),
-            employee_code=f"DEL-{secrets.token_hex(3)}",
-            full_name="Linked Agent",
-            role="AGENT",
-            user_id=user_id,
-        )
-        db.add(employee)
-        db.commit()
-        db.refresh(employee)
+        employee = db.query(Employee).filter(Employee.user_id == user_id).first()
+        assert employee is not None
         employee_id = employee.id
     finally:
         db.close()

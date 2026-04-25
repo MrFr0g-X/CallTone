@@ -111,15 +111,23 @@ const CompanyCard = ({ company }: { company: CompanyContextSummary }) => {
 // ─── Upload Tab ───────────────────────────────────────────────────────────────
 const UploadTab = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [companyName, setCompanyName] = useState("");
+  const [companyName, setCompanyName] = useState(user?.roleScope === "tenant" ? user?.clientName ?? "" : "");
   const [dragOver, setDragOver] = useState(false);
   const [status, setStatus] = useState<"idle" | "polling" | "success" | "error">("idle");
   const [jobId, setJobId] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<IngestJobStatus | null>(null);
   const [errMsg, setErrMsg] = useState("");
+  const platformScope = user?.roleScope === "platform";
+
+  useEffect(() => {
+    if (!platformScope) {
+      setCompanyName(user?.clientName ?? "");
+    }
+  }, [platformScope, user?.clientName]);
 
   // Poll for job status every 3 seconds while running
   useEffect(() => {
@@ -186,8 +194,13 @@ const UploadTab = () => {
             onChange={e => setCompanyName(e.target.value)}
             placeholder="e.g. BankServ Global"
             className="w-full h-10 px-4 rounded-xl glass-input text-sm"
-            disabled={status === "polling"}
+            disabled={status === "polling" || !platformScope}
           />
+          {!platformScope && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Tenant admins update only their assigned company context.
+            </p>
+          )}
         </div>
 
         <div>
@@ -297,10 +310,17 @@ const TicketsTab = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ companyName: "", fieldName: "", oldText: "", newText: "", reason: "" });
+  const [form, setForm] = useState({ companyName: user?.roleScope === "tenant" ? user?.clientName ?? "" : "", fieldName: "", oldText: "", newText: "", reason: "" });
   const [creating, setCreating] = useState(false);
+  const platformScope = user?.roleScope === "platform";
   const canReviewTickets =
     user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
+
+  useEffect(() => {
+    if (!platformScope) {
+      setForm((current) => ({ ...current, companyName: user?.clientName ?? "" }));
+    }
+  }, [platformScope, user?.clientName]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["context-tickets"],
@@ -380,7 +400,10 @@ const TicketsTab = () => {
                 <div>
                   <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">Company *</label>
                   <input value={form.companyName} onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))}
-                    placeholder="BankServ Global" className="w-full h-9 px-3 rounded-xl glass-input text-sm" />
+                    placeholder="BankServ Global" disabled={!platformScope} className="w-full h-9 px-3 rounded-xl glass-input text-sm disabled:opacity-70" />
+                  {!platformScope && (
+                    <p className="mt-1 text-[10px] text-muted-foreground">Locked to your company.</p>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">Field Name *</label>
@@ -494,6 +517,7 @@ const CompanyContext = () => {
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>("companies");
   const userRole = user?.role === "qa" ? "qa" : "admin";
+  const canManageContext = Boolean(user?.capabilities?.canManageContext);
 
   const { data: companiesData, isLoading: companiesLoading } = useQuery({
     queryKey: ["context-companies"],
@@ -502,9 +526,15 @@ const CompanyContext = () => {
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "companies", label: "Companies",  icon: Building2 },
-    { id: "upload",    label: "Upload Context", icon: Upload },
+    ...(canManageContext ? [{ id: "upload" as const, label: "Upload Context", icon: Upload }] : []),
     { id: "tickets",   label: "Change Tickets", icon: Ticket },
   ];
+
+  useEffect(() => {
+    if (tab === "upload" && !canManageContext) {
+      setTab("tickets");
+    }
+  }, [tab, canManageContext]);
 
   return (
     <PageTransition>
@@ -568,7 +598,7 @@ const CompanyContext = () => {
                   )}
                 </div>
               )}
-              {tab === "upload"  && <UploadTab />}
+              {tab === "upload"  && canManageContext && <UploadTab />}
               {tab === "tickets" && <TicketsTab />}
             </motion.div>
           </AnimatePresence>
