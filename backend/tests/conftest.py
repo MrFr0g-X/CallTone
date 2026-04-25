@@ -13,6 +13,7 @@ from pathlib import Path
 # Force SQLite mode and a deterministic test secret BEFORE importing app
 os.environ["DB_HOST"] = ""
 os.environ["SECRET_KEY"] = "test-secret-key-not-for-production"
+os.environ["PIPELINE_QUEUE_AUTOSTART"] = "0"
 
 # Make ``app`` importable as a top-level package
 _BACKEND_DIR = Path(__file__).resolve().parent.parent

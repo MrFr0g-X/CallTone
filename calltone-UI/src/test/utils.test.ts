@@ -7,7 +7,8 @@ describe("cn classname joiner", () => {
   });
 
   it("drops falsy values", () => {
-    expect(cn("a", false && "b", null, undefined, "c")).toBe("a c");
+    const includeB = false;
+    expect(cn("a", includeB && "b", null, undefined, "c")).toBe("a c");
   });
 
   it("merges tailwind-like conflicts (last wins)", () => {

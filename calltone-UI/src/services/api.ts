@@ -41,7 +41,7 @@ export const ACCEPTED_AUDIO_TYPES = [
   "audio/webm",
 ] as const;
 
-export const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024;
+export const MAX_UPLOAD_SIZE_BYTES = 200 * 1024 * 1024;
 
 /** Pure predicate: does the file look like a supported audio upload? */
 export function isAudioFile(file: Pick<File, "name" | "type">): boolean {
@@ -50,6 +50,14 @@ export function isAudioFile(file: Pick<File, "name" | "type">): boolean {
   }
   const ext = file.name.toLowerCase().split(".").pop() ?? "";
   return ["wav", "mp3", "mpeg", "flac", "ogg", "webm", "m4a"].includes(ext);
+}
+
+export function apiErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === "object" && "response" in error) {
+    const response = (error as { response?: { data?: { detail?: unknown } } }).response;
+    if (typeof response?.data?.detail === "string") return response.data.detail;
+  }
+  return fallback;
 }
 
 export type ApiUserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
@@ -234,6 +242,8 @@ export interface UploadCallResponse {
   filename: string;
   status: string;
   message: string;
+  queuePosition?: number | null;
+  etaSeconds?: number | null;
 }
 
 export type AsrEngine = "fasterwhisper" | "sensevoice";
@@ -245,6 +255,9 @@ export interface CallStatusResponse {
   hasTranscript: boolean;
   hasReport: boolean;
   error: string | null;
+  queuePosition?: number | null;
+  queuedCount?: number | null;
+  etaSeconds?: number | null;
 }
 
 export const callsApi = {
@@ -363,11 +376,54 @@ export interface PipelineSettingsResponse {
   companyName:   string;
 }
 
+export interface PipelineQueueResponse {
+  activeCallId: string | null;
+  queuedCount: number;
+  queuedCallIds: string[];
+  runningCallIds: string[];
+  failedCount: number;
+  failedCallIds: string[];
+  etaSecondsPerJob: number;
+  estimatedDrainSeconds: number;
+}
+
+export interface PipelineJobResponse {
+  id: string;
+  callId: string;
+  audioPath: string;
+  asrEngine: AsrEngine;
+  companyName: string | null;
+  status: "queued" | "running" | "completed" | "failed";
+  priority: number;
+  attempts: number;
+  maxAttempts: number;
+  errorMessage: string | null;
+  lockedAt: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export interface PipelineJobsResponse {
+  jobs: PipelineJobResponse[];
+}
+
 export const pipelineApi = {
   getSettings: () =>
     apiClient.get<PipelineSettingsResponse>("/settings/pipeline"),
   updateSettings: (payload: Partial<PipelineSettingsResponse>) =>
     apiClient.put<PipelineSettingsResponse>("/settings/pipeline", payload),
+  getQueue: () =>
+    apiClient.get<PipelineQueueResponse>("/pipeline/queue"),
+  getJobs: (statusFilter?: PipelineJobResponse["status"], limit = 50) =>
+    apiClient.get<PipelineJobsResponse>("/pipeline/jobs", {
+      params: { status_filter: statusFilter, limit },
+    }),
+  retryJob: (callId: string) =>
+    apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/retry`),
+  deadLetterJob: (callId: string) =>
+    apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/dead-letter`),
 };
 
 // ── Company Context ────────────────────────────────────────────────────────

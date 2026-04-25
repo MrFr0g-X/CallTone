@@ -35,7 +35,7 @@ const AgentDashboard = () => {
     queryFn: () => agentApi.getCalls({ range: selectedRange }).then(r => r.data),
   });
 
-  const agentCalls: QaCallItem[] = callsData?.calls ?? [];
+  const agentCalls: QaCallItem[] = useMemo(() => callsData?.calls ?? [], [callsData?.calls]);
   const trendData = dashData?.trend ?? [];
 
   const greeting = useMemo(() => {

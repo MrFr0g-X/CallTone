@@ -7,13 +7,14 @@ import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
-import { callsApi, contextApi, pipelineApi } from "@/services/api";
+import { callsApi, contextApi, isAudioFile, MAX_UPLOAD_SIZE_BYTES, pipelineApi } from "@/services/api";
 import type { AsrEngine, CompanyContextSummary } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 type UploadStage = "idle" | "uploading" | "processing" | "completed" | "error";
 
 const STEP_LABELS: Record<string, string> = {
+  queued: "Queued for GPU processing...",
   uploaded: "File received",
   denoising: "Enhancing audio quality...",
   transcribing: "Transcribing & diarizing...",
@@ -41,6 +42,8 @@ const UploadCall = () => {
   const [callId, setCallId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [queuePosition, setQueuePosition] = useState<number | null>(null);
+  const [etaSeconds, setEtaSeconds] = useState<number | null>(null);
   const [asrEngine, setAsrEngine] = useState<AsrEngine>("fasterwhisper");
   const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
   const [companyName, setCompanyName] = useState("");
@@ -53,12 +56,19 @@ const UploadCall = () => {
     setCallId(null);
     setCurrentStep("");
     setErrorMsg("");
+    setQueuePosition(null);
+    setEtaSeconds(null);
     if (pollRef.current) clearInterval(pollRef.current);
   };
 
   const handleFile = useCallback((f: File) => {
-    if (f.size > 100 * 1024 * 1024) {
-      setErrorMsg("File too large (max 100 MB)");
+    if (!isAudioFile(f)) {
+      setErrorMsg("Unsupported file type. Upload WAV, MP3, FLAC, OGG, or WebM audio.");
+      setStage("error");
+      return;
+    }
+    if (f.size > MAX_UPLOAD_SIZE_BYTES) {
+      setErrorMsg("File too large (max 200 MB)");
       setStage("error");
       return;
     }
@@ -92,6 +102,8 @@ const UploadCall = () => {
           const res = await callsApi.getStatus(id);
           const d = res.data;
           setCurrentStep(d.currentStep);
+          setQueuePosition(d.queuePosition ?? null);
+          setEtaSeconds(d.etaSeconds ?? null);
 
           if (d.status === "COMPLETED") {
             setStage("completed");
@@ -116,8 +128,11 @@ const UploadCall = () => {
 
     try {
       const res = await callsApi.upload(file, undefined, asrEngine, companyName);
-      const { callId: id } = res.data;
+      const { callId: id, queuePosition: pos, etaSeconds: eta } = res.data;
       setCallId(id);
+      setCurrentStep("queued");
+      setQueuePosition(pos ?? null);
+      setEtaSeconds(eta ?? null);
       setStage("processing");
       pollStatus(id);
     } catch (err: unknown) {
@@ -213,7 +228,7 @@ const UploadCall = () => {
                     : "Drag & drop an audio file, or click to browse"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  MP3, WAV, FLAC, OGG, WebM — up to 100 MB
+                  MP3, WAV, FLAC, OGG, WebM — up to 200 MB
                 </p>
               </div>
             </GlassCard>
@@ -356,7 +371,9 @@ const UploadCall = () => {
                   : STEP_LABELS[currentStep] || "Processing..."}
               </p>
               <p className="text-xs text-muted-foreground mt-2">
-                This may take a moment
+                {currentStep === "queued" && queuePosition != null
+                  ? `Queue position ${queuePosition}${etaSeconds ? ` · ETA ~${Math.ceil(etaSeconds / 60)} min` : ""}`
+                  : "This may take a moment"}
               </p>
             </GlassCard>
           )}

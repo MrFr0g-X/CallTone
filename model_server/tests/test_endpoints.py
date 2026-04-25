@@ -236,6 +236,16 @@ def test_analyze_rejects_unknown_company_context(client, auth_headers):
     assert "unknown company context" in r.json()["detail"]
 
 
+def test_capacity_endpoint_reports_single_slot(client, auth_headers):
+    r = client.get("/v1/capacity", headers=auth_headers)
+    assert r.status_code == 200
+    body = r.json()
+    assert body["maxConcurrentJobs"] == 1
+    assert body["availableSlots"] in (0, 1)
+    assert body["maxUploadBytes"] == 200 * 1024 * 1024
+    assert "busy" in body
+
+
 def test_classify_line_recognises_stage_markers():
     from model_server.pipeline_adapter import classify_line
 

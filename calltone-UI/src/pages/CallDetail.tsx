@@ -38,6 +38,9 @@ const scoreClass = (score: number) => {
 const CallDetailPage = () => {
   const { callId } = useParams();
   const { user } = useAuth();
+  const navRole = user?.role === "agent" ? "agent" : user?.role === "admin" || user?.role === "super_admin" ? "admin" : "qa";
+  const backPath = user?.role === "agent" ? "/agent/dashboard" : user?.role === "admin" || user?.role === "super_admin" ? "/admin/dashboard" : "/qa/dashboard";
+  const backLabel = user?.role === "agent" ? "Back to Agent Dashboard" : user?.role === "admin" || user?.role === "super_admin" ? "Back to Admin Dashboard" : "Back to Dashboard";
 
   const { data: call, isLoading, isError } = useQuery({
     queryKey: ["call-detail-real", callId],
@@ -76,7 +79,7 @@ const CallDetailPage = () => {
     <PageTransition>
       <div className="min-h-screen relative">
         <AnimatedBackground />
-        <Navbar userName={user?.name ?? ""} userRole="qa" />
+        <Navbar userName={user?.name ?? ""} userRole={navRole} />
 
         {isLoading || !call ? (
           <div className="flex items-center justify-center min-h-[60vh]">
@@ -93,10 +96,10 @@ const CallDetailPage = () => {
           <main className="max-w-7xl mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-6 sm:space-y-8">
             <nav aria-label="Breadcrumb">
               <Link
-                to="/qa/dashboard"
+                to={backPath}
                 className="inline-flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground transition-colors duration-300"
               >
-                <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+                <ArrowLeft className="w-4 h-4" /> {backLabel}
               </Link>
             </nav>
 

@@ -3,15 +3,12 @@ import { ShieldX, ArrowLeft } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
+import { roleHome } from "@/lib/roles";
 
 const NotAuthorized = () => {
   const { user } = useAuth();
 
-  const homeRoute = user?.role === "admin"
-    ? "/admin/dashboard"
-    : user?.role === "qa"
-    ? "/qa/dashboard"
-    : "/agent/dashboard";
+  const homeRoute = roleHome(user?.role);
 
   return (
     <PageTransition>

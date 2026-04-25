@@ -330,6 +330,21 @@ def list_contexts():
     return {"contexts": _list_contexts()}
 
 
+@router.get("/capacity")
+def capacity(request: Request):
+    store: JobStore = request.app.state.jobs
+    snapshot = store.snapshot()
+    return {
+        **snapshot,
+        "maxConcurrentJobs": 1,
+        "availableSlots": 0 if snapshot["busy"] else 1,
+        "etaSeconds": ETA_SECONDS,
+        "maxUploadBytes": MAX_UPLOAD_BYTES,
+        "pipelineTimeoutSeconds": PIPELINE_TIMEOUT_SECONDS,
+        "contextsAvailable": len(_list_contexts()),
+    }
+
+
 @router.get("/contexts/{company}")
 def get_context(company: str):
     context = _load_context(company)

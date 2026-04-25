@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import PageTransition from "@/components/PageTransition";
 import { useAuth } from "@/contexts/AuthContext";
+import { roleHome } from "@/lib/roles";
+import { apiErrorMessage } from "@/services/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,14 +21,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   if (!authLoading && isAuthenticated && user) {
-    const dest =
-      user.role === "admin" || user.role === "super_admin" || user.role === "manager" || user.role === "viewer"
-        ? "/admin/dashboard"
-        : user.role === "qa"
-        ? "/qa/dashboard"
-        : "/agent/dashboard";
-
-    return <Navigate to={dest} replace />;
+    return <Navigate to={roleHome(user.role)} replace />;
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -51,25 +46,11 @@ const Login = () => {
         description: "You've been signed in successfully.",
       });
 
-      if (
-        loggedInUser.role === "admin" ||
-        loggedInUser.role === "super_admin" ||
-        loggedInUser.role === "manager" ||
-        loggedInUser.role === "viewer"
-      ) {
-        navigate("/admin/dashboard");
-      } else if (loggedInUser.role === "qa") {
-        navigate("/qa/dashboard");
-      } else {
-        navigate("/agent/dashboard");
-      }
-    } catch (error: any) {
-      const message =
-        error?.response?.data?.detail || "Login failed. Please check your email and password.";
-
+      navigate(roleHome(loggedInUser.role), { replace: true });
+    } catch (error: unknown) {
       toast({
         title: "Sign in failed",
-        description: message,
+        description: apiErrorMessage(error, "Login failed. Please check your email and password."),
         variant: "destructive",
       });
     } finally {

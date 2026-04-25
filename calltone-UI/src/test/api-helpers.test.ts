@@ -32,7 +32,7 @@ describe("upload constants", () => {
     expect(ACCEPTED_AUDIO_TYPES).toContain("audio/wav");
   });
 
-  it("caps uploads at 100 MB", () => {
-    expect(MAX_UPLOAD_SIZE_BYTES).toBe(100 * 1024 * 1024);
+  it("caps uploads at 200 MB", () => {
+    expect(MAX_UPLOAD_SIZE_BYTES).toBe(200 * 1024 * 1024);
   });
 });

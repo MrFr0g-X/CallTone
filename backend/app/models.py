@@ -136,6 +136,30 @@ class Call(Base):
     employee = relationship("Employee", back_populates="calls")
     transcript = relationship("Transcript", back_populates="call", uselist=False)
     qa_report = relationship("QaReport", back_populates="call", uselist=False)
+    pipeline_job = relationship("PipelineJob", back_populates="call", uselist=False)
+
+
+class PipelineJob(Base):
+    """Durable queue record for GPU pipeline execution."""
+    __tablename__ = "pipeline_jobs"
+
+    id = Column(String(36), primary_key=True, default=_uuid_str)
+    call_id = Column(String(36), ForeignKey("calls.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
+    audio_path = Column(String(512), nullable=False)
+    asr_engine = Column(String(50), nullable=False, default="fasterwhisper")
+    company_name = Column(String(150), nullable=True)
+    status = Column(String(20), nullable=False, default="queued", index=True)  # queued | running | completed | failed
+    priority = Column(Integer, nullable=False, default=100)
+    attempts = Column(Integer, nullable=False, default=0)
+    max_attempts = Column(Integer, nullable=False, default=2)
+    error_message = Column(Text, nullable=True)
+    locked_at = Column(DateTime(timezone=True), nullable=True)
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    call = relationship("Call", back_populates="pipeline_job")
 
 
 class Transcript(Base):

@@ -26,13 +26,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from app.database import Base, engine, get_db, settings, SessionLocal
 from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
-    PipelineSettings,
+    PipelineJob, PipelineSettings,
     _compute_grade,
 )
 from app.schemas import LoginRequest, TokenResponse
@@ -423,6 +423,33 @@ def get_current_user(
         raise HTTPException(status_code=401, detail="User not found or inactive")
 
     return user
+
+
+def _role_name(user: User) -> str:
+    return user.role.name if user.role else ""
+
+
+def _require_role(user: User, allowed: set[str] | tuple[str, ...] | list[str], detail: str = "Not authorized") -> str:
+    role = _role_name(user)
+    if role not in allowed:
+        raise HTTPException(status_code=403, detail=detail)
+    return role
+
+
+def _agent_employee_id(user: User, db: Session) -> str | None:
+    employee = db.query(Employee).filter(Employee.user_id == user.id).first()
+    return employee.id if employee else None
+
+
+def _ensure_call_visible_to_user(call: Call, user: User, db: Session) -> None:
+    role = _role_name(user)
+    if role in ("qa", "admin", "super_admin"):
+        return
+    if role == "agent":
+        employee_id = _agent_employee_id(user, db)
+        if employee_id and call.employee_id == employee_id:
+            return
+    raise HTTPException(status_code=403, detail="Not authorized to access this call")
 
 
 @app.get("/")
@@ -1078,13 +1105,22 @@ def get_qa_calls(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    rows = (
+    role = _require_role(
+        current_user, ("qa", "admin", "super_admin", "agent"),
+        "QA, Admin, or owning Agent access required",
+    )
+    query = (
         db.query(Call, Employee, QaReport)
         .join(Employee, Call.employee_id == Employee.id)
         .outerjoin(QaReport, Call.id == QaReport.call_id)
-        .order_by(Call.created_at.desc())
-        .all()
     )
+    if role == "agent":
+        employee_id = _agent_employee_id(current_user, db)
+        if not employee_id:
+            return {"calls": []}
+        query = query.filter(Call.employee_id == employee_id)
+
+    rows = query.order_by(Call.created_at.desc()).all()
 
     results = []
     for call, emp, report in rows:
@@ -1115,6 +1151,7 @@ def get_qa_call_audio(
     call = db.query(Call).filter(Call.id == call_id).first()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
+    _ensure_call_visible_to_user(call, current_user, db)
     if not call.storage_path:
         raise HTTPException(status_code=404, detail="No stored audio for this call")
 
@@ -1153,6 +1190,7 @@ def get_qa_call_detail(
         raise HTTPException(status_code=404, detail="Call not found")
 
     call, emp, transcript, report = row
+    _ensure_call_visible_to_user(call, current_user, db)
 
     drive_file_id = call.drive_file_id
     drive_preview_url = (
@@ -1208,6 +1246,7 @@ def get_agent_dashboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("agent",), "Agent access required")
     employee = _get_agent_employee(current_user, db)
     query = db.query(QaReport).join(Call, QaReport.call_id == Call.id)
     if employee:
@@ -1264,6 +1303,7 @@ def get_agent_calls(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("agent",), "Agent access required")
     employee = _get_agent_employee(current_user, db)
     if not employee:
         return {"calls": [], "total": 0}
@@ -1300,7 +1340,11 @@ ALLOWED_AUDIO_TYPES = {
     "audio/flac", "audio/ogg", "audio/webm", "audio/mp4",
     "application/octet-stream",
 }
-MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+# Keep backend and Tier-3 model-server limits aligned. The stress-test call is
+# ~89 MB, so buffering many concurrent uploads at the old 100 MB cap caused
+# TLS/write resets before jobs reached the GPU. Uploads are streamed below.
+MAX_FILE_SIZE = 200 * 1024 * 1024  # 200 MB
+UPLOAD_CHUNK_SIZE = 1024 * 1024
 VALID_ASR_ENGINES = {"fasterwhisper", "sensevoice"}
 
 
@@ -1319,6 +1363,45 @@ def _asr_metadata(asr_engine: str | None) -> tuple[str, str]:
     if engine == "sensevoice":
         return "sensevoice", "SenseVoiceSmall"
     return "fasterwhisper", "large-v3"
+
+
+async def _stream_upload_to_disk(file: UploadFile, dest: Path) -> tuple[int, str]:
+    """Stream an uploaded audio file to disk while computing SHA-256.
+
+    This avoids buffering large WAV files in backend RAM. It also removes
+    partial files on oversize/error so failed stress waves do not leave junk
+    behind in the uploads directory.
+    """
+    sha256_hash = hashlib.sha256()
+    total_bytes = 0
+    try:
+        with dest.open("wb") as out:
+            while True:
+                chunk = await file.read(UPLOAD_CHUNK_SIZE)
+                if not chunk:
+                    break
+                total_bytes += len(chunk)
+                if total_bytes > MAX_FILE_SIZE:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"File too large (max {MAX_FILE_SIZE // (1024 * 1024)} MB)",
+                    )
+                sha256_hash.update(chunk)
+                out.write(chunk)
+    except HTTPException:
+        dest.unlink(missing_ok=True)
+        raise
+    except Exception:
+        dest.unlink(missing_ok=True)
+        raise
+    finally:
+        await file.close()
+
+    if total_bytes == 0:
+        dest.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail="Empty file")
+
+    return total_bytes, sha256_hash.hexdigest()
 
 
 def _run_real_pipeline(
@@ -1843,6 +1926,314 @@ def _run_pipeline(
             db.close()
 
 
+PIPELINE_QUEUE_ETA_SECONDS = int(os.getenv("PIPELINE_QUEUE_ETA_SECONDS", "120"))
+PIPELINE_QUEUE_POLL_SECONDS = float(os.getenv("PIPELINE_QUEUE_POLL_SECONDS", "2"))
+_PIPELINE_QUEUE_LOCK = threading.Lock()
+_PIPELINE_QUEUE_WAKE_EVENT = threading.Event()
+_PIPELINE_ACTIVE_CALL_ID: str | None = None
+_PIPELINE_WORKER_THREAD: threading.Thread | None = None
+_PIPELINE_RECOVERY_DONE = False
+
+
+def _ensure_pipeline_queue_worker_started() -> None:
+    """Start the durable pipeline queue worker if it is not running."""
+    global _PIPELINE_RECOVERY_DONE, _PIPELINE_WORKER_THREAD
+    with _PIPELINE_QUEUE_LOCK:
+        if not _PIPELINE_RECOVERY_DONE:
+            _recover_interrupted_pipeline_jobs()
+            _PIPELINE_RECOVERY_DONE = True
+        if _PIPELINE_WORKER_THREAD is not None and _PIPELINE_WORKER_THREAD.is_alive():
+            return
+        _PIPELINE_WORKER_THREAD = threading.Thread(
+            target=_pipeline_queue_worker_loop,
+            name="calltone-pipeline-queue",
+            daemon=True,
+        )
+        _PIPELINE_WORKER_THREAD.start()
+
+
+def _enqueue_pipeline(
+    call_id: str,
+    audio_path: str,
+    asr_engine: str = "fasterwhisper",
+    company_name: str | None = None,
+) -> int:
+    """Persist one pipeline job and return its 1-based queue position."""
+    _ensure_pipeline_queue_worker_started()
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+        if job is None:
+            job = PipelineJob(
+                call_id=call_id,
+                audio_path=audio_path,
+                asr_engine=asr_engine,
+                company_name=company_name,
+                status="queued",
+                created_at=now,
+                updated_at=now,
+            )
+            db.add(job)
+        elif job.status not in ("running", "completed"):
+            job.audio_path = audio_path
+            job.asr_engine = asr_engine
+            job.company_name = company_name
+            job.status = "queued"
+            job.locked_at = None
+            job.finished_at = None
+            job.updated_at = now
+        db.commit()
+    finally:
+        db.close()
+
+    _PIPELINE_QUEUE_WAKE_EVENT.set()
+    snapshot = _pipeline_queue_snapshot(call_id)
+    return int(snapshot["queuePosition"] or 0)
+
+
+def _queued_pipeline_jobs(db: Session) -> list[PipelineJob]:
+    return (
+        db.query(PipelineJob)
+        .filter(PipelineJob.status == "queued")
+        .order_by(PipelineJob.priority.asc(), PipelineJob.created_at.asc(), PipelineJob.id.asc())
+        .all()
+    )
+
+
+def _pipeline_queue_snapshot(call_id: str | None = None) -> dict[str, int | str | None]:
+    db = SessionLocal()
+    try:
+        queued_jobs = _queued_pipeline_jobs(db)
+        queued = [job.call_id for job in queued_jobs]
+        running = db.query(PipelineJob).filter(PipelineJob.status == "running").first()
+        running_call_id = running.call_id if running else None
+    finally:
+        db.close()
+    with _PIPELINE_QUEUE_LOCK:
+        active_id = _PIPELINE_ACTIVE_CALL_ID
+    active_id = active_id or running_call_id
+    position = None
+    if call_id:
+        if call_id == active_id:
+            position = 0
+        elif call_id in queued:
+            position = queued.index(call_id) + 1
+    eta = None
+    if position is not None:
+        eta = PIPELINE_QUEUE_ETA_SECONDS if position == 0 else position * PIPELINE_QUEUE_ETA_SECONDS
+    return {
+        "activeCallId": active_id,
+        "queuePosition": position,
+        "queuedCount": len(queued),
+        "etaSeconds": eta,
+    }
+
+
+def _pipeline_queue_overview() -> dict[str, int | str | list[str] | None]:
+    db = SessionLocal()
+    try:
+        queued_jobs = _queued_pipeline_jobs(db)
+        queued = [job.call_id for job in queued_jobs]
+        running_jobs = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "running")
+            .order_by(PipelineJob.started_at.asc(), PipelineJob.id.asc())
+            .all()
+        )
+        running = [job.call_id for job in running_jobs]
+        failed_jobs = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "failed")
+            .order_by(PipelineJob.updated_at.desc(), PipelineJob.id.asc())
+            .limit(20)
+            .all()
+        )
+        failed_count = db.query(PipelineJob).filter(PipelineJob.status == "failed").count()
+    finally:
+        db.close()
+    with _PIPELINE_QUEUE_LOCK:
+        active_id = _PIPELINE_ACTIVE_CALL_ID
+    active_id = active_id or (running[0] if running else None)
+    return {
+        "activeCallId": active_id,
+        "queuedCount": len(queued),
+        "queuedCallIds": queued,
+        "runningCallIds": running,
+        "failedCount": failed_count,
+        "failedCallIds": [job.call_id for job in failed_jobs],
+        "etaSecondsPerJob": PIPELINE_QUEUE_ETA_SECONDS,
+        "estimatedDrainSeconds": len(queued) * PIPELINE_QUEUE_ETA_SECONDS,
+    }
+
+
+def _pipeline_job_to_public(job: PipelineJob) -> dict:
+    return {
+        "id": job.id,
+        "callId": job.call_id,
+        "audioPath": job.audio_path,
+        "asrEngine": job.asr_engine,
+        "companyName": job.company_name,
+        "status": job.status,
+        "priority": job.priority,
+        "attempts": job.attempts,
+        "maxAttempts": job.max_attempts,
+        "errorMessage": job.error_message,
+        "lockedAt": job.locked_at.isoformat() if job.locked_at else None,
+        "startedAt": job.started_at.isoformat() if job.started_at else None,
+        "finishedAt": job.finished_at.isoformat() if job.finished_at else None,
+        "createdAt": job.created_at.isoformat() if job.created_at else None,
+        "updatedAt": job.updated_at.isoformat() if job.updated_at else None,
+    }
+
+
+def _recover_interrupted_pipeline_jobs() -> None:
+    """Put jobs that were running during a backend restart back into the queue."""
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        interrupted = db.query(PipelineJob).filter(PipelineJob.status == "running").all()
+        for job in interrupted:
+            job.status = "queued"
+            job.locked_at = None
+            job.updated_at = now
+            call = db.query(Call).filter(Call.id == job.call_id).first()
+            if call and call.status != "COMPLETED":
+                call.status = "PENDING"
+                call.current_step = "queued"
+        db.commit()
+    finally:
+        db.close()
+
+
+def _claim_next_pipeline_job() -> dict[str, str] | None:
+    db = SessionLocal()
+    try:
+        if db.bind and db.bind.dialect.name.startswith("postgres"):
+            got_lock = db.execute(text("SELECT pg_try_advisory_xact_lock(42620260425)")).scalar()
+            if got_lock is not True:
+                return None
+
+        running_exists = db.query(PipelineJob.id).filter(PipelineJob.status == "running").first()
+        if running_exists is not None:
+            return None
+
+        query = (
+            db.query(PipelineJob)
+            .filter(PipelineJob.status == "queued")
+            .order_by(PipelineJob.priority.asc(), PipelineJob.created_at.asc(), PipelineJob.id.asc())
+        )
+        if db.bind and db.bind.dialect.name.startswith("postgres"):
+            query = query.with_for_update(skip_locked=True)
+        job = query.first()
+        if job is None:
+            return None
+
+        now = datetime.now(timezone.utc)
+        job.status = "running"
+        job.attempts = int(job.attempts or 0) + 1
+        job.locked_at = now
+        job.started_at = job.started_at or now
+        job.updated_at = now
+        job.error_message = None
+
+        call = db.query(Call).filter(Call.id == job.call_id).first()
+        if call:
+            call.status = "PENDING"
+            call.current_step = "starting"
+            call.error_message = None
+
+        payload = {
+            "call_id": job.call_id,
+            "audio_path": job.audio_path,
+            "asr_engine": job.asr_engine,
+            "company_name": job.company_name or "",
+        }
+        db.commit()
+        return payload
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+
+def _finish_pipeline_job(call_id: str, worker_error: str | None = None) -> None:
+    db = SessionLocal()
+    try:
+        now = datetime.now(timezone.utc)
+        job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+        call = db.query(Call).filter(Call.id == call_id).first()
+        if job is None:
+            return
+
+        if worker_error:
+            error_message = worker_error
+            call_completed = False
+        else:
+            call_completed = bool(call and call.status == "COMPLETED")
+            error_message = call.error_message if call else "Call record not found after pipeline run"
+
+        if call_completed:
+            job.status = "completed"
+            job.error_message = None
+            job.finished_at = now
+        elif job.attempts < job.max_attempts:
+            job.status = "queued"
+            job.error_message = error_message or "Pipeline failed; queued for retry"
+            job.locked_at = None
+            if call:
+                call.status = "PENDING"
+                call.current_step = "queued"
+            _PIPELINE_QUEUE_WAKE_EVENT.set()
+        else:
+            job.status = "failed"
+            job.error_message = error_message or "Pipeline failed"
+            job.finished_at = now
+            if call and call.status != "COMPLETED":
+                call.status = "FAILED"
+                call.current_step = "error"
+                call.error_message = job.error_message
+
+        job.updated_at = now
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
+
+
+def _pipeline_queue_worker_loop() -> None:
+    global _PIPELINE_ACTIVE_CALL_ID
+    while True:
+        job = _claim_next_pipeline_job()
+        if job is None:
+            _PIPELINE_QUEUE_WAKE_EVENT.wait(PIPELINE_QUEUE_POLL_SECONDS)
+            _PIPELINE_QUEUE_WAKE_EVENT.clear()
+            continue
+
+        call_id = job["call_id"]
+        with _PIPELINE_QUEUE_LOCK:
+            _PIPELINE_ACTIVE_CALL_ID = call_id
+        worker_error = None
+        try:
+            _run_pipeline(call_id, job["audio_path"], job["asr_engine"], job["company_name"] or None)
+        except Exception as exc:
+            worker_error = f"Pipeline worker crashed: {exc}"
+        finally:
+            _finish_pipeline_job(call_id, worker_error=worker_error)
+            with _PIPELINE_QUEUE_LOCK:
+                if _PIPELINE_ACTIVE_CALL_ID == call_id:
+                    _PIPELINE_ACTIVE_CALL_ID = None
+
+
+@app.on_event("startup")
+def _start_pipeline_queue_worker_on_startup() -> None:
+    if os.getenv("PIPELINE_QUEUE_AUTOSTART", "1") != "0":
+        _ensure_pipeline_queue_worker_started()
+
+
 @app.post(f"{settings.API_V1_PREFIX}/calls/upload")
 async def upload_call(
     file: UploadFile = File(...),
@@ -1874,13 +2265,6 @@ async def upload_call(
     except FileNotFoundError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
-    content = await file.read()
-    if len(content) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File too large (max 100 MB)")
-    if len(content) == 0:
-        raise HTTPException(status_code=400, detail="Empty file")
-
-    sha256 = hashlib.sha256(content).hexdigest()
     call_id = str(uuid.uuid4())
     # C-4: strip any path separators / control chars from the
     # user-supplied name before joining with UPLOAD_DIR. Without this,
@@ -1889,7 +2273,7 @@ async def upload_call(
     safe_filename = _sanitize_filename(file.filename)
 
     dest = UPLOAD_DIR / f"{call_id}_{safe_filename}"
-    dest.write_bytes(content)
+    total_bytes, sha256 = await _stream_upload_to_disk(file, dest)
     duration_seconds, sample_rate_hz, channels = _audio_duration_metadata(dest)
 
     # Resolve agent employee record
@@ -1921,35 +2305,27 @@ async def upload_call(
         employee_id=employee.id,
         original_filename=safe_filename,
         storage_path=str(dest),
-        size_bytes=len(content),
+        size_bytes=total_bytes,
         sha256=sha256,
         duration_seconds=round(duration_seconds, 3) if duration_seconds else None,
         sample_rate_hz=sample_rate_hz,
         channels=channels,
         status="PENDING",
-        current_step="uploaded",
+        current_step="queued",
         call_time=datetime.now(timezone.utc),
     )
     db.add(call)
     db.commit()
 
-    # Run pipeline in a SEPARATE PROCESS so it gets its own GIL.
-    # This eliminates all GIL contention between uvicorn (HTTP handling)
-    # and the GPU pipeline.  Must use 'spawn' (not 'fork') because CUDA
-    # contexts cannot be re-initialized in forked subprocesses.
-    import multiprocessing
-    ctx = multiprocessing.get_context("spawn")
-    p = ctx.Process(
-        target=_run_pipeline, args=(call_id, str(dest), asr_engine, selected_company),
-        name=f"pipeline-{call_id[:8]}", daemon=True,
-    )
-    p.start()
+    queue_position = _enqueue_pipeline(call_id, str(dest), asr_engine, selected_company)
 
     return {
         "callId": call_id,
         "filename": safe_filename,
-        "status": "PENDING",
-        "message": "Call uploaded successfully. Processing started.",
+        "status": "QUEUED",
+        "queuePosition": queue_position,
+        "etaSeconds": queue_position * PIPELINE_QUEUE_ETA_SECONDS,
+        "message": "Call uploaded successfully. Processing queued.",
     }
 
 
@@ -1964,9 +2340,11 @@ def get_call_status(
     call = db.query(Call).filter(Call.id == call_id).first()
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
+    _ensure_call_visible_to_user(call, current_user, db)
 
     has_transcript = db.query(Transcript).filter(Transcript.call_id == call_id).first() is not None
     has_report = db.query(QaReport).filter(QaReport.call_id == call_id).first() is not None
+    queue_state = _pipeline_queue_snapshot(call_id)
 
     return {
         "callId": call.id,
@@ -1975,7 +2353,111 @@ def get_call_status(
         "hasTranscript": has_transcript,
         "hasReport": has_report,
         "error": call.error_message,
+        "queuePosition": queue_state["queuePosition"],
+        "queuedCount": queue_state["queuedCount"],
+        "etaSeconds": queue_state["etaSeconds"],
     }
+
+
+@app.get(f"{settings.API_V1_PREFIX}/pipeline/queue")
+def get_pipeline_queue(
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+        raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline queue")
+    return _pipeline_queue_overview()
+
+
+@app.get(f"{settings.API_V1_PREFIX}/pipeline/jobs")
+def list_pipeline_jobs(
+    status_filter: str | None = None,
+    limit: int = 50,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin", "qa"]:
+        raise HTTPException(status_code=403, detail="Not authorized to inspect pipeline jobs")
+    limit = max(1, min(int(limit or 50), 200))
+    query = db.query(PipelineJob)
+    if status_filter:
+        allowed = {"queued", "running", "completed", "failed"}
+        if status_filter not in allowed:
+            raise HTTPException(status_code=400, detail=f"status_filter must be one of {', '.join(sorted(allowed))}")
+        query = query.filter(PipelineJob.status == status_filter)
+    jobs = (
+        query.order_by(PipelineJob.created_at.desc(), PipelineJob.id.asc())
+        .limit(limit)
+        .all()
+    )
+    return {"jobs": [_pipeline_job_to_public(job) for job in jobs]}
+
+
+@app.post(f"{settings.API_V1_PREFIX}/pipeline/jobs/{{call_id}}/retry")
+def retry_pipeline_job(
+    call_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if job.status == "running":
+        raise HTTPException(status_code=409, detail="Cannot retry a running job")
+    if job.status == "completed":
+        raise HTTPException(status_code=409, detail="Completed jobs cannot be retried")
+
+    now = datetime.now(timezone.utc)
+    job.status = "queued"
+    job.attempts = 0
+    job.error_message = None
+    job.locked_at = None
+    job.started_at = None
+    job.finished_at = None
+    job.updated_at = now
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if call and call.status != "COMPLETED":
+        call.status = "PENDING"
+        call.current_step = "queued"
+        call.error_message = None
+    db.commit()
+    db.refresh(job)
+    _PIPELINE_QUEUE_WAKE_EVENT.set()
+    return {"ok": True, "job": _pipeline_job_to_public(job)}
+
+
+@app.post(f"{settings.API_V1_PREFIX}/pipeline/jobs/{{call_id}}/dead-letter")
+def dead_letter_pipeline_job(
+    call_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role.name not in ["super_admin", "admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    job = db.query(PipelineJob).filter(PipelineJob.call_id == call_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Pipeline job not found")
+    if job.status == "running":
+        raise HTTPException(status_code=409, detail="Cannot dead-letter a running job")
+    if job.status == "completed":
+        raise HTTPException(status_code=409, detail="Completed jobs cannot be dead-lettered")
+
+    now = datetime.now(timezone.utc)
+    job.status = "failed"
+    job.max_attempts = max(job.max_attempts, job.attempts)
+    job.error_message = job.error_message or "Manually dead-lettered by admin"
+    job.locked_at = None
+    job.finished_at = now
+    job.updated_at = now
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if call and call.status != "COMPLETED":
+        call.status = "FAILED"
+        call.current_step = "error"
+        call.error_message = job.error_message
+    db.commit()
+    db.refresh(job)
+    return {"ok": True, "job": _pipeline_job_to_public(job)}
 
 
 @app.post(f"{settings.API_V1_PREFIX}/auth/logout")
@@ -1990,6 +2472,7 @@ def get_pipeline_settings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     ps = db.query(PipelineSettings).filter(PipelineSettings.id == 1).first()
     if not ps:
         ps = PipelineSettings(id=1, company_name=_default_pipeline_company())
@@ -2067,6 +2550,7 @@ _INGEST_JOBS: dict = {}
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies")
 def list_companies(current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     companies = []
     seen_slugs: set[str] = set()
@@ -2109,6 +2593,7 @@ def list_companies(current_user: User = Depends(get_current_user)):
 
 @app.get(f"{settings.API_V1_PREFIX}/context/companies/{'{name}'}")
 def get_company_context(name: str, current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     path = CONTEXTS_DIR / f"{name.lower().replace(' ', '_')}.json"
     if not path.exists():
@@ -2206,6 +2691,7 @@ def ingest_job_status(
     job_id: str,
     current_user: User = Depends(get_current_user),
 ):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     job = _INGEST_JOBS.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
@@ -2214,6 +2700,7 @@ def ingest_job_status(
 
 @app.get(f"{settings.API_V1_PREFIX}/context/tickets")
 def list_tickets(current_user: User = Depends(get_current_user)):
+    _require_role(current_user, ("qa", "admin", "super_admin"), "QA or Admin access required")
     import json as _json
     tickets = []
     if TICKETS_DIR.exists():
