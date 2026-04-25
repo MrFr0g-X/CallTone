@@ -10,7 +10,15 @@ Covers:
 import secrets
 
 from app.database import SessionLocal
-from app.models import Employee, User
+from app.models import Client, Employee, User
+
+
+def _bankserv_client_id():
+    db = SessionLocal()
+    try:
+        return db.query(Client).filter(Client.name == "BankServ Global").first().id
+    finally:
+        db.close()
 
 
 def test_admin_can_invite_qa_who_then_logs_in(client, admin_token):
@@ -20,7 +28,7 @@ def test_admin_can_invite_qa_who_then_logs_in(client, admin_token):
     invite = client.post(
         "/api/admin/users/invite",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"name": "Invite Flow QA", "email": new_email, "role": "qa"},
+        json={"name": "Invite Flow QA", "email": new_email, "role": "qa", "clientId": _bankserv_client_id()},
     )
     assert invite.status_code == 200, invite.text
     body = invite.json()
@@ -64,7 +72,7 @@ def test_invite_token_cannot_be_reused(client, admin_token):
     invite = client.post(
         "/api/admin/users/invite",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"name": "Reuse Test", "email": new_email, "role": "agent"},
+        json={"name": "Reuse Test", "email": new_email, "role": "agent", "clientId": _bankserv_client_id()},
     )
     token = invite.json()["inviteUrl"].rsplit("token=", 1)[-1]
 
@@ -100,7 +108,7 @@ def test_invited_user_login_does_not_500(client, admin_token):
     invite = client.post(
         "/api/admin/users/invite",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"name": "Invited Login Probe", "email": new_email, "role": "viewer"},
+        json={"name": "Invited Login Probe", "email": new_email, "role": "viewer", "clientId": _bankserv_client_id()},
     )
     assert invite.status_code == 200, invite.text
 
@@ -118,7 +126,7 @@ def test_delete_user_detaches_employee_link(client, admin_token):
     invite = client.post(
         "/api/admin/users/invite",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"name": "Linked Agent", "email": new_email, "role": "agent"},
+        json={"name": "Linked Agent", "email": new_email, "role": "agent", "clientId": _bankserv_client_id()},
     )
     assert invite.status_code == 200, invite.text
     user_id = invite.json()["user"]["id"]
@@ -126,6 +134,7 @@ def test_delete_user_detaches_employee_link(client, admin_token):
     db = SessionLocal()
     try:
         employee = Employee(
+            client_id=_bankserv_client_id(),
             employee_code=f"DEL-{secrets.token_hex(3)}",
             full_name="Linked Agent",
             role="AGENT",

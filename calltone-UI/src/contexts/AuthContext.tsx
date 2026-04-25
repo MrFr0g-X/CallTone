@@ -6,7 +6,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { authApi } from "@/services/api";
+import { authApi, type UserCapabilities } from "@/services/api";
 
 export type UserRole =
   | "owner"
@@ -23,6 +23,9 @@ interface AuthUser {
   name: string;
   role: UserRole;
   clientId?: number | null;
+  clientName?: string | null;
+  roleScope?: "platform" | "tenant";
+  capabilities?: UserCapabilities;
 }
 
 interface AuthContextType {
@@ -67,6 +70,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           name: me.name,
           role: me.role,
           clientId: me.clientId,
+          clientName: me.clientName,
+          roleScope: me.roleScope,
+          capabilities: me.capabilities,
         };
 
         setUser(authUser);
@@ -95,6 +101,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       name: user.name,
       role: user.role,
       clientId: user.clientId,
+      clientName: user.clientName,
+      roleScope: user.roleScope,
+      capabilities: user.capabilities,
     };
 
     setUser(authUser);

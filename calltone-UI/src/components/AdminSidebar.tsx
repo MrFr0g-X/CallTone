@@ -10,7 +10,7 @@ import { roleConfig } from "@/data/adminMockData";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
 import calltoneLogo from "@/assets/calltone-logo.png";
-import { canManageAdminUsers } from "@/lib/roles";
+import { canManageAdminUsers, isPlatformScope } from "@/lib/roles";
 import { useState } from "react";
 
 const navItems = [
@@ -29,7 +29,12 @@ const AdminSidebar = () => {
   const adminRole = (user?.role ?? "viewer") as keyof typeof roleConfig;
   const role = roleConfig[adminRole] ?? roleConfig.viewer;
   const userName = user?.name ?? "Admin";
-  const visibleNavItems = navItems.filter((item) => item.to !== "/admin/settings" || canManageAdminUsers(user?.role));
+  const platformScope = isPlatformScope(user);
+  const visibleNavItems = navItems.filter((item) => {
+    if (item.to === "/admin/clients") return platformScope;
+    if (item.to === "/admin/settings") return canManageAdminUsers(user?.role);
+    return true;
+  });
 
   const handleLogout = async () => {
     await logout();

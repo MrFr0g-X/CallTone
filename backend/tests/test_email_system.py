@@ -1,11 +1,19 @@
 import secrets
 
 from app.database import SessionLocal
-from app.models import EmailEvent
+from app.models import Client, EmailEvent
 
 
 def _auth(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+def _bankserv_client_id() -> int:
+    db = SessionLocal()
+    try:
+        return db.query(Client).filter(Client.name == "BankServ Global").first().id
+    finally:
+        db.close()
 
 
 def test_invite_records_email_event_even_when_mail_disabled(client, admin_token):
@@ -14,7 +22,7 @@ def test_invite_records_email_event_even_when_mail_disabled(client, admin_token)
     response = client.post(
         "/api/admin/users/invite",
         headers=_auth(admin_token),
-        json={"name": "Mail Invite", "email": email, "role": "qa"},
+        json={"name": "Mail Invite", "email": email, "role": "qa", "clientId": _bankserv_client_id()},
     )
 
     assert response.status_code == 200, response.text
@@ -57,4 +65,3 @@ def test_mail_status_and_null_provider_test_send(client, admin_token, monkeypatc
 def test_qa_cannot_send_test_email(client, qa_token):
     response = client.post("/api/settings/mail/test", headers=_auth(qa_token))
     assert response.status_code == 403
-

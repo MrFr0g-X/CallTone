@@ -14,7 +14,7 @@ from pathlib import Path
 from app.database import SessionLocal, Base, engine, settings
 from app.models import (
     Client, Role, User, Employee, Customer, Call, Transcript, QaReport,
-    _compute_grade,
+    ClientPolicy, _compute_grade,
 )
 from app.security import hash_password
 
@@ -284,6 +284,10 @@ def main():
             if not db.query(Client).filter(Client.name == client_data["name"]).first():
                 db.add(Client(**client_data))
         db.commit()
+        for client in db.query(Client).all():
+            if not db.query(ClientPolicy).filter(ClientPolicy.client_id == client.id).first():
+                db.add(ClientPolicy(client_id=client.id))
+        db.commit()
 
         # ── Users ──
         seeded_agent_emails = {}
@@ -329,9 +333,13 @@ def main():
 
 def _seed_qa_data(db, seeded_agent_emails=None):
     seeded_agent_emails = seeded_agent_emails or {}
+    bankserv = db.query(Client).filter(Client.name == "BankServ Global").first()
+    bankserv_id = bankserv.id if bankserv else None
+
     # Create QA employee
     qa_emp = Employee(
         id=str(uuid.uuid4()),
+        client_id=bankserv_id,
         employee_code="QA001",
         full_name="Maya QA",
         role="QA",
@@ -354,6 +362,7 @@ def _seed_qa_data(db, seeded_agent_emails=None):
             user_id = u.id if u else None
         agent = Employee(
             id=str(uuid.uuid4()),
+            client_id=bankserv_id,
             employee_code=f"AG{i:03d}",
             full_name=name,
             role="AGENT",
@@ -367,6 +376,7 @@ def _seed_qa_data(db, seeded_agent_emails=None):
     # Create customer
     customer = Customer(
         id=str(uuid.uuid4()),
+        client_id=bankserv_id,
         external_customer_ref="customer-001",
         display_name="Sample Customer",
         phone_hash="hash_placeholder",
@@ -398,6 +408,7 @@ def _seed_qa_data(db, seeded_agent_emails=None):
 
         call = Call(
             id=call_id,
+            client_id=bankserv_id,
             customer_id=customer.id,
             employee_id=agent.id,
             drive_file_id=drive_id,

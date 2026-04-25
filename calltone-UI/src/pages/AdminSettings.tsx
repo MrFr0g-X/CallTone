@@ -4,13 +4,15 @@ import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save,
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { apiErrorMessage, contextApi, mailApi, pipelineApi } from "@/services/api";
-import type { CompanyContextSummary, MailSettingsResponse, PipelineJobResponse, PipelineQueueResponse, PipelineSettingsResponse } from "@/services/api";
+import { adminApi, apiErrorMessage, contextApi, mailApi, pipelineApi } from "@/services/api";
+import type { AdminClientItem, ClientPolicy, CompanyContextSummary, MailSettingsResponse, PipelineJobResponse, PipelineQueueResponse, PipelineSettingsResponse } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { isPlatformScope } from "@/lib/roles";
 
 const AdminSettings = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const platformScope = isPlatformScope(user);
   const [pipeline, setPipeline] = useState<PipelineSettingsResponse>({
     audioMode: "denoise",
     injectionScan: "static",
@@ -23,11 +25,17 @@ const AdminSettings = () => {
   const [queue, setQueue] = useState<PipelineQueueResponse | null>(null);
   const [jobs, setJobs] = useState<PipelineJobResponse[]>([]);
   const [mail, setMail] = useState<MailSettingsResponse | null>(null);
+  const [clientDirectory, setClientDirectory] = useState<AdminClientItem[]>([]);
+  const [policyClientId, setPolicyClientId] = useState<number | null>(null);
+  const [clientPolicy, setClientPolicy] = useState<ClientPolicy | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [queueLoading, setQueueLoading] = useState(false);
   const [mailTestLoading, setMailTestLoading] = useState(false);
+  const [policyLoading, setPolicyLoading] = useState(false);
+  const [policySaving, setPolicySaving] = useState(false);
   const [jobActionCallId, setJobActionCallId] = useState<string | null>(null);
+  const canManagePolicy = user?.capabilities?.canManageUsers ?? false;
 
   const loadQueueState = async () => {
     setQueueLoading(true);
@@ -56,7 +64,7 @@ const AdminSettings = () => {
       contextApi.listCompanies(),
       pipelineApi.getQueue(),
       pipelineApi.getJobs(undefined, 20),
-      mailApi.getSettings(),
+      platformScope ? mailApi.getSettings() : Promise.resolve({ data: null as MailSettingsResponse | null }),
     ])
       .then(([settingsRes, companiesRes, queueRes, jobsRes, mailRes]) => {
         if (cancelled) return;
@@ -79,7 +87,62 @@ const AdminSettings = () => {
     return () => {
       cancelled = true;
     };
-  }, [toast]);
+  }, [toast, platformScope]);
+
+  useEffect(() => {
+    if (!platformScope) return;
+    let cancelled = false;
+    adminApi
+      .getClients()
+      .then((response) => {
+        if (cancelled) return;
+        const clients = response.data.clients || [];
+        setClientDirectory(clients);
+        if (!policyClientId && clients.length > 0) {
+          setPolicyClientId(clients[0].id);
+        }
+      })
+      .catch((error: unknown) => {
+        toast({
+          title: "Clients unavailable",
+          description: apiErrorMessage(error, "Could not load client policy targets."),
+          variant: "destructive",
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [platformScope, policyClientId, toast]);
+
+  useEffect(() => {
+    const targetClientId = platformScope ? policyClientId : null;
+    if (platformScope && !targetClientId) return;
+
+    let cancelled = false;
+    setPolicyLoading(true);
+    adminApi
+      .getClientPolicy(targetClientId)
+      .then((response) => {
+        if (cancelled) return;
+        setClientPolicy(response.data.policy);
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setClientPolicy(null);
+        toast({
+          title: "Access policy unavailable",
+          description: apiErrorMessage(error, "Could not load client access policy."),
+          variant: "destructive",
+        });
+      })
+      .finally(() => {
+        if (!cancelled) setPolicyLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [platformScope, policyClientId, user?.id, toast]);
 
   const handlePipelineSave = async () => {
     setSaving(true);
@@ -122,6 +185,34 @@ const AdminSettings = () => {
     }
   };
 
+  const updatePolicyField = <K extends keyof ClientPolicy>(key: K, value: ClientPolicy[K]) => {
+    setClientPolicy((policy) => (policy ? { ...policy, [key]: value } : policy));
+  };
+
+  const handlePolicySave = async () => {
+    if (!clientPolicy) return;
+    setPolicySaving(true);
+    try {
+      const response = await adminApi.updateClientPolicy({
+        ...clientPolicy,
+        clientId: platformScope ? policyClientId : clientPolicy.clientId,
+      });
+      setClientPolicy(response.data.policy);
+      toast({
+        title: "Access policy saved",
+        description: "Company permissions are enforced immediately by the backend.",
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Policy save failed",
+        description: apiErrorMessage(error, "Could not update client access policy."),
+        variant: "destructive",
+      });
+    } finally {
+      setPolicySaving(false);
+    }
+  };
+
   const handleRetryJob = async (callId: string) => {
     setJobActionCallId(callId);
     try {
@@ -156,6 +247,24 @@ const AdminSettings = () => {
     }
   };
 
+  const agentPolicyFlags = [
+    ["agentPortalEnabled", "Enable agent portal", "If disabled, agents cannot use their dashboard at all."],
+    ["agentCanViewCallList", "Agent call list", "Allow agents to see their own calls list."],
+    ["agentCanOpenCallDetail", "Call detail page", "Allow agents to open individual call reports."],
+    ["agentCanPlayAudio", "Audio playback", "Allow agents to stream their own call audio."],
+    ["agentCanViewTranscript", "Transcript", "Allow agents to read transcript text and speaker turns."],
+    ["agentCanViewScores", "Scores", "Allow agents to see scores, severity, and trends."],
+    ["agentCanViewEvidence", "Evidence", "Allow agents to see QA evidence quotes."],
+    ["agentCanViewAiReport", "AI report", "Allow agents to see the generated narrative report."],
+    ["agentCanViewTrends", "Trends", "Allow agents to see historical performance trends."],
+  ] as const;
+
+  const qaPolicyFlags = [
+    ["qaCanUploadCalls", "QA uploads", "Allow QA/admin users in this company to submit calls."],
+    ["qaCanManageContextTickets", "Context tickets", "Allow QA/admin users to submit and review context change tickets."],
+    ["tenantAdminCanInviteAdmins", "Tenant admin invitations", "Allow this company admin to invite additional company admins."],
+  ] as const;
+
   return (
     <div className="space-y-8">
       <header>
@@ -180,6 +289,150 @@ const AdminSettings = () => {
         </div>
       </GlassCard>
 
+      <GlassCard className="rounded-2xl p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-accent" />
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Company Access Policy
+              </h2>
+            </div>
+            <p className="max-w-3xl text-xs leading-5 text-muted-foreground">
+              These permissions are enforced by the backend, not only hidden in the UI. Use them to decide what each
+              company&apos;s agents and QA users can see or operate.
+            </p>
+          </div>
+
+          {platformScope && (
+            <select
+              value={policyClientId ?? ""}
+              onChange={(event) => setPolicyClientId(event.target.value ? Number(event.target.value) : null)}
+              className="h-10 min-w-[240px] rounded-xl glass-input px-4 text-sm"
+            >
+              {clientDirectory.length === 0 ? (
+                <option value="">No clients found</option>
+              ) : (
+                clientDirectory.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.name}
+                  </option>
+                ))
+              )}
+            </select>
+          )}
+        </div>
+
+        {policyLoading ? (
+          <div className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading access policy...
+          </div>
+        ) : clientPolicy ? (
+          <div className="mt-6 space-y-6">
+            <section>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Agent visibility
+              </p>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {agentPolicyFlags.map(([key, label, description]) => (
+                  <label
+                    key={key}
+                    className={cn(
+                      "rounded-xl border border-border/50 bg-muted/10 p-4 transition-colors",
+                      !canManagePolicy && "opacity-70",
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-foreground">{label}</span>
+                      <button
+                        type="button"
+                        disabled={!canManagePolicy}
+                        onClick={() => updatePolicyField(key, !clientPolicy[key])}
+                        className={cn(
+                          "flex h-6 w-10 items-center rounded-full px-0.5 transition-colors disabled:cursor-not-allowed",
+                          clientPolicy[key] ? "justify-end bg-success" : "justify-start bg-muted-foreground/25",
+                        )}
+                        aria-label={`Toggle ${label}`}
+                      >
+                        <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
+                      </button>
+                    </div>
+                    <p className="mt-2 text-[11px] leading-5 text-muted-foreground">{description}</p>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                QA and tenant admin operations
+              </p>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {qaPolicyFlags.map(([key, label, description]) => (
+                  <label key={key} className="rounded-xl border border-border/50 bg-muted/10 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-foreground">{label}</span>
+                      <button
+                        type="button"
+                        disabled={!canManagePolicy}
+                        onClick={() => updatePolicyField(key, !clientPolicy[key])}
+                        className={cn(
+                          "flex h-6 w-10 items-center rounded-full px-0.5 transition-colors disabled:cursor-not-allowed",
+                          clientPolicy[key] ? "justify-end bg-success" : "justify-start bg-muted-foreground/25",
+                        )}
+                        aria-label={`Toggle ${label}`}
+                      >
+                        <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
+                      </button>
+                    </div>
+                    <p className="mt-2 text-[11px] leading-5 text-muted-foreground">{description}</p>
+                  </label>
+                ))}
+              </div>
+
+              <div className="mt-4 max-w-sm">
+                <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
+                  QA data scope
+                </label>
+                <select
+                  disabled={!canManagePolicy}
+                  value={clientPolicy.qaScope}
+                  onChange={(event) =>
+                    updatePolicyField("qaScope", event.target.value as ClientPolicy["qaScope"])
+                  }
+                  className="h-10 w-full rounded-xl glass-input px-4 text-sm disabled:opacity-60"
+                >
+                  <option value="company">Whole company</option>
+                  <option value="assigned_team">Assigned team only</option>
+                  <option value="own_uploads">Own uploads only</option>
+                </select>
+                <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                  Company scope is currently production-ready. Assigned-team and own-upload modes are reserved for the
+                  next employee assignment workflow expansion.
+                </p>
+              </div>
+            </section>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-[11px] text-muted-foreground">
+                Last updated: {clientPolicy.updatedAt ? new Date(clientPolicy.updatedAt).toLocaleString() : "Not recorded"}
+              </p>
+              <button
+                onClick={handlePolicySave}
+                disabled={!canManagePolicy || policySaving}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:brightness-110 disabled:opacity-60"
+              >
+                {policySaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                Save Access Policy
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="mt-5 text-sm text-muted-foreground">Select a client to load policy controls.</p>
+        )}
+      </GlassCard>
+
+      {platformScope && (
       <GlassCard className="relative overflow-hidden rounded-2xl p-6">
         <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 left-8 h-52 w-52 rounded-full bg-teal-400/10 blur-3xl" />
@@ -264,6 +517,7 @@ const AdminSettings = () => {
           </button>
         </div>
       </GlassCard>
+      )}
 
       <GlassCard className="rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-5">

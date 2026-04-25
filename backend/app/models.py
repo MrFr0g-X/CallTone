@@ -76,6 +76,7 @@ class Employee(Base):
     __tablename__ = "employees"
 
     id = Column(String(36), primary_key=True, default=_uuid_str)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     employee_code = Column(String(50), unique=True, nullable=True)
     full_name = Column(String(150), nullable=False)
     role = Column(String(20), nullable=False)  # AGENT, QA, BOTH
@@ -85,13 +86,20 @@ class Employee(Base):
 
     calls = relationship("Call", back_populates="employee")
     user = relationship("User", foreign_keys=[user_id])
+    client = relationship("Client", foreign_keys=[client_id])
 
 
 class PipelineSettings(Base):
-    """Singleton table — always one row (id=1). Stores admin-controlled pipeline config."""
+    """Pipeline config.
+
+    Legacy deployments have one global row (id=1, client_id=NULL). New
+    multi-tenant deployments create one row per client and keep the global row
+    as platform/default fallback.
+    """
     __tablename__ = "pipeline_settings"
 
-    id = Column(Integer, primary_key=True, default=1)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     audio_mode = Column(String(20), nullable=False, default="denoise")    # none | denoise | enhance
     injection_scan = Column(String(20), nullable=False, default="static") # static | llm
     num_speakers = Column(Integer, nullable=True)                          # None = auto-detect
@@ -99,22 +107,58 @@ class PipelineSettings(Base):
     use_consensus = Column(Boolean, nullable=False, default=False)
     company_name = Column(String(150), nullable=False, default="metroboost")
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    client = relationship("Client", foreign_keys=[client_id])
+
+
+class ClientPolicy(Base):
+    """Per-client visibility policy for tenant users.
+
+    The backend uses this for response shaping. The frontend may hide matching
+    controls, but these flags are enforced server-side.
+    """
+    __tablename__ = "client_policies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), unique=True, nullable=False, index=True)
+
+    agent_portal_enabled = Column(Boolean, nullable=False, default=True)
+    agent_can_view_call_list = Column(Boolean, nullable=False, default=True)
+    agent_can_open_call_detail = Column(Boolean, nullable=False, default=True)
+    agent_can_play_audio = Column(Boolean, nullable=False, default=False)
+    agent_can_view_transcript = Column(Boolean, nullable=False, default=True)
+    agent_can_view_scores = Column(Boolean, nullable=False, default=True)
+    agent_can_view_evidence = Column(Boolean, nullable=False, default=False)
+    agent_can_view_ai_report = Column(Boolean, nullable=False, default=False)
+    agent_can_view_trends = Column(Boolean, nullable=False, default=True)
+
+    qa_can_upload_calls = Column(Boolean, nullable=False, default=True)
+    qa_can_manage_context_tickets = Column(Boolean, nullable=False, default=True)
+    qa_scope = Column(String(30), nullable=False, default="company")  # company | assigned_team | own_uploads
+    tenant_admin_can_invite_admins = Column(Boolean, nullable=False, default=False)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    client = relationship("Client", foreign_keys=[client_id])
 
 
 class Customer(Base):
     __tablename__ = "customers"
 
     id = Column(String(36), primary_key=True, default=_uuid_str)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     external_customer_ref = Column(String(100), nullable=True)
     display_name = Column(String(150), nullable=True)
     phone_hash = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    client = relationship("Client", foreign_keys=[client_id])
 
 
 class Call(Base):
     __tablename__ = "calls"
 
     id = Column(String(36), primary_key=True, default=_uuid_str)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     customer_id = Column(String(36), ForeignKey("customers.id"), nullable=True)
     employee_id = Column(String(36), ForeignKey("employees.id"), nullable=False)
     drive_file_id = Column(String(255), nullable=True)
@@ -134,6 +178,7 @@ class Call(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     employee = relationship("Employee", back_populates="calls")
+    client = relationship("Client", foreign_keys=[client_id])
     transcript = relationship("Transcript", back_populates="call", uselist=False)
     qa_report = relationship("QaReport", back_populates="call", uselist=False)
     pipeline_job = relationship("PipelineJob", back_populates="call", uselist=False)
@@ -144,6 +189,7 @@ class PipelineJob(Base):
     __tablename__ = "pipeline_jobs"
 
     id = Column(String(36), primary_key=True, default=_uuid_str)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     call_id = Column(String(36), ForeignKey("calls.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
     audio_path = Column(String(512), nullable=False)
     asr_engine = Column(String(50), nullable=False, default="fasterwhisper")
@@ -160,6 +206,7 @@ class PipelineJob(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     call = relationship("Call", back_populates="pipeline_job")
+    client = relationship("Client", foreign_keys=[client_id])
 
 
 class Transcript(Base):
@@ -224,6 +271,7 @@ class EmailEvent(Base):
     __tablename__ = "email_events"
 
     id = Column(String(36), primary_key=True, default=_uuid_str)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
     event_type = Column(String(100), nullable=False, index=True)
     recipient_email = Column(String(255), nullable=False, index=True)
     recipient_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
@@ -237,6 +285,7 @@ class EmailEvent(Base):
     sent_at = Column(DateTime(timezone=True), nullable=True)
 
     recipient = relationship("User", foreign_keys=[recipient_user_id])
+    client = relationship("Client", foreign_keys=[client_id])
 
 
 class EmailPreference(Base):
