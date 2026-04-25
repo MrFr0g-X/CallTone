@@ -1193,7 +1193,10 @@ def get_admin_dashboard(
         call_query = _scope_call_query(call_query, current_user)
         report_query = _scope_call_query(report_query, current_user)
 
-    total_agents = user_query.filter(User.role.has(name="agent")).count()
+    agent_query = db.query(Employee).filter(Employee.role == "AGENT")
+    if visible_client_ids is not None:
+        agent_query = agent_query.filter(Employee.client_id.in_(visible_client_ids))
+    total_agents = agent_query.count()
 
     # Compute real stats from call data
     total_calls = call_query.count()
@@ -1262,12 +1265,7 @@ def get_admin_clients(
 
     result = []
     for client in clients:
-        agent_count = (
-            db.query(User)
-            .join(User.role)
-            .filter(User.client_id == client.id, User.role.has(name="agent"))
-            .count()
-        )
+        agent_count = db.query(Employee).filter(Employee.client_id == client.id, Employee.role == "AGENT").count()
 
         qa_count = (
             db.query(User)
@@ -1335,8 +1333,10 @@ def create_admin_client(
     db.add(client)
     db.flush()
 
-    db.add(PipelineSettings(client_id=client.id, company_name=name))
-    db.add(ClientPolicy(client_id=client.id))
+    next_pipeline_settings_id = (db.query(func.max(PipelineSettings.id)).scalar() or 0) + 1
+    next_client_policy_id = (db.query(func.max(ClientPolicy.id)).scalar() or 0) + 1
+    db.add(PipelineSettings(id=next_pipeline_settings_id, client_id=client.id, company_name=name))
+    db.add(ClientPolicy(id=next_client_policy_id, client_id=client.id))
     db.commit()
     db.refresh(client)
 
@@ -1427,6 +1427,7 @@ def update_admin_client_policy(
 
     policy = _get_client_policy(db, resolved_client_id)
     _apply_client_policy_payload(policy, payload)
+    policy.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(policy)
     return {

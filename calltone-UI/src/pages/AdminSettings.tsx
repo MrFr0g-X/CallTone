@@ -13,6 +13,7 @@ const AdminSettings = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const platformScope = isPlatformScope(user);
+  const tenantScope = !platformScope;
   const [pipeline, setPipeline] = useState<PipelineSettingsResponse>({
     audioMode: "denoise",
     injectionScan: "static",
@@ -36,6 +37,10 @@ const AdminSettings = () => {
   const [policySaving, setPolicySaving] = useState(false);
   const [jobActionCallId, setJobActionCallId] = useState<string | null>(null);
   const canManagePolicy = user?.capabilities?.canManageUsers ?? false;
+  const settingsTitle = platformScope ? "Platform" : "Company";
+  const settingsSubtitle = platformScope
+    ? "Owner and Super Admin controls for all tenants, mail, GPU queue, and platform defaults."
+    : `Company-scoped controls for ${user?.clientName ?? "your company"}. Platform-only settings are hidden.`;
 
   const loadQueueState = async () => {
     setQueueLoading(true);
@@ -262,17 +267,19 @@ const AdminSettings = () => {
   const qaPolicyFlags = [
     ["qaCanUploadCalls", "QA uploads", "Allow QA/admin users in this company to submit calls."],
     ["qaCanManageContextTickets", "Context tickets", "Allow QA/admin users to submit and review context change tickets."],
-    ["tenantAdminCanInviteAdmins", "Tenant admin invitations", "Allow this company admin to invite additional company admins."],
+    ...(platformScope
+      ? ([["tenantAdminCanInviteAdmins", "Tenant admin invitations", "Allow this company admin to invite additional company admins."]] as const)
+      : []),
   ] as const;
 
   return (
     <div className="space-y-8">
       <header>
         <h1 className="text-3xl sm:text-4xl font-light text-foreground">
-          Platform <span className="font-bold gradient-text">Settings</span>
+          {settingsTitle} <span className="font-bold gradient-text">Settings</span>
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Only live, backend-backed settings are shown here.
+          {settingsSubtitle}
         </p>
       </header>
 
@@ -280,10 +287,13 @@ const AdminSettings = () => {
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-0.5 h-5 w-5 text-success" />
           <div>
-            <p className="text-sm font-semibold text-foreground">Privileged admin control surface</p>
+            <p className="text-sm font-semibold text-foreground">
+              {platformScope ? "Privileged platform control surface" : "Tenant company control surface"}
+            </p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              User management and pipeline changes are server-enforced for owner, super admin, and admin accounts only.
-              Manager and viewer accounts can inspect platform data but cannot mutate system settings.
+              {platformScope
+                ? "User management, client creation, mail, queue operations, and pipeline changes are server-enforced for owner, super admin, and platform admin accounts."
+                : "This page is scoped to your company only. You cannot create platform clients, change mail settings, access other companies, or edit platform-wide configuration."}
             </p>
           </div>
         </div>
@@ -299,8 +309,9 @@ const AdminSettings = () => {
               </h2>
             </div>
             <p className="max-w-3xl text-xs leading-5 text-muted-foreground">
-              These permissions are enforced by the backend, not only hidden in the UI. Use them to decide what each
-              company&apos;s agents and QA users can see or operate.
+              {platformScope
+                ? "Select a client and control what that company's agents, QA users, and tenant admins can see or operate."
+                : "These controls apply only to your company. Owner-only options, such as allowing tenant admins to invite other admins, are not exposed here."}
             </p>
           </div>
 
@@ -320,6 +331,11 @@ const AdminSettings = () => {
                 ))
               )}
             </select>
+          )}
+          {tenantScope && (
+            <div className="rounded-xl border border-border/50 bg-muted/20 px-4 py-2 text-sm text-foreground">
+              {user?.clientName ?? "Assigned company"}
+            </div>
           )}
         </div>
 
@@ -394,21 +410,11 @@ const AdminSettings = () => {
                 <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                   QA data scope
                 </label>
-                <select
-                  disabled={!canManagePolicy}
-                  value={clientPolicy.qaScope}
-                  onChange={(event) =>
-                    updatePolicyField("qaScope", event.target.value as ClientPolicy["qaScope"])
-                  }
-                  className="h-10 w-full rounded-xl glass-input px-4 text-sm disabled:opacity-60"
-                >
-                  <option value="company">Whole company</option>
-                  <option value="assigned_team">Assigned team only</option>
-                  <option value="own_uploads">Own uploads only</option>
-                </select>
+                <div className="h-10 w-full rounded-xl border border-border/50 bg-muted/20 px-4 py-2.5 text-sm text-foreground">
+                  Whole company
+                </div>
                 <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
-                  Company scope is currently production-ready. Assigned-team and own-upload modes are reserved for the
-                  next employee assignment workflow expansion.
+                  This is the only active QA scope in the current release. The backend enforces same-company isolation.
                 </p>
               </div>
             </section>
@@ -521,8 +527,10 @@ const AdminSettings = () => {
 
       <GlassCard className="rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-5">
-          <Cpu className="w-4 h-4 text-accent" />
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">AI Pipeline</h2>
+            <Cpu className="w-4 h-4 text-accent" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            {platformScope ? "AI Pipeline Defaults" : "Company AI Pipeline Defaults"}
+          </h2>
         </div>
 
         {loading ? (
@@ -551,7 +559,9 @@ const AdminSettings = () => {
                 )}
               </select>
               <p className="text-[11px] text-muted-foreground mt-1">
-                The selected context is synced to the GPU model server before scoring.
+                {platformScope
+                  ? "The selected context is synced to the GPU model server before scoring."
+                  : "This context is used for this company's future uploads and is enforced server-side."}
               </p>
             </div>
 
@@ -681,7 +691,7 @@ const AdminSettings = () => {
           <div className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-accent" />
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              GPU Queue Operations
+              {platformScope ? "GPU Queue Operations" : "Company Processing Queue"}
             </h2>
           </div>
           <button
