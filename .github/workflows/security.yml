@@ -1,8 +1,8 @@
 name: Security
 
-# Lightweight security checks that should never block a merge silently —
-# they run on PRs and on a weekly schedule. Findings are uploaded to the
-# Security tab via SARIF where supported.
+# Lightweight security checks that should never block a merge silently.
+# Bandit output is kept as a SARIF artifact because GitHub code scanning is
+# not enabled on every repository/plan.
 
 on:
   push:
@@ -22,7 +22,7 @@ permissions:
   contents: read
   pull-requests: read
   actions: read
-  security-events: write     # SARIF upload to the Security tab
+  security-events: write
 
 concurrency:
   group: security-${{ github.ref }}
@@ -43,12 +43,12 @@ jobs:
         # -ll = report medium+high severity only; tests/ excluded (assert is fine)
         run: |
           bandit -r backend/app -ll -f sarif -o bandit.sarif || true
-      - name: Upload SARIF
+      - name: Upload Bandit SARIF artifact
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: bandit.sarif
-          category: bandit
+          name: bandit-sarif
+          path: bandit.sarif
 
   npm-audit:
     name: npm audit (frontend)
