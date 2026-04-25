@@ -9,6 +9,9 @@ Covers:
 
 import secrets
 
+from app.database import SessionLocal
+from app.models import Employee, User
+
 
 def test_admin_can_invite_qa_who_then_logs_in(client, admin_token):
     new_email = f"inviteflow_{secrets.token_hex(4)}@calltone.ai"
@@ -88,3 +91,47 @@ def test_invite_requires_admin_role(client, qa_token):
         json={"name": "Should Fail", "email": "fail@calltone.ai", "role": "agent"},
     )
     assert r.status_code == 403
+
+
+def test_delete_user_detaches_employee_link(client, admin_token):
+    """Deleting a user must preserve employee/call history by unlinking Employee.user_id."""
+    new_email = f"delete_linked_{secrets.token_hex(4)}@calltone.ai"
+
+    invite = client.post(
+        "/api/admin/users/invite",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"name": "Linked Agent", "email": new_email, "role": "agent"},
+    )
+    assert invite.status_code == 200, invite.text
+    user_id = invite.json()["user"]["id"]
+
+    db = SessionLocal()
+    try:
+        employee = Employee(
+            employee_code=f"DEL-{secrets.token_hex(3)}",
+            full_name="Linked Agent",
+            role="AGENT",
+            user_id=user_id,
+        )
+        db.add(employee)
+        db.commit()
+        db.refresh(employee)
+        employee_id = employee.id
+    finally:
+        db.close()
+
+    delete_response = client.delete(
+        f"/api/admin/users/{user_id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert delete_response.status_code == 200, delete_response.text
+    assert delete_response.json()["deletedType"] == "invitation"
+
+    db = SessionLocal()
+    try:
+        assert db.query(User).filter(User.id == user_id).first() is None
+        employee = db.query(Employee).filter(Employee.id == employee_id).first()
+        assert employee is not None
+        assert employee.user_id is None
+    finally:
+        db.close()

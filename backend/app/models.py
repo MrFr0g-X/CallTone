@@ -210,3 +210,56 @@ class QaReport(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     call = relationship("Call", back_populates="qa_report")
+
+
+# ── Transactional email domain ──────────────────────────────────────────────
+
+class EmailEvent(Base):
+    """Auditable outbound email attempt.
+
+    The app creates an EmailEvent for every semantic notification even when
+    mail is disabled. This gives admins a reliable trail for invites, pipeline
+    failures, and future webhooks without coupling business logic to Mailtrap.
+    """
+    __tablename__ = "email_events"
+
+    id = Column(String(36), primary_key=True, default=_uuid_str)
+    event_type = Column(String(100), nullable=False, index=True)
+    recipient_email = Column(String(255), nullable=False, index=True)
+    recipient_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    subject = Column(String(255), nullable=False)
+    status = Column(String(20), nullable=False, default="queued", index=True)
+    provider = Column(String(50), nullable=False, default="null")
+    provider_message_id = Column(String(255), nullable=True)
+    error = Column(Text, nullable=True)
+    metadata_json = Column(JsonType, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+
+    recipient = relationship("User", foreign_keys=[recipient_user_id])
+
+
+class EmailPreference(Base):
+    __tablename__ = "email_preferences"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
+    call_completed = Column(Boolean, nullable=False, default=True)
+    call_failed = Column(Boolean, nullable=False, default=True)
+    context_ticket_updates = Column(Boolean, nullable=False, default=True)
+    admin_security_alerts = Column(Boolean, nullable=False, default=True)
+    weekly_digest = Column(Boolean, nullable=False, default=False)
+
+    user = relationship("User", foreign_keys=[user_id])
+
+
+class EmailWebhookEvent(Base):
+    __tablename__ = "email_webhook_events"
+
+    id = Column(String(36), primary_key=True, default=_uuid_str)
+    provider = Column(String(50), nullable=False, index=True)
+    provider_event_id = Column(String(255), nullable=True, unique=True)
+    event_type = Column(String(100), nullable=False, index=True)
+    recipient_email = Column(String(255), nullable=True, index=True)
+    payload = Column(JsonType, nullable=False)
+    received_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

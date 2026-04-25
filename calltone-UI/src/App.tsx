@@ -51,24 +51,24 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/qa/call/:callId" element={
-          <ProtectedRoute allowedRoles={["qa", "agent", "admin", "super_admin"]}>
+          <ProtectedRoute allowedRoles={["qa", "agent", "owner", "admin", "super_admin"]}>
             <CallDetail />
           </ProtectedRoute>
         } />
         <Route path="/qa/upload" element={
-          <ProtectedRoute allowedRoles={["qa", "admin", "super_admin"]}>
+          <ProtectedRoute allowedRoles={["qa", "owner", "admin", "super_admin"]}>
             <UploadCall />
           </ProtectedRoute>
         } />
         <Route path="/qa/context" element={
-          <ProtectedRoute allowedRoles={["qa", "admin", "super_admin"]}>
+          <ProtectedRoute allowedRoles={["qa", "owner", "admin", "super_admin"]}>
             <CompanyContext />
           </ProtectedRoute>
         } />
 
         {/* Admin routes */}
         <Route path="/admin" element={
-          <ProtectedRoute allowedRoles={["admin", "super_admin", "manager", "viewer"]}>
+          <ProtectedRoute allowedRoles={["owner", "admin", "super_admin", "manager", "viewer"]}>
           <AdminLayout />
           </ProtectedRoute>
         }>
@@ -77,7 +77,7 @@ const AnimatedRoutes = () => {
           <Route path="team" element={<AdminTeam />} />
           <Route path="activity" element={<AdminActivity />} />
           <Route path="settings" element={
-            <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            <ProtectedRoute allowedRoles={["owner", "admin", "super_admin"]}>
               <AdminSettings />
             </ProtectedRoute>
           } />

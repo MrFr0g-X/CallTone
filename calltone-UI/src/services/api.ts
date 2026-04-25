@@ -60,7 +60,7 @@ export function apiErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
-export type ApiUserRole = "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
+export type ApiUserRole = "owner" | "agent" | "qa" | "admin" | "super_admin" | "manager" | "viewer";
 
 export interface AuthApiUser {
   id: number;
@@ -133,7 +133,7 @@ export interface AdminClientsResponse {
   clients: AdminClientItem[];
 }
 
-export type AdminTeamRole = "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
+export type AdminTeamRole = "owner" | "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 export type AdminTeamStatus = "active" | "disabled" | "invited";
 
 export interface AdminTeamUser {
@@ -154,19 +154,21 @@ export interface AdminUsersResponse {
 export interface InviteUserPayload {
   name: string;
   email: string;
-  role: "admin" | "manager" | "viewer" | "qa" | "agent";
+  role: "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 }
 
 export interface InviteUserResponse {
   message: string;
   inviteUrl: string;
+  emailStatus?: "queued" | "sent" | "failed" | "suppressed";
+  emailMessageId?: string | null;
   user: AdminTeamUser;
 }
 
 export interface InviteDetailsResponse {
   name: string;
   email: string;
-  role: "admin" | "manager" | "viewer" | "qa" | "agent" | "super_admin";
+  role: "owner" | "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
   expiresAt: string;
 }
 
@@ -197,7 +199,7 @@ export const authApi = {
 };
 
 export interface UpdateUserRolePayload {
-  role: "admin" | "manager" | "viewer" | "qa" | "agent";
+  role: "super_admin" | "admin" | "manager" | "viewer" | "qa" | "agent";
 }
 
 export interface UpdateUserStatusPayload {
@@ -212,6 +214,37 @@ export interface DeleteUserResponse {
   message: string;
   deletedType: "invitation" | "user";
   name: string;
+}
+
+export interface MailEventSummary {
+  id: string;
+  eventType: string;
+  recipientEmail: string;
+  subject: string;
+  status: "queued" | "sent" | "failed" | "suppressed";
+  provider: string;
+  providerMessageId: string | null;
+  error: string | null;
+  createdAt: string | null;
+  sentAt: string | null;
+}
+
+export interface MailSettingsResponse {
+  enabled: boolean;
+  configured: boolean;
+  provider: string;
+  fromEmail: string;
+  fromName: string | null;
+  replyTo: string;
+  appBaseUrl: string;
+  apiBaseUrl: string;
+  logoUrl: string;
+  lastEvent: MailEventSummary | null;
+}
+
+export interface MailTestResponse {
+  ok: boolean;
+  event: MailEventSummary;
 }
 
 export const agentApi = {
@@ -424,6 +457,13 @@ export const pipelineApi = {
     apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/retry`),
   deadLetterJob: (callId: string) =>
     apiClient.post<{ ok: boolean; job: PipelineJobResponse }>(`/pipeline/jobs/${callId}/dead-letter`),
+};
+
+export const mailApi = {
+  getSettings: () =>
+    apiClient.get<MailSettingsResponse>("/settings/mail"),
+  sendTest: () =>
+    apiClient.post<MailTestResponse>("/settings/mail/test"),
 };
 
 // ── Company Context ────────────────────────────────────────────────────────

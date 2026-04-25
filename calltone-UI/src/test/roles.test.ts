@@ -5,6 +5,7 @@ describe("role helpers", () => {
   it("routes each role to its correct home surface", () => {
     expect(roleHome("agent")).toBe("/agent/dashboard");
     expect(roleHome("qa")).toBe("/qa/dashboard");
+    expect(roleHome("owner")).toBe("/admin/dashboard");
     expect(roleHome("admin")).toBe("/admin/dashboard");
     expect(roleHome("super_admin")).toBe("/admin/dashboard");
     expect(roleHome("manager")).toBe("/admin/dashboard");
@@ -12,6 +13,7 @@ describe("role helpers", () => {
   });
 
   it("limits admin mutations to admin and super admin", () => {
+    expect(canManageAdminUsers("owner")).toBe(true);
     expect(canManageAdminUsers("super_admin")).toBe(true);
     expect(canManageAdminUsers("admin")).toBe(true);
     expect(canManageAdminUsers("manager")).toBe(false);
@@ -21,6 +23,7 @@ describe("role helpers", () => {
 
   it("limits QA tooling to QA and admin operators", () => {
     expect(canUseQaTools("qa")).toBe(true);
+    expect(canUseQaTools("owner")).toBe(true);
     expect(canUseQaTools("admin")).toBe(true);
     expect(canUseQaTools("super_admin")).toBe(true);
     expect(canUseQaTools("agent")).toBe(false);

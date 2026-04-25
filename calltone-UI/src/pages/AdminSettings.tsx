@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArchiveX, Cpu, Loader2, RefreshCw, RotateCcw, Save, ShieldCheck } from "lucide-react";
+import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save, Send, ShieldCheck, XCircle } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { apiErrorMessage, contextApi, pipelineApi } from "@/services/api";
-import type { CompanyContextSummary, PipelineJobResponse, PipelineQueueResponse, PipelineSettingsResponse } from "@/services/api";
+import { apiErrorMessage, contextApi, mailApi, pipelineApi } from "@/services/api";
+import type { CompanyContextSummary, MailSettingsResponse, PipelineJobResponse, PipelineQueueResponse, PipelineSettingsResponse } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminSettings = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [pipeline, setPipeline] = useState<PipelineSettingsResponse>({
     audioMode: "denoise",
     injectionScan: "static",
@@ -20,9 +22,11 @@ const AdminSettings = () => {
   const [companies, setCompanies] = useState<CompanyContextSummary[]>([]);
   const [queue, setQueue] = useState<PipelineQueueResponse | null>(null);
   const [jobs, setJobs] = useState<PipelineJobResponse[]>([]);
+  const [mail, setMail] = useState<MailSettingsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [queueLoading, setQueueLoading] = useState(false);
+  const [mailTestLoading, setMailTestLoading] = useState(false);
   const [jobActionCallId, setJobActionCallId] = useState<string | null>(null);
 
   const loadQueueState = async () => {
@@ -47,13 +51,20 @@ const AdminSettings = () => {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([pipelineApi.getSettings(), contextApi.listCompanies(), pipelineApi.getQueue(), pipelineApi.getJobs(undefined, 20)])
-      .then(([settingsRes, companiesRes, queueRes, jobsRes]) => {
+    Promise.all([
+      pipelineApi.getSettings(),
+      contextApi.listCompanies(),
+      pipelineApi.getQueue(),
+      pipelineApi.getJobs(undefined, 20),
+      mailApi.getSettings(),
+    ])
+      .then(([settingsRes, companiesRes, queueRes, jobsRes, mailRes]) => {
         if (cancelled) return;
         setPipeline(settingsRes.data);
         setCompanies(companiesRes.data.companies || []);
         setQueue(queueRes.data);
         setJobs(jobsRes.data.jobs);
+        setMail(mailRes.data);
       })
       .catch(() => {
         toast({
@@ -84,6 +95,30 @@ const AdminSettings = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleMailTest = async () => {
+    setMailTestLoading(true);
+    try {
+      const response = await mailApi.sendTest();
+      const statusResponse = await mailApi.getSettings();
+      setMail(statusResponse.data);
+      toast({
+        title: response.data.ok ? "Test email sent" : "Test email recorded",
+        description: response.data.ok
+          ? `Mailtrap accepted the test email to ${response.data.event.recipientEmail}.`
+          : response.data.event.error || `Email status: ${response.data.event.status}`,
+        variant: response.data.ok ? "default" : "destructive",
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Mail test failed",
+        description: apiErrorMessage(error, "Could not send the test email."),
+        variant: "destructive",
+      });
+    } finally {
+      setMailTestLoading(false);
     }
   };
 
@@ -136,12 +171,97 @@ const AdminSettings = () => {
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-0.5 h-5 w-5 text-success" />
           <div>
-            <p className="text-sm font-semibold text-foreground">Admin-only control surface</p>
+            <p className="text-sm font-semibold text-foreground">Privileged admin control surface</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              User management and pipeline changes are server-enforced for admin and super admin accounts only.
+              User management and pipeline changes are server-enforced for owner, super admin, and admin accounts only.
               Manager and viewer accounts can inspect platform data but cannot mutate system settings.
             </p>
           </div>
+        </div>
+      </GlassCard>
+
+      <GlassCard className="relative overflow-hidden rounded-2xl p-6">
+        <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 left-8 h-52 w-52 rounded-full bg-teal-400/10 blur-3xl" />
+        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <div className="mb-5 flex items-center gap-2">
+              <Mail className="h-4 w-4 text-accent" />
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Mail & Notifications
+              </h2>
+            </div>
+
+            {mail ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold",
+                      mail.enabled && mail.configured
+                        ? "bg-success/15 text-success"
+                        : "bg-warning/15 text-warning",
+                    )}
+                  >
+                    {mail.enabled && mail.configured ? (
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                    ) : (
+                      <XCircle className="h-3.5 w-3.5" />
+                    )}
+                    {mail.enabled && mail.configured ? "Live" : "Needs config"}
+                  </span>
+                  <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+                    {mail.provider}
+                  </span>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Sender</p>
+                    <p className="mt-1 truncate text-sm font-medium text-foreground">{mail.fromEmail}</p>
+                  </div>
+                  <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Reply To</p>
+                    <p className="mt-1 truncate text-sm font-medium text-foreground">{mail.replyTo}</p>
+                  </div>
+                  <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Last Event</p>
+                    <p className="mt-1 text-sm font-medium text-foreground">
+                      {mail.lastEvent ? `${mail.lastEvent.status} · ${mail.lastEvent.eventType}` : "None yet"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Test Recipient</p>
+                    <p className="mt-1 truncate text-sm font-medium text-foreground">{user?.email || "current admin"}</p>
+                  </div>
+                </div>
+
+                {mail.lastEvent?.providerMessageId && (
+                  <p className="font-mono text-[11px] text-muted-foreground">
+                    Latest provider message ID: {mail.lastEvent.providerMessageId}
+                  </p>
+                )}
+                {mail.lastEvent?.error && (
+                  <p className="rounded-xl border border-destructive/25 bg-destructive/10 p-3 text-xs text-destructive">
+                    {mail.lastEvent.error}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Loading mail configuration...
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={handleMailTest}
+            disabled={!mail || mailTestLoading}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:brightness-110 disabled:opacity-60"
+          >
+            {mailTestLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            Send Test Email
+          </button>
         </div>
       </GlassCard>
 

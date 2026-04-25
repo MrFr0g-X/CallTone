@@ -14,6 +14,14 @@ from pathlib import Path
 os.environ["DB_HOST"] = ""
 os.environ["SECRET_KEY"] = "test-secret-key-not-for-production"
 os.environ["PIPELINE_QUEUE_AUTOSTART"] = "0"
+os.environ["CALLTONE_SEED_SUPER_ADMIN_EMAIL"] = "admin@calltone.ai"
+os.environ["CALLTONE_SEED_SUPER_ADMIN_PASSWORD"] = "Admin123!"
+os.environ["CALLTONE_SEED_QA_EMAIL"] = "qa@calltone.ai"
+os.environ["CALLTONE_SEED_QA_PASSWORD"] = "Qa123456!"
+os.environ["CALLTONE_SEED_AGENT1_EMAIL"] = "agent1@calltone.ai"
+os.environ["CALLTONE_SEED_AGENT1_PASSWORD"] = "Agent123!"
+os.environ["CALLTONE_SEED_AGENT2_EMAIL"] = "agent2@calltone.ai"
+os.environ["CALLTONE_SEED_AGENT2_PASSWORD"] = "Agent123!"
 
 # Make ``app`` importable as a top-level package
 _BACKEND_DIR = Path(__file__).resolve().parent.parent
