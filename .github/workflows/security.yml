@@ -5,6 +5,13 @@ name: Security
 # Security tab via SARIF where supported.
 
 on:
+  push:
+    branches:
+      - main
+      - "integration/**"
+      - "release/**"
+      - "feat/**"
+      - "fix/**"
   pull_request:
     branches: [main]
   schedule:

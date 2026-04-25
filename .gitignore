@@ -77,8 +77,16 @@ node_modules/
 # ============================================================
 # Local deployment secrets and one-off deploy artifacts
 # ============================================================
-deployment/ssh-keys/
+deployment/
 *.tgz
+
+# Generated LaTeX/report build artefacts
+docs/*.aux
+docs/*.out
+docs/*.toc
+docs/*.log
+docs/*.fls
+docs/*.fdb_latexmk
 
 # ============================================================
 # Windows Zone.Identifier metadata files (WSL artifact)

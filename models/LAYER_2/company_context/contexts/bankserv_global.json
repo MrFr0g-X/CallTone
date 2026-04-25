@@ -1,22 +1,1345 @@
 {
   "company_name": "BankServ Global",
-  "industry": "banking_finance",
-  "version": "1.0.0",
-  "opening_greeting": "Thank you for calling [Company]. My name is [Agent]. How may I help you today?",
-  "closing_phrase": "Is there anything else I can help you with? Thank you for calling and have a great day.",
-  "required_verification_steps": "1. Confirm caller's full name.\n2. Verify account or reference number.\n3. Confirm one security detail (DOB, postcode, last transaction, etc.).",
-  "hold_procedure": "Before hold: 'May I place you on a brief hold while I look into this?' After hold: 'Thank you for holding. Here is what I found...'",
-  "transfer_procedure": "Explain the reason for transfer, name the destination department, and stay on the line until the customer is connected.",
-  "escalation_procedure": "Escalate to a supervisor if: customer requests one, threatens legal action, the issue cannot be resolved in two attempts, or compliance is at risk.",
-  "mandatory_disclosures": "Inform the customer if the call is being recorded for quality and training purposes at the start of the call.",
-  "products_services": "General customer service: account inquiries, technical support, billing questions, complaints, and general information requests.",
-  "pricing_policies": "All pricing must match current published rates. Agents must NOT quote prices not present in the official price list.",
-  "policy_documents": "Standard refund window: 30 days from purchase date with receipt. Warranty: per product specification. Cancellation: 30-day notice required.",
-  "common_facts": "Business hours: 9 AM - 6 PM weekdays. Support phone: 1-800-XXX-XXXX. Average resolution time for standard issues: 24-48 hours.",
-  "tone_guidelines": "Professional, warm, and courteous throughout. Use the customer's name. Avoid technical jargon. Match the customer's pace. Never argue or be defensive.",
-  "empathy_phrases": "I understand how frustrating that must be.\nI'm sorry you're experiencing this.\nThat is completely understandable.\nLet's see how we can resolve this together.",
-  "prohibited_language": "Profanity, slang, dismissive phrases (e.g., 'calm down', 'that's not my problem'), promises that cannot be kept, blaming the customer.",
-  "conflict_handling": "Acknowledge the customer's feelings first. Apologize for the inconvenience even if not at fault. Restate the issue in your own words. Offer at least one concrete next step. Escalate if tension does not de-escalate.",
-  "resolution_definition": "Issue is resolved when: (a) customer explicitly confirms satisfaction, (b) the agent provided a concrete solution, follow-up commitment, or ticket reference, and (c) the customer agreed with the next step.",
-  "follow_up_requirements": "Provide a ticket or reference number for any unresolved issue. Offer a callback if the resolution requires more time. Confirm the next step before ending the call."
+  "context_version": "1.0.0",
+  "last_updated": "2026-04-04",
+  "script_compliance": {
+    "greeting_script": "Thank you for calling MetroBoost, this is [Agent Name], your wireless specialist. How can I assist you today?",
+    "closing_script": "Thank you so much for being a valued part of the MetroBoost family, [Customer Name]. If you ever need anything, do not hesitate to call us back. Have a wonderful day!",
+    "required_verification_steps": "1. Ask for the customer's full name, 2. Ask for the mobile number on the account, 3. Ask for the 4-digit account security PIN",
+    "hold_procedure": "Before: May I please place you on a brief hold while I look into this for you? I'll be back with you in no more than two minutes. After: Thank you so much for your patience, [Customer Name]. I appreciate you holding.",
+    "transfer_procedure": "1. Explain why the transfer is needed, 2. Name the department they're sending the customer to, 3. Offer to stay on the line until the other department picks up, 4. Give the customer a direct callback number in case the transfer drops",
+    "escalation_procedure": "Escalate to a supervisor immediately if: - The customer explicitly asks for a supervisor or manager, - The customer mentions filing a complaint with the FCC, BBB, or any regulatory body, - The issue can't be resolved after two genuine attempts, - The customer has been calling about the same unresolved issue for more than 3 contacts",
+    "mandatory_disclosures": "1. Recording disclosure: Just to let you know, this call may be recorded for quality assurance and training purposes. 2. Plan change disclosure: Before I make this change, I want to confirm: [describe the change and billing impact]. Do you authorize this change? 3. AutoPay enrollment disclosure: By enrolling in O2Pay, you authorize MetroBoost to automatically charge your selected payment method each billing cycle. You can cancel AutoPay at any time through the MetroBoost app or by calling us.",
+    "prohibited_phrases": "Calm down, There's nothing I can do, That's not my department, I don't know, You should have read the terms, No problem"
+  },
+  "factual_accuracy": {
+    "products_and_services": "Metro Basic: price: $40/month, features: Unlimited domestic calls and texts, 10GB of high-speed LTE data, no hotspot, taxes NOT included\nMetro Unlimited: price: $65/month, features: Unlimited calls, texts, and data, 15GB of hotspot data, taxes included\nMetro Plus: price: $85/month, features: Everything in Metro Unlimited, plus international calls to 20 countries, 30GB hotspot, one year of partner streaming subscription, taxes included\nInternational Add-On: price: $10/month, features: Adds international calling to 50+ countries to any plan",
+    "current_promotions": "O2Pay AutoPay Discount: description: Customers who enroll in O2Pay get $5 off their monthly bill, starts from the SECOND billing cycle after enrollment, terms: Not applied retroactively, discount removed from next cycle if AutoPay is cancelled\nBring Your Own Device (BYOD) Credit: description: New customers who bring an unlocked device and activate Metro Unlimited or Metro Plus get a one-time $25 credit on their third billing cycle, terms: \nRefer-a-Friend: description: Existing customers earn $15 credit per friend who activates a plan and stays active for 30 days, referred friend gets $10 off their first month, terms: \nSwitcher Bonus: description: Customers switching from a competitor who port their number and activate Metro Unlimited or Metro Plus get a $30 bill credit on the second billing cycle, terms: Limited time, expires June 30, 2026",
+    "policies": "Billing: MetroBoost bills in advance, each payment covers the next 30 days\nRefunds: Agents CANNOT issue refunds over $20 without supervisor approval\nCancellation: Customers can cancel anytime, prepaid balances are non-refundable\nPorting: Porting from MetroBoost to another carrier closes the account automatically, takes 2\u20134 hours weekdays, up to 24 hours weekends",
+    "common_troubleshooting": "Billing discrepancy: Pull up the account, review the last statement, identify the charge breakdown, compare to what the customer expected, issue a credit and document the cause if there's a real discrepancy\nBank overdraft fee: MetroBoost is not responsible, offer a one-time $5 courtesy credit for customers who've been with us 12+ months, subject to supervisor approval\nAutoPay not working: Check if the card on file is expired, check if the card has sufficient funds, walk them through re-enrolling AutoPay in the MetroBoost app, escalate to billing tier 2 if still broken",
+    "contact_information": "Customer Care: 1-800-METRO-01, Monday\u2013Saturday 7am\u201310pm local time, Sunday 9am\u20137pm\nBilling: 1-800-METRO-02, Monday\u2013Friday 8am\u20138pm EST\nTech Support: 1-800-METRO-03, 24/7\nMetroBoost App: iOS App Store and Google Play, search 'MetroBoost'\nLive Chat: metroboost.com, Monday\u2013Friday 8am\u201311pm EST\nStores: metroboost.com/stores",
+    "frequently_asked_questions": "Q: Why is my bill higher than my plan price?: The Metro Basic ($40) doesn't include taxes, taxes add $2\u2013$4 depending on your state\nQ: Does the $65 plan really include taxes?: Yes, the only extra you might see is a one-time $5 activation fee if you're a new customer\nQ: When does the AutoPay discount kick in?: The $5 discount starts on your second billing cycle after enrollment\nQ: What if I cancel AutoPay?: The $5 discount is removed from the next billing cycle after cancellation\nQ: Can I switch from postpaid to prepaid and keep my number?: Yes, we port your number over, takes 2\u20134 hours weekdays, up to 24 hours weekends"
+  },
+  "behavioral": {
+    "tone_guidelines": "Use a warm, professional, and empathetic tone. Match the customer's urgency and avoid jargon. Frame things positively and never minimize charges.",
+    "empathy_guidelines": "Acknowledge the customer's feelings, validate their emotions, and take ownership of the issue. Then, solve the problem. Never tell them they 'shouldn't feel that way'.",
+    "conflict_resolution_guidelines": "Stay calm, don't argue, and don't blame. Close with a concrete next step and offer a supervisor callback if necessary. Never hang up without supervisor approval.",
+    "resolution_expectations": "An issue is resolved when the customer confirms satisfaction or a credit/correction is issued and acknowledged. If not resolved, create a ticket, set a follow-up timeline, and log the call in the CRM."
+  },
+  "atomic_nodes": [
+    {
+      "field": "greeting_script",
+      "content": "Thank you for calling MetroBoost, this is [Agent Name], your wireless specialist. How can I assist you today?",
+      "semantic_tags": [
+        "greeting-script",
+        "opening-phrase",
+        "your-wireless-specialist",
+        "thank-you-for-calling",
+        "wireless-specialist",
+        "assist-you-today",
+        "metroboost"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "closing_script",
+      "content": "Thank you so much for being a valued part of the MetroBoost family, [Customer Name]. If you ever need anything, do not hesitate to call us back. Have a wonderful day!",
+      "semantic_tags": [
+        "closing-script",
+        "thank-you-for-being-valued",
+        "valued-part-of-metroboost",
+        "have-a-wonderful-day",
+        "call-us-back",
+        "customer-name"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "required_verification_steps",
+      "content": "Ask for the customer's full name.",
+      "semantic_tags": [
+        "required-verification",
+        "customer-full-name",
+        "ask-for-full-name",
+        "identification-verification"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "required_verification_steps",
+      "content": "Ask for the mobile number on the account.",
+      "semantic_tags": [
+        "required-verification",
+        "mobile-number",
+        "account-number",
+        "ask-for-mobile-number"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "required_verification_steps",
+      "content": "Ask for the 4-digit account security PIN.",
+      "semantic_tags": [
+        "required-verification",
+        "account-security-pin",
+        "4-digit-pin",
+        "security-pin"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "hold_procedure",
+      "content": "May I please place you on a brief hold while I look into this for you?",
+      "semantic_tags": [
+        "hold-procedure",
+        "brief-hold",
+        "please-hold",
+        "look-into-this"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "hold_procedure",
+      "content": "I'll be back with you in no more than two minutes.",
+      "semantic_tags": [
+        "hold-procedure",
+        "brief-hold",
+        "two-minutes",
+        "be-back-with-you"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "hold_procedure",
+      "content": "Thank you so much for your patience, [Customer Name].",
+      "semantic_tags": [
+        "thank-you-for-patience",
+        "customer-name",
+        "patience-appreciation"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "transfer_procedure",
+      "content": "Explain why the transfer is needed.",
+      "semantic_tags": [
+        "transfer-procedure",
+        "explain-transfer",
+        "transfer-needed",
+        "why-transfer"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "transfer_procedure",
+      "content": "Name the department they're sending the customer to.",
+      "semantic_tags": [
+        "transfer-procedure",
+        "department-name",
+        "customer-department",
+        "send-to-department"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "transfer_procedure",
+      "content": "Offer to stay on the line until the other department picks up.",
+      "semantic_tags": [
+        "transfer-procedure",
+        "stay-on-line",
+        "other-department",
+        "pick-up"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "transfer_procedure",
+      "content": "Give the customer a direct callback number in case the transfer drops.",
+      "semantic_tags": [
+        "transfer-procedure",
+        "callback-number",
+        "direct-number",
+        "transfer-drops"
+      ],
+      "cross_refs": [
+        "escalation_procedure",
+        "mandatory_disclosures"
+      ]
+    },
+    {
+      "field": "escalation_procedure",
+      "content": "Escalate to a supervisor immediately if the customer explicitly asks for a supervisor or manager.",
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-requests-supervisor",
+        "explicit-request"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "escalation_procedure",
+      "content": "Escalate to a supervisor immediately if the customer mentions filing a complaint with the FCC, BBB, or any regulatory body.",
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-mentions-complaint",
+        "filing-complaint"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "escalation_procedure",
+      "content": "Escalate to a supervisor immediately if the issue can't be resolved after two genuine attempts.",
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "issue-unresolved",
+        "two-attempts"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "escalation_procedure",
+      "content": "Escalate to a supervisor immediately if the customer has been calling about the same unresolved issue for more than 3 contacts.",
+      "semantic_tags": [
+        "escalation-procedure",
+        "supervisor-escalation",
+        "customer-has-been-calling",
+        "same-issue",
+        "more-than-3-contacts"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "mandatory_disclosures",
+      "content": "Just to let you know, this call may be recorded for quality assurance and training purposes.",
+      "semantic_tags": [
+        "recording-disclosure",
+        "quality-assurance",
+        "training-purposes",
+        "call-recorded"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "mandatory_disclosures",
+      "content": "Before I make this change, I want to confirm: [describe the change and billing impact].",
+      "semantic_tags": [
+        "plan-change-disclosure",
+        "change-confirmation",
+        "billing-impact",
+        "describe-change"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "mandatory_disclosures",
+      "content": "Do you authorize this change?",
+      "semantic_tags": [
+        "authorization-disclosure",
+        "authorize-change",
+        "change-authorization"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "mandatory_disclosures",
+      "content": "By enrolling in O2Pay, you authorize MetroBoost to automatically charge your selected payment method each billing cycle.",
+      "semantic_tags": [
+        "autopay-enrollment-disclosure",
+        "autopay-authorization",
+        "automatic-charge",
+        "billing-cycle"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "mandatory_disclosures",
+      "content": "You can cancel AutoPay at any time through the MetroBoost app or by calling us.",
+      "semantic_tags": [
+        "autopay-cancellation-disclosure",
+        "autopay-cancel",
+        "cancel-autopay",
+        "metroboost-app"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "Calm down.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "calm-down",
+        "stay-calm"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "There's nothing I can do.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "nothing-can-be-done",
+        "no-solution"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "That's not my department.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "not-my-department",
+        "wrong-department"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "I don't know.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "don't-know",
+        "unknown"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "You should have read the terms.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "should-have-read-terms",
+        "terms-and-conditions"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "prohibited_phrases",
+      "content": "No problem.",
+      "semantic_tags": [
+        "prohibited-phrase",
+        "no-problem",
+        "no-issue"
+      ],
+      "cross_refs": [
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Basic plan costs $40/month.",
+      "semantic_tags": [
+        "metro-basic",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Basic plan features unlimited domestic calls and texts.",
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "unlimited-calls",
+        "unlimited-texts",
+        "domestic"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Basic plan includes 10GB of high-speed LTE data.",
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "lte-data",
+        "high-speed-data",
+        "data"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Basic plan does not include hotspot data.",
+      "semantic_tags": [
+        "metro-basic",
+        "features",
+        "no-hotspot",
+        "hotspot"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Basic plan does not include taxes.",
+      "semantic_tags": [
+        "metro-basic",
+        "taxes",
+        "not-included"
+      ],
+      "cross_refs": [
+        "frequently_asked_questions"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Unlimited plan costs $65/month.",
+      "semantic_tags": [
+        "metro-unlimited",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Unlimited plan features unlimited calls, texts, and data.",
+      "semantic_tags": [
+        "metro-unlimited",
+        "features",
+        "unlimited-calls",
+        "unlimited-texts",
+        "unlimited-data"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Unlimited plan includes 15GB of hotspot data.",
+      "semantic_tags": [
+        "metro-unlimited",
+        "features",
+        "hotspot-data",
+        "lte-data",
+        "data"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Unlimited plan includes taxes.",
+      "semantic_tags": [
+        "metro-unlimited",
+        "taxes",
+        "included"
+      ],
+      "cross_refs": [
+        "frequently_asked_questions"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Plus plan costs $85/month.",
+      "semantic_tags": [
+        "metro-plus",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost",
+        "metro"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Plus plan features everything in Metro Unlimited, plus international calls to 20 countries.",
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "international-calls",
+        "countries"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Plus plan includes 30GB of hotspot data.",
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "hotspot-data",
+        "lte-data",
+        "data"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "Metro Plus plan includes one year of partner streaming subscription.",
+      "semantic_tags": [
+        "metro-plus",
+        "features",
+        "streaming-subscription",
+        "partner"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "International Add-On plan costs $10/month.",
+      "semantic_tags": [
+        "international-add-on",
+        "monthly-plan",
+        "wireless-plan",
+        "price",
+        "cost"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "products_and_services",
+      "content": "International Add-On plan adds international calling to 50+ countries to any plan.",
+      "semantic_tags": [
+        "international-add-on",
+        "features",
+        "international-calls",
+        "countries"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "Customers who enroll in O2Pay get $5 off their monthly bill.",
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "5-dollar-off",
+        "monthly-credit"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "O2Pay discount starts from the second billing cycle after enrollment.",
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "second-billing-cycle",
+        "enrollment"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "O2Pay discount is not applied retroactively.",
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "not-applied-retroactively"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "O2Pay discount is removed from the next billing cycle after cancellation.",
+      "semantic_tags": [
+        "o2pay",
+        "autopay-discount",
+        "next-billing-cycle",
+        "cancellation"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "New customers who bring an unlocked device and activate Metro Unlimited or Metro Plus get a one-time $25 credit on their third billing cycle.",
+      "semantic_tags": [
+        "bring-your-own-device",
+        "credit",
+        "third-billing-cycle",
+        "new-customer"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "Existing customers earn $15 credit per friend who activates a plan and stays active for 30 days.",
+      "semantic_tags": [
+        "refer-a-friend",
+        "credit",
+        "existing-customer",
+        "friend"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "Existing customers earn $10 off their first month for each friend who activates a plan.",
+      "semantic_tags": [
+        "refer-a-friend",
+        "credit",
+        "existing-customer",
+        "friend"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "current_promotions",
+      "content": "Customers switching from a competitor who port their number and activate Metro Unlimited or Metro Plus get a $30 bill credit on the second billing cycle.",
+      "semantic_tags": [
+        "switcher-bonus",
+        "credit",
+        "second-billing-cycle",
+        "switching"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "policies",
+      "content": "MetroBoost bills in advance, each payment covers the next 30 days.",
+      "semantic_tags": [
+        "billing",
+        "metroboost",
+        "advance",
+        "payment",
+        "30-days"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "policies",
+      "content": "Agents cannot issue refunds over $20 without supervisor approval.",
+      "semantic_tags": [
+        "refund",
+        "agent",
+        "supervisor-approval",
+        "limit"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "policies",
+      "content": "Customers can cancel anytime, prepaid balances are non-refundable.",
+      "semantic_tags": [
+        "cancellation",
+        "prepaid",
+        "non-refundable"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "policies",
+      "content": "Porting from MetroBoost to another carrier closes the account automatically, takes 2\u20134 hours weekdays, up to 24 hours weekends.",
+      "semantic_tags": [
+        "porting",
+        "metroboost",
+        "account-closure",
+        "timeframe"
+      ],
+      "cross_refs": [
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "common_troubleshooting",
+      "content": "Billing discrepancy: Pull up the account, review the last statement, identify the charge breakdown, compare to what the customer expected, issue a credit and document the cause if there's a real discrepancy.",
+      "semantic_tags": [
+        "billing-discrepancy",
+        "account-review",
+        "charge-breakdown",
+        "credit"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "common_troubleshooting",
+      "content": "Bank overdraft fee: MetroBoost is not responsible, offer a one-time $5 courtesy credit for customers who've been with us 12+ months, subject to supervisor approval.",
+      "semantic_tags": [
+        "bank-overdraft",
+        "courtesy-credit",
+        "supervisor-approval",
+        "timeframe"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "common_troubleshooting",
+      "content": "AutoPay not working: Check if the card on file is expired, check if the card has sufficient funds, walk them through re-enrolling AutoPay in the MetroBoost app, escalate to billing tier 2 if still broken.",
+      "semantic_tags": [
+        "autopay-not-working",
+        "card-expiration",
+        "sufficient-funds",
+        "re-enrollment"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "contact_information",
+      "content": "Customer Care: 1-800-METRO-01, Monday\u2013Saturday 7am\u201310pm local time, Sunday 9am\u20137pm.",
+      "semantic_tags": [
+        "customer-care",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "contact_information",
+      "content": "Billing: 1-800-METRO-02, Monday\u2013Friday 8am\u20138pm EST.",
+      "semantic_tags": [
+        "billing",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "contact_information",
+      "content": "Tech Support: 1-800-METRO-03, 24/7.",
+      "semantic_tags": [
+        "tech-support",
+        "phone-number",
+        "hours-of-operation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "contact_information",
+      "content": "MetroBoost App: iOS App Store and Google Play, search 'MetroBoost'.",
+      "semantic_tags": [
+        "metroboost-app",
+        "app-store",
+        "google-play"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "contact_information",
+      "content": "Live Chat: metroboost.com, Monday\u2013Friday 8am\u201311pm EST.",
+      "semantic_tags": [
+        "live-chat",
+        "website",
+        "hours-of-operation"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "contact_information",
+      "content": "Stores: metroboost.com/stores.",
+      "semantic_tags": [
+        "stores",
+        "website"
+      ],
+      "cross_refs": []
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "Why is my bill higher than my plan price?",
+      "semantic_tags": [
+        "billing",
+        "plan-price",
+        "higher-bill"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "The Metro Basic ($40) doesn't include taxes, taxes add $2\u2013$4 depending on your state.",
+      "semantic_tags": [
+        "metro-basic",
+        "taxes",
+        "not-included",
+        "state-dependent"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "Does the $65 plan really include taxes?",
+      "semantic_tags": [
+        "metro-unlimited",
+        "taxes",
+        "included"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "Yes, the only extra you might see is a one-time $5 activation fee if you're a new customer.",
+      "semantic_tags": [
+        "activation-fee",
+        "new-customer",
+        "one-time-fee"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "When does the AutoPay discount kick in?",
+      "semantic_tags": [
+        "autopay-discount",
+        "kick-in",
+        "second-billing-cycle"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "The $5 discount starts on your second billing cycle after enrollment.",
+      "semantic_tags": [
+        "autopay-discount",
+        "second-billing-cycle",
+        "enrollment"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "What if I cancel AutoPay?",
+      "semantic_tags": [
+        "autopay-cancellation",
+        "impact"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "The $5 discount is removed from the next billing cycle after cancellation.",
+      "semantic_tags": [
+        "autopay-discount",
+        "next-billing-cycle",
+        "cancellation"
+      ],
+      "cross_refs": [
+        "current_promotions",
+        "policies",
+        "common_troubleshooting"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "Can I switch from postpaid to prepaid and keep my number?",
+      "semantic_tags": [
+        "switching",
+        "postpaid",
+        "prepaid",
+        "number-porting"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "frequently_asked_questions",
+      "content": "Yes, we port your number over, takes 2\u20134 hours weekdays, up to 24 hours weekends.",
+      "semantic_tags": [
+        "number-porting",
+        "timeframe",
+        "weekdays",
+        "weekends"
+      ],
+      "cross_refs": [
+        "products_and_services",
+        "current_promotions",
+        "policies"
+      ]
+    },
+    {
+      "field": "tone_guidelines",
+      "content": "Use a warm, professional, and empathetic tone.",
+      "semantic_tags": [
+        "friendly-voice",
+        "professional-tone",
+        "empathetic-communication",
+        "customer-centric",
+        "positive-language"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "tone_guidelines",
+      "content": "Match the customer's urgency.",
+      "semantic_tags": [
+        "urgency-matching",
+        "customer-needs",
+        "timely-response",
+        "responsive-service"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "tone_guidelines",
+      "content": "Avoid jargon.",
+      "semantic_tags": [
+        "clear-language",
+        "simple-explanations",
+        "avoid-jargon",
+        "plain-english"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "tone_guidelines",
+      "content": "Frame things positively.",
+      "semantic_tags": [
+        "positive-framing",
+        "solution-focused",
+        "customer-centric",
+        "optimistic-attitude"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "tone_guidelines",
+      "content": "Never minimize charges.",
+      "semantic_tags": [
+        "charge-minimization",
+        "charge-disclosure",
+        "transparency",
+        "honesty"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "empathy_guidelines",
+      "content": "Acknowledge the customer's feelings.",
+      "semantic_tags": [
+        "emotional-validation",
+        "feeling-acknowledgment",
+        "empathy",
+        "customer-emotions"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "empathy_guidelines",
+      "content": "Validate their emotions.",
+      "semantic_tags": [
+        "emotional-validation",
+        "emotional-understanding",
+        "empathy",
+        "customer-emotions"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "empathy_guidelines",
+      "content": "Take ownership of the issue.",
+      "semantic_tags": [
+        "ownership",
+        "responsibility",
+        "issue-resolution",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "empathy_guidelines",
+      "content": "Never tell them they 'shouldn't feel that way'.",
+      "semantic_tags": [
+        "emotional-judgment",
+        "emotional-shaming",
+        "empathy",
+        "customer-emotions"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Stay calm.",
+      "semantic_tags": [
+        "calm-communication",
+        "emotional-control",
+        "conflict-resolution",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Don't argue.",
+      "semantic_tags": [
+        "conflict-resolution",
+        "calm-communication",
+        "emotional-control",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Don't blame.",
+      "semantic_tags": [
+        "blame-avoidance",
+        "conflict-resolution",
+        "calm-communication",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Close with a concrete next step.",
+      "semantic_tags": [
+        "next-step",
+        "concrete-action",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Offer a supervisor callback if necessary.",
+      "semantic_tags": [
+        "supervisor-escalation",
+        "callback-offer",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "conflict_resolution_guidelines",
+      "content": "Never hang up without supervisor approval.",
+      "semantic_tags": [
+        "supervisor-approval",
+        "hang-up-protocol",
+        "customer-satisfaction",
+        "issue-resolution"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines"
+      ]
+    },
+    {
+      "field": "resolution_expectations",
+      "content": "An issue is resolved when the customer confirms satisfaction.",
+      "semantic_tags": [
+        "issue-resolution",
+        "customer-satisfaction",
+        "confirmation",
+        "resolution-criteria"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "resolution_expectations",
+      "content": "A credit/correction is issued and acknowledged.",
+      "semantic_tags": [
+        "credit-issuance",
+        "correction-acknowledgment",
+        "issue-resolution",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "resolution_expectations",
+      "content": "If not resolved, create a ticket.",
+      "semantic_tags": [
+        "ticket-creation",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "resolution_expectations",
+      "content": "Set a follow-up timeline.",
+      "semantic_tags": [
+        "follow-up-scheduling",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    },
+    {
+      "field": "resolution_expectations",
+      "content": "Log the call in the CRM.",
+      "semantic_tags": [
+        "crm-logging",
+        "issue-tracking",
+        "resolution-failure",
+        "customer-satisfaction"
+      ],
+      "cross_refs": [
+        "greeting_script",
+        "tone_guidelines",
+        "empathy_guidelines",
+        "conflict_resolution_guidelines"
+      ]
+    }
+  ]
 }

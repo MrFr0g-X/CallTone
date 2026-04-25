@@ -1,209 +1,271 @@
 # CallTone Branching, CI/CD, and Deployment Plan — 2026-04-25
 
-This note records the recommended production workflow after the queue, frontend RBAC, model-server capacity, backup, and Report 2 evidence work.
+This is the release plan implemented on `integration/release-2026-04-25`.
 
-## Current Branch State
+## Final Branch Route
 
-Observed on 2026-04-25:
-
-| Branch | Current role | State |
+| Branch | Purpose | Current decision |
 |---|---|---|
-| `feat/test-suite-and-evidence` | Current integration branch | Contains the latest production queue, frontend RBAC, docs, tests, security probes, and stress tooling. Pushed at commit `aaebf6e`. |
-| `main` | Intended stable trunk | Behind the current integration branch by 27 commits. |
-| `backend` | Old backend feature branch | No unique commits missing from the current integration branch. Can be archived after merge to `main`. |
-| `server` | GPU/server experiment branch | Has 2 unique commits: B200 quickstart fixes, `.gitattributes`, SPA route, BankServ context, and an SVG update. Needs selective merge/review. |
-| `deploy` | Deployment experiment branch | Has 2 unique commits: rsync deployment workflow and SPA `.htaccess`. Needs selective merge/review because workflow conflicts with current CI/CD files. |
+| `main` | Protected trunk. Only reviewed, tested, deployable code lands here. | Keep as the only long-lived trunk. |
+| `integration/release-2026-04-25` | Release integration branch created from `feat/test-suite-and-evidence`. | Use for PR into `main`. |
+| `feat/test-suite-and-evidence` | Previous release-candidate branch containing queue, tests, evidence, RBAC, stress tooling, and report docs. | Source branch for integration. |
+| `server` | Experimental GPU/server branch. | Selectively ported useful files only. Do not merge blindly. |
+| `deploy` | Experimental frontend deployment branch. | Not merged. Its old deploy model was replaced by the 3-tier workflow. |
+| `backend` | Old backend feature branch. | No unique required work. Archive after `main` is updated. |
 
-Dry-run merge findings:
-
-- `origin/deploy` conflicts with current branch in `.github/workflows/deploy.yml` and `calltone-UI/public/.htaccess`.
-- `origin/server` conflicts in `backend/app/main.py` and `models/LAYER_2/company_context/contexts/bankserv_global.json`.
-- `origin/backend` has no unique missing work relative to the current branch.
-
-## Recommendation
-
-Do **not** merge the current branch blindly into `deploy`.
-
-The best route is:
-
-1. Treat `main` as the protected trunk.
-2. Treat `feat/test-suite-and-evidence` as the current release candidate.
-3. Create one short-lived integration branch from it.
-4. Selectively merge or cherry-pick the useful `server` and `deploy` branch commits.
-5. Run full CI locally and in GitHub.
-6. Open a pull request into `main`.
-7. Let `main` represent the exact deployable source state.
-8. Deploy from `main` to staging automatically.
-9. Deploy production only from a version tag after smoke tests.
-
-Recommended commands:
-
-```bash
-git checkout feat/test-suite-and-evidence
-git pull origin feat/test-suite-and-evidence
-git checkout -b integration/release-2026-04-25
-
-# Bring only reviewed work from the older branches.
-git cherry-pick a59cd56   # deploy rsync workflow, if still useful after review
-git cherry-pick 52a2786   # server quickstart/context fixes, resolve conflicts manually
-
-# Resolve conflicts by preserving current queue/backend behavior.
-pytest backend/tests/ model_server/tests/ models/LAYER_2/security/tests/ -q
-cd calltone-UI && npm ci && npm test -- --run && npm run build
-
-git push origin integration/release-2026-04-25
-```
-
-Then open a PR:
+Backup branch created before integration work:
 
 ```text
-integration/release-2026-04-25 -> main
+backup/pre-cicd-20260425-050520
 ```
 
-## Branch Policy Going Forward
+## Cherry-Pick / Porting Decisions
 
-| Branch type | Naming | Allowed content | Deployment effect |
-|---|---|---|---|
-| Stable trunk | `main` | Reviewed, tested, deployable code only | Auto-deploy to staging after CI. |
-| Feature branches | `feat/<area>-<summary>` | One bounded feature or fix | CI only; no deployment. |
-| Hotfix branches | `fix/<area>-<summary>` | Production bug fix | CI only; PR to `main`; tag if production fix. |
-| Release branches | `release/<date-or-version>` | Short-lived stabilization branch | Optional staging deploy. |
-| Production tags | `vX.Y.Z` | Immutable production release | Production deploy after manual approval. |
+Useful `server` work was ported:
 
-Retire these after the final merge:
+- `.gitattributes` to normalize line endings and protect binary/model formats.
+- `models/LAYER_2/company_context/contexts/bankserv_global.json` expanded context.
+- `models/LAYER_2/company_context/contexts/bankserv_global_graph.json`.
+- `models/audio_transcription_pipeline.svg` update.
+- Backend `/` static-index fallback for all-in-one server mode.
+- `VAST_AI_QUICKSTART.sh`, rewritten to match the current 3-server architecture.
 
-- `backend`, because its useful work is already in the current integration branch.
-- `server`, after its unique useful files are merged/cherry-picked.
-- `deploy`, after its useful deployment workflow changes are merged/cherry-picked.
+Rejected/rewritten work:
 
-## CI Strategy
+- `server_setup.sh` from `server` was removed because it was an old all-in-one deployment script and contained a hardcoded token. It is not safe or correct for the current architecture.
+- `deploy` branch workflow was not cherry-picked because it deploys only the frontend from the `deploy` branch. The final workflow deploys from `main`/tags and handles frontend + backend + smoke checks.
 
-CI should not require the live A100 or model downloads on every PR.
+## Required Branch Policy
 
-Mandatory CI for every PR:
+Use this policy in GitHub branch protection:
 
-- backend unit/integration tests with mocked model server,
-- model-server endpoint/job tests using tiny fixtures,
-- Layer 2 security scanner and bypass tests,
-- frontend Vitest suite,
-- frontend production build,
-- secret scan,
-- lint/security checks that do not require secrets.
+- Protect `main`.
+- Require pull request before merge.
+- Require at least one approving review.
+- Require conversation resolution.
+- Require status checks:
+  - `backend (pytest + OpenAPI)`
+  - `model-server (pytest)`
+  - `Layer 2 skills/security (pytest)`
+  - `frontend (vitest + build)`
+- Require branches to be up to date before merge.
+- Do not allow force pushes to `main`.
+- Do not allow deletion of `main`.
 
-Current GitHub Actions already cover:
+Feature work should use:
 
-- backend tests,
-- skill/security tests,
-- frontend Vitest + build,
-- Bandit,
-- npm audit,
-- gitleaks.
+```text
+feat/<area>-<short-summary>
+fix/<area>-<short-summary>
+```
 
-Recommended additions:
+Production releases should use immutable tags:
 
-| Gap | Action |
-|---|---|
-| Backend queue regression | Add CI test that submits multiple fake jobs and verifies queued/running/completed states without the real GPU. |
-| Model-server timeout policy | Add endpoint test proving `pipelineTimeoutSeconds=null` is reported when timeout is disabled. |
-| OpenAPI evidence | Add CI artifact that exports `openapi.json`. |
-| Frontend RBAC evidence | Keep `roles.test.ts`; add route-level smoke tests later with Playwright. |
-| Deploy smoke | Keep post-deploy smoke as a separate environment-gated step, not regular PR CI. |
+```text
+v1.0.0
+v1.0.1
+```
 
-## Deployment Strategy
+## CI Workflow
 
-The live system is not a simple one-container deployment. It is a three-server system:
+File:
 
-1. Tier 1 frontend on Hetzner shared webspace.
-2. Tier 2 FastAPI backend + PostgreSQL on Hetzner VPS.
-3. Tier 3 A100 GPU model server on Vast.ai behind an SSH tunnel.
+```text
+.github/workflows/ci.yml
+```
 
-Therefore deployment must be split by tier.
+Triggers:
+
+- push to `main`,
+- push to `integration/**`,
+- push to `release/**`,
+- push to `feat/**`,
+- push to `fix/**`,
+- pull request into `main`,
+- manual `workflow_dispatch`.
+
+Jobs:
+
+| Job | What it validates | A100 required? |
+|---|---|---|
+| `backend (pytest + OpenAPI)` | Backend API, RBAC, upload settings, queue behavior, remote pipeline client, OpenAPI export. | No |
+| `model-server (pytest)` | Model-server auth, endpoints, job lifecycle with mocked subprocess. | No |
+| `Layer 2 skills/security (pytest)` | Skill validation and transcript-bypass prompt-injection blocking. | No |
+| `frontend (vitest + build)` | Frontend unit tests and production Vite build. | No |
+
+CI intentionally does not download Qwen, pyannote, Whisper, or Audio2Emotion. Live model tests are expensive and tied to short-lived GPU infrastructure, so they run only as deployment/demo smoke tests.
+
+## Deployment Workflow
+
+File:
+
+```text
+.github/workflows/deploy.yml
+```
 
 ### Staging
 
 Trigger:
 
-- merge to `main`, after CI passes.
+- CI success on `main`,
+- or manual dispatch with `target=staging`.
 
 Actions:
 
-- build frontend and upload `dist/` to staging webspace,
-- rsync backend source to staging VPS and restart service,
-- run `/api/health/detailed`,
-- optionally point staging backend to the current GPU tunnel or to a fake model-server stub.
+- Build frontend with `VITE_API_BASE_URL=${{ vars.STAGING_API_BASE_URL }}`.
+- Rsync `calltone-UI/dist/` to staging webspace.
+- Rsync repository source to staging backend VPS while excluding secrets, uploads, model weights, caches, and generated files.
+- Run the configured backend restart command.
+- Smoke-test frontend and backend health URLs.
 
 ### Production
 
 Trigger:
 
-- tag `vX.Y.Z`,
-- manual GitHub environment approval.
+- push tag `v*.*.*`,
+- or manual dispatch with `target=production`.
+
+Guardrails:
+
+- Requires successful CI for the same commit SHA.
+- Uses GitHub `production` environment.
+- Production environment should require manual approval in repository settings.
 
 Actions:
 
-- deploy frontend build to `calltone.tech`,
-- deploy backend to Hetzner,
-- preserve backend `.env` and PostgreSQL data,
-- verify tunnel to A100,
-- run public health check,
-- run one small pipeline smoke only when GPU is available.
+- Build frontend with `VITE_API_BASE_URL=${{ vars.PROD_API_BASE_URL }}`.
+- Rsync frontend to production webspace.
+- Rsync backend/source to production VPS with strict excludes.
+- Restart backend through the configured command.
+- Smoke-test public frontend and backend health.
 
-### GPU Server
+## GitHub Environments
 
-Do not deploy the GPU server from every commit.
+Create two environments:
 
-The GPU server is expensive and often short-lived. Treat it as a replaceable runtime restored from Drive:
+```text
+staging
+production
+```
 
-- restore from `gdrive:hothifa-full-gpu-20260425-005615-queue-ready`,
-- update only model-server source when needed,
-- restart uvicorn on port `8081`,
-- update Hetzner tunnel if Vast IP/port changes,
-- validate `/v1/health` and `/v1/capacity`.
+Recommended environment protection:
 
-## Live Model Testing Policy
-
-Do not make every GitHub CI run call the real model pipeline.
-
-Use three levels:
-
-| Level | When | What it proves |
-|---|---|---|
-| PR CI | Every PR | Code correctness without A100. |
-| Deployment smoke | After staging/prod deploy | API, frontend, auth, queue, and tunnel health. |
-| Live GPU smoke | On demand / before demo | Full Layer 1 -> Layer 2 -> Layer 3 pipeline on one known fixture. |
-
-For Report 2 and demo readiness, the current strongest live evidence is:
-
-- public health endpoint green,
-- model-server capacity green,
-- `10/10` server-side queued stress completed,
-- all completed stress calls produced score, evidence, 7 dimensions, speaker turns, and AI report.
+| Environment | Required reviewers | Deployment branches |
+|---|---:|---|
+| `staging` | 0 | `main` only |
+| `production` | 1+ | tags matching `v*.*.*` only |
 
 ## Required GitHub Secrets
 
-Do not commit secrets to GitHub. Store them in GitHub repository/environment secrets.
+Never commit these values.
 
-Expected secret groups:
+### Staging
 
-| Secret | Environment | Purpose |
-|---|---|---|
-| `PROD_ADMIN_PASSWORD` | production | Post-deploy backend smoke login. |
-| `STAGING_ADMIN_PASSWORD` | staging | Staging smoke login. |
-| `HETZNER_HOST` / `HETZNER_USER` / `HETZNER_SSH_KEY` | production or staging | Backend deployment over SSH. |
-| `WEBSPACE_HOST` / `WEBSPACE_USER` / `WEBSPACE_SSH_KEY` | production or staging | Frontend upload to Hetzner webspace. |
-| `MODEL_SERVER_TOKEN` | production only | Backend-to-model-server bearer auth; never printed in logs. |
-| `HF_TOKEN` | GPU setup only | HuggingFace gated model downloads; do not expose in frontend/backend CI. |
+| Secret | Purpose |
+|---|---|
+| `STAGING_WEBSPACE_HOST` | SSH/SFTP host for staging frontend webspace. |
+| `STAGING_WEBSPACE_USER` | SSH username for staging frontend webspace. |
+| `STAGING_WEBSPACE_PORT` | SSH port for staging frontend webspace. |
+| `STAGING_WEBSPACE_PATH` | Remote directory that receives frontend `dist/`. |
+| `STAGING_WEBSPACE_SSH_KEY` | Private key for frontend webspace deploy. |
+| `STAGING_BACKEND_HOST` | Staging backend VPS host. |
+| `STAGING_BACKEND_USER` | Staging backend SSH user. |
+| `STAGING_BACKEND_PORT` | Staging backend SSH port. |
+| `STAGING_BACKEND_PATH` | Remote source directory for staging backend. |
+| `STAGING_BACKEND_SSH_KEY` | Private key for backend deploy. |
 
-## Immediate Next Step
+### Production
 
-Use this sequence:
+| Secret | Purpose |
+|---|---|
+| `PROD_WEBSPACE_HOST` | Production frontend webspace host. |
+| `PROD_WEBSPACE_USER` | Production frontend webspace username. |
+| `PROD_WEBSPACE_PORT` | Production frontend webspace SSH port. |
+| `PROD_WEBSPACE_PATH` | Production frontend remote path. |
+| `PROD_WEBSPACE_SSH_KEY` | Private key for frontend deploy. |
+| `PROD_BACKEND_HOST` | Production backend VPS host. |
+| `PROD_BACKEND_USER` | Production backend SSH user. |
+| `PROD_BACKEND_PORT` | Production backend SSH port. |
+| `PROD_BACKEND_PATH` | Production backend source path. |
+| `PROD_BACKEND_SSH_KEY` | Private key for backend deploy. |
 
-1. Keep current branch as release candidate.
-2. Create `integration/release-2026-04-25`.
-3. Manually port useful `server` and `deploy` branch changes.
-4. Run CI and local checks.
-5. PR into `main`.
-6. Deploy staging from `main`.
-7. Tag production only after one final human-checked smoke.
+## Required GitHub Variables
 
-This avoids turning `deploy` into a second trunk and prevents branch drift from becoming unmanageable.
+### Staging
+
+| Variable | Example |
+|---|---|
+| `STAGING_API_BASE_URL` | `https://api-staging.calltone.tech` |
+| `STAGING_FRONTEND_URL` | `https://staging.calltone.tech` |
+| `STAGING_BACKEND_HEALTH_URL` | `https://api-staging.calltone.tech/api/health/detailed` |
+| `STAGING_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+
+### Production
+
+| Variable | Example |
+|---|---|
+| `PROD_API_BASE_URL` | `https://api.calltone.tech` |
+| `PROD_FRONTEND_URL` | `https://calltone.tech` |
+| `PROD_BACKEND_HEALTH_URL` | `https://api.calltone.tech/api/health/detailed` |
+| `PROD_BACKEND_RESTART_CMD` | `sudo systemctl restart calltone-backend` |
+
+## GPU Server Policy
+
+Do not rebuild or redeploy the A100/B200 GPU server on every commit.
+
+Correct policy:
+
+1. Restore the GPU server from the Google Drive/rclone backup when a new instance is created.
+2. Start `model_server` on port `8081`.
+3. Update Hetzner autossh tunnel to forward backend `127.0.0.1:8090` to GPU `localhost:8081`.
+4. Validate:
+
+```bash
+curl http://127.0.0.1:8090/v1/health
+curl -H "Authorization: Bearer $MODEL_SERVER_TOKEN" http://127.0.0.1:8090/v1/capacity
+curl https://api.calltone.tech/api/health/detailed
+```
+
+For fresh Vast instances, the safe bootstrap is:
+
+```bash
+export HF_TOKEN=...
+export CALLTONE_BRANCH=main
+bash VAST_AI_QUICKSTART.sh
+```
+
+The script never stores the token in git. It reads `HF_TOKEN` only from the environment.
+
+## Release Sequence
+
+Use this exact sequence:
+
+```bash
+git switch integration/release-2026-04-25
+git push origin integration/release-2026-04-25
+gh pr create --base main --head integration/release-2026-04-25
+```
+
+After PR CI passes and review is complete:
+
+```bash
+gh pr merge --merge
+git switch main
+git pull origin main
+git tag -a v1.0.0 -m "CallTone v1.0.0 graduation demo release"
+git push origin v1.0.0
+```
+
+Production deployment starts from the tag and waits for GitHub Environment approval.
+
+## Verification Evidence to Keep
+
+For the graduation implementation/testing report, keep:
+
+- CI run URL showing all four jobs passing.
+- OpenAPI artifact from the CI run.
+- Screenshot of protected `main` branch settings.
+- Screenshot of `staging` and `production` GitHub environments.
+- Screenshot of deployment workflow run.
+- Screenshot or JSON output from `/api/health/detailed`.
+- One live GPU smoke result only when the GPU instance is available.

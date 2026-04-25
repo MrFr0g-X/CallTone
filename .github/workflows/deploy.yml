@@ -1,20 +1,16 @@
 name: Deploy
 
-# ────────────────────────────────────────────────────────────────────────────
-# CallTone deployment workflow
+# CallTone is a 3-tier deployment:
+#   Tier 1: React frontend on Hetzner shared webspace.
+#   Tier 2: FastAPI backend + PostgreSQL on Hetzner VPS.
+#   Tier 3: GPU model server on Vast.ai, reached through an SSH tunnel.
 #
-#  Staging  : auto on push to `main`, after CI passes (workflow_run)
-#  Prod     : on tag `v*.*.*`, gated by GitHub `production` environment
-#             (manual approval), after CI passes
-#
-# Both jobs run on a SELF-HOSTED runner labelled `gpu-stage` / `gpu-prod`
-# (the GPU box). The runners are registered as part of the one-time
-# bootstrap in docs/DEPLOYMENT_PLAN.md §10.
-#
-# Atomicity: `docker compose up -d --build` swaps the new container in
-# only after a successful build. The previous container keeps serving
-# until the new one is healthy.
-# ────────────────────────────────────────────────────────────────────────────
+# Policy:
+#   - Staging deploys automatically from main after CI passes.
+#   - Production deploys only from vX.Y.Z tags or manual dispatch.
+#   - Production uses the protected GitHub "production" environment.
+#   - GPU instances are not rebuilt on every deploy; this workflow verifies
+#     their tunnel/health through the backend smoke endpoint.
 
 on:
   workflow_run:
@@ -26,40 +22,36 @@ on:
   workflow_dispatch:
     inputs:
       target:
-        description: "Which environment to deploy"
+        description: "Deployment target"
         required: true
         type: choice
-        options: [staging, prod]
+        options: [staging, production]
 
-# Least-privilege: this workflow needs to read the repo and write deploy
-# statuses; it does NOT need write access to code.
 permissions:
   contents: read
   deployments: write
 
-# Prevent overlapping deploys to the same environment.
 concurrency:
-  group: deploy-${{ github.event.inputs.target || (startsWith(github.ref, 'refs/tags/v') && 'prod' || 'staging') }}
+  group: deploy-${{ github.event.inputs.target || (startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging') }}
   cancel-in-progress: false
 
 jobs:
-  # ───────────────────────────────── staging ─────────────────────────────────
   deploy-staging:
-    name: deploy → staging
+    name: deploy staging
     if: |
       (github.event_name == 'workflow_run'
         && github.event.workflow_run.conclusion == 'success'
         && github.event.workflow_run.head_branch == 'main')
       || (github.event_name == 'workflow_dispatch'
         && github.event.inputs.target == 'staging')
-    runs-on: [self-hosted, gpu-stage]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: staging
-      url: https://stage.calltone.local
-    timeout-minutes: 15
+      url: ${{ vars.STAGING_FRONTEND_URL }}
     steps:
-      - name: Resolve commit SHA
-        id: sha
+      - name: Resolve source SHA
+        id: src
         run: |
           if [ "${{ github.event_name }}" = "workflow_run" ]; then
             echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
@@ -67,69 +59,58 @@ jobs:
             echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Checkout (fast-forward only)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ steps.sha.outputs.sha }}
-          fetch-depth: 1
+          ref: ${{ steps.src.outputs.sha }}
 
-      - name: Verify deploy host layout
-        run: |
-          set -euo pipefail
-          test -d /opt/calltone/staging || {
-            echo "::error::/opt/calltone/staging not provisioned. See DEPLOYMENT_PLAN.md §10."
-            exit 1
-          }
-          test -f /opt/calltone/staging/.env.staging || {
-            echo "::error::missing /opt/calltone/staging/.env.staging"
-            exit 1
-          }
-
-      - name: Sync source into deploy dir
-        working-directory: /opt/calltone/staging
-        run: |
-          set -euo pipefail
-          git fetch --quiet origin
-          git checkout --quiet ${{ steps.sha.outputs.sha }}
-
-      - name: Build & start (atomic swap)
-        working-directory: /opt/calltone/staging
-        run: |
-          set -euo pipefail
-          docker compose \
-            --env-file .env.staging \
-            -f docker-compose.yml \
-            -f docker-compose.staging.yml \
-            up -d --build --remove-orphans
-
-      - name: Smoke test
-        working-directory: /opt/calltone/staging
+      - name: Build frontend
+        working-directory: calltone-UI
         env:
-          SMOKE_BASE_URL: http://localhost:8001
-          SMOKE_ADMIN_EMAIL: admin@calltone.ai
-          SMOKE_ADMIN_PASSWORD: ${{ secrets.STAGING_ADMIN_PASSWORD }}
-        run: bash scripts/post_deploy_smoke.sh
-
-      - name: Notify on failure
-        if: failure()
+          VITE_API_BASE_URL: ${{ vars.STAGING_API_BASE_URL }}
         run: |
-          echo "::error::Staging deploy of ${{ steps.sha.outputs.sha }} failed."
-          echo "Previous container is still running (atomic swap aborted)."
+          npm ci
+          npm run build
 
-  # ─────────────────────────────────── prod ──────────────────────────────────
-  deploy-prod:
-    name: deploy → prod
+      - name: Deploy frontend to staging webspace
+        env:
+          SSH_KEY: ${{ secrets.STAGING_WEBSPACE_SSH_KEY }}
+          HOST: ${{ secrets.STAGING_WEBSPACE_HOST }}
+          USER: ${{ secrets.STAGING_WEBSPACE_USER }}
+          PORT: ${{ secrets.STAGING_WEBSPACE_PORT }}
+          PATH_REMOTE: ${{ secrets.STAGING_WEBSPACE_PATH }}
+        run: bash scripts/ci/rsync_dir.sh calltone-UI/dist/ "$USER@$HOST:$PATH_REMOTE" "$PORT" "$SSH_KEY"
+
+      - name: Deploy backend to staging VPS
+        env:
+          SSH_KEY: ${{ secrets.STAGING_BACKEND_SSH_KEY }}
+          HOST: ${{ secrets.STAGING_BACKEND_HOST }}
+          USER: ${{ secrets.STAGING_BACKEND_USER }}
+          PORT: ${{ secrets.STAGING_BACKEND_PORT }}
+          PATH_REMOTE: ${{ secrets.STAGING_BACKEND_PATH }}
+          RESTART_CMD: ${{ vars.STAGING_BACKEND_RESTART_CMD || 'sudo systemctl restart calltone-backend' }}
+        run: |
+          bash scripts/ci/rsync_repo.sh "$USER@$HOST:$PATH_REMOTE" "$PORT" "$SSH_KEY"
+          bash scripts/ci/remote_exec.sh "$USER@$HOST" "$PORT" "$SSH_KEY" "cd '$PATH_REMOTE' && ${RESTART_CMD}"
+
+      - name: Smoke staging
+        env:
+          FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
+          BACKEND_HEALTH_URL: ${{ vars.STAGING_BACKEND_HEALTH_URL }}
+        run: bash scripts/ci/smoke_http.sh
+
+  deploy-production:
+    name: deploy production
     if: |
       startsWith(github.ref, 'refs/tags/v')
       || (github.event_name == 'workflow_dispatch'
-        && github.event.inputs.target == 'prod')
-    runs-on: [self-hosted, gpu-prod]
+        && github.event.inputs.target == 'production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     environment:
-      name: production       # GitHub-protected — requires manual approval
-      url: https://calltone.local
-    timeout-minutes: 20
+      name: production
+      url: ${{ vars.PROD_FRONTEND_URL }}
     steps:
-      - name: Verify CI passed for this ref
+      - name: Verify CI passed for this SHA
         uses: actions/github-script@v7
         with:
           script: |
@@ -141,71 +122,44 @@ jobs:
             });
             const ciPassed = data.workflow_runs.some(r => r.name === 'CI');
             if (!ciPassed) {
-              core.setFailed(`No successful CI run found for ${context.sha}. Refusing to deploy.`);
+              core.setFailed(`No successful CI run found for ${context.sha}. Refusing production deploy.`);
             }
 
-      - name: Checkout tagged ref
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
-      - name: Verify deploy host layout
-        run: |
-          set -euo pipefail
-          test -d /opt/calltone/prod
-          test -f /opt/calltone/prod/.env.prod
-          test "$(stat -c %a /opt/calltone/prod/.env.prod)" = "600" || {
-            echo "::error::.env.prod must be mode 600"
-            exit 1
-          }
-
-      - name: Capture previous tag (for rollback log)
-        id: prev
-        working-directory: /opt/calltone/prod
-        run: |
-          PREV=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
-          echo "prev=$PREV" >> "$GITHUB_OUTPUT"
-          echo "Previous tag: $PREV"
-
-      - name: Sync source into deploy dir
-        working-directory: /opt/calltone/prod
-        run: |
-          set -euo pipefail
-          git fetch --quiet --tags origin
-          git checkout --quiet ${{ github.ref_name }}
-
-      - name: Build & start (atomic swap)
-        working-directory: /opt/calltone/prod
-        run: |
-          set -euo pipefail
-          docker compose \
-            --env-file .env.prod \
-            -f docker-compose.yml \
-            -f docker-compose.prod.yml \
-            up -d --build --remove-orphans
-
-      - name: Smoke test
-        working-directory: /opt/calltone/prod
+      - name: Build frontend
+        working-directory: calltone-UI
         env:
-          SMOKE_BASE_URL: http://localhost:8000
-          SMOKE_ADMIN_EMAIL: admin@calltone.ai
-          SMOKE_ADMIN_PASSWORD: ${{ secrets.PROD_ADMIN_PASSWORD }}
-        run: bash scripts/post_deploy_smoke.sh
-
-      - name: Auto-rollback on smoke failure
-        if: failure()
-        working-directory: /opt/calltone/prod
+          VITE_API_BASE_URL: ${{ vars.PROD_API_BASE_URL }}
         run: |
-          set -euo pipefail
-          echo "::warning::Smoke failed. Rolling back to ${{ steps.prev.outputs.prev }}."
-          if [ "${{ steps.prev.outputs.prev }}" != "none" ]; then
-            git checkout --quiet ${{ steps.prev.outputs.prev }}
-            docker compose \
-              --env-file .env.prod \
-              -f docker-compose.yml \
-              -f docker-compose.prod.yml \
-              up -d --build --remove-orphans
-          else
-            echo "::error::No previous tag to roll back to. Manual intervention required."
-            exit 1
-          fi
+          npm ci
+          npm run build
+
+      - name: Deploy frontend to production webspace
+        env:
+          SSH_KEY: ${{ secrets.PROD_WEBSPACE_SSH_KEY }}
+          HOST: ${{ secrets.PROD_WEBSPACE_HOST }}
+          USER: ${{ secrets.PROD_WEBSPACE_USER }}
+          PORT: ${{ secrets.PROD_WEBSPACE_PORT }}
+          PATH_REMOTE: ${{ secrets.PROD_WEBSPACE_PATH }}
+        run: bash scripts/ci/rsync_dir.sh calltone-UI/dist/ "$USER@$HOST:$PATH_REMOTE" "$PORT" "$SSH_KEY"
+
+      - name: Deploy backend to production VPS
+        env:
+          SSH_KEY: ${{ secrets.PROD_BACKEND_SSH_KEY }}
+          HOST: ${{ secrets.PROD_BACKEND_HOST }}
+          USER: ${{ secrets.PROD_BACKEND_USER }}
+          PORT: ${{ secrets.PROD_BACKEND_PORT }}
+          PATH_REMOTE: ${{ secrets.PROD_BACKEND_PATH }}
+          RESTART_CMD: ${{ vars.PROD_BACKEND_RESTART_CMD || 'sudo systemctl restart calltone-backend' }}
+        run: |
+          bash scripts/ci/rsync_repo.sh "$USER@$HOST:$PATH_REMOTE" "$PORT" "$SSH_KEY"
+          bash scripts/ci/remote_exec.sh "$USER@$HOST" "$PORT" "$SSH_KEY" "cd '$PATH_REMOTE' && ${RESTART_CMD}"
+
+      - name: Smoke production
+        env:
+          FRONTEND_URL: ${{ vars.PROD_FRONTEND_URL }}
+          BACKEND_HEALTH_URL: ${{ vars.PROD_BACKEND_HEALTH_URL }}
+        run: bash scripts/ci/smoke_http.sh
