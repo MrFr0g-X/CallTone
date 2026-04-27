@@ -312,6 +312,11 @@ const TicketsTab = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ companyName: user?.roleScope === "tenant" ? user?.clientName ?? "" : "", fieldName: "", oldText: "", newText: "", reason: "" });
   const [creating, setCreating] = useState(false);
+  const [reviewTarget, setReviewTarget] = useState<{
+    ticketId: string;
+    status: "approved" | "rejected";
+  } | null>(null);
+  const [reviewNote, setReviewNote] = useState("");
   const platformScope = user?.roleScope === "platform";
   const canReviewTickets =
     user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
@@ -363,8 +368,25 @@ const TicketsTab = () => {
   };
 
   const reviewTicket = (ticketId: string, status: "approved" | "rejected") => {
-    const note = window.prompt(`Optional review note for ${status}:`) || undefined;
-    reviewMutation.mutate({ ticketId, status, note });
+    setReviewTarget({ ticketId, status });
+    setReviewNote("");
+  };
+
+  const submitReview = () => {
+    if (!reviewTarget) return;
+    reviewMutation.mutate(
+      {
+        ticketId: reviewTarget.ticketId,
+        status: reviewTarget.status,
+        note: reviewNote.trim() || undefined,
+      },
+      {
+        onSuccess: () => {
+          setReviewTarget(null);
+          setReviewNote("");
+        },
+      },
+    );
   };
 
   return (
@@ -508,6 +530,80 @@ const TicketsTab = () => {
           ))}
         </div>
       )}
+
+      <AnimatePresence>
+        {reviewTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm"
+            onClick={() => {
+              if (!reviewMutation.isPending) setReviewTarget(null);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.97 }}
+              className="glass-strong w-full max-w-md rounded-2xl border border-border/60 p-6 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {reviewTarget.status === "approved" ? "Approve change request" : "Reject change request"}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Add an optional review note. This is stored with the ticket audit trail.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setReviewTarget(null)}
+                  disabled={reviewMutation.isPending}
+                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground disabled:opacity-50"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <textarea
+                value={reviewNote}
+                onChange={(event) => setReviewNote(event.target.value)}
+                rows={4}
+                className="mt-5 w-full resize-none rounded-xl glass-input px-3 py-2 text-sm"
+                placeholder="Optional note for the requester..."
+              />
+
+              <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  onClick={() => setReviewTarget(null)}
+                  disabled={reviewMutation.isPending}
+                  className="rounded-xl border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/40 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitReview}
+                  disabled={reviewMutation.isPending}
+                  className={cn(
+                    "rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50",
+                    reviewTarget.status === "approved"
+                      ? "bg-success text-white hover:brightness-110"
+                      : "bg-destructive text-destructive-foreground hover:brightness-110",
+                  )}
+                >
+                  {reviewMutation.isPending
+                    ? "Saving..."
+                    : reviewTarget.status === "approved"
+                    ? "Approve"
+                    : "Reject"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

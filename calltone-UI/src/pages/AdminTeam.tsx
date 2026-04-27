@@ -11,6 +11,9 @@ import {
   Copy,
   Trash2,
   Ban,
+  Building2,
+  Users,
+  UserCheck,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AdminTeamUser } from "@/services/api";
@@ -120,7 +123,7 @@ const AdminTeam = () => {
       const response = await adminApi.getClients();
       return response.data;
     },
-    enabled: canMutateUsers && platformScope,
+    enabled: platformScope,
   });
 
   const inviteMutation = useMutation({
@@ -152,8 +155,6 @@ const AdminTeam = () => {
               : data.inviteUrl,
         });
       }
-
-      console.log("Invite URL:", data.inviteUrl);
 
       setShowInviteModal(false);
       setInviteForm({ name: "", email: "", role: platformScope ? "viewer" : "qa", clientId: null });
@@ -312,24 +313,103 @@ const AdminTeam = () => {
     deleteUserMutation.mutate(deleteTarget.id);
   };
 
+  const clientNameById = useMemo(() => {
+    return new Map((clientsData?.clients ?? []).map((client) => [client.id, client.name]));
+  }, [clientsData]);
+
+  const clientMetaById = useMemo(() => {
+    return new Map((clientsData?.clients ?? []).map((client) => [client.id, client]));
+  }, [clientsData]);
+
+  const getCompanyLabel = (user: AdminTeamUser) => {
+    if (!user.clientId) return "Platform account";
+    return (
+      clientNameById.get(user.clientId) ||
+      (user.clientId === currentUser?.clientId ? currentUser?.clientName : undefined) ||
+      `Company ID ${user.clientId}`
+    );
+  };
+
   const filteredUsers = useMemo(() => {
     if (!data) return [];
+    const query = search.trim().toLowerCase();
 
     return data.users.filter((u) => {
       if (roleFilter !== "All" && u.role !== roleFilter) return false;
-      if (
-        search &&
-        !u.name.toLowerCase().includes(search.toLowerCase()) &&
-        !u.email.toLowerCase().includes(search.toLowerCase())
-      ) {
+      const company = !u.clientId
+        ? "platform account"
+        : clientNameById.get(u.clientId) ||
+          (u.clientId === currentUser?.clientId ? currentUser?.clientName : "") ||
+          `company id ${u.clientId}`;
+      if (query && ![u.name, u.email, u.role, u.status, company].join(" ").toLowerCase().includes(query)) {
         return false;
       }
       return true;
     });
-  }, [data, search, roleFilter]);
+  }, [data, search, roleFilter, clientNameById, currentUser?.clientId, currentUser?.clientName]);
+
+  const groupedUsers = useMemo(() => {
+    const sortUsers = (users: AdminTeamUser[]) =>
+      [...users].sort((a, b) => {
+        const rankDiff = roleConfig[a.role].rank - roleConfig[b.role].rank;
+        return rankDiff || a.name.localeCompare(b.name);
+      });
+
+    const groups: Array<{
+      key: string;
+      title: string;
+      subtitle: string;
+      users: AdminTeamUser[];
+      accent: "platform" | "tenant";
+    }> = [];
+
+    const platformUsers = filteredUsers.filter((user) => !user.clientId);
+    if (platformUsers.length) {
+      groups.push({
+        key: "platform",
+        title: "Platform Operators",
+        subtitle: "CallTone owner and internal administration accounts.",
+        users: sortUsers(platformUsers),
+        accent: "platform",
+      });
+    }
+
+    const tenantGroups = new Map<number, AdminTeamUser[]>();
+    filteredUsers
+      .filter((user) => user.clientId)
+      .forEach((user) => {
+        const list = tenantGroups.get(user.clientId!) ?? [];
+        list.push(user);
+        tenantGroups.set(user.clientId!, list);
+      });
+
+    [...tenantGroups.entries()]
+      .sort(([a], [b]) => {
+        const nameA = clientNameById.get(a) || `Company ID ${a}`;
+        const nameB = clientNameById.get(b) || `Company ID ${b}`;
+        return nameA.localeCompare(nameB);
+      })
+      .forEach(([clientId, users]) => {
+        const meta = clientMetaById.get(clientId);
+        groups.push({
+          key: `client-${clientId}`,
+          title: meta?.name || (clientId === currentUser?.clientId ? currentUser?.clientName : undefined) || `Company ID ${clientId}`,
+          subtitle: meta
+            ? `${meta.industry || "Client company"} · ${meta.status} · ${meta.plan}`
+            : "Tenant users scoped to this company only.",
+          users: sortUsers(users),
+          accent: "tenant",
+        });
+      });
+
+    return groups;
+  }, [filteredUsers, clientMetaById, clientNameById, currentUser?.clientId, currentUser?.clientName]);
 
   const activeCount =
     data?.users.filter((u) => u.status === "active").length ?? 0;
+  const invitedCount = data?.users.filter((u) => u.status === "invited").length ?? 0;
+  const platformAccountCount = data?.users.filter((u) => !u.clientId).length ?? 0;
+  const companyCount = new Set(data?.users.filter((u) => u.clientId).map((u) => u.clientId)).size;
 
   if (isLoading) {
     return (
@@ -356,6 +436,7 @@ const AdminTeam = () => {
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             {data.users.length} team members · {activeCount} active
+            {platformScope ? ` · ${platformAccountCount} platform account${platformAccountCount === 1 ? "" : "s"}` : ""}
           </p>
         </div>
 
@@ -375,6 +456,25 @@ const AdminTeam = () => {
           </span>
         )}
       </header>
+
+      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          { label: "Total members", value: data.users.length, icon: Users },
+          { label: "Active", value: activeCount, icon: UserCheck },
+          { label: "Invited", value: invitedCount, icon: Mail },
+          { label: platformScope ? "Companies" : "Company scope", value: platformScope ? companyCount : 1, icon: Building2 },
+        ].map((stat) => (
+          <GlassCard key={stat.label} className="rounded-2xl p-4">
+            <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10">
+              <stat.icon className="h-4 w-4 text-accent" />
+            </div>
+            <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {stat.label}
+            </p>
+          </GlassCard>
+        ))}
+      </section>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="relative flex-1 max-w-xs">
@@ -405,152 +505,163 @@ const AdminTeam = () => {
         />
       </div>
 
-      <div className="space-y-3">
-        {filteredUsers.map((user: AdminTeamUser, i) => {
-          const role = roleConfig[user.role];
-          const status = statusIcons[user.status];
-          const isCurrentUser = user.id === data.currentUserId;
-          const canManageThisUser =
-            canMutateUsers &&
-            !isCurrentUser &&
-            user.role !== "owner" &&
-            (isOwner || user.role !== "super_admin");
+      <div className="space-y-6">
+        {groupedUsers.map((group, groupIndex) => (
+          <section key={group.key} className="space-y-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-xl",
+                      group.accent === "platform" ? "bg-emerald-400/10 text-emerald-400" : "bg-accent/10 text-accent",
+                    )}
+                  >
+                    {group.accent === "platform" ? <Shield className="h-4 w-4" /> : <Building2 className="h-4 w-4" />}
+                  </span>
+                  <h2 className="text-base font-semibold text-foreground">{group.title}</h2>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{group.subtitle}</p>
+              </div>
+              <span className="w-fit rounded-full border border-border/60 bg-background/50 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                {group.users.length} member{group.users.length === 1 ? "" : "s"}
+              </span>
+            </div>
 
-          return (
-            <motion.div
-              key={user.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03, duration: 0.3 }}
-            >
-              <GlassCard className="rounded-2xl p-5 hover:border-accent/20 transition-colors">
-                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-accent">
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </span>
-                    </div>
+            <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
+              {group.users.map((user: AdminTeamUser, i) => {
+                const role = roleConfig[user.role];
+                const status = statusIcons[user.status];
+                const isCurrentUser = user.id === data.currentUserId;
+                const tenantAssignableRole = tenantRoleOptions.includes(user.role as AssignableRole);
+                const canManageThisUser =
+                  canMutateUsers &&
+                  !isCurrentUser &&
+                  user.role !== "owner" &&
+                  (platformScope || tenantAssignableRole) &&
+                  (isOwner || user.role !== "super_admin");
 
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold truncate">{user.name}</h3>
-                        {isCurrentUser && (
-                          <span className="text-[10px] font-medium text-accent bg-accent/10 px-1.5 py-0.5 rounded">
-                            You
-                          </span>
+                return (
+                  <motion.div
+                    key={user.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: (groupIndex + i) * 0.025, duration: 0.25 }}
+                  >
+                    <GlassCard className="h-full rounded-2xl p-5 hover:border-accent/20 transition-colors">
+                      <div className="flex h-full flex-col gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-accent/10">
+                            <span className="text-xs font-bold text-accent">
+                              {user.name
+                                .split(" ")
+                                .filter(Boolean)
+                                .slice(0, 2)
+                                .map((n) => n[0])
+                                .join("")}
+                            </span>
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="truncate text-sm font-semibold text-foreground">{user.name}</h3>
+                              {isCurrentUser && (
+                                <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[10px] font-medium text-accent">
+                                  You
+                                </span>
+                              )}
+                            </div>
+                            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                            <p className={cn("mt-1 truncate text-[11px]", user.clientId ? "text-muted-foreground/80" : "text-accent/80")}>
+                              {getCompanyLabel(user)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className={cn("flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium", role.bg)}>
+                            <Shield className={cn("h-3 w-3", role.color)} />
+                            <span className={role.color}>{role.label}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 rounded-lg bg-muted/25 px-2.5 py-1">
+                            <status.icon className={cn("h-3 w-3", status.color)} />
+                            <span className={cn("text-xs", status.color)}>{status.label}</span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/40 bg-background/35 p-3">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Scope</p>
+                            <p className="mt-1 truncate text-xs font-medium text-foreground">
+                              {user.clientId ? "Tenant" : "Platform"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Last Login</p>
+                            <p className="mt-1 text-xs font-medium text-foreground">
+                              {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
+                            </p>
+                          </div>
+                        </div>
+
+                        {canMutateUsers && (
+                          <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-border/40 pt-3">
+                            {user.status === "invited" ? (
+                              <button
+                                onClick={() => handleCopyInviteLink(user.id)}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-border/50 px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                              >
+                                <Copy className="h-3.5 w-3.5" />
+                                Invite link
+                              </button>
+                            ) : canManageThisUser ? (
+                              <select
+                                value={user.role}
+                                onChange={(event) => handleRoleChange(user.id, event.target.value as AssignableRole)}
+                                disabled={updateRoleMutation.isPending}
+                                className="h-8 rounded-lg border border-border/50 bg-background/70 px-2 text-xs outline-none transition-colors focus:border-primary"
+                              >
+                                {visibleRoleOptions.map((r) => (
+                                  <option key={r} value={r}>
+                                    {roleConfig[r].label}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <span className="text-[11px] text-muted-foreground">Protected account</span>
+                            )}
+
+                            <div className="flex items-center gap-1">
+                              {canManageThisUser && user.status !== "invited" && (
+                                <button
+                                  onClick={() => handleToggleStatus(user)}
+                                  className="grid h-8 w-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+                                  title={user.status === "active" ? "Disable user" : "Enable user"}
+                                >
+                                  <Ban className="h-3.5 w-3.5" />
+                                </button>
+                              )}
+
+                              {canManageThisUser && (
+                                <button
+                                  onClick={() => setDeleteTarget(user)}
+                                  className="grid h-8 w-8 place-items-center rounded-lg text-destructive transition-colors hover:bg-destructive/10"
+                                  title={user.status === "invited" ? "Delete invitation" : "Delete user"}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                      {user.clientId ? (
-                        <p className="text-[11px] text-muted-foreground/80">Client #{user.clientId}</p>
-                      ) : (
-                        <p className="text-[11px] text-accent/80">Platform account</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-                    <div
-                      className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
-                        role.bg
-                      )}
-                    >
-                      <Shield className={cn("w-3 h-3", role.color)} />
-                      <span className={role.color}>{role.label}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <status.icon className={cn("w-3 h-3", status.color)} />
-                      <span className={cn("text-xs", status.color)}>{status.label}</span>
-                    </div>
-
-                    <div className="text-right min-w-[90px]">
-                      <p className="text-[10px] text-muted-foreground uppercase">
-                        Last Login
-                      </p>
-                      <p className="text-xs text-foreground">
-                        {user.lastLogin
-                          ? new Date(user.lastLogin).toLocaleDateString()
-                          : "Never"}
-                      </p>
-                    </div>
-
-                    {canMutateUsers && (
-                    <div className="flex flex-wrap items-center gap-1">
-                      {user.status === "invited" ? (
-                        <>
-                          <button
-                            onClick={() => handleCopyInviteLink(user.id)}
-                            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
-                            title="Copy invite link"
-                          >
-                            <Copy className="w-3.5 h-3.5" />
-                          </button>
-
-                          {canManageThisUser && (
-                            <button
-                              onClick={() => setDeleteTarget(user)}
-                              className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
-                              title="Delete invitation"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          {canManageThisUser && (
-                            <>
-                              <div className="flex flex-wrap items-center gap-1">
-                                {visibleRoleOptions.map((r) => (
-                                  <button
-                                    key={r}
-                                    onClick={() => handleRoleChange(user.id, r)}
-                                    className={cn(
-                                      "px-2 py-1 rounded text-[10px] transition-colors",
-                                      user.role === r
-                                        ? "bg-primary/20 text-primary"
-                                        : "bg-muted/30 hover:bg-muted/50"
-                                    )}
-                                    title={`Change role to ${r}`}
-                                  >
-                                    {r}
-                                  </button>
-                                ))}
-                              </div>
-
-                              <button
-                                onClick={() => handleToggleStatus(user)}
-                                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
-                                title={user.status === "active" ? "Disable user" : "Enable user"}
-                              >
-                                <Ban className="w-3.5 h-3.5" />
-                              </button>
-
-                              <button
-                                onClick={() => setDeleteTarget(user)}
-                                className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
-                                title="Delete user"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </>
-                          )}
-                        </>
-                      )}
-                    </div>
-                    )}
-                  </div>
-                </div>
-              </GlassCard>
-            </motion.div>
-          );
-        })}
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+        ))}
 
         {filteredUsers.length === 0 && (
           <div className="text-center py-12 text-muted-foreground text-sm">
@@ -668,7 +779,7 @@ const AdminTeam = () => {
                     onChange={(e) =>
                       setInviteForm({ ...inviteForm, email: e.target.value })
                     }
-                    placeholder="email@calltone.ai"
+                    placeholder="person@company.com"
                     className="w-full h-10 px-4 rounded-xl glass-input text-sm"
                   />
                 </div>

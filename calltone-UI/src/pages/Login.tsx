@@ -95,7 +95,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@calltone.ai"
+                placeholder="you@company.com"
                 className="w-full h-12 px-4 rounded-xl glass-input text-sm"
                 required
               />
