@@ -614,6 +614,8 @@ const CompanyContext = () => {
   const [tab, setTab] = useState<Tab>("companies");
   const userRole = user?.role === "qa" ? "qa" : "admin";
   const canManageContext = Boolean(user?.capabilities?.canManageContext);
+  const platformScope = user?.roleScope === "platform";
+  const contextScopeLabel = platformScope ? "Platform context workspace" : `${user?.clientName ?? "Your company"} context workspace`;
 
   const { data: companiesData, isLoading: companiesLoading } = useQuery({
     queryKey: ["context-companies"],
@@ -622,7 +624,7 @@ const CompanyContext = () => {
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "companies", label: "Companies",  icon: Building2 },
-    ...(canManageContext ? [{ id: "upload" as const, label: "Upload Context", icon: Upload }] : []),
+    ...(canManageContext ? [{ id: "upload" as const, label: platformScope ? "Upload Context" : "Replace Context", icon: Upload }] : []),
     { id: "tickets",   label: "Change Tickets", icon: Ticket },
   ];
 
@@ -648,6 +650,24 @@ const CompanyContext = () => {
               Manage company policies the AI uses when scoring calls.
             </p>
           </header>
+
+          <GlassCard className="rounded-2xl p-5">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <Building2 className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">{contextScopeLabel}</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  {platformScope
+                    ? "Platform admins can view and upload contexts for any company. Tenant admins and QA users are restricted to their assigned company."
+                    : canManageContext
+                    ? "You can replace this company's scoring context by uploading the approved policy document. QA change tickets are kept as a review/audit workflow for proposed context updates."
+                    : "You can view the active company context and submit change tickets if company policy allows it. Direct context replacement is disabled for your role or company policy."}
+                </p>
+              </div>
+            </div>
+          </GlassCard>
 
           {/* Tabs */}
           <div className="flex gap-1 p-1 rounded-2xl bg-foreground/[0.04] w-fit">

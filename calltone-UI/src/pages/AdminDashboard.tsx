@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Building2,
@@ -21,9 +21,12 @@ import AnimatedNumber from "@/components/AnimatedNumber";
 import GlassCard from "@/components/GlassCard";
 import { adminApi } from "@/services/api";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { isPlatformScope } from "@/lib/roles";
 
 const AdminDashboard = () => {
-  const [chartView, setChartView] = useState("Calls");
+  const { user } = useAuth();
+  const platformScope = isPlatformScope(user);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-dashboard"],
@@ -43,6 +46,101 @@ const AdminDashboard = () => {
     data && (data.health.totalCalls ?? 0) > 0
       ? Math.round(((data.health.completedCalls ?? 0) / (data.health.totalCalls ?? 1)) * 100)
       : 0;
+  const dashboardTitle = platformScope ? "Platform" : "Company";
+  const dashboardSubtitle = platformScope
+    ? "CallTone Admin Dashboard"
+    : `${user?.clientName ?? "Your company"} operational overview`;
+  const trendTitle = platformScope ? "Platform Trends" : "Company Trends";
+  const healthTitle = platformScope ? "Platform Health" : "Company Health";
+  const kpis = platformScope
+    ? [
+        {
+          icon: Building2,
+          label: "ACTIVE CLIENTS",
+          value: data?.kpis.activeClients ?? 0,
+          suffix: data && data.kpis.trialClients > 0 ? ` (+${data.kpis.trialClients} trial)` : "",
+        },
+        {
+          icon: Users,
+          label: "TOTAL AGENTS",
+          value: data?.kpis.totalAgents ?? 0,
+        },
+        {
+          icon: Phone,
+          label: "TOTAL CALLS",
+          value: data?.kpis.callsThisMonth ?? 0,
+        },
+        {
+          icon: Activity,
+          label: "AVG QUALITY SCORE",
+          value: data?.health.avgQualityScore ?? 0,
+        },
+      ]
+    : [
+        {
+          icon: Users,
+          label: "COMPANY AGENTS",
+          value: data?.kpis.totalAgents ?? 0,
+        },
+        {
+          icon: Phone,
+          label: "COMPANY CALLS",
+          value: data?.health.totalCalls ?? 0,
+        },
+        {
+          icon: CheckCircle2,
+          label: "COMPLETED CALLS",
+          value: data?.health.completedCalls ?? 0,
+        },
+        {
+          icon: Activity,
+          label: "AVG QUALITY SCORE",
+          value: data?.health.avgQualityScore ?? 0,
+        },
+      ];
+  const healthStats = [
+    {
+      label: "Avg. Quality Score",
+      value: `${data?.health.avgQualityScore ?? 0}`,
+      icon: Activity,
+      color: "text-success",
+    },
+    ...(platformScope
+      ? [
+          {
+            label: "Active Clients",
+            value: `${data?.health.activeClients ?? 0}`,
+            icon: Building2,
+            color: "text-accent",
+          },
+        ]
+      : [
+          {
+            label: "Company Agents",
+            value: `${data?.kpis.totalAgents ?? 0}`,
+            icon: Users,
+            color: "text-accent",
+          },
+        ]),
+    {
+      label: "Completed Calls",
+      value: `${data?.health.completedCalls ?? 0}`,
+      icon: CheckCircle2,
+      color: "text-primary",
+    },
+    {
+      label: "Total Calls",
+      value: `${data?.health.totalCalls ?? 0}`,
+      icon: Phone,
+      color: "text-accent",
+    },
+    {
+      label: "Completion Rate",
+      value: `${completionRate}%`,
+      icon: CheckCircle2,
+      color: "text-success",
+    },
+  ];
 
   if (isLoading) {
     return (
@@ -64,35 +162,13 @@ const AdminDashboard = () => {
     <div className="space-y-8 sm:space-y-12">
       <header>
         <h1 className="text-3xl sm:text-4xl font-light text-foreground">
-          Platform <span className="font-bold gradient-text">Overview</span>
+          {dashboardTitle} <span className="font-bold gradient-text">Overview</span>
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">CallTone Admin Dashboard</p>
+        <p className="text-sm text-muted-foreground mt-1">{dashboardSubtitle}</p>
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          {
-            icon: Building2,
-            label: "ACTIVE CLIENTS",
-            value: data.kpis.activeClients,
-            suffix: data.kpis.trialClients > 0 ? ` (+${data.kpis.trialClients} trial)` : "",
-          },
-          {
-            icon: Users,
-            label: "TOTAL AGENTS",
-            value: data.kpis.totalAgents,
-          },
-          {
-            icon: Phone,
-            label: "TOTAL CALLS",
-            value: data.kpis.callsThisMonth,
-          },
-          {
-            icon: Activity,
-            label: "AVG QUALITY SCORE",
-            value: data.health.avgQualityScore,
-          },
-        ].map((kpi) => (
+        {kpis.map((kpi) => (
           <GlassCard key={kpi.label} className="rounded-2xl p-5 sm:p-6">
             <div className="flex items-start justify-between mb-3">
               <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -114,7 +190,7 @@ const AdminDashboard = () => {
         <GlassCard className="lg:col-span-3 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Platform Trends
+              {trendTitle}
             </h2>
             <span className="text-xs text-muted-foreground">Calls per month</span>
           </div>
@@ -165,41 +241,10 @@ const AdminDashboard = () => {
 
         <GlassCard className="lg:col-span-2 rounded-2xl p-6">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6">
-            Platform Health
+            {healthTitle}
           </h2>
           <div className="space-y-5">
-            {[
-              {
-                label: "Avg. Quality Score",
-                value: `${data.health.avgQualityScore}`,
-                icon: Activity,
-                color: "text-success",
-              },
-              {
-                label: "Active Clients",
-                value: `${data.health.activeClients}`,
-                icon: Building2,
-                color: "text-accent",
-              },
-              {
-                label: "Completed Calls",
-                value: `${data.health.completedCalls ?? 0}`,
-                icon: CheckCircle2,
-                color: "text-primary",
-              },
-              {
-                label: "Total Calls",
-                value: `${data.health.totalCalls ?? 0}`,
-                icon: Phone,
-                color: "text-accent",
-              },
-              {
-                label: "Completion Rate",
-                value: `${completionRate}%`,
-                icon: CheckCircle2,
-                color: "text-success",
-              },
-            ].map((stat) => (
+            {healthStats.map((stat) => (
               <div key={stat.label} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <stat.icon className={cn("w-4 h-4", stat.color)} />
