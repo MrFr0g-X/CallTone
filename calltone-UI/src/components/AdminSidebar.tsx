@@ -6,7 +6,7 @@ import {
   ChevronLeft, ChevronRight, Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { roleConfig } from "@/data/adminMockData";
+import { roleConfig } from "@/data/adminRoleConfig";
 import ThemeToggle from "@/components/ThemeToggle";
 import calltoneIcon from "@/assets/calltone-icon.png";
 import calltoneLogo from "@/assets/calltone-logo.png";

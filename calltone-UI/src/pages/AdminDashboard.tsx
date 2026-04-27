@@ -39,6 +39,10 @@ const AdminDashboard = () => {
   }, [data]);
 
   const chartKey = "calls";
+  const completionRate =
+    data && (data.health.totalCalls ?? 0) > 0
+      ? Math.round(((data.health.completedCalls ?? 0) / (data.health.totalCalls ?? 1)) * 100)
+      : 0;
 
   if (isLoading) {
     return (
@@ -190,8 +194,8 @@ const AdminDashboard = () => {
                 color: "text-accent",
               },
               {
-                label: "Uptime",
-                value: `${data.health.uptime}%`,
+                label: "Completion Rate",
+                value: `${completionRate}%`,
                 icon: CheckCircle2,
                 color: "text-success",
               },
