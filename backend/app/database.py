@@ -53,11 +53,18 @@ settings = Settings()
 # resulting deploy would be trivially compromised (anyone can forge
 # tokens against the well-known default).
 _DEV_SECRET_KEY_DEFAULT = "dev-secret-key-change-in-production"
-if not settings.DEBUG and settings.SECRET_KEY == _DEV_SECRET_KEY_DEFAULT:
+# Refuse the dev default whenever this looks like a real deployment: either
+# DEBUG=false OR a non-SQLite (Postgres) database is configured. The DB check
+# catches the case where a prod host forgets to set DEBUG=false — production
+# always points at Postgres, while local/CI use SQLite (DB_HOST="") and are
+# unaffected, so tests and local dev keep working with the dev default.
+if settings.SECRET_KEY == _DEV_SECRET_KEY_DEFAULT and (
+    not settings.DEBUG or not settings.use_sqlite
+):
     raise RuntimeError(
-        "SECRET_KEY is the development default but DEBUG=false. "
-        "Set SECRET_KEY in .env.prod via `openssl rand -hex 32` before "
-        "starting the production server."
+        "SECRET_KEY is the development default but this is a production-like "
+        "deployment (DEBUG=false or a non-SQLite database is configured). "
+        "Set SECRET_KEY via `openssl rand -hex 32` before starting the server."
     )
 
 connect_args = {"check_same_thread": False} if settings.use_sqlite else {}
