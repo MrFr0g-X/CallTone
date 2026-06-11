@@ -12,6 +12,7 @@ server as an *internal* API: only the Tier-2 backend (Hetzner CPX31,
 
 from __future__ import annotations
 
+import hmac
 import logging
 import os
 from typing import Iterable
@@ -74,7 +75,8 @@ class BearerAndIPMiddleware(BaseHTTPMiddleware):
             )
 
         header = request.headers.get("authorization", "")
-        if not header.startswith("Bearer ") or header[len("Bearer ") :] != expected:
+        provided = header[len("Bearer ") :] if header.startswith("Bearer ") else ""
+        if not header.startswith("Bearer ") or not hmac.compare_digest(provided, expected):
             log.warning(
                 "model_server.auth.token_denied",
                 extra={"event": "token_denied", "ip": ip, "path": path},

@@ -3662,8 +3662,12 @@ async def ingest_company_context(
     if not content:
         raise HTTPException(status_code=400, detail="Empty file")
 
-    # Save the text file temporarily — the background thread will delete it when done
-    tmp_path = UPLOAD_DIR / f"context_{company_name.lower().replace(' ', '_')}_{uuid.uuid4().hex[:8]}.txt"
+    # Save the text file temporarily — the background thread will delete it when done.
+    # Sanitize the company-derived path component: platform/super-admin callers skip
+    # the tenant whitelist in _ensure_company_allowed_for_user, so company_name must
+    # not be trusted to build a filesystem path (path-traversal guard).
+    safe_company = _sanitize_filename(company_name.lower().replace(" ", "_"))
+    tmp_path = UPLOAD_DIR / f"context_{safe_company}_{uuid.uuid4().hex[:8]}.txt"
     tmp_path.write_bytes(content)
 
     job_id = uuid.uuid4().hex
