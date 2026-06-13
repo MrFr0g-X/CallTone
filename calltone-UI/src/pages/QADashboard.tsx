@@ -31,6 +31,12 @@ const QADashboard = () => {
   const [selectedRange, setSelectedRange] = useState<DashboardRange>("Monthly");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"time" | "rating">("time");
+  const [flaggedOnly, setFlaggedOnly] = useState(false);
+
+  const isFlagged = (c: QaCallItem) =>
+    (c.overallScore ?? 100) < 70 ||
+    (c.severity ?? "").toLowerCase() === "major" ||
+    (c.severity ?? "").toLowerCase() === "critical";
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["qa-calls-list"],
@@ -46,6 +52,7 @@ const QADashboard = () => {
     let filtered = calls.filter((call) => {
       const q = search.toLowerCase();
       if (!isDateInDashboardRange(call.callTime, selectedRange)) return false;
+      if (flaggedOnly && !isFlagged(call)) return false;
       return (
         call.filename.toLowerCase().includes(q) ||
         call.agentName.toLowerCase().includes(q) ||
@@ -66,7 +73,7 @@ const QADashboard = () => {
     }
 
     return filtered;
-  }, [calls, search, selectedRange, sortBy]);
+  }, [calls, search, selectedRange, sortBy, flaggedOnly]);
 
   const rangeCalls = useMemo(
     () => calls.filter((call) => isDateInDashboardRange(call.callTime, selectedRange)),
@@ -79,12 +86,7 @@ const QADashboard = () => {
           rangeCalls.reduce((sum, c) => sum + (c.overallScore ?? 0), 0) / rangeCalls.length
         )
       : 0;
-  const flaggedCalls = rangeCalls.filter(
-    (c) =>
-      (c.overallScore ?? 100) < 70 ||
-      (c.severity ?? "").toLowerCase() === "major" ||
-      (c.severity ?? "").toLowerCase() === "critical"
-  ).length;
+  const flaggedCalls = rangeCalls.filter(isFlagged).length;
 
   if (isLoading) {
     return (
@@ -193,6 +195,21 @@ const QADashboard = () => {
                 value={sortBy === "time" ? "By Time" : "By Rating"}
                 onChange={(v) => setSortBy(v === "By Time" ? "time" : "rating")}
               />
+
+              <button
+                type="button"
+                onClick={() => setFlaggedOnly((v) => !v)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border text-xs font-medium transition-colors",
+                  flaggedOnly
+                    ? "border-warning bg-warning/10 text-warning"
+                    : "border-border/50 text-muted-foreground hover:text-foreground hover:border-warning/50"
+                )}
+                aria-pressed={flaggedOnly}
+              >
+                <AlertTriangle className="w-3.5 h-3.5" />
+                Flagged only
+              </button>
             </div>
           </div>
 

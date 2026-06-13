@@ -198,7 +198,7 @@ const UploadTab = () => {
           />
           {!platformScope && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Tenant admins update only their assigned company context.
+              Updates apply to your company's context.
             </p>
           )}
         </div>
@@ -663,10 +663,10 @@ const CompanyContext = () => {
                 <p className="text-sm font-semibold text-foreground">{contextScopeLabel}</p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   {platformScope
-                    ? "Platform admins can view and upload contexts for any company. Tenant admins and QA users are restricted to their assigned company."
+                    ? "View and manage the scoring context for any company."
                     : canManageContext
-                    ? "You can replace this company's scoring context by uploading the approved policy document. QA change tickets are kept as a review/audit workflow for proposed context updates."
-                    : "You can view the active company context and submit change tickets if company policy allows it. Direct context replacement is disabled for your role or company policy."}
+                    ? "Review your company's scoring context and replace it by uploading an updated policy document. Change requests from your QA team appear under Change Tickets for you to approve."
+                    : "Review your company's scoring context and send a change request when something needs updating. Your admins handle the approval."}
                 </p>
               </div>
             </div>

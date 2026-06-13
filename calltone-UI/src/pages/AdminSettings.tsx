@@ -545,7 +545,7 @@ const AdminSettings = () => {
               <p className="text-[11px] text-muted-foreground mt-1">
                 {platformScope
                   ? "The selected context is synced to the GPU model server before scoring."
-                  : "This context is used for this company's future uploads and is enforced server-side."}
+                  : "The AI uses this context when scoring your company's calls."}
               </p>
             </div>
 

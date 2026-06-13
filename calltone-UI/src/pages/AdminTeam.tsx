@@ -401,7 +401,7 @@ const AdminTeam = () => {
           title: meta?.name || (clientId === currentUser?.clientId ? currentUser?.clientName : undefined) || `Company ID ${clientId}`,
           subtitle: meta
             ? `${meta.industry || "Client company"} · ${meta.status} · ${meta.plan}`
-            : "Tenant users scoped to this company only.",
+            : "Members of this company.",
           users: sortUsers(users),
           accent: "tenant",
         });
