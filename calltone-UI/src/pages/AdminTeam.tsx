@@ -87,6 +87,9 @@ const ownerRoleOptions = ["super_admin", ...baseRoleOptions] as const satisfies 
 // Tenant admins may assign the five company-level roles only (never owner/super_admin).
 const tenantRoleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
 
+// A2: cap each company/role group so large teams (100s of agents) stay readable.
+const TEAM_GROUP_LIMIT = 9;
+
 const AdminTeam = () => {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
@@ -98,6 +101,7 @@ const AdminTeam = () => {
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Pick<
     AdminTeamUser,
@@ -530,7 +534,7 @@ const AdminTeam = () => {
             </div>
 
             <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-              {group.users.map((user: AdminTeamUser, i) => {
+              {(expandedGroups.has(group.key) ? group.users : group.users.slice(0, TEAM_GROUP_LIMIT)).map((user: AdminTeamUser, i) => {
                 const role = roleConfig[user.role];
                 const status = statusIcons[user.status];
                 const isCurrentUser = user.id === data.currentUserId;
@@ -661,6 +665,23 @@ const AdminTeam = () => {
                 );
               })}
             </div>
+
+            {group.users.length > TEAM_GROUP_LIMIT && (
+              <button
+                onClick={() =>
+                  setExpandedGroups((prev) => {
+                    const next = new Set(prev);
+                    next.has(group.key) ? next.delete(group.key) : next.add(group.key);
+                    return next;
+                  })
+                }
+                className="mx-auto block rounded-xl border border-border/50 px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-accent/50 transition-colors"
+              >
+                {expandedGroups.has(group.key)
+                  ? "Show fewer"
+                  : `Show all ${group.users.length} members`}
+              </button>
+            )}
           </section>
         ))}
 

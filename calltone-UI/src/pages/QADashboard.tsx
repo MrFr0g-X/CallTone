@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { qaApi } from "@/services/api";
 import type { QaCallItem } from "@/services/api";
-import { cn } from "@/lib/utils";
+import { cn, cleanCallTitle } from "@/lib/utils";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import { isDateInDashboardRange, type DashboardRange } from "@/lib/timeRange";
 
@@ -216,7 +216,7 @@ const QADashboard = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
                           <h3 className="text-sm font-semibold text-foreground truncate">
-                            {call.filename}
+                            {cleanCallTitle(call.filename)}
                           </h3>
 
                           <span

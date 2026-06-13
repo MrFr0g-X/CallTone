@@ -15,10 +15,11 @@ import AnimatedBackground from "@/components/AnimatedBackground";
 import GlassCard from "@/components/GlassCard";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
+import ScoreGauge from "@/components/ScoreGauge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { qaApi } from "@/services/api";
-import { cn } from "@/lib/utils";
+import { cn, cleanCallTitle } from "@/lib/utils";
 
 const severityClass = (severity?: string | null) => {
   const s = (severity || "").toLowerCase();
@@ -203,9 +204,12 @@ const CallAudioPlayer = ({
   );
 };
 
+type CallTab = "overview" | "transcript" | "scores" | "report" | "evidence";
+
 const CallDetailPage = () => {
   const { callId } = useParams();
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<CallTab>("overview");
   const isAdminAreaRole = user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
   const navRole = user?.role === "agent" ? "agent" : isAdminAreaRole ? "admin" : "qa";
   const backPath = user?.role === "agent" ? "/agent/dashboard" : isAdminAreaRole ? "/admin/dashboard" : "/qa/dashboard";
@@ -247,26 +251,26 @@ const CallDetailPage = () => {
               </Link>
             </nav>
 
-            <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-light text-foreground tracking-tight">
-                  {call.filename}
+                  {cleanCallTitle(call.filename)}
                 </h1>
                 <p className="text-muted-foreground text-sm font-light mt-1">
                   {call.agentName} ·{" "}
                   {call.callTime ? new Date(call.callTime).toLocaleString() : "No date"} ·{" "}
                   {call.durationSeconds ? `${call.durationSeconds}s` : "Unknown duration"}
                 </p>
+                <p className="text-[11px] text-muted-foreground/70 mt-1 font-mono">
+                  {call.filename}
+                </p>
               </div>
 
-              <span
-                className={cn(
-                  "text-5xl sm:text-6xl font-extralight tracking-tight",
-                  scoreClass(call.report.overallScore ?? 0)
-                )}
-              >
-                {call.report.overallScore ?? "-"}
-              </span>
+              <ScoreGauge
+                score={call.report.overallScore ?? 0}
+                grade={call.report.grade}
+                size={200}
+              />
             </header>
 
             {(call.report.severity || "").toLowerCase() === "major" ||
@@ -288,19 +292,57 @@ const CallDetailPage = () => {
               </motion.div>
             ) : null}
 
-            <GlassCard className="p-5 sm:p-6">
-              <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                <PlayCircle className="w-4 h-4" /> Call Audio
-              </h2>
+            {/* B4: section tabs so AI report / evidence are not buried at the bottom */}
+            <div className="flex flex-wrap gap-1 border-b border-border/40">
+              {([
+                ["overview", "Overview"],
+                ["transcript", "Transcript"],
+                ["scores", "QA Scores"],
+                ["report", "AI Report"],
+                ["evidence", "Evidence"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setActiveTab(key)}
+                  className={cn(
+                    "px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors",
+                    activeTab === key
+                      ? "border-accent text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
 
-              <CallAudioPlayer
-                audioSrc={audioSrc}
-                drivePreviewUrl={call.drivePreviewUrl}
-                driveDownloadUrl={call.driveDownloadUrl}
-              />
-            </GlassCard>
+            {activeTab === "overview" && (
+              <GlassCard className="p-5 sm:p-6">
+                <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  <PlayCircle className="w-4 h-4" /> Call Audio
+                </h2>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                <CallAudioPlayer
+                  audioSrc={audioSrc}
+                  drivePreviewUrl={call.drivePreviewUrl}
+                  driveDownloadUrl={call.driveDownloadUrl}
+                />
+
+                <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {Object.entries(call.report.dimensionScores || {}).map(([key, value]) => (
+                    <div key={key} className="p-3 rounded-xl bg-foreground/[0.03] border border-foreground/[0.04]">
+                      <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                        {key.replace(/_/g, " ")}
+                      </p>
+                      <span className={cn("text-lg font-semibold", scoreClass(value))}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            )}
+
+            {activeTab === "transcript" && (
               <GlassCard className="p-5 sm:p-6 max-h-[700px] overflow-y-auto">
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
                   <FileText className="w-4 h-4" /> Transcript
@@ -383,12 +425,13 @@ const CallDetailPage = () => {
                   })}
                 </div>
               </GlassCard>
+            )}
 
-              <div className="space-y-5 sm:space-y-6">
-                <GlassCard className="p-5 sm:p-6">
-                  <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
-                    <Shield className="w-4 h-4" /> QA Scores
-                  </h2>
+            {activeTab === "scores" && (
+              <GlassCard className="p-5 sm:p-6">
+                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-5 flex items-center gap-2">
+                  <Shield className="w-4 h-4" /> QA Scores
+                </h2>
 
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-sm text-muted-foreground">Grade</span>
@@ -438,7 +481,9 @@ const CallDetailPage = () => {
                     ))}
                   </div>
                 </GlassCard>
+            )}
 
+            {activeTab === "report" && (
                 <GlassCard className="p-5 sm:p-6">
                   <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-5">
                     AI Quality Report
@@ -478,7 +523,9 @@ const CallDetailPage = () => {
                     </div>
                   </div>
                 </GlassCard>
+            )}
 
+            {activeTab === "evidence" && (
                 <GlassCard className="p-5 sm:p-6">
                   <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-5">
                     Evidence
@@ -501,8 +548,7 @@ const CallDetailPage = () => {
                     ))}
                   </div>
                 </GlassCard>
-              </div>
-            </div>
+            )}
           </main>
         )}
       </div>

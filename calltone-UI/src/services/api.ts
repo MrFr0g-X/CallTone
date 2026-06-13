@@ -123,6 +123,7 @@ export interface AdminDashboardResponse {
     activeClients: number;
     completedCalls?: number;
     totalCalls?: number;
+    flaggedCalls?: number;
     uptime: number;
   };
   trends: {

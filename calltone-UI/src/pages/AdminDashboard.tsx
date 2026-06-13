@@ -6,6 +6,7 @@ import {
   Phone,
   Activity,
   CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
 import {
   AreaChart,
@@ -88,9 +89,9 @@ const AdminDashboard = () => {
           value: data?.health.totalCalls ?? 0,
         },
         {
-          icon: CheckCircle2,
-          label: "COMPLETED CALLS",
-          value: data?.health.completedCalls ?? 0,
+          icon: AlertTriangle,
+          label: "FLAGGED FOR REVIEW",
+          value: data?.health.flaggedCalls ?? 0,
         },
         {
           icon: Activity,
@@ -140,6 +141,16 @@ const AdminDashboard = () => {
       icon: CheckCircle2,
       color: "text-success",
     },
+    ...(!platformScope
+      ? [
+          {
+            label: "Flagged for Review",
+            value: `${data?.health.flaggedCalls ?? 0}`,
+            icon: AlertTriangle,
+            color: "text-warning",
+          },
+        ]
+      : []),
   ];
 
   if (isLoading) {

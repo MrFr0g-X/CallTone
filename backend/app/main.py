@@ -434,10 +434,17 @@ def _run_startup_migrations():
         if not ps:
             ps = PipelineSettings(id=1, client_id=None, company_name=_default_pipeline_company())
             db.add(ps)
+            # The per-client rows below use explicit ids for compatibility
+            # with legacy SQLite deployments. Flush the global row first so
+            # Postgres sees id=1 before we calculate the next available id.
+            db.flush()
         if ps.report_mode == "none":
             ps.report_mode = "narrative"
 
-        next_pipeline_settings_id = (db.query(func.max(PipelineSettings.id)).scalar() or 0) + 1
+        next_pipeline_settings_id = max(
+            2,
+            (db.query(func.max(PipelineSettings.id)).scalar() or 0) + 1,
+        )
         for client in db.query(Client).all():
             if not db.query(PipelineSettings).filter(PipelineSettings.client_id == client.id).first():
                 db.add(
@@ -1205,6 +1212,14 @@ def get_admin_dashboard(
     avg_score_row = report_query.with_entities(func.avg(QaReport.overall_score)).first()
     avg_quality_score = round(avg_score_row[0], 1) if avg_score_row and avg_score_row[0] else 0
 
+    # Admin-focused signal: calls that need human attention (low score or high severity).
+    flagged_calls = report_query.filter(
+        or_(
+            QaReport.overall_score < 70,
+            func.lower(QaReport.severity).in_(["major", "critical"]),
+        )
+    ).count()
+
     # Build monthly call trend from actual data
     calls_by_month_query = (
         db.query(
@@ -1242,6 +1257,7 @@ def get_admin_dashboard(
             "activeClients": active_clients,
             "completedCalls": completed_calls,
             "totalCalls": total_calls,
+            "flaggedCalls": flagged_calls,
             "uptime": 99.9,
         },
         "trends": {

@@ -15,7 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { agentApi } from "@/services/api";
 import type { QaCallItem } from "@/services/api";
-import { cn } from "@/lib/utils";
+import { cn, cleanCallTitle } from "@/lib/utils";
 
 const timeRanges = ["Per Call", "Weekly", "Monthly", "Quarterly", "Yearly", "Custom"];
 
@@ -200,7 +200,7 @@ const AgentDashboard = () => {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-sm font-medium text-foreground">{call.filename}</span>
+                        <span className="text-sm font-medium text-foreground">{cleanCallTitle(call.filename)}</span>
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="w-3 h-3" />
                           {call.callTime ? new Date(call.callTime).toLocaleDateString() : "—"}
