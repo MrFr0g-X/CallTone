@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Building2, LayoutDashboard, Users, Settings, LogOut,
-  ChevronLeft, ChevronRight, Activity
+  ChevronLeft, ChevronRight, Activity, FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { roleConfig } from "@/data/adminRoleConfig";
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
+  { to: "/qa/context", label: "Company Context", icon: FileText },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
@@ -33,6 +34,7 @@ const AdminSidebar = () => {
   const visibleNavItems = navItems.filter((item) => {
     if (item.to === "/admin/clients") return platformScope;
     if (item.to === "/admin/settings") return canManageAdminUsers(user?.role);
+    if (item.to === "/qa/context") return Boolean(user?.capabilities?.canManageContext);
     return true;
   });
 

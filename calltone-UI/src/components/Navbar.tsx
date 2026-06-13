@@ -31,10 +31,13 @@ const Navbar = ({ userName, userRole }: NavbarProps) => {
   const canUploadCalls = Boolean(user?.capabilities?.canUploadCalls);
   const canManageContext = Boolean(user?.capabilities?.canManageContext);
 
+  // Company Context is a core QA surface (view the policy the AI scores against +
+  // submit change tickets), so QA always sees it regardless of edit rights. The page
+  // itself gates the "Replace Context" tab on canManageContext.
   const qaLinks = [
     { to: "/qa/dashboard", label: "Dashboard", icon: Users },
     ...(canUploadCalls ? [{ to: "/qa/upload", label: "Upload", icon: Upload }] : []),
-    ...(canManageContext ? [{ to: "/qa/context", label: "Context", icon: Building2 }] : []),
+    { to: "/qa/context", label: "Context", icon: Building2 },
   ];
 
   const adminLinks = [
