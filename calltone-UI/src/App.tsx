@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -26,6 +26,14 @@ import CompanyContext from "./pages/CompanyContext";
 
 const queryClient = new QueryClient();
 
+// Backward-compat: the call-detail page used to live under /qa/call/:id, which wrongly
+// implied a QA-only URL for agents/admins. Old links now redirect to the role-neutral
+// /call/:id. Backend still authorizes each call per user.
+const LegacyCallRedirect = () => {
+  const { callId } = useParams();
+  return <Navigate to={`/call/${callId}`} replace />;
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
@@ -36,6 +44,13 @@ const AnimatedRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
+
+        {/* Role-neutral call detail (any role that can view a call; backend authorizes per call) */}
+        <Route path="/call/:callId" element={
+          <ProtectedRoute allowedRoles={["qa", "agent", "owner", "admin", "super_admin", "manager", "viewer"]}>
+            <CallDetail />
+          </ProtectedRoute>
+        } />
 
         {/* Agent routes */}
         <Route path="/agent/dashboard" element={
@@ -50,11 +65,8 @@ const AnimatedRoutes = () => {
             <QADashboard />
           </ProtectedRoute>
         } />
-        <Route path="/qa/call/:callId" element={
-          <ProtectedRoute allowedRoles={["qa", "agent", "owner", "admin", "super_admin"]}>
-            <CallDetail />
-          </ProtectedRoute>
-        } />
+        {/* Legacy QA-scoped path now redirects to the role-neutral /call/:callId */}
+        <Route path="/qa/call/:callId" element={<LegacyCallRedirect />} />
         <Route path="/qa/upload" element={
           <ProtectedRoute allowedRoles={["qa", "owner", "admin", "super_admin"]}>
             <UploadCall />

@@ -208,7 +208,7 @@ const QADashboard = () => {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.25 }}
-                  onClick={() => navigate(`/qa/call/${call.callId}`)}
+                  onClick={() => navigate(`/call/${call.callId}`)}
                   className="cursor-pointer"
                 >
                   <GlassCard className="rounded-2xl p-5 hover:border-accent/20 transition-colors">

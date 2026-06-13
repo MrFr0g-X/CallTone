@@ -183,7 +183,7 @@ const AgentDashboard = () => {
                     transition={{ duration: 0.3, delay: i * 0.04, ease: [0.25, 0.46, 0.45, 0.94] }}
                     whileHover={{ scale: 1.01, y: -2 }}
                     whileTap={{ scale: 0.99 }}
-                    onClick={() => navigate(`/qa/call/${call.callId}`)}
+                    onClick={() => navigate(`/call/${call.callId}`)}
                     className={cn(
                       "glass rounded-2xl p-4 sm:p-5 flex items-center gap-4 cursor-pointer transition-colors duration-300 hover:bg-foreground/[0.04] group",
                       score < 50 && "border-destructive/20 bg-destructive/[0.03]"

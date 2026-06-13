@@ -455,7 +455,7 @@ const UploadCall = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <motion.button
-                  onClick={() => navigate(`/qa/call/${callId}`)}
+                  onClick={() => navigate(`/call/${callId}`)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm"
