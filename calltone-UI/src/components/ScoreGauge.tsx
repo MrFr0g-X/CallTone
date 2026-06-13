@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
 /**
- * Semicircular speedometer gauge for an overall QA score (0–100).
- * Color bands: <60 red, 60–79 amber, >=80 green. Pointer + value animate in.
+ * Semicircular score gauge (0–100). Clean, needle-less design: a muted track arc
+ * with a colored value arc on top, and the score + grade centered in the bowl.
+ * Color bands: <60 red, 60–79 amber, >=80 green.
  */
 type ScoreGaugeProps = {
   score: number;
@@ -10,83 +11,79 @@ type ScoreGaugeProps = {
   size?: number;
 };
 
-const bandColor = (s: number) => {
-  if (s >= 80) return "hsl(var(--success))";
-  if (s >= 60) return "hsl(var(--warning))";
-  return "hsl(var(--destructive))";
+const band = (s: number) => {
+  if (s >= 80) return { stroke: "hsl(var(--success))", label: "text-success" };
+  if (s >= 60) return { stroke: "hsl(var(--warning))", label: "text-warning" };
+  return { stroke: "hsl(var(--destructive))", label: "text-destructive" };
 };
 
-const ScoreGauge = ({ score, grade, size = 220 }: ScoreGaugeProps) => {
-  const clamped = Math.max(0, Math.min(100, Math.round(score)));
+const ScoreGauge = ({ score, grade, size = 200 }: ScoreGaugeProps) => {
+  const target = Math.max(0, Math.min(100, Math.round(score)));
   const [shown, setShown] = useState(0);
 
   useEffect(() => {
-    // Animate the needle/value from 0 to the real score on mount/score change.
     const start = performance.now();
-    const duration = 900;
+    const dur = 850;
     let raf = 0;
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
+      const t = Math.min(1, (now - start) / dur);
       const eased = 1 - Math.pow(1 - t, 3);
-      setShown(Math.round(eased * clamped));
+      setShown(Math.round(eased * target));
       if (t < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [clamped]);
+  }, [target]);
 
-  // Geometry: 180° arc from 180° (left) to 0° (right).
-  const stroke = Math.max(10, size * 0.07);
+  const stroke = Math.round(size * 0.085);
   const r = (size - stroke) / 2;
   const cx = size / 2;
-  const cy = size / 2;
-  const circumference = Math.PI * r; // half circle
-  const dash = (shown / 100) * circumference;
-  const color = bandColor(shown);
-
-  // Needle angle: 0 score = 180° (pointing left), 100 = 0° (right).
-  const angle = Math.PI - (shown / 100) * Math.PI;
-  const needleLen = r - stroke * 0.4;
-  const nx = cx + needleLen * Math.cos(angle);
-  const ny = cy - needleLen * Math.sin(angle);
+  const cy = r + stroke / 2;          // baseline (flat edge) of the semicircle
+  const height = cy + Math.round(size * 0.20); // room for the grade under the baseline
+  // Semicircle that bulges upward, left baseline -> right baseline.
+  const arc = `M ${stroke / 2} ${cy} A ${r} ${r} 0 0 1 ${size - stroke / 2} ${cy}`;
+  const { stroke: color, label } = band(shown);
 
   return (
-    <div className="flex flex-col items-center" style={{ width: size }}>
-      <svg width={size} height={size / 2 + stroke} viewBox={`0 0 ${size} ${size / 2 + stroke}`}>
-        {/* track */}
-        <path
-          d={`M ${stroke / 2} ${cy} A ${r} ${r} 0 0 1 ${size - stroke / 2} ${cy}`}
-          fill="none"
-          stroke="hsl(var(--muted))"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-        />
-        {/* value arc */}
-        <path
-          d={`M ${stroke / 2} ${cy} A ${r} ${r} 0 0 1 ${size - stroke / 2} ${cy}`}
-          fill="none"
-          stroke={color}
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={`${dash} ${circumference}`}
-          style={{ transition: "stroke 200ms" }}
-        />
-        {/* needle */}
-        <line x1={cx} y1={cy} x2={nx} y2={ny} stroke={color} strokeWidth={3} strokeLinecap="round" />
-        <circle cx={cx} cy={cy} r={stroke * 0.45} fill={color} />
-      </svg>
-      <div className="-mt-6 text-center">
-        <div className="text-4xl font-light tracking-tight" style={{ color }}>
-          {shown}
-          <span className="text-lg text-muted-foreground">/100</span>
-        </div>
-        {grade ? (
-          <div className="text-xs uppercase tracking-wider text-muted-foreground mt-0.5">
-            Grade {grade}
-          </div>
-        ) : null}
-      </div>
-    </div>
+    <svg
+      width={size}
+      height={height}
+      viewBox={`0 0 ${size} ${height}`}
+      role="img"
+      aria-label={`Overall score ${target} out of 100${grade ? `, grade ${grade}` : ""}`}
+    >
+      {/* track */}
+      <path d={arc} fill="none" stroke="hsl(var(--muted))" strokeWidth={stroke} strokeLinecap="round" />
+      {/* value arc — pathLength=100 lets dasharray map 1:1 to the score */}
+      <path
+        d={arc}
+        fill="none"
+        stroke={color}
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        pathLength={100}
+        strokeDasharray={`${shown} 100`}
+        style={{ transition: "stroke 250ms ease" }}
+      />
+      {/* end labels */}
+      <text x={stroke / 2} y={cy + 16} textAnchor="middle"
+            className="fill-muted-foreground" style={{ fontSize: size * 0.06 }}>0</text>
+      <text x={size - stroke / 2} y={cy + 16} textAnchor="middle"
+            className="fill-muted-foreground" style={{ fontSize: size * 0.06 }}>100</text>
+      {/* score + grade, centered in the bowl, clear of the arc */}
+      <text x={cx} y={cy - size * 0.06} textAnchor="middle" className={label}
+            style={{ fontSize: size * 0.26, fontWeight: 300, fill: color }}>
+        {shown}
+        <tspan className="fill-muted-foreground" style={{ fontSize: size * 0.085 }}>/100</tspan>
+      </text>
+      {grade ? (
+        <text x={cx} y={cy + height * 0.13} textAnchor="middle"
+              className="fill-muted-foreground"
+              style={{ fontSize: size * 0.07, letterSpacing: "0.08em" }}>
+          GRADE {String(grade).toUpperCase()}
+        </text>
+      ) : null}
+    </svg>
   );
 };
 
