@@ -5,6 +5,22 @@ export const ADMIN_AREA_ROLES: UserRole[] = ["owner", "super_admin", "admin", "m
 export const ADMIN_MUTATION_ROLES: UserRole[] = ["owner", "super_admin", "admin"];
 export const QA_TOOL_ROLES: UserRole[] = ["qa", "owner", "admin", "super_admin"];
 
+// Platform roles are CallTone-internal (owner = CallTone owner, super_admin = CallTone
+// staff). Company tenants must never see or assign them. Tenant-assignable roles are the
+// company-level roles only.
+export const PLATFORM_ROLES: UserRole[] = ["owner", "super_admin"];
+export const TENANT_ASSIGNABLE_ROLES: UserRole[] = ["admin", "manager", "qa", "agent", "viewer"];
+
+// Roles an actor may see in filters / assign in menus. Platform users (CallTone staff)
+// see every role; tenant users see only the company-level roles.
+export function assignableRolesFor(
+  user?: { role?: UserRole | null; clientId?: number | null; roleScope?: "platform" | "tenant" } | null,
+): UserRole[] {
+  return isPlatformScope(user)
+    ? ["owner", "super_admin", ...TENANT_ASSIGNABLE_ROLES]
+    : [...TENANT_ASSIGNABLE_ROLES];
+}
+
 export function roleHome(role?: UserRole | null): string {
   if (!role) return "/login";
   if (ADMIN_AREA_ROLES.includes(role)) return "/admin/dashboard";

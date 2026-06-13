@@ -379,7 +379,7 @@ const UploadCall = () => {
                         Platform testing control. Tenant QA/admin uploads use the production default.
                       </p>
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="grid gap-3">
                       <button
                         type="button"
                         onClick={() => setAsrEngine("fasterwhisper")}
@@ -392,22 +392,7 @@ const UploadCall = () => {
                       >
                         <p className="text-sm font-medium text-foreground">Faster-Whisper</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Current default. Faster, lower latency, best for quick testing.
-                        </p>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAsrEngine("sensevoice")}
-                        className={cn(
-                          "text-left rounded-2xl border p-4 transition-all",
-                          asrEngine === "sensevoice"
-                            ? "border-primary bg-primary/10"
-                            : "border-border/50 hover:border-primary/40"
-                        )}
-                      >
-                        <p className="text-sm font-medium text-foreground">SenseVoice</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Original path. Better for A/B transcript checks, usually slower.
+                          Production transcription engine (CTranslate2). Faster, lower latency.
                         </p>
                       </button>
                     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save, Send, ShieldCheck, XCircle } from "lucide-react";
+import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save, Send, XCircle } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -284,22 +284,6 @@ const AdminSettings = () => {
       </header>
 
       <GlassCard className="rounded-2xl p-6">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="mt-0.5 h-5 w-5 text-success" />
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              {platformScope ? "Privileged platform control surface" : "Tenant company control surface"}
-            </p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              {platformScope
-                ? "User management, client creation, mail, queue operations, and pipeline changes are server-enforced for owner, super admin, and platform admin accounts."
-                : "This page is scoped to your company only. You cannot create platform clients, change mail settings, access other companies, or edit platform-wide configuration."}
-            </p>
-          </div>
-        </div>
-      </GlassCard>
-
-      <GlassCard className="rounded-2xl p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2">
@@ -529,7 +513,7 @@ const AdminSettings = () => {
         <div className="flex items-center gap-2 mb-5">
             <Cpu className="w-4 h-4 text-accent" />
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            {platformScope ? "AI Pipeline Defaults" : "Company AI Pipeline Defaults"}
+            {platformScope ? "AI Pipeline Defaults" : "Company Context"}
           </h2>
         </div>
 
@@ -565,6 +549,9 @@ const AdminSettings = () => {
               </p>
             </div>
 
+            {/* Audio/injection/speaker/report/consensus are CallTone-platform controls,
+                not tenant-admin controls. Company admins only choose their context. */}
+            {platformScope && (<>
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-2 block uppercase tracking-wider">
                 Audio Processing
@@ -671,6 +658,7 @@ const AdminSettings = () => {
                 <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
               </button>
             </div>
+            </>)}
 
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -680,18 +668,20 @@ const AdminSettings = () => {
               className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition-all disabled:opacity-60"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Save Pipeline Settings
+              {platformScope ? "Save Pipeline Settings" : "Save Company Context"}
             </motion.button>
           </div>
         )}
       </GlassCard>
 
+      {/* Queue operations are a CallTone-ops concern, not a tenant-admin surface. */}
+      {platformScope && (
       <GlassCard className="rounded-2xl p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4 text-accent" />
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              {platformScope ? "GPU Queue Operations" : "Company Processing Queue"}
+              GPU Queue Operations
             </h2>
           </div>
           <button
@@ -783,6 +773,7 @@ const AdminSettings = () => {
           </table>
         </div>
       </GlassCard>
+      )}
     </div>
   );
 };

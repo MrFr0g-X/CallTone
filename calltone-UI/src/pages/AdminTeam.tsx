@@ -84,7 +84,8 @@ const statusIcons = {
 
 const baseRoleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
 const ownerRoleOptions = ["super_admin", ...baseRoleOptions] as const satisfies readonly AssignableRole[];
-const tenantRoleOptions = ["manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
+// Tenant admins may assign the five company-level roles only (never owner/super_admin).
+const tenantRoleOptions = ["admin", "manager", "viewer", "qa", "agent"] as const satisfies readonly AssignableRole[];
 
 const AdminTeam = () => {
   const { toast } = useToast();
@@ -489,7 +490,7 @@ const AdminTeam = () => {
         </div>
 
         <BubbleToggle
-          options={["All", "owner", "super_admin", "admin", "manager", "viewer", "qa", "agent"]}
+          options={["All", ...(platformScope ? ["owner", "super_admin"] : []), "admin", "manager", "viewer", "qa", "agent"]}
           value={roleFilter}
           onChange={setRoleFilter}
           labels={{
