@@ -885,6 +885,7 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canUseQa": True,
             "canUploadCalls": True,
             "canManageContext": True,
+            "canSubmitContextTickets": True,
             "canViewAgentDashboard": True,
             "canViewAgentCalls": True,
             "canPlayAudio": True,
@@ -901,7 +902,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canManageClients": False,
             "canUseQa": role == "admin",
             "canUploadCalls": role == "admin" and policy.qa_can_upload_calls,
-            "canManageContext": role == "admin" and policy.qa_can_manage_context_tickets,
+            "canManageContext": role == "admin",
+            "canSubmitContextTickets": role == "admin",
             "canViewAgentDashboard": False,
             "canViewAgentCalls": False,
             "canPlayAudio": True,
@@ -918,7 +920,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canManageClients": False,
             "canUseQa": True,
             "canUploadCalls": policy.qa_can_upload_calls,
-            "canManageContext": policy.qa_can_manage_context_tickets,
+            "canManageContext": False,
+            "canSubmitContextTickets": policy.qa_can_manage_context_tickets,
             "canViewAgentDashboard": False,
             "canViewAgentCalls": False,
             "canPlayAudio": True,
@@ -936,6 +939,7 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canUseQa": False,
             "canUploadCalls": False,
             "canManageContext": False,
+            "canSubmitContextTickets": False,
             "canViewAgentDashboard": policy.agent_portal_enabled,
             "canViewAgentCalls": policy.agent_portal_enabled and policy.agent_can_view_call_list,
             "canPlayAudio": policy.agent_portal_enabled and policy.agent_can_play_audio,
@@ -3666,12 +3670,15 @@ async def ingest_company_context(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if not _can_use_qa_tools(current_user):
-        raise HTTPException(status_code=403, detail="QA or Admin access required")
-    if _is_tenant_user(current_user):
-        policy = _get_client_policy(db, current_user.client_id)
-        if not policy or not policy.qa_can_manage_context_tickets:
-            raise HTTPException(status_code=403, detail="Context management is disabled by company policy")
+    # Direct context replacement is an admin-level action. QA users propose changes
+    # through context tickets instead; they cannot overwrite the company context.
+    role = _role_name(current_user)
+    is_admin_level = _is_platform_user(current_user) or (role == "admin" and current_user.client_id is not None)
+    if not is_admin_level:
+        raise HTTPException(
+            status_code=403,
+            detail="Only company admins can replace the context. QA users submit a change ticket instead.",
+        )
     company_name = _ensure_company_allowed_for_user(db, current_user, company_name)
 
     content = await file.read()

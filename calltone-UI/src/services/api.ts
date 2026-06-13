@@ -69,6 +69,7 @@ export interface UserCapabilities {
   canUseQa?: boolean;
   canUploadCalls?: boolean;
   canManageContext?: boolean;
+  canSubmitContextTickets?: boolean;
   canViewAgentDashboard?: boolean;
   canViewAgentCalls?: boolean;
   canPlayAudio?: boolean;

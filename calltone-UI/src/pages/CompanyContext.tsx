@@ -318,6 +318,7 @@ const TicketsTab = () => {
   } | null>(null);
   const [reviewNote, setReviewNote] = useState("");
   const platformScope = user?.roleScope === "platform";
+  const canSubmitTickets = Boolean(user?.capabilities?.canSubmitContextTickets);
   const canReviewTickets =
     user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
 
@@ -393,14 +394,16 @@ const TicketsTab = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{data?.length ?? 0} ticket{data?.length !== 1 ? "s" : ""}</p>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs font-semibold"
-        >
-          <Plus className="w-3.5 h-3.5" /> New Change Request
-        </motion.button>
+        {canSubmitTickets && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs font-semibold"
+          >
+            <Plus className="w-3.5 h-3.5" /> New Change Request
+          </motion.button>
+        )}
       </div>
 
       {/* Create form */}
