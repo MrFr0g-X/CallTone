@@ -538,7 +538,7 @@ const AdminTeam = () => {
                 const role = roleConfig[user.role];
                 const status = statusIcons[user.status];
                 const isCurrentUser = user.id === data.currentUserId;
-                const tenantAssignableRole = tenantRoleOptions.includes(user.role as AssignableRole);
+                const tenantAssignableRole = (tenantRoleOptions as readonly string[]).includes(user.role);
                 const canManageThisUser =
                   canMutateUsers &&
                   !isCurrentUser &&

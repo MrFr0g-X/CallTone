@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save, Send, XCircle } from "lucide-react";
+import { ArchiveX, CheckCircle2, Cpu, Loader2, Mail, RefreshCw, RotateCcw, Save, Send, ShieldCheck, XCircle } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
