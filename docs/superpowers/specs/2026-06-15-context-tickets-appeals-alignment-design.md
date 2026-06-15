@@ -139,4 +139,11 @@ backend RBAC tests. Items B/C/E feed this; this pass catches the rest.
 1. **GPU-free now:** B, C, E, F (frontend + backend + DB), A's non-LLM parts, G audit + fixes.
 2. **Re-rent GPU once** at the end → implement/verify A (injection+ingest apply) and D (signal fix) on real calls, full per-role smoke, then prod cutover.
 
-## Open decisions to confirm: D-A1, D-A2, D-A3, D-F1, D-F2 (recommendations marked).
+## Decisions — CONFIRMED 2026-06-15
+- **D-A1 = targeted single-field update** (regenerate atomic nodes for that section only; no full re-ingest).
+- **D-A2 = keep admin audit view + manual Replace Context** (admins don't approve; AI does).
+- **D-A3 = borderline (suspicious/hold) → auto-decline + ask QA to rephrase** (fully autonomous).
+- **D-F1 = overturn records human decision + optional corrected_score; AI score preserved** (audit trail).
+- **D-F2 = appeal eligible when flag_for_review OR grade ≤ D / severity Major+.**
+
+Plan approved → proceed to writing-plans (implementation plan).
