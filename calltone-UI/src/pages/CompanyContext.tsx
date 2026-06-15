@@ -607,7 +607,7 @@ const TicketsTab = () => {
 };
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-const CompanyContext = () => {
+const CompanyContext = ({ chromeless = false }: { chromeless?: boolean }) => {
   const { user } = useAuth();
   const [tab, setTab] = useState<Tab>("companies");
   const userRole = user?.role === "qa" ? "qa" : "admin";
@@ -632,12 +632,7 @@ const CompanyContext = () => {
     }
   }, [tab, canManageContext]);
 
-  return (
-    <PageTransition>
-      <div className="min-h-screen relative">
-        <AnimatedBackground />
-        <Navbar userName={user?.name ?? ""} userRole={userRole} />
-
+  const Body = (
         <main className="max-w-5xl mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-8">
           <header>
             <h1 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
@@ -719,6 +714,16 @@ const CompanyContext = () => {
             </motion.div>
           </AnimatePresence>
         </main>
+  );
+
+  if (chromeless) return Body;  // rendered inside AdminLayout (sidebar provides chrome)
+
+  return (
+    <PageTransition>
+      <div className="min-h-screen relative">
+        <AnimatedBackground />
+        <Navbar userName={user?.name ?? ""} userRole={userRole} />
+        {Body}
       </div>
     </PageTransition>
   );
