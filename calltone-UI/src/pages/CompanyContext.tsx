@@ -25,8 +25,8 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 // ─── Company card ─────────────────────────────────────────────────────────────
-const CompanyCard = ({ company }: { company: CompanyContextSummary }) => {
-  const [expanded, setExpanded] = useState(false);
+const CompanyCard = ({ company, defaultExpanded = false }: { company: CompanyContextSummary; defaultExpanded?: boolean }) => {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const { data: detail, isLoading } = useQuery({
     queryKey: ["context-detail", company.name],
     queryFn: () => contextApi.getCompany(company.name).then(r => r.data),
@@ -621,7 +621,7 @@ const CompanyContext = () => {
   });
 
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
-    { id: "companies", label: "Companies",  icon: Building2 },
+    { id: "companies", label: platformScope ? "Companies" : "Context",  icon: Building2 },
     ...(canManageContext ? [{ id: "upload" as const, label: platformScope ? "Upload Context" : "Replace Context", icon: Upload }] : []),
     { id: "tickets",   label: "Change Tickets", icon: Ticket },
   ];
@@ -707,8 +707,10 @@ const CompanyContext = () => {
                       <p className="text-sm text-muted-foreground">No company contexts yet.</p>
                       <p className="text-xs text-muted-foreground/60 mt-1">Upload a policy document in the Upload tab to get started.</p>
                     </GlassCard>
-                  ) : (
+                  ) : platformScope ? (
                     (companiesData ?? []).map(c => <CompanyCard key={c.name} company={c} />)
+                  ) : (
+                    <CompanyCard company={(companiesData ?? [])[0]} defaultExpanded />
                   )}
                 </div>
               )}
