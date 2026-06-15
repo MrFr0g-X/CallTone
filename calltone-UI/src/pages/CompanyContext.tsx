@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiErrorMessage, contextApi } from "@/services/api";
 import type { CompanyContextSummary, ContextTicket, IngestResult, IngestJobStatus } from "@/services/api";
 import { cn } from "@/lib/utils";
+import { toContextGroups } from "@/lib/contextSchema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,16 +23,6 @@ const STATUS_COLORS: Record<string, string> = {
   approved: "bg-success/10 text-success",
   rejected: "bg-destructive/10 text-destructive",
 };
-
-const CONTEXT_FIELDS = [
-  "greeting_script", "closing_script", "required_verification_steps",
-  "hold_procedure", "transfer_procedure", "escalation_procedure",
-  "mandatory_disclosures", "prohibited_phrases", "products_and_services",
-  "current_promotions", "policies", "common_troubleshooting",
-  "contact_information", "frequently_asked_questions",
-  "tone_guidelines", "empathy_guidelines", "conflict_resolution_guidelines",
-  "resolution_expectations",
-];
 
 // ─── Company card ─────────────────────────────────────────────────────────────
 const CompanyCard = ({ company }: { company: CompanyContextSummary }) => {
@@ -75,28 +66,32 @@ const CompanyCard = ({ company }: { company: CompanyContextSummary }) => {
                   <Loader2 className="w-4 h-4 animate-spin" /> Loading context...
                 </div>
               ) : detail ? (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {CONTEXT_FIELDS.map(field => {
-                    const val = (detail as Record<string, unknown>)[field];
-                    const filled = typeof val === "string" && val.trim();
-                    return (
-                      <div key={field} className="flex items-start gap-2">
-                        {filled
-                          ? <CheckCircle className="w-3.5 h-3.5 text-success mt-0.5 flex-shrink-0" />
-                          : <XCircle className="w-3.5 h-3.5 text-muted-foreground/40 mt-0.5 flex-shrink-0" />
-                        }
-                        <div className="min-w-0">
-                          <p className={cn("text-xs font-medium capitalize", filled ? "text-foreground" : "text-muted-foreground/50")}>
-                            {field.replace(/_/g, " ")}
-                          </p>
-                          {filled && (
-                            <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{String(val)}</p>
-                          )}
+                (() => {
+                  const g = toContextGroups(detail as Record<string, unknown>);
+                  return (
+                    <div className="space-y-5">
+                      {g.groups.map((grp) => (
+                        <div key={grp.key}>
+                          <p className="text-xs font-semibold text-foreground mb-2">{grp.label}</p>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            {grp.fields.map((f) => (
+                              <div key={f.key} className="flex items-start gap-2">
+                                {f.filled
+                                  ? <CheckCircle className="w-3.5 h-3.5 text-success mt-0.5 flex-shrink-0" />
+                                  : <XCircle className="w-3.5 h-3.5 text-muted-foreground/40 mt-0.5 flex-shrink-0" />}
+                                <div className="min-w-0">
+                                  <p className={cn("text-xs font-medium", f.filled ? "text-foreground" : "text-muted-foreground/50")}>{f.label}</p>
+                                  {f.filled && <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{f.value}</p>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      ))}
+                      <p className="text-[11px] text-muted-foreground/70">{g.atomicNodeCount} knowledge nodes</p>
+                    </div>
+                  );
+                })()
               ) : (
                 <p className="text-sm text-muted-foreground">No detail available.</p>
               )}
