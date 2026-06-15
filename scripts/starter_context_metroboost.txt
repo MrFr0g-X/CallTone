@@ -1,0 +1,55 @@
+MetroBoost Telecom — Customer Service Policy & Knowledge Base
+
+GREETING
+Thank you for calling MetroBoost Telecom, my name is [agent name]. May I have your name, and how can I help you today?
+
+CLOSING
+Is there anything else I can help you with? Thank you for being a MetroBoost customer — have a great day.
+
+IDENTITY VERIFICATION
+Before discussing any account details, verify the customer's full name, the mobile number on the account, and the last 4 digits of the account PIN. Never read back the full PIN or password.
+
+HOLD PROCEDURE
+Ask permission before placing the customer on hold, give an estimated wait time, and check back at least every 60 seconds.
+
+TRANSFER PROCEDURE
+Explain why a transfer is needed, name the team you are transferring to, and stay on the line until the receiving agent answers.
+
+ESCALATION PROCEDURE
+Escalate to a supervisor when the customer requests it, when the issue is outside your authority, or after two failed resolution attempts.
+
+MANDATORY DISCLOSURES
+This call may be recorded for quality and training purposes. Plan changes take effect on the next billing cycle. Early termination fees may apply to contract plans.
+
+PROHIBITED PHRASES
+Do not say "calm down", "that's not my problem", or "there is nothing I can do". Never promise a refund or credit you are not authorized to approve.
+
+PRODUCTS AND SERVICES
+Prepaid and postpaid mobile plans, home fibre internet, MetroBoost TV bundles, international roaming packs, and device instalment plans.
+
+CURRENT PROMOTIONS
+Unlimited 5G data for the first 3 months on new postpaid plans. Free router with any 12-month fibre contract.
+
+POLICIES
+Billing disputes must be raised within 60 days of the invoice date. Approved credits appear within 1-2 billing cycles. Roaming must be enabled before travel.
+
+COMMON TROUBLESHOOTING
+For no signal: toggle airplane mode, restart the device, and check for a network outage in the area. For slow fibre: power-cycle the router and confirm no data cap has been reached.
+
+CONTACT INFORMATION
+Support: 16500 (24/7). Fault reporting: 16501. Email: support@metroboost.example.
+
+FREQUENTLY ASKED QUESTIONS
+Q: When does my plan renew? A: On your monthly billing date. Q: How do I enable roaming? A: In the MetroBoost app under Plan > Roaming, or by calling support.
+
+TONE GUIDELINES
+Warm, professional, and patient. Acknowledge the customer's concern before moving to a solution. Mirror their pace.
+
+EMPATHY GUIDELINES
+Acknowledge frustration explicitly ("I understand how frustrating that is") before explaining the next steps.
+
+CONFLICT RESOLUTION GUIDELINES
+Stay calm, do not interrupt, take ownership of the issue, and focus on what you can do for the customer.
+
+RESOLUTION EXPECTATIONS
+Resolve billing and connectivity issues within the call where possible. Always confirm the resolution and any timelines before closing.
