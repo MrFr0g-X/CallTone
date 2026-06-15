@@ -17,7 +17,7 @@ const navItems = [
   { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/admin/clients", label: "Clients", icon: Building2 },
   { to: "/admin/team", label: "Team", icon: Users },
-  { to: "/qa/context", label: "Company Context", icon: FileText },
+  { to: "/admin/context", label: "Company Context", icon: FileText },
   { to: "/admin/activity", label: "Activity Log", icon: Activity },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
@@ -34,7 +34,7 @@ const AdminSidebar = () => {
   const visibleNavItems = navItems.filter((item) => {
     if (item.to === "/admin/clients") return platformScope;
     if (item.to === "/admin/settings") return canManageAdminUsers(user?.role);
-    if (item.to === "/qa/context") return Boolean(user?.capabilities?.canManageContext);
+    if (item.to === "/admin/context") return Boolean(user?.capabilities?.canManageContext);
     return true;
   });
 

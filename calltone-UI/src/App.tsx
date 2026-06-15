@@ -85,6 +85,11 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         }>
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="context" element={
+            <ProtectedRoute allowedRoles={["owner", "admin", "super_admin"]}>
+              <CompanyContext chromeless />
+            </ProtectedRoute>
+          } />
           <Route path="clients" element={<AdminClients />} />
           <Route path="team" element={<AdminTeam />} />
           <Route path="activity" element={<AdminActivity />} />
