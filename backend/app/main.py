@@ -369,9 +369,28 @@ def _apply_context_field(company_name: str, field_name: str, new_text: str) -> d
     if group is None:
         raise ValueError(f"'{field_name}' is not a known context field.")
 
+    # Resolve the context file: slug fast-path, else match by internal company_name
+    # (space/case-insensitive). Prod data has e.g. company "metro boost" stored in
+    # metroboost.json (company_name "metroboost"), so the slug path alone misses it.
     path = _context_path(company_name)
     if not path.exists():
-        raise FileNotFoundError(f"No company context to update for {company_name}.")
+        want = company_name.strip().lower().replace(" ", "")
+        match = None
+        if CONTEXTS_DIR.exists():
+            for f in sorted(CONTEXTS_DIR.glob("*.json")):
+                if f.stem.endswith("_graph") or f.stem.endswith("_backup"):
+                    continue
+                try:
+                    cand = _json.loads(f.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                cand_name = str(cand.get("company_name", f.stem)).strip().lower().replace(" ", "")
+                if cand_name == want or f.stem.replace("_", "") == want:
+                    match = f
+                    break
+        if match is None:
+            raise FileNotFoundError(f"No company context to update for {company_name}.")
+        path = match
     context = _json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(context, dict):
         raise FileNotFoundError(f"Context for {company_name} is not a JSON object.")
