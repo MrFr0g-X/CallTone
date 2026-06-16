@@ -318,21 +318,45 @@ def _sync_company_context_to_model_server(company_name: str) -> bool:
         return False
 
 
+class _RemoteScanResult:
+    """Adapts the model server's /v1/scan-injection JSON to the ScanResult shape
+    that ``decide_ticket`` reads (recommended_action / verdict / severity /
+    overall_reasoning / llm_was_run / to_dict)."""
+
+    def __init__(self, data: dict):
+        self._d = data or {}
+        self.recommended_action = self._d.get("recommended_action", "proceed")
+        self.verdict = self._d.get("verdict", "safe")
+        self.severity = self._d.get("severity", "none")
+        self.overall_reasoning = self._d.get("overall_reasoning", "")
+        self.llm_was_run = bool(self._d.get("llm_was_run", False))
+
+    def to_dict(self) -> dict:
+        return self._d
+
+
 def injection_scan(text: str, use_llm: bool = False):
     """Run the LAYER_2 prompt-injection scanner on a proposed context change.
 
-    Lazily imports the scanner (it lives under ``models/LAYER_2``) so importing
-    ``app.main`` never requires the model code. Tests monkeypatch this symbol to
-    run GPU-free.
+    Prefers the **model server** (it runs the full static + LLM detector — the LLM
+    needs ``skill_runtime`` + the local model, which the slim API tier does not
+    ship). Falls back to the local static-only scan if the model server is
+    unreachable; the caller's safety gate then holds the ticket (llm_was_run=False).
+    Tests monkeypatch this symbol to run GPU-free.
     """
+    try:
+        from app import model_client
+        if model_client.configured():
+            return _RemoteScanResult(model_client.scan_injection(text))
+    except Exception as exc:
+        log.warning(
+            "context.injection_scan_remote_failed",
+            extra={"event": "injection_scan_remote_failed", "err": str(exc)},
+        )
     import sys as _sys
     if str(MODELS_DIR) not in _sys.path:
         _sys.path.insert(0, str(MODELS_DIR))
     from LAYER_2.security.injection_scanner import scan as _scan
-    # The LLM detector imports skill_runtime + loads a local model, which the slim
-    # API tier does not ship. The static prompt-injection scanner is pure-Python
-    # (regex patterns) and catches the canonical injections, so fall back to it if
-    # the LLM path is unavailable rather than 500 the submitter.
     try:
         return _scan(text, use_llm=use_llm)
     except Exception:

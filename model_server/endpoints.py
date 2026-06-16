@@ -374,6 +374,33 @@ def put_context(company: str, payload: dict = Body(...)):
     return {"ok": True, "company": payload_company, "file": path.name}
 
 
+@router.post("/scan-injection")
+def scan_injection(payload: dict = Body(...)):
+    """Run the full prompt-injection scan (static + LLM) on arbitrary text.
+
+    The slim backend API tier cannot run the LLM detector (it needs
+    ``skill_runtime`` + the local model), so it calls this endpoint for the
+    authoritative verdict on context-ticket text. ``always_use_llm=True`` forces
+    the LLM pass even when the static scan is clean, so the caller can trust
+    ``llm_was_run`` to gate auto-apply.
+    """
+    text = str(payload.get("text") or "")
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="text is required")
+    import sys
+    models_dir = Path(__file__).resolve().parent.parent / "models"
+    if str(models_dir) not in sys.path:
+        sys.path.insert(0, str(models_dir))
+    try:
+        from LAYER_2.security.injection_scanner import scan as _scan
+    except Exception as exc:  # pragma: no cover - environment guard
+        raise HTTPException(status_code=503, detail=f"scanner unavailable: {exc}")
+    result = _scan(text, use_llm=True, always_use_llm=True)
+    out = result.to_dict()
+    out["llm_was_run"] = bool(getattr(result, "llm_was_run", False))
+    return out
+
+
 @router.get("/jobs/{job_id}")
 def job_status(job_id: str, request: Request):
     store: JobStore = request.app.state.jobs

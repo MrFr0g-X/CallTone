@@ -170,6 +170,28 @@ def context_exists(company: str) -> bool:
     return get_context(company) is not None
 
 
+def scan_injection(text: str) -> dict[str, Any]:
+    """Run the full prompt-injection scan (static + LLM) on the model server.
+
+    Used by the context-ticket gate: the LLM detector can only run where the
+    model + skill_runtime live. Read timeout is generous because the first call
+    may cold-load the model.
+    """
+    url = f"{_base_url()}/v1/scan-injection"
+    r = httpx.post(
+        url,
+        headers=_auth_headers(),
+        json={"text": text},
+        timeout=httpx.Timeout(connect=5.0, read=180.0, write=10.0, pool=5.0),
+    )
+    if r.status_code >= 400:
+        raise ModelServerError(f"scan_injection failed: HTTP {r.status_code} {r.text[:400]}")
+    body = r.json()
+    if not isinstance(body, dict):
+        raise ModelServerError("scan_injection returned non-dict")
+    return body
+
+
 def put_context(company: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Mirror a backend context JSON to the Tier-3 model server."""
     url = f"{_base_url()}/v1/contexts/{quote(company, safe='')}"
