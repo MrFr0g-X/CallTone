@@ -34,33 +34,54 @@ if sys.platform == "win32":
         if _s and hasattr(_s, "reconfigure"):
             _s.reconfigure(encoding="utf-8", errors="replace")
 
-# pyannote checkpoints contain many custom classes (Specifications, etc.).
-# PyTorch 2.6+ changed weights_only default to True, breaking pyannote.
-# Patch lightning_fabric's _load (used by pyannote) to use weights_only=False.
-import torch
-import lightning_fabric.utilities.cloud_io as _la_io
-def _patched_la_load(path, map_location=None, **kwargs):
-    kwargs["weights_only"] = False
-    return torch.load(path, map_location=map_location, **kwargs)
-_la_io._load = _patched_la_load
-
-# pyannote 4.x always downloads PLDA from pyannote/speaker-diarization-community-1
-# even when using AgglomerativeClustering which never uses PLDA.
-# Patch get_plda to return None so no network access is attempted.
-import pyannote.audio.pipelines.utils.getter as _pa_getter
-import pyannote.audio.pipelines.speaker_diarization as _pa_sd
-def _noop_get_plda(plda, **kwargs):
-    return None
-_pa_getter.get_plda = _noop_get_plda
-_pa_sd.get_plda = _noop_get_plda
-
 from collections import defaultdict, Counter
-
 import warnings
-import numpy as np
-import torchaudio
-from faster_whisper import WhisperModel
-from pyannote.audio import Pipeline
+
+# Heavy ML stack (torch / pyannote / faster-whisper / torchaudio / numpy) is only
+# needed for actual transcription + diarization, which run on the GPU box. The
+# pure-Python helpers below (detect_signals, strip_emojis, parse_sense_output)
+# need none of it, so guard these imports: when the ML deps are absent the module
+# still imports and those helpers stay usable (e.g. in CI / unit tests). The
+# transcription/diarization functions will fail loudly at call time if torch is
+# missing — which is correct, they require the model environment anyway.
+_ML_DEPS_AVAILABLE = True
+try:
+    # pyannote checkpoints contain many custom classes (Specifications, etc.).
+    # PyTorch 2.6+ changed weights_only default to True, breaking pyannote.
+    # Patch lightning_fabric's _load (used by pyannote) to use weights_only=False.
+    import torch
+    import lightning_fabric.utilities.cloud_io as _la_io
+    def _patched_la_load(path, map_location=None, **kwargs):
+        kwargs["weights_only"] = False
+        return torch.load(path, map_location=map_location, **kwargs)
+    _la_io._load = _patched_la_load
+
+    # pyannote 4.x always downloads PLDA from pyannote/speaker-diarization-community-1
+    # even when using AgglomerativeClustering which never uses PLDA.
+    # Patch get_plda to return None so no network access is attempted.
+    import pyannote.audio.pipelines.utils.getter as _pa_getter
+    import pyannote.audio.pipelines.speaker_diarization as _pa_sd
+    def _noop_get_plda(plda, **kwargs):
+        return None
+    _pa_getter.get_plda = _noop_get_plda
+    _pa_sd.get_plda = _noop_get_plda
+
+    import numpy as np
+    import torchaudio
+    from faster_whisper import WhisperModel
+    from pyannote.audio import Pipeline
+except ImportError as _ml_exc:  # pragma: no cover - exercised only without ML deps
+    _ML_DEPS_AVAILABLE = False
+    torch = None  # type: ignore
+    np = None  # type: ignore
+    torchaudio = None  # type: ignore
+    WhisperModel = None  # type: ignore
+    Pipeline = None  # type: ignore
+    warnings.warn(
+        f"transcribe_diarize: ML deps unavailable ({_ml_exc}); only text helpers "
+        "(detect_signals, strip_emojis) are usable.",
+        RuntimeWarning,
+    )
 
 # Suppress known harmless deprecation warnings from transformers / pyannote
 warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
@@ -83,13 +104,13 @@ logging.getLogger("transformers.pipelines.automatic_speech_recognition").setLeve
 logging.getLogger("transformers.generation.configuration_utils").setLevel(logging.ERROR)
 
 # GPU optimizations
-if torch.cuda.is_available():
+if _ML_DEPS_AVAILABLE and torch.cuda.is_available():
     torch.backends.cudnn.benchmark = True
     torch.set_float32_matmul_precision("high")
 
 # ── paths ───────────────────────────────────────────────────────────────────────
 MODEL_DIR  = os.path.join(os.path.dirname(__file__), "../models/whisper/openai/whisper-large-v3")
-DEVICE     = "cuda:0" if torch.cuda.is_available() else "cpu"
+DEVICE     = "cuda:0" if (_ML_DEPS_AVAILABLE and torch.cuda.is_available()) else "cpu"
 
 # ── model cache — loaded once, reused across pipeline calls ──────────────────
 _WHISPER_MODEL   = None   # Whisper ASR pipeline
@@ -132,20 +153,32 @@ def strip_emojis(text: str) -> str:
 
 
 # ── text-based behavioural signal detection ──────────────────────────────────
-# Patterns tuned for customer-service quality analysis.
+# Keep signals SPARSE and INTENTFUL. These are coarse, keyword-based behavioural
+# flags layered on top of the real per-utterance emotion (audio_emotion, from
+# Audio2Emotion) — they are NOT a sentiment model. Over-broad rules (a bare "?"
+# => QUESTIONING, "great" => SATISFIED, filler "um" => HESITANT) tagged almost
+# every line and drowned the transcript, so they were removed. We keep only
+# strong, unambiguous intent signals:
+#   FRUSTRATED  — explicit anger/dissatisfaction wording
+#   ESCALATION  — asking for a manager / threatening complaint or legal action
+#   APOLOGETIC  — explicit apology
+# A plain greeting or a routine question produces NO signal.
 TEXT_SIGNALS: dict[str, list[str]] = {
-    "CONFUSED":    [r"(?i)\b(confused?|not (sure|clear)|don'?t understand|what do you mean|unclear|i'?m lost)\b"],
-    "FRUSTRATED":  [r"(?i)\b(frustrated?|annoyed?|upset|ridiculous|unacceptable|terrible|awful|worst)\b",
+    "FRUSTRATED":  [r"(?i)\b(frustrated?|annoyed?|ridiculous|unacceptable|terrible|awful|worst)\b",
                     r"(?i)\b(already (told|said)|been waiting|still (not|haven'?t)|keep (calling|trying))\b"],
-    "APOLOGETIC":  [r"(?i)\b(sorry|apologize|apologi[sz]e?|apologies|my bad|pardon)\b"],
-    "HESITANT":    [r"(?i)\bum+\b|\buh+\b|\bhmm+\b|\berr?\b"],
-    "SATISFIED":   [r"(?i)\b(thank(s| you)|great|perfect|excellent|wonderful|appreciate|(very )?helpful|resolved|happy with)\b"],
-    "QUESTIONING": [r"\?"],
-    "ESCALATION":  [r"(?i)\b(manager|supervisor|escalat|complaint|complain|sue|legal|lawyer)\b"],
+    "ESCALATION":  [r"(?i)\b(manager|supervisor|escalat\w*|complaint|sue|lawyer)\b",
+                    r"(?i)\bfile a complaint\b",
+                    r"(?i)\b(legal action|take.*legal)\b"],
+    "APOLOGETIC":  [r"(?i)\b(apologize|apologi[sz]e|apologies|i'?m (so |very )?sorry|my apolog)\b"],
 }
 
 def detect_signals(text: str) -> list[str]:
-    """Return behavioural signal tags matched in the text (rule-based)."""
+    """Return strong behavioural signal tags matched in the text (rule-based).
+
+    Intentionally sparse: routine greetings and plain questions yield an empty
+    list. The authoritative per-utterance emotion is ``audio_emotion``; these
+    tags only flag clear FRUSTRATED / ESCALATION / APOLOGETIC intent.
+    """
     return [sig for sig, pats in TEXT_SIGNALS.items()
             if any(re.search(p, text) for p in pats)]
 
