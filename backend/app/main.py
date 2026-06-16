@@ -318,6 +318,20 @@ def _sync_company_context_to_model_server(company_name: str) -> bool:
         return False
 
 
+def injection_scan(text: str, use_llm: bool = False):
+    """Run the LAYER_2 prompt-injection scanner on a proposed context change.
+
+    Lazily imports the scanner (it lives under ``models/LAYER_2``) so importing
+    ``app.main`` never requires the model code. Tests monkeypatch this symbol to
+    run GPU-free.
+    """
+    import sys as _sys
+    if str(MODELS_DIR) not in _sys.path:
+        _sys.path.insert(0, str(MODELS_DIR))
+    from LAYER_2.security.injection_scanner import scan as _scan
+    return _scan(text, use_llm=use_llm)
+
+
 def _bump_patch_version(version: str) -> str:
     """Increment the patch component of a semver string (default 1.0.0 -> 1.0.1)."""
     parts = str(version or "1.0.0").strip().split(".")
@@ -4002,6 +4016,27 @@ def create_ticket(
             raise HTTPException(status_code=403, detail="Context tickets are disabled by company policy")
     company_name = _ensure_company_allowed_for_user(db, current_user, payload.get("companyName", ""))
 
+    field_name = payload.get("fieldName", "")
+    new_text = payload.get("newText", "")
+
+    # ── AI decision: injection scan → validity → auto-apply / auto-decline ──────
+    # No human approval. Borderline verdicts are declined with a rephrase ask.
+    from app.context_tickets import decide_ticket
+    decision = decide_ticket(
+        field_name, new_text,
+        scan=lambda t: injection_scan(t, use_llm=bool(os.getenv("MODEL_SERVER_URL"))),
+    )
+
+    applied_info: dict | None = None
+    if decision.status == "applied":
+        try:
+            applied_info = _apply_context_field(company_name, field_name, new_text)
+        except (FileNotFoundError, ValueError) as exc:
+            # Re-classify as an invalid change rather than 500 the submitter.
+            decision = type(decision)(
+                "declined", "ai_invalid", f"Declined: {exc}", decision.scan,
+            )
+
     TICKETS_DIR.mkdir(parents=True, exist_ok=True)
     existing = list(TICKETS_DIR.glob("TICKET-*.json"))
     next_num = len(existing) + 1
@@ -4011,37 +4046,39 @@ def create_ticket(
         "ticket_id":    ticket_id,
         "submitted_by": current_user.email,
         "submitted_at": datetime.now(timezone.utc).isoformat(),
-        "status":       "pending",
+        "decided_at":   datetime.now(timezone.utc).isoformat(),
+        "status":       decision.status,        # applied | declined
+        "decision":     decision.decision,      # ai_applied | ai_blocked | ai_invalid
+        "ai_reasoning": decision.reasoning,
+        "scan":         decision.scan,
         "company_name": company_name,
-        "field_name":   payload.get("fieldName", ""),
+        "field_name":   field_name,
         "old_text":     payload.get("oldText", ""),
-        "new_text":     payload.get("newText", ""),
+        "new_text":     new_text,
         "reason":       payload.get("reason", ""),
     }
+    if applied_info is not None:
+        ticket["old_text"] = applied_info.get("old_text", ticket["old_text"])
+        ticket["context_version"] = applied_info.get("context_version")
+        ticket["diff"] = {
+            "field": field_name,
+            "before": applied_info.get("old_text", ""),
+            "after": applied_info.get("new_text", new_text),
+        }
 
     out = TICKETS_DIR / f"{ticket_id}.json"
     out.write_text(_json.dumps(ticket, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Notify the submitter of the AI outcome (no human reviewer loop anymore).
     try:
-        reviewers = (
-            db.query(User)
-            .join(User.role)
-            .filter(User.is_active == True)
-            .all()
-        )
-        for reviewer in reviewers:
-            if not reviewer.role or reviewer.role.name not in ADMIN_MUTATION_ROLES:
-                continue
-            if reviewer.client_id is not None:
-                reviewer_allowed = _context_names_visible_to_user(db, reviewer)
-                if reviewer_allowed is not None and ticket["company_name"].lower() not in reviewer_allowed:
-                    continue
+        if current_user.is_active:
             email_service.send_context_ticket_email(
                 db,
-                recipient=reviewer,
-                title="New CallTone context ticket",
+                recipient=current_user,
+                title="CallTone context ticket processed",
                 company=ticket["company_name"],
                 field=ticket["field_name"],
-                status="pending",
+                status=decision.status,
                 actor=current_user,
                 ticket_id=ticket_id,
             )
@@ -4060,10 +4097,21 @@ def update_ticket_status(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    import json as _json
-    if not _can_mutate_users(current_user):
-        raise HTTPException(status_code=403, detail="Admin access required to approve/reject tickets")
+    # Human approve/reject is disabled: the AI auto-applies or auto-declines on
+    # submit. Tickets are now a read-only audit trail (GET /context/tickets).
+    raise HTTPException(
+        status_code=410,
+        detail="Context tickets are decided automatically on submit; manual approval is disabled.",
+    )
 
+
+def _DISABLED_update_ticket_status(
+    ticket_id: str,
+    payload: dict,
+    current_user: User,
+    db: Session,
+):
+    import json as _json
     ticket_file = TICKETS_DIR / f"{ticket_id}.json"
     if not ticket_file.exists():
         raise HTTPException(status_code=404, detail="Ticket not found")
