@@ -13,12 +13,15 @@ import { apiErrorMessage, contextApi } from "@/services/api";
 import type { CompanyContextSummary, ContextTicket, IngestResult, IngestJobStatus } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { toContextGroups } from "@/lib/contextSchema";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 type Tab = "companies" | "upload" | "tickets";
 
 const STATUS_COLORS: Record<string, string> = {
+  applied:  "bg-success/10 text-success",
+  declined: "bg-destructive/10 text-destructive",
+  // legacy human-reviewed tickets
   pending:  "bg-warning/10 text-warning",
   approved: "bg-success/10 text-success",
   rejected: "bg-destructive/10 text-destructive",
@@ -307,15 +310,10 @@ const TicketsTab = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ companyName: user?.roleScope === "tenant" ? user?.clientName ?? "" : "", fieldName: "", oldText: "", newText: "", reason: "" });
   const [creating, setCreating] = useState(false);
-  const [reviewTarget, setReviewTarget] = useState<{
-    ticketId: string;
-    status: "approved" | "rejected";
-  } | null>(null);
-  const [reviewNote, setReviewNote] = useState("");
+  // The most recent AI decision, shown inline right after submitting.
+  const [lastOutcome, setLastOutcome] = useState<ContextTicket | null>(null);
   const platformScope = user?.roleScope === "platform";
   const canSubmitTickets = Boolean(user?.capabilities?.canSubmitContextTickets);
-  const canReviewTickets =
-    user?.role === "owner" || user?.role === "admin" || user?.role === "super_admin";
 
   useEffect(() => {
     if (!platformScope) {
@@ -328,22 +326,6 @@ const TicketsTab = () => {
     queryFn: () => contextApi.listTickets().then(r => r.data.tickets),
   });
 
-  const reviewMutation = useMutation({
-    mutationFn: ({ ticketId, status, note }: { ticketId: string; status: "approved" | "rejected"; note?: string }) =>
-      contextApi.updateTicket(ticketId, status, note),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["context-tickets"] });
-      toast({ title: `Ticket ${variables.status}`, description: "Change request status updated." });
-    },
-    onError: (error: unknown) => {
-      toast({
-        title: "Ticket update failed",
-        description: apiErrorMessage(error, "Could not update this change request."),
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleCreate = async () => {
     if (!form.companyName || !form.fieldName || !form.newText || !form.reason) {
       toast({ title: "Fill all required fields", variant: "destructive" });
@@ -351,38 +333,24 @@ const TicketsTab = () => {
     }
     setCreating(true);
     try {
-      await contextApi.createTicket(form);
+      const { data: ticket } = await contextApi.createTicket(form);
       queryClient.invalidateQueries({ queryKey: ["context-tickets"] });
-      setShowCreate(false);
-      setForm({ companyName: "", fieldName: "", oldText: "", newText: "", reason: "" });
-      toast({ title: "Ticket created", description: "Your change request has been submitted." });
-    } catch {
-      toast({ title: "Failed to create ticket", variant: "destructive" });
+      queryClient.invalidateQueries({ queryKey: ["context-companies"] });
+      queryClient.invalidateQueries({ queryKey: ["context-detail", form.companyName] });
+      setLastOutcome(ticket);
+      if (ticket.status === "applied") {
+        setShowCreate(false);
+        setForm({ companyName: platformScope ? "" : user?.clientName ?? "", fieldName: "", oldText: "", newText: "", reason: "" });
+        toast({ title: "Change applied", description: "The AI applied your change to the company context." });
+      } else {
+        // Declined: keep the form open so the user can rephrase and resubmit.
+        toast({ title: "Change declined", description: ticket.ai_reasoning || "The AI declined this change. Please rephrase and resubmit.", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Failed to submit change", description: apiErrorMessage(error, "Could not submit this change request."), variant: "destructive" });
     } finally {
       setCreating(false);
     }
-  };
-
-  const reviewTicket = (ticketId: string, status: "approved" | "rejected") => {
-    setReviewTarget({ ticketId, status });
-    setReviewNote("");
-  };
-
-  const submitReview = () => {
-    if (!reviewTarget) return;
-    reviewMutation.mutate(
-      {
-        ticketId: reviewTarget.ticketId,
-        status: reviewTarget.status,
-        note: reviewNote.trim() || undefined,
-      },
-      {
-        onSuccess: () => {
-          setReviewTarget(null);
-          setReviewNote("");
-        },
-      },
-    );
   };
 
   return (
@@ -400,6 +368,49 @@ const TicketsTab = () => {
           </motion.button>
         )}
       </div>
+
+      {/* Inline AI outcome from the last submission */}
+      <AnimatePresence>
+        {lastOutcome && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+          >
+            <GlassCard
+              className={cn(
+                "rounded-2xl p-4 border",
+                lastOutcome.status === "applied" ? "border-success/30" : "border-destructive/30",
+              )}
+            >
+              <div className="flex items-start gap-3">
+                {lastOutcome.status === "applied"
+                  ? <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  : <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />}
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {lastOutcome.status === "applied"
+                      ? "AI applied your change"
+                      : "AI declined your change"}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {lastOutcome.ai_reasoning ||
+                      (lastOutcome.status === "applied"
+                        ? "The change was applied to the company context."
+                        : "Please rephrase and resubmit.")}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setLastOutcome(null)}
+                  className="p-1 rounded-lg hover:bg-foreground/[0.08]"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Create form */}
       <AnimatePresence>
@@ -483,125 +494,51 @@ const TicketsTab = () => {
                   </div>
                   <p className="text-sm font-medium text-foreground capitalize">{t.field_name.replace(/_/g, " ")}</p>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.reason}</p>
-                  {t.new_text && (
+                  {(t.ai_reasoning || t.review_note) && (
+                    <p
+                      className={cn(
+                        "text-xs mt-2 italic",
+                        t.status === "declined" ? "text-destructive" : "text-muted-foreground",
+                      )}
+                    >
+                      {t.ai_reasoning || t.review_note}
+                    </p>
+                  )}
+                  {t.status === "applied" && t.diff ? (
+                    <div className="mt-2 space-y-1">
+                      {t.diff.before && (
+                        <div className="p-2 rounded-lg bg-destructive/[0.06] text-xs text-muted-foreground line-clamp-2">
+                          <span className="font-medium text-foreground">Before: </span>{t.diff.before}
+                        </div>
+                      )}
+                      <div className="p-2 rounded-lg bg-success/[0.08] text-xs text-muted-foreground line-clamp-3">
+                        <span className="font-medium text-foreground">After: </span>{t.diff.after}
+                      </div>
+                    </div>
+                  ) : t.new_text ? (
                     <div className="mt-2 p-2 rounded-lg bg-foreground/[0.04] text-xs text-muted-foreground line-clamp-3">
                       <span className="font-medium text-foreground">Proposed: </span>{t.new_text}
                     </div>
-                  )}
-                  {t.review_note && (
-                    <p className="text-xs text-muted-foreground mt-2 italic">Note: {t.review_note}</p>
-                  )}
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  {t.status === "pending" ? (
-                    <Clock className="w-4 h-4 text-warning" />
-                  ) : t.status === "approved" ? (
+                  {t.status === "applied" || t.status === "approved" ? (
                     <CheckCircle className="w-4 h-4 text-success" />
-                  ) : (
+                  ) : t.status === "declined" || t.status === "rejected" ? (
                     <XCircle className="w-4 h-4 text-destructive" />
+                  ) : (
+                    <Clock className="w-4 h-4 text-warning" />
                   )}
                 </div>
               </div>
-              {canReviewTickets && t.status === "pending" && (
-                <div className="mt-4 flex flex-wrap gap-2 border-t border-border/40 pt-3">
-                  <button
-                    onClick={() => reviewTicket(t.ticket_id, "approved")}
-                    disabled={reviewMutation.isPending}
-                    className="rounded-xl bg-success/10 px-3 py-1.5 text-xs font-semibold text-success transition-colors hover:bg-success/20 disabled:opacity-50"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => reviewTicket(t.ticket_id, "rejected")}
-                    disabled={reviewMutation.isPending}
-                    className="rounded-xl bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
               <p className="text-[10px] text-muted-foreground/60 mt-3">
                 By {t.submitted_by} · {new Date(t.submitted_at).toLocaleDateString()}
-                {t.reviewed_by && ` · Reviewed by ${t.reviewed_by}`}
+                {t.context_version && ` · v${t.context_version}`}
               </p>
             </GlassCard>
           ))}
         </div>
       )}
-
-      <AnimatePresence>
-        {reviewTarget && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 p-4 backdrop-blur-sm"
-            onClick={() => {
-              if (!reviewMutation.isPending) setReviewTarget(null);
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.97 }}
-              className="glass-strong w-full max-w-md rounded-2xl border border-border/60 p-6 shadow-2xl"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {reviewTarget.status === "approved" ? "Approve change request" : "Reject change request"}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Add an optional review note. This is stored with the ticket audit trail.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setReviewTarget(null)}
-                  disabled={reviewMutation.isPending}
-                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground disabled:opacity-50"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <textarea
-                value={reviewNote}
-                onChange={(event) => setReviewNote(event.target.value)}
-                rows={4}
-                className="mt-5 w-full resize-none rounded-xl glass-input px-3 py-2 text-sm"
-                placeholder="Optional note for the requester..."
-              />
-
-              <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <button
-                  onClick={() => setReviewTarget(null)}
-                  disabled={reviewMutation.isPending}
-                  className="rounded-xl border border-border/60 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/40 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={submitReview}
-                  disabled={reviewMutation.isPending}
-                  className={cn(
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50",
-                    reviewTarget.status === "approved"
-                      ? "bg-success text-white hover:brightness-110"
-                      : "bg-destructive text-destructive-foreground hover:brightness-110",
-                  )}
-                >
-                  {reviewMutation.isPending
-                    ? "Saving..."
-                    : reviewTarget.status === "approved"
-                    ? "Approve"
-                    : "Reject"}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
@@ -655,8 +592,8 @@ const CompanyContext = ({ chromeless = false }: { chromeless?: boolean }) => {
                   {platformScope
                     ? "View and manage the scoring context for any company."
                     : canManageContext
-                    ? "Review your company's scoring context and replace it by uploading an updated policy document. Change requests from your QA team appear under Change Tickets for you to approve."
-                    : "Review your company's scoring context and send a change request when something needs updating. Your admins handle the approval."}
+                    ? "Review your company's scoring context and replace it by uploading an updated policy document. QA change requests are scanned and applied automatically; see the outcome under Change Tickets."
+                    : "Review your company's scoring context and submit a change when something needs updating. Each change is scanned for safety and applied or declined automatically."}
                 </p>
               </div>
             </div>

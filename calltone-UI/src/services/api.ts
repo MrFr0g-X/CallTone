@@ -570,12 +570,20 @@ export interface ContextTicket {
   ticket_id:    string;
   submitted_by: string;
   submitted_at: string;
-  status:       "pending" | "approved" | "rejected";
+  // AI auto-decision outcome. Legacy human-reviewed tickets may still carry
+  // "pending" | "approved" | "rejected".
+  status:       "applied" | "declined" | "pending" | "approved" | "rejected";
+  decision?:    "ai_applied" | "ai_blocked" | "ai_invalid";
+  ai_reasoning?: string;
   company_name: string;
   field_name:   string;
   old_text:     string;
   new_text:     string;
   reason:       string;
+  decided_at?:  string;
+  context_version?: string;
+  diff?: { field: string; before: string; after: string };
+  // Legacy human-review fields (no longer written; kept for old audit records).
   reviewed_by?: string;
   reviewed_at?: string;
   review_note?: string;
@@ -628,9 +636,6 @@ export const contextApi = {
     newText:     string;
     reason:      string;
   }) => apiClient.post<ContextTicket>("/context/tickets", payload),
-
-  updateTicket: (ticketId: string, status: "approved" | "rejected", note?: string) =>
-    apiClient.patch<ContextTicket>(`/context/tickets/${ticketId}`, { status, note }),
 };
 
 // ── Appeals ────────────────────────────────────────────────────────────────
