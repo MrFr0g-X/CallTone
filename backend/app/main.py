@@ -33,6 +33,7 @@ from app.models import (
     User, Client, Role,
     Employee, Customer, Call, Transcript, QaReport,
     PipelineJob, PipelineSettings, ClientPolicy, EmailEvent, EmailPreference,
+    CallAppeal,
     _compute_grade,
 )
 from app.email import service as email_service
@@ -894,6 +895,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canViewEvidence": True,
             "canViewAiReport": True,
             "canViewTrends": True,
+            "canAppealCalls": False,
+            "canReviewAppeals": True,
         }
     if role in ("admin", "manager", "viewer"):
         return {
@@ -912,6 +915,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canViewEvidence": True,
             "canViewAiReport": True,
             "canViewTrends": True,
+            "canAppealCalls": False,
+            "canReviewAppeals": role == "admin",
         }
     if role == "qa":
         return {
@@ -930,6 +935,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canViewEvidence": True,
             "canViewAiReport": True,
             "canViewTrends": True,
+            "canAppealCalls": False,
+            "canReviewAppeals": True,
         }
     if role == "agent":
         return {
@@ -948,6 +955,8 @@ def _policy_capabilities(policy: ClientPolicy | None, role: str) -> dict[str, bo
             "canViewEvidence": policy.agent_portal_enabled and policy.agent_can_view_evidence,
             "canViewAiReport": policy.agent_portal_enabled and policy.agent_can_view_ai_report,
             "canViewTrends": policy.agent_portal_enabled and policy.agent_can_view_trends,
+            "canAppealCalls": policy.agent_portal_enabled,
+            "canReviewAppeals": False,
         }
     return {}
 

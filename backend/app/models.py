@@ -259,6 +259,34 @@ class QaReport(Base):
     call = relationship("Call", back_populates="qa_report")
 
 
+class CallAppeal(Base):
+    """An agent's appeal of a flagged/bad-scored call's AI review.
+
+    One open appeal per call. Resolution records a human decision (uphold /
+    overturn) plus an optional ``corrected_score``. The AI score on the
+    associated ``QaReport`` is NEVER overwritten — the correction lives here as
+    an audit trail.
+    """
+    __tablename__ = "call_appeals"
+
+    id = Column(String(36), primary_key=True, default=_uuid_str)
+    call_id = Column(String(36), ForeignKey("calls.id", ondelete="CASCADE"), nullable=False, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
+    agent_employee_id = Column(String(36), ForeignKey("employees.id"), nullable=False)
+    status = Column(String(20), nullable=False, default="open")  # open | under_review | upheld | overturned
+    agent_reason = Column(Text, nullable=False)
+    qa_id = Column(String(36), ForeignKey("employees.id"), nullable=True)
+    qa_response = Column(Text, nullable=True)
+    corrected_score = Column(Float, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    resolved_at = Column(DateTime(timezone=True), nullable=True)
+
+    call = relationship("Call", foreign_keys=[call_id])
+    client = relationship("Client", foreign_keys=[client_id])
+    agent_employee = relationship("Employee", foreign_keys=[agent_employee_id])
+    qa = relationship("Employee", foreign_keys=[qa_id])
+
+
 # ── Transactional email domain ──────────────────────────────────────────────
 
 class EmailEvent(Base):
