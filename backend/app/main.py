@@ -2069,6 +2069,166 @@ def get_qa_call_detail(
     }
 
 
+## Appeal endpoints
+
+APPEAL_OPEN_STATUSES = ("open", "under_review")
+APPEAL_TERMINAL_STATUSES = ("upheld", "overturned")
+APPEAL_RESOLVABLE_STATUSES = ("under_review", "upheld", "overturned")
+
+
+def _can_appeal_calls(user: User) -> bool:
+    """Only agents may file appeals on their own calls."""
+    return _role_name(user) == "agent"
+
+
+def _can_review_appeals(user: User) -> bool:
+    """QA + tenant admin + platform operators may resolve appeals."""
+    return _can_use_qa_tools(user)
+
+
+def _report_is_appealable(report: QaReport | None) -> bool:
+    """Eligibility = flag_for_review OR grade <= D OR severity Major/Critical."""
+    if report is None:
+        return False
+    report_json = report.report_json or {}
+    if isinstance(report_json, dict) and report_json.get("flag_for_review"):
+        return True
+    grade = (report.grade or "").strip().upper()
+    if grade and grade[0] in ("D", "F"):
+        return True
+    severity = (report.severity or "").strip().lower()
+    if severity in ("major", "critical"):
+        return True
+    return False
+
+
+def _serialize_appeal(appeal: CallAppeal) -> dict:
+    return {
+        "id": appeal.id,
+        "callId": appeal.call_id,
+        "status": appeal.status,
+        "agentReason": appeal.agent_reason,
+        "qaResponse": appeal.qa_response,
+        "correctedScore": appeal.corrected_score,
+        "createdAt": appeal.created_at.isoformat() if appeal.created_at else None,
+        "resolvedAt": appeal.resolved_at.isoformat() if appeal.resolved_at else None,
+    }
+
+
+@app.post(f"{settings.API_V1_PREFIX}/calls/{{call_id}}/appeal", status_code=201)
+def create_call_appeal(
+    call_id: str,
+    payload: dict = Body(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if not _can_appeal_calls(current_user):
+        raise HTTPException(status_code=403, detail="Only agents can appeal calls")
+
+    reason = str(payload.get("reason") or "").strip()
+    if not reason:
+        raise HTTPException(status_code=400, detail="An appeal reason is required")
+
+    call = db.query(Call).filter(Call.id == call_id).first()
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+
+    # Scope + ownership: the call must be visible AND owned by this agent.
+    _ensure_call_visible_to_user(call, current_user, db)
+    employee_id = _agent_employee_id(current_user, db)
+    if not employee_id or call.employee_id != employee_id:
+        raise HTTPException(status_code=403, detail="You can only appeal your own calls")
+
+    report = db.query(QaReport).filter(QaReport.call_id == call_id).first()
+    if not _report_is_appealable(report):
+        raise HTTPException(status_code=400, detail="This call is not eligible for appeal")
+
+    existing = (
+        db.query(CallAppeal)
+        .filter(CallAppeal.call_id == call_id, CallAppeal.status.in_(APPEAL_OPEN_STATUSES))
+        .first()
+    )
+    if existing:
+        raise HTTPException(status_code=409, detail="An appeal is already open for this call")
+
+    appeal = CallAppeal(
+        call_id=call_id,
+        client_id=call.client_id,
+        agent_employee_id=employee_id,
+        status="open",
+        agent_reason=reason,
+    )
+    db.add(appeal)
+    db.commit()
+    db.refresh(appeal)
+    return _serialize_appeal(appeal)
+
+
+@app.get(f"{settings.API_V1_PREFIX}/appeals")
+def list_appeals(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    query = db.query(CallAppeal)
+    if _can_review_appeals(current_user):
+        if _is_tenant_user(current_user):
+            query = query.filter(CallAppeal.client_id == _tenant_client_id(current_user))
+    elif _can_appeal_calls(current_user):
+        employee_id = _agent_employee_id(current_user, db)
+        if not employee_id:
+            return {"appeals": []}
+        query = query.filter(CallAppeal.agent_employee_id == employee_id)
+    else:
+        raise HTTPException(status_code=403, detail="Not authorized to view appeals")
+
+    appeals = query.order_by(CallAppeal.created_at.desc()).all()
+    return {"appeals": [_serialize_appeal(a) for a in appeals]}
+
+
+@app.patch(f"{settings.API_V1_PREFIX}/appeals/{{appeal_id}}")
+def resolve_appeal(
+    appeal_id: str,
+    payload: dict = Body(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if not _can_review_appeals(current_user):
+        raise HTTPException(status_code=403, detail="Not authorized to resolve appeals")
+
+    appeal = db.query(CallAppeal).filter(CallAppeal.id == appeal_id).first()
+    if not appeal:
+        raise HTTPException(status_code=404, detail="Appeal not found")
+
+    if _is_tenant_user(current_user) and appeal.client_id != _tenant_client_id(current_user):
+        raise HTTPException(status_code=403, detail="Not authorized to resolve this appeal")
+
+    new_status = str(payload.get("status") or "").strip()
+    if new_status not in APPEAL_RESOLVABLE_STATUSES:
+        raise HTTPException(
+            status_code=400,
+            detail="status must be one of: under_review, upheld, overturned",
+        )
+
+    appeal.status = new_status
+    if "qa_response" in payload and payload["qa_response"] is not None:
+        appeal.qa_response = str(payload["qa_response"])
+    if "corrected_score" in payload and payload["corrected_score"] is not None:
+        # Stored on the appeal as an audit trail. The QaReport AI score is NEVER
+        # overwritten here — that is an intentional decision (D-F1).
+        appeal.corrected_score = float(payload["corrected_score"])
+
+    reviewer_employee_id = _agent_employee_id(current_user, db)
+    if reviewer_employee_id:
+        appeal.qa_id = reviewer_employee_id
+
+    if new_status in APPEAL_TERMINAL_STATUSES:
+        appeal.resolved_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(appeal)
+    return _serialize_appeal(appeal)
+
+
 ## Agent endpoints
 
 def _get_agent_employee(current_user: User, db: Session) -> Employee | None:
