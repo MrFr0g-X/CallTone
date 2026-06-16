@@ -7,8 +7,10 @@ import {
   ArrowLeft,
   Download,
   FileText,
+  Gavel,
   Pause,
   Shield,
+  ShieldCheck,
   PlayCircle,
 } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
@@ -17,9 +19,10 @@ import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import ScoreGauge from "@/components/ScoreGauge";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { qaApi } from "@/services/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { qaApi, appealsApi, type CallAppeal, type AppealStatus } from "@/services/api";
 import { cn, cleanCallTitle } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const severityClass = (severity?: string | null) => {
   const s = (severity || "").toLowerCase();
@@ -204,6 +207,286 @@ const CallAudioPlayer = ({
   );
 };
 
+const APPEAL_STATUS_LABEL: Record<AppealStatus, string> = {
+  open: "Open",
+  under_review: "Under Review",
+  upheld: "Upheld",
+  overturned: "Overturned",
+};
+
+const appealStatusClass = (status: AppealStatus) => {
+  if (status === "overturned") return "bg-success/10 text-success";
+  if (status === "upheld") return "bg-muted/30 text-muted-foreground";
+  if (status === "under_review") return "bg-warning/10 text-warning";
+  return "bg-accent/10 text-accent";
+};
+
+type AppealSectionProps = {
+  callId: string;
+  reportSeverity?: string | null;
+  reportGrade?: string | null;
+  aiScore?: number | null;
+};
+
+/** Agent appeal submission + QA/admin resolution for a single call. */
+const AppealSection = ({ callId, reportSeverity, reportGrade, aiScore }: AppealSectionProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const caps = user?.capabilities;
+
+  const [reasonOpen, setReasonOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const [qaResponse, setQaResponse] = useState("");
+  const [correctedScore, setCorrectedScore] = useState("");
+  const [resolving, setResolving] = useState(false);
+
+  const { data: appealsData } = useQuery({
+    queryKey: ["appeals"],
+    queryFn: () => appealsApi.list().then((r) => r.data),
+    enabled: Boolean(caps?.canAppealCalls || caps?.canReviewAppeals),
+  });
+
+  const appeals: CallAppeal[] = appealsData?.appeals ?? [];
+  const callAppeals = appeals.filter((a) => a.callId === callId);
+  const latestAppeal = callAppeals[0] ?? null;
+  const hasOpenAppeal = callAppeals.some(
+    (a) => a.status === "open" || a.status === "under_review"
+  );
+
+  const grade = (reportGrade || "").trim().toUpperCase();
+  const severity = (reportSeverity || "").trim().toLowerCase();
+  const eligible =
+    (grade && (grade.startsWith("D") || grade.startsWith("F"))) ||
+    severity === "major" ||
+    severity === "critical";
+
+  const refresh = () => queryClient.invalidateQueries({ queryKey: ["appeals"] });
+
+  const submitAppeal = async () => {
+    if (!reason.trim()) return;
+    setSubmitting(true);
+    try {
+      await appealsApi.create(callId, reason.trim());
+      toast({ title: "Appeal submitted", description: "A reviewer will look into this call." });
+      setReasonOpen(false);
+      setReason("");
+      refresh();
+    } catch {
+      toast({ title: "Could not submit appeal", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const resolveAppeal = async (status: AppealStatus) => {
+    if (!latestAppeal) return;
+    setResolving(true);
+    try {
+      const parsedScore = correctedScore.trim() === "" ? undefined : Number(correctedScore);
+      await appealsApi.resolve(latestAppeal.id, {
+        status,
+        qaResponse: qaResponse.trim() || undefined,
+        correctedScore:
+          status === "overturned" && parsedScore != null && !Number.isNaN(parsedScore)
+            ? parsedScore
+            : undefined,
+      });
+      toast({ title: status === "overturned" ? "Appeal overturned" : "Appeal upheld" });
+      setQaResponse("");
+      setCorrectedScore("");
+      refresh();
+    } catch {
+      toast({ title: "Could not resolve appeal", variant: "destructive" });
+    } finally {
+      setResolving(false);
+    }
+  };
+
+  // ── Agent view ──
+  if (caps?.canAppealCalls) {
+    if (!eligible && !latestAppeal) return null;
+    return (
+      <GlassCard className="p-5 sm:p-6">
+        <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+          <Gavel className="w-4 h-4" /> Appeal
+        </h2>
+
+        {latestAppeal ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "text-[11px] px-3 py-1.5 rounded-full font-semibold",
+                  appealStatusClass(latestAppeal.status)
+                )}
+              >
+                {APPEAL_STATUS_LABEL[latestAppeal.status]}
+              </span>
+              {latestAppeal.createdAt && (
+                <span className="text-[11px] text-muted-foreground">
+                  Submitted {new Date(latestAppeal.createdAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <p className="text-[13px] text-foreground/75 leading-relaxed">
+              Your reason: {latestAppeal.agentReason}
+            </p>
+            {latestAppeal.qaResponse && (
+              <p className="text-[13px] text-foreground/75 leading-relaxed">
+                Reviewer note: {latestAppeal.qaResponse}
+              </p>
+            )}
+            {latestAppeal.correctedScore != null && (
+              <p className="text-[13px] text-foreground/75">
+                Corrected score: <span className="font-semibold">{latestAppeal.correctedScore}</span>
+              </p>
+            )}
+          </div>
+        ) : reasonOpen ? (
+          <div className="space-y-3">
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={4}
+              placeholder="Explain why this review should be reconsidered."
+              className="w-full rounded-2xl border border-border/70 bg-card/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={submitting || !reason.trim()}
+                onClick={submitAppeal}
+                className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-transform hover:scale-[1.02] disabled:opacity-50"
+              >
+                {submitting ? "Submitting..." : "Submit appeal"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setReasonOpen(false)}
+                className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-[13px] text-muted-foreground">
+              You can appeal this review if you believe the score is unfair.
+            </p>
+            <button
+              type="button"
+              disabled={hasOpenAppeal}
+              onClick={() => setReasonOpen(true)}
+              className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-transform hover:scale-[1.02] disabled:opacity-50"
+            >
+              Appeal this review
+            </button>
+          </div>
+        )}
+      </GlassCard>
+    );
+  }
+
+  // ── QA / admin view ──
+  if (caps?.canReviewAppeals && latestAppeal) {
+    const resolved =
+      latestAppeal.status === "upheld" || latestAppeal.status === "overturned";
+    return (
+      <GlassCard className="p-5 sm:p-6">
+        <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+          <Gavel className="w-4 h-4" /> Appeal
+        </h2>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={cn(
+                "text-[11px] px-3 py-1.5 rounded-full font-semibold",
+                appealStatusClass(latestAppeal.status)
+              )}
+            >
+              {APPEAL_STATUS_LABEL[latestAppeal.status]}
+            </span>
+            {resolved && (
+              <span className="text-[11px] px-3 py-1.5 rounded-full font-semibold bg-success/10 text-success inline-flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> Human-reviewed
+              </span>
+            )}
+            {latestAppeal.createdAt && (
+              <span className="text-[11px] text-muted-foreground">
+                Submitted {new Date(latestAppeal.createdAt).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+
+          <p className="text-[13px] text-foreground/75 leading-relaxed">
+            Agent reason: {latestAppeal.agentReason}
+          </p>
+
+          {latestAppeal.correctedScore != null && (
+            <p className="text-[13px] text-foreground/75">
+              AI score <span className="font-semibold">{aiScore ?? "-"}</span> · corrected score{" "}
+              <span className="font-semibold text-success">{latestAppeal.correctedScore}</span>
+            </p>
+          )}
+
+          {resolved ? (
+            latestAppeal.qaResponse && (
+              <p className="text-[13px] text-foreground/75 leading-relaxed">
+                Your note: {latestAppeal.qaResponse}
+              </p>
+            )
+          ) : (
+            <div className="space-y-3 pt-1">
+              <textarea
+                value={qaResponse}
+                onChange={(e) => setQaResponse(e.target.value)}
+                rows={3}
+                placeholder="Add a note for the agent (optional)."
+                className="w-full rounded-2xl border border-border/70 bg-card/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                type="number"
+                value={correctedScore}
+                onChange={(e) => setCorrectedScore(e.target.value)}
+                placeholder="Corrected score (optional, for overturn)"
+                className="w-full rounded-2xl border border-border/70 bg-card/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Overturning records a corrected score for the audit trail. The AI score is never changed.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={resolving}
+                  onClick={() => resolveAppeal("overturned")}
+                  className="rounded-full bg-success px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] disabled:opacity-50"
+                >
+                  Overturn
+                </button>
+                <button
+                  type="button"
+                  disabled={resolving}
+                  onClick={() => resolveAppeal("upheld")}
+                  className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground hover:text-foreground disabled:opacity-50"
+                >
+                  Uphold
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </GlassCard>
+    );
+  }
+
+  return null;
+};
+
 type CallTab = "overview" | "transcript" | "scores" | "report" | "evidence";
 
 const CallDetailPage = () => {
@@ -291,6 +574,13 @@ const CallDetailPage = () => {
                 </div>
               </motion.div>
             ) : null}
+
+            <AppealSection
+              callId={call.callId}
+              reportSeverity={call.report.severity}
+              reportGrade={call.report.grade}
+              aiScore={call.report.overallScore}
+            />
 
             {/* B4: section tabs so AI report / evidence are not buried at the bottom */}
             <div className="flex flex-wrap gap-1 border-b border-border/40">
