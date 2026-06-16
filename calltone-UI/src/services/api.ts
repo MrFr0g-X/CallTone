@@ -78,6 +78,8 @@ export interface UserCapabilities {
   canViewEvidence?: boolean;
   canViewAiReport?: boolean;
   canViewTrends?: boolean;
+  canAppealCalls?: boolean;
+  canReviewAppeals?: boolean;
 }
 
 export interface AuthApiUser {
@@ -629,6 +631,41 @@ export const contextApi = {
 
   updateTicket: (ticketId: string, status: "approved" | "rejected", note?: string) =>
     apiClient.patch<ContextTicket>(`/context/tickets/${ticketId}`, { status, note }),
+};
+
+// ── Appeals ────────────────────────────────────────────────────────────────
+
+export type AppealStatus = "open" | "under_review" | "upheld" | "overturned";
+
+export interface CallAppeal {
+  id: string;
+  callId: string;
+  status: AppealStatus;
+  agentReason: string;
+  qaResponse?: string | null;
+  correctedScore?: number | null;
+  createdAt: string | null;
+  resolvedAt?: string | null;
+}
+
+export interface ResolveAppealPayload {
+  status: AppealStatus;
+  qaResponse?: string;
+  correctedScore?: number;
+}
+
+export const appealsApi = {
+  create: (callId: string, reason: string) =>
+    apiClient.post<CallAppeal>(`/calls/${callId}/appeal`, { reason }),
+
+  list: () => apiClient.get<{ appeals: CallAppeal[] }>("/appeals"),
+
+  resolve: (id: string, body: ResolveAppealPayload) =>
+    apiClient.patch<CallAppeal>(`/appeals/${id}`, {
+      status: body.status,
+      qa_response: body.qaResponse,
+      corrected_score: body.correctedScore,
+    }),
 };
 
 export default apiClient;
