@@ -12,9 +12,19 @@ def _auth(token):
 
 
 def _scan_ok(text, use_llm=False):
+    # Full AI gate ran (llm_was_run True) and found nothing -> safe to auto-apply.
     return type("R", (), {
         "recommended_action": "proceed", "verdict": "safe",
-        "severity": "none", "overall_reasoning": "",
+        "severity": "none", "overall_reasoning": "", "llm_was_run": True,
+        "to_dict": lambda self: {"verdict": "safe", "recommended_action": "proceed"},
+    })()
+
+
+def _scan_static_only(text, use_llm=False):
+    # Static scan clean but LLM detector unavailable -> must be HELD, not applied.
+    return type("R", (), {
+        "recommended_action": "proceed", "verdict": "safe",
+        "severity": "none", "overall_reasoning": "", "llm_was_run": False,
         "to_dict": lambda self: {"verdict": "safe", "recommended_action": "proceed"},
     })()
 
@@ -52,6 +62,29 @@ def test_clean_change_is_auto_applied(client, qa_token, monkeypatch):
     assert body["decision"] == "ai_applied"
     assert len(calls) == 1
     assert body.get("diff", {}).get("field") == "greeting_script"
+
+
+def test_clean_change_is_held_when_llm_unavailable(client, qa_token, monkeypatch):
+    calls = []
+    monkeypatch.setattr(main, "injection_scan", _scan_static_only)
+    monkeypatch.setattr(
+        main, "_apply_context_field",
+        lambda company, field, text: calls.append((company, field, text)),
+    )
+    r = client.post(
+        "/api/context/tickets",
+        headers=_auth(qa_token),
+        json={
+            "companyName": "BankServ Global", "fieldName": "greeting_script",
+            "newText": "Thank you for calling BankServ, how may I help you today?",
+            "reason": "improve greeting",
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "pending"
+    assert body["decision"] == "ai_unavailable"
+    assert calls == []  # must NOT apply without the full AI safety gate
 
 
 def test_injection_change_is_auto_declined(client, qa_token, monkeypatch):

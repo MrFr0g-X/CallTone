@@ -53,8 +53,8 @@ FIELD_TO_GROUP = {
 
 @dataclass
 class TicketDecision:
-    status: str                    # applied | declined
-    decision: str                  # ai_applied | ai_blocked | ai_invalid
+    status: str                    # applied | declined | pending
+    decision: str                  # ai_applied | ai_blocked | ai_invalid | ai_unavailable
     reasoning: str
     scan: Optional[dict] = None
 
@@ -96,6 +96,21 @@ def decide_ticket(
             "declined", "ai_blocked",
             "Declined: the request looks like a prompt injection or unsafe content "
             f"({getattr(r, 'overall_reasoning', '')}). Please rephrase and resubmit.",
+            _scan_to_dict(r),
+        )
+
+    # SAFETY GATE: auto-apply requires the full AI injection review (static + LLM).
+    # The static scanner alone misses paraphrased injections, so if the LLM detector
+    # did not actually run (model server offline / not wired on this tier) we must NOT
+    # auto-apply attacker-controllable text into the scoring context. Hold the ticket
+    # for review when the AI engine is available again. (A clear static BLOCK above
+    # is still declined even without the LLM.)
+    if not getattr(r, "llm_was_run", False):
+        return TicketDecision(
+            "pending", "ai_unavailable",
+            "Held for review: the automated safety check needs the scoring engine, "
+            "which is temporarily offline. Your request was recorded and will be "
+            "reviewed automatically once it's back.",
             _scan_to_dict(r),
         )
 
