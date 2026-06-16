@@ -318,6 +318,75 @@ def _sync_company_context_to_model_server(company_name: str) -> bool:
         return False
 
 
+def _bump_patch_version(version: str) -> str:
+    """Increment the patch component of a semver string (default 1.0.0 -> 1.0.1)."""
+    parts = str(version or "1.0.0").strip().split(".")
+    while len(parts) < 3:
+        parts.append("0")
+    try:
+        parts[2] = str(int(parts[2]) + 1)
+    except ValueError:
+        parts[2] = "1"
+    return ".".join(parts[:3])
+
+
+def _apply_context_field(company_name: str, field_name: str, new_text: str) -> dict:
+    """Apply a single approved field change to a company's grouped context JSON.
+
+    Loads the grouped context, writes ``context[group][field_name] = new_text``,
+    bumps the patch version + ``last_updated``, persists the JSON, then mirrors
+    it to the GPU model server via ``_sync_company_context_to_model_server``.
+
+    Returns a small dict with the old/new text + new version. Raises
+    ``FileNotFoundError`` if the context is missing and ``ValueError`` for an
+    unknown field.
+    """
+    import json as _json
+    from app.context_tickets import FIELD_TO_GROUP
+
+    group = FIELD_TO_GROUP.get(field_name)
+    if group is None:
+        raise ValueError(f"'{field_name}' is not a known context field.")
+
+    path = _context_path(company_name)
+    if not path.exists():
+        raise FileNotFoundError(f"No company context to update for {company_name}.")
+    context = _json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(context, dict):
+        raise FileNotFoundError(f"Context for {company_name} is not a JSON object.")
+
+    section = context.get(group)
+    if not isinstance(section, dict):
+        section = {}
+        context[group] = section
+    old_text = section.get(field_name, "")
+    section[field_name] = new_text
+
+    new_version = _bump_patch_version(context.get("context_version", "1.0.0"))
+    context["context_version"] = new_version
+    context["last_updated"] = datetime.now(timezone.utc).isoformat()
+
+    path.write_text(_json.dumps(context, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Targeted single-field update: push the whole context to the model server.
+    # Atomic-node regeneration for just this section requires the LLM; if the
+    # model server is unreachable the field text is still applied + pushed.
+    synced = _sync_company_context_to_model_server(company_name)
+    if not synced and os.getenv("MODEL_SERVER_URL"):
+        log.warning(
+            "context.field_apply_not_synced",
+            extra={"event": "field_apply_not_synced", "company": company_name, "field": field_name},
+        )
+
+    return {
+        "old_text": old_text,
+        "new_text": new_text,
+        "group": group,
+        "context_version": new_version,
+        "synced_to_model_server": synced,
+    }
+
+
 def _ensure_known_company_context(company_name: str) -> str:
     company_name = str(company_name or "").strip()
     if not company_name:
