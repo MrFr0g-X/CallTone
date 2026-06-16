@@ -329,7 +329,14 @@ def injection_scan(text: str, use_llm: bool = False):
     if str(MODELS_DIR) not in _sys.path:
         _sys.path.insert(0, str(MODELS_DIR))
     from LAYER_2.security.injection_scanner import scan as _scan
-    return _scan(text, use_llm=use_llm)
+    # The LLM detector imports skill_runtime + loads a local model, which the slim
+    # API tier does not ship. The static prompt-injection scanner is pure-Python
+    # (regex patterns) and catches the canonical injections, so fall back to it if
+    # the LLM path is unavailable rather than 500 the submitter.
+    try:
+        return _scan(text, use_llm=use_llm)
+    except Exception:
+        return _scan(text, use_llm=False)
 
 
 def _bump_patch_version(version: str) -> str:
@@ -4024,7 +4031,10 @@ def create_ticket(
     from app.context_tickets import decide_ticket
     decision = decide_ticket(
         field_name, new_text,
-        scan=lambda t: injection_scan(t, use_llm=bool(os.getenv("MODEL_SERVER_URL"))),
+        # Static prompt-injection scan (CPU, deterministic). The LLM detector needs
+        # skill_runtime + a local model not present on the API tier; injection_scan
+        # falls back to static automatically if use_llm can't run.
+        scan=lambda t: injection_scan(t, use_llm=False),
     )
 
     applied_info: dict | None = None
