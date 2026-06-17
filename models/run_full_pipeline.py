@@ -75,7 +75,12 @@ sys.path.insert(0, str(PROJECT_ROOT / "skill_implementation"))
 # OPT-A4: SNR gate — skip resemble-enhance on already-clean telephony audio.
 # Tuned via empirical spectral-flatness probe: clean telephony recordings
 # typically score ≥ 18 dB. Anything below gets the full denoise pass.
-_SNR_SKIP_THRESHOLD_DB = 18.0
+# Threshold is overridable via CALLTONE_SNR_SKIP_DB for tuning/benchmarking;
+# the default (18.0) preserves the original shipped behavior exactly.
+try:
+    _SNR_SKIP_THRESHOLD_DB = float(os.environ.get("CALLTONE_SNR_SKIP_DB", "18.0"))
+except (TypeError, ValueError):
+    _SNR_SKIP_THRESHOLD_DB = 18.0
 
 
 def _estimate_snr_db(audio_path: str) -> float:
@@ -97,7 +102,7 @@ def _estimate_snr_db(audio_path: str) -> float:
         return 0.0
 
 
-def denoise_audio(input_path: str, mode: str = "denoise") -> str:
+def denoise_audio(input_path: str, mode: str = "denoise", force: bool = False) -> str:
     """
     Process audio before transcription.
 
@@ -121,8 +126,10 @@ def denoise_audio(input_path: str, mode: str = "denoise") -> str:
         return input_path
 
     # OPT-A4: SNR gate — return original path if audio is already clean.
+    # ``force`` bypasses the gate (always denoise); used for benchmarking and
+    # for operators who want to guarantee the denoise pass.
     snr_db = _estimate_snr_db(input_path)
-    if snr_db >= _SNR_SKIP_THRESHOLD_DB:
+    if not force and snr_db >= _SNR_SKIP_THRESHOLD_DB:
         print(f"\n{'='*70}")
         print("LAYER 1 — STEP 1: AUDIO ENHANCEMENT SKIPPED (SNR gate)")
         print(f"{'='*70}")
@@ -461,6 +468,11 @@ def main():
         "--use-consensus", action="store_true",
         help="Run 3-pass consensus scoring for Layer 2 instead of one deterministic pass.",
     )
+    parser.add_argument(
+        "--denoise", choices=["auto", "force", "off"], default="auto",
+        help="Audio denoise policy: 'auto' (default) = SNR gate decides (skip clean "
+             "audio); 'force' = always denoise; 'off' = never denoise.",
+    )
     args = parser.parse_args()
 
     # Propagate --asr to transcribe_diarize via env var (subprocess-safe).
@@ -520,7 +532,10 @@ def main():
         print(f"\n[SKIP LAYER 1]  Reusing: {json_path}")
     else:
         # Step 1: Denoise
-        denoised_path = denoise_audio(audio_file)
+        _denoise_mode = "none" if args.denoise == "off" else "denoise"
+        denoised_path = denoise_audio(
+            audio_file, mode=_denoise_mode, force=(args.denoise == "force")
+        )
 
         # Step 2: Transcribe + diarize
         txt_path, json_path = transcribe_diarize(denoised_path, args.speakers)
