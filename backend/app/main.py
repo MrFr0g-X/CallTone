@@ -3080,28 +3080,40 @@ def _run_pipeline(
 
 PIPELINE_QUEUE_ETA_SECONDS = int(os.getenv("PIPELINE_QUEUE_ETA_SECONDS", "120"))
 PIPELINE_QUEUE_POLL_SECONDS = float(os.getenv("PIPELINE_QUEUE_POLL_SECONDS", "2"))
+# Number of pipeline jobs processed concurrently. Default 1 reproduces the
+# original strictly-serialized behavior exactly; raise it (with enough GPU
+# capacity / a model-server pool) to process calls from many tenants in
+# parallel. The DB-backed claim is atomic, so this is safe to scale.
+PIPELINE_WORKER_CONCURRENCY = max(1, int(os.getenv("PIPELINE_WORKER_CONCURRENCY", "1")))
+# A job whose ``locked_at`` is older than this lease is assumed orphaned (its
+# worker died) and is requeued by the next claimer. 0 disables the reaper.
+PIPELINE_JOB_LEASE_SECONDS = int(os.getenv("PIPELINE_JOB_LEASE_SECONDS", "3600"))
 _PIPELINE_QUEUE_LOCK = threading.Lock()
 _PIPELINE_QUEUE_WAKE_EVENT = threading.Event()
-_PIPELINE_ACTIVE_CALL_ID: str | None = None
-_PIPELINE_WORKER_THREAD: threading.Thread | None = None
+# Call IDs currently being processed by the worker pool (one per busy worker).
+_PIPELINE_ACTIVE_CALL_IDS: set[str] = set()
+_PIPELINE_WORKER_THREADS: list[threading.Thread] = []
 _PIPELINE_RECOVERY_DONE = False
 
 
 def _ensure_pipeline_queue_worker_started() -> None:
-    """Start the durable pipeline queue worker if it is not running."""
-    global _PIPELINE_RECOVERY_DONE, _PIPELINE_WORKER_THREAD
+    """Start the durable pipeline queue worker pool if it is not running."""
+    global _PIPELINE_RECOVERY_DONE
     with _PIPELINE_QUEUE_LOCK:
         if not _PIPELINE_RECOVERY_DONE:
             _recover_interrupted_pipeline_jobs()
             _PIPELINE_RECOVERY_DONE = True
-        if _PIPELINE_WORKER_THREAD is not None and _PIPELINE_WORKER_THREAD.is_alive():
-            return
-        _PIPELINE_WORKER_THREAD = threading.Thread(
-            target=_pipeline_queue_worker_loop,
-            name="calltone-pipeline-queue",
-            daemon=True,
-        )
-        _PIPELINE_WORKER_THREAD.start()
+        # Drop dead threads, then top the pool back up to the configured size.
+        alive = [t for t in _PIPELINE_WORKER_THREADS if t.is_alive()]
+        _PIPELINE_WORKER_THREADS[:] = alive
+        for i in range(len(alive), PIPELINE_WORKER_CONCURRENCY):
+            thread = threading.Thread(
+                target=_pipeline_queue_worker_loop,
+                name=f"calltone-pipeline-queue-{i}",
+                daemon=True,
+            )
+            _PIPELINE_WORKER_THREADS.append(thread)
+            thread.start()
 
 
 def _enqueue_pipeline(
@@ -3161,26 +3173,34 @@ def _pipeline_queue_snapshot(call_id: str | None = None) -> dict[str, int | str 
     try:
         queued_jobs = _queued_pipeline_jobs(db)
         queued = [job.call_id for job in queued_jobs]
-        running = db.query(PipelineJob).filter(PipelineJob.status == "running").first()
-        running_call_id = running.call_id if running else None
+        running_call_ids = [
+            row[0]
+            for row in db.query(PipelineJob.call_id).filter(PipelineJob.status == "running").all()
+        ]
     finally:
         db.close()
     with _PIPELINE_QUEUE_LOCK:
-        active_id = _PIPELINE_ACTIVE_CALL_ID
-    active_id = active_id or running_call_id
+        active_ids = set(_PIPELINE_ACTIVE_CALL_IDS)
+    active_ids.update(running_call_ids)
+    concurrency = max(1, PIPELINE_WORKER_CONCURRENCY)
     position = None
     if call_id:
-        if call_id == active_id:
+        if call_id in active_ids:
             position = 0
         elif call_id in queued:
             position = queued.index(call_id) + 1
     eta = None
     if position is not None:
-        eta = PIPELINE_QUEUE_ETA_SECONDS if position == 0 else position * PIPELINE_QUEUE_ETA_SECONDS
+        # With N concurrent workers, a job at queue position p starts after
+        # roughly ceil(p / N) batches drain.
+        batches = (position + concurrency - 1) // concurrency
+        eta = PIPELINE_QUEUE_ETA_SECONDS if position == 0 else batches * PIPELINE_QUEUE_ETA_SECONDS
     return {
-        "activeCallId": active_id,
+        "activeCallId": next(iter(sorted(active_ids)), None),
+        "activeCallIds": sorted(active_ids),
         "queuePosition": position,
         "queuedCount": len(queued),
+        "concurrency": concurrency,
         "etaSeconds": eta,
     }
 
@@ -3208,17 +3228,21 @@ def _pipeline_queue_overview() -> dict[str, int | str | list[str] | None]:
     finally:
         db.close()
     with _PIPELINE_QUEUE_LOCK:
-        active_id = _PIPELINE_ACTIVE_CALL_ID
-    active_id = active_id or (running[0] if running else None)
+        active_ids = set(_PIPELINE_ACTIVE_CALL_IDS)
+    active_ids.update(running)
+    concurrency = max(1, PIPELINE_WORKER_CONCURRENCY)
+    drain_batches = (len(queued) + concurrency - 1) // concurrency
     return {
-        "activeCallId": active_id,
+        "activeCallId": running[0] if running else next(iter(sorted(active_ids)), None),
+        "activeCallIds": sorted(active_ids),
+        "concurrency": concurrency,
         "queuedCount": len(queued),
         "queuedCallIds": queued,
         "runningCallIds": running,
         "failedCount": failed_count,
         "failedCallIds": [job.call_id for job in failed_jobs],
         "etaSecondsPerJob": PIPELINE_QUEUE_ETA_SECONDS,
-        "estimatedDrainSeconds": len(queued) * PIPELINE_QUEUE_ETA_SECONDS,
+        "estimatedDrainSeconds": drain_batches * PIPELINE_QUEUE_ETA_SECONDS,
     }
 
 
@@ -3312,29 +3336,80 @@ def _recover_interrupted_pipeline_jobs() -> None:
 
 
 def _claim_next_pipeline_job() -> dict[str, str] | None:
+    # Serialize the (fast) claim across in-process workers; the Postgres
+    # advisory lock inside additionally serializes across separate backend
+    # instances. Together these guarantee a queued job is claimed exactly once,
+    # even with PIPELINE_WORKER_CONCURRENCY > 1.
+    with _PIPELINE_QUEUE_LOCK:
+        return _claim_next_pipeline_job_locked()
+
+
+def _claim_next_pipeline_job_locked() -> dict[str, str] | None:
     db = SessionLocal()
     try:
-        if db.bind and db.bind.dialect.name.startswith("postgres"):
+        is_postgres = bool(db.bind and db.bind.dialect.name.startswith("postgres"))
+        if is_postgres:
             got_lock = db.execute(text("SELECT pg_try_advisory_xact_lock(42620260425)")).scalar()
             if got_lock is not True:
                 return None
 
-        running_exists = db.query(PipelineJob.id).filter(PipelineJob.status == "running").first()
-        if running_exists is not None:
+        now = datetime.now(timezone.utc)
+
+        # Reap orphaned jobs: a 'running' row whose worker died leaves a stale
+        # lock; requeue it so the pool can pick it up again.
+        if PIPELINE_JOB_LEASE_SECONDS > 0:
+            lease_cutoff = now - timedelta(seconds=PIPELINE_JOB_LEASE_SECONDS)
+            for job in (
+                db.query(PipelineJob)
+                .filter(PipelineJob.status == "running", PipelineJob.locked_at < lease_cutoff)
+                .all()
+            ):
+                job.status = "queued"
+                job.locked_at = None
+                job.updated_at = now
+            # Make the requeue visible to the count/select below even when the
+            # session has autoflush disabled.
+            db.flush()
+
+        # Honor the concurrency cap: never run more than N jobs at once.
+        running_count = db.query(PipelineJob.id).filter(PipelineJob.status == "running").count()
+        if running_count >= PIPELINE_WORKER_CONCURRENCY:
+            db.commit()
             return None
 
+        # Fair scheduling: prefer the tenant with the fewest jobs currently
+        # running so one busy company cannot starve the others. Within a tenant,
+        # fall back to priority then FIFO.
+        running_counts = (
+            db.query(
+                PipelineJob.company_name.label("company_name"),
+                func.count().label("rc"),
+            )
+            .filter(PipelineJob.status == "running")
+            .group_by(PipelineJob.company_name)
+            .subquery()
+        )
         query = (
             db.query(PipelineJob)
+            .outerjoin(
+                running_counts,
+                PipelineJob.company_name == running_counts.c.company_name,
+            )
             .filter(PipelineJob.status == "queued")
-            .order_by(PipelineJob.priority.asc(), PipelineJob.created_at.asc(), PipelineJob.id.asc())
+            .order_by(
+                func.coalesce(running_counts.c.rc, 0).asc(),
+                PipelineJob.priority.asc(),
+                PipelineJob.created_at.asc(),
+                PipelineJob.id.asc(),
+            )
         )
-        if db.bind and db.bind.dialect.name.startswith("postgres"):
-            query = query.with_for_update(skip_locked=True)
+        if is_postgres:
+            query = query.with_for_update(skip_locked=True, of=PipelineJob)
         job = query.first()
         if job is None:
+            db.commit()
             return None
 
-        now = datetime.now(timezone.utc)
         job.status = "running"
         job.attempts = int(job.attempts or 0) + 1
         job.locked_at = now
@@ -3418,7 +3493,6 @@ def _finish_pipeline_job(call_id: str, worker_error: str | None = None) -> None:
 
 
 def _pipeline_queue_worker_loop() -> None:
-    global _PIPELINE_ACTIVE_CALL_ID
     while True:
         job = _claim_next_pipeline_job()
         if job is None:
@@ -3428,7 +3502,7 @@ def _pipeline_queue_worker_loop() -> None:
 
         call_id = job["call_id"]
         with _PIPELINE_QUEUE_LOCK:
-            _PIPELINE_ACTIVE_CALL_ID = call_id
+            _PIPELINE_ACTIVE_CALL_IDS.add(call_id)
         worker_error = None
         try:
             _run_pipeline(call_id, job["audio_path"], job["asr_engine"], job["company_name"] or None)
@@ -3437,8 +3511,9 @@ def _pipeline_queue_worker_loop() -> None:
         finally:
             _finish_pipeline_job(call_id, worker_error=worker_error)
             with _PIPELINE_QUEUE_LOCK:
-                if _PIPELINE_ACTIVE_CALL_ID == call_id:
-                    _PIPELINE_ACTIVE_CALL_ID = None
+                _PIPELINE_ACTIVE_CALL_IDS.discard(call_id)
+            # A slot just freed up; wake any idle workers to pull the next job.
+            _PIPELINE_QUEUE_WAKE_EVENT.set()
 
 
 @app.on_event("startup")

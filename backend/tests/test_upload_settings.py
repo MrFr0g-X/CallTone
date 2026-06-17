@@ -235,8 +235,8 @@ def test_pipeline_queue_snapshot_reports_active_and_queued_positions(client):
 
     db = SessionLocal()
     with app_main._PIPELINE_QUEUE_LOCK:
-        old_active = app_main._PIPELINE_ACTIVE_CALL_ID
-        app_main._PIPELINE_ACTIVE_CALL_ID = "active-call"
+        old_active = set(app_main._PIPELINE_ACTIVE_CALL_IDS)
+        app_main._PIPELINE_ACTIVE_CALL_IDS.add("active-call")
 
     try:
         db.query(PipelineJob).filter(PipelineJob.call_id.in_(["queued-1", "queued-2"])).delete(
@@ -261,7 +261,8 @@ def test_pipeline_queue_snapshot_reports_active_and_queued_positions(client):
         db.commit()
         db.close()
         with app_main._PIPELINE_QUEUE_LOCK:
-            app_main._PIPELINE_ACTIVE_CALL_ID = old_active
+            app_main._PIPELINE_ACTIVE_CALL_IDS.clear()
+            app_main._PIPELINE_ACTIVE_CALL_IDS.update(old_active)
 
 
 def test_recover_interrupted_pipeline_jobs_requeues_running_jobs(client):
@@ -293,8 +294,8 @@ def test_pipeline_queue_endpoint_is_role_protected(client, qa_token, agent_token
 
     db = SessionLocal()
     with app_main._PIPELINE_QUEUE_LOCK:
-        old_active = app_main._PIPELINE_ACTIVE_CALL_ID
-        app_main._PIPELINE_ACTIVE_CALL_ID = "active-call"
+        old_active = set(app_main._PIPELINE_ACTIVE_CALL_IDS)
+        app_main._PIPELINE_ACTIVE_CALL_IDS.add("active-call")
 
     try:
         db.query(PipelineJob).filter(PipelineJob.call_id.in_(["queued-1", "queued-2"])).delete(
@@ -322,7 +323,8 @@ def test_pipeline_queue_endpoint_is_role_protected(client, qa_token, agent_token
         db.commit()
         db.close()
         with app_main._PIPELINE_QUEUE_LOCK:
-            app_main._PIPELINE_ACTIVE_CALL_ID = old_active
+            app_main._PIPELINE_ACTIVE_CALL_IDS.clear()
+            app_main._PIPELINE_ACTIVE_CALL_IDS.update(old_active)
 
 
 def test_pipeline_jobs_list_retry_and_dead_letter(client, admin_token, qa_token, agent_token):
