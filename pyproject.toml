@@ -9,6 +9,10 @@ pythonpath = [
     "models",
     "models/skill_implementation",
 ]
+markers = [
+    "integration: end-to-end tests that start the real worker pool; excluded from the default suite (run explicitly with -m integration)",
+]
+addopts = "-m 'not integration'"
 
 [tool.coverage.run]
 source = ["backend/app", "models/skill_implementation/skill_runtime"]
