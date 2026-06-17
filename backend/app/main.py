@@ -516,6 +516,17 @@ def _run_startup_migrations():
         _add_client_id_if_missing("pipeline_settings")
         _add_client_id_if_missing("email_events")
 
+        # Per-tenant usage quota columns (added post-initial-create). NULL quota
+        # = unlimited, so existing tenants keep their pre-quota behavior.
+        if "client_policies" in inspector.get_table_names():
+            cp_cols = _cols("client_policies")
+            if "monthly_call_quota" not in cp_cols:
+                conn.execute(text("ALTER TABLE client_policies ADD COLUMN monthly_call_quota INTEGER"))
+                conn.commit()
+            if "quota_enforcement" not in cp_cols:
+                conn.execute(text("ALTER TABLE client_policies ADD COLUMN quota_enforcement VARCHAR(10) DEFAULT 'hard'"))
+                conn.commit()
+
     db = SessionLocal()
     try:
         default_client = (
@@ -889,6 +900,39 @@ def _policy_client_id_for_request(current_user: User, client_id: int | None) -> 
             raise HTTPException(status_code=400, detail="client_id is required for platform users")
         return int(client_id)
     return _tenant_client_id(current_user)
+
+
+def _current_month_start() -> datetime:
+    """Start of the current UTC calendar month, naive to match calls.created_at."""
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    return now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
+def _tenant_calls_this_month(db: Session, client_id: int) -> int:
+    """Real-time usage meter: calls a tenant submitted this calendar month."""
+    return (
+        db.query(func.count(Call.id))
+        .filter(Call.client_id == client_id, Call.created_at >= _current_month_start())
+        .scalar()
+    ) or 0
+
+
+def _quota_status(db: Session, policy: ClientPolicy | None, client_id: int) -> dict:
+    """Quota state for a tenant: used / remaining / exceeded. Used for both
+    enforcement (upload) and transparency (usage endpoint). NULL quota =
+    unlimited, which reproduces the pre-quota behavior."""
+    quota = getattr(policy, "monthly_call_quota", None) if policy else None
+    enforcement = (getattr(policy, "quota_enforcement", "hard") if policy else "hard") or "hard"
+    used = _tenant_calls_this_month(db, client_id)
+    remaining = None if quota is None else max(0, int(quota) - used)
+    return {
+        "monthlyCallQuota": quota,
+        "enforcement": enforcement,
+        "used": used,
+        "remaining": remaining,
+        "exceeded": bool(quota is not None and used >= int(quota)),
+        "periodStart": _current_month_start().isoformat(),
+    }
 
 
 def _serialize_client_policy(policy: ClientPolicy) -> dict:
@@ -3522,6 +3566,27 @@ def _start_pipeline_queue_worker_on_startup() -> None:
         _ensure_pipeline_queue_worker_started()
 
 
+@app.get(f"{settings.API_V1_PREFIX}/usage")
+def get_usage(
+    client_id: int | None = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Real-time monthly call-quota usage for the caller's tenant.
+
+    Tenant users see their own company; platform users may pass ``client_id``.
+    Returns quota, used, remaining, and whether the quota is exceeded.
+    """
+    if _is_platform_user(current_user):
+        if client_id is None:
+            raise HTTPException(status_code=400, detail="client_id is required for platform users")
+        target = int(client_id)
+    else:
+        target = _tenant_client_id(current_user)
+    policy = _get_client_policy(db, target)
+    return _quota_status(db, policy, target)
+
+
 @app.post(f"{settings.API_V1_PREFIX}/calls/upload")
 async def upload_call(
     file: UploadFile = File(...),
@@ -3537,6 +3602,18 @@ async def upload_call(
         policy = _get_client_policy(db, current_user.client_id)
         if not policy or not policy.qa_can_upload_calls:
             raise HTTPException(status_code=403, detail="Call upload is disabled by company policy")
+        # Per-subscription usage quota: bound a tenant's monthly GPU consumption.
+        # A 'hard' quota blocks once reached; 'soft' allows metered overage.
+        quota = _quota_status(db, policy, _tenant_client_id(current_user))
+        if quota["exceeded"] and quota["enforcement"] == "hard":
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Monthly call quota reached ({quota['used']}/{quota['monthlyCallQuota']}). "
+                    f"Quota resets at the start of next month, or contact your administrator "
+                    f"to upgrade your plan."
+                ),
+            )
 
     if file.content_type and file.content_type not in ALLOWED_AUDIO_TYPES:
         raise HTTPException(

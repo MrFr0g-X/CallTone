@@ -136,6 +136,14 @@ class ClientPolicy(Base):
     qa_scope = Column(String(30), nullable=False, default="company")  # company | assigned_team | own_uploads
     tenant_admin_can_invite_admins = Column(Boolean, nullable=False, default=False)
 
+    # Per-subscription usage quota (bounds GPU cost from a noisy/abusive tenant).
+    # NULL = unlimited (preserves pre-quota behavior exactly). When set, it caps
+    # the number of calls a tenant may submit per calendar month.
+    monthly_call_quota = Column(Integer, nullable=True, default=None)
+    # 'hard' = block uploads once the quota is reached; 'soft' = allow overage
+    # (metered for billing) but keep serving. Only consulted when a quota is set.
+    quota_enforcement = Column(String(10), nullable=False, default="hard")  # hard | soft
+
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
