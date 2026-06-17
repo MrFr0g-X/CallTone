@@ -38,15 +38,73 @@ class ModelServerError(RuntimeError):
     """Raised when the model server is unreachable or returns an error body."""
 
 
+# Composite job handle: when a GPU pool is configured we prefix the job_id with
+# the server that owns it so poll/fetch_result route back to the right GPU.
+# Single-server deployments keep the bare job_id (backward compatible).
+HANDLE_DELIM = "|@|"
+HEALTH_TTL_SECONDS = 15.0
+_rr_counter = 0
+_health_cache: dict[str, tuple[float, bool]] = {}
+
+
+def _server_urls() -> list[str]:
+    """All configured model-server base URLs.
+
+    ``MODEL_SERVER_URLS`` (comma-separated) defines a GPU pool; ``MODEL_SERVER_URL``
+    is the single-server fallback. Either enables the two-tier path.
+    """
+    raw = os.getenv("MODEL_SERVER_URLS") or os.getenv("MODEL_SERVER_URL") or ""
+    return [u.strip().rstrip("/") for u in raw.split(",") if u.strip()]
+
+
 def configured() -> bool:
-    return bool(os.getenv("MODEL_SERVER_URL"))
+    return bool(_server_urls())
 
 
 def _base_url() -> str:
-    url = os.getenv("MODEL_SERVER_URL")
-    if not url:
-        raise ModelServerError("MODEL_SERVER_URL is not set")
-    return url.rstrip("/")
+    """Default target for server-agnostic ops (health, contexts, scan)."""
+    urls = _server_urls()
+    if not urls:
+        raise ModelServerError("MODEL_SERVER_URL / MODEL_SERVER_URLS is not set")
+    return urls[0]
+
+
+def _is_healthy(url: str) -> bool:
+    """Cheap cached health probe so a dead GPU is skipped by the balancer."""
+    now = time.time()
+    cached = _health_cache.get(url)
+    if cached and now - cached[0] < HEALTH_TTL_SECONDS:
+        return cached[1]
+    try:
+        ok = httpx.get(f"{url}/v1/health", timeout=2.0).status_code < 400
+    except httpx.RequestError:
+        ok = False
+    _health_cache[url] = (now, ok)
+    return ok
+
+
+def _select_base_url() -> str:
+    """Round-robin a job across healthy GPUs (the load balancer)."""
+    global _rr_counter
+    urls = _server_urls()
+    if not urls:
+        raise ModelServerError("MODEL_SERVER_URL / MODEL_SERVER_URLS is not set")
+    if len(urls) == 1:
+        return urls[0]
+    healthy = [u for u in urls if _is_healthy(u)] or urls
+    _rr_counter += 1
+    return healthy[_rr_counter % len(healthy)]
+
+
+def _make_handle(url: str, job_id: str) -> str:
+    return job_id if len(_server_urls()) <= 1 else f"{url}{HANDLE_DELIM}{job_id}"
+
+
+def _split_handle(handle: str) -> tuple[str, str]:
+    if HANDLE_DELIM in handle:
+        url, job_id = handle.split(HANDLE_DELIM, 1)
+        return url.rstrip("/"), job_id
+    return _base_url(), handle
 
 
 def _auth_headers() -> dict[str, str]:
@@ -85,7 +143,8 @@ def submit(
     if not path.is_file():
         raise ModelServerError(f"audio file not found: {path}")
 
-    url = f"{_base_url()}/v1/analyze"
+    server = _select_base_url()
+    url = f"{server}/v1/analyze"
     display_name = filename or path.name
 
     data: dict[str, Any] = {
@@ -136,9 +195,9 @@ def submit(
             raise ModelServerError(f"malformed /analyze response: {body!r}")
         log.info(
             "model_client.submit.ok",
-            extra={"event": "submit_ok", "job_id": job_id},
+            extra={"event": "submit_ok", "job_id": job_id, "server": server},
         )
-        return job_id
+        return _make_handle(server, job_id)
 
     raise ModelServerError(f"submit exhausted retries: {last_err}")
 
@@ -193,23 +252,40 @@ def scan_injection(text: str) -> dict[str, Any]:
 
 
 def put_context(company: str, payload: dict[str, Any]) -> dict[str, Any]:
-    """Mirror a backend context JSON to the Tier-3 model server."""
-    url = f"{_base_url()}/v1/contexts/{quote(company, safe='')}"
-    r = httpx.put(
-        url,
-        headers={**_auth_headers(), "Content-Type": "application/json"},
-        json=payload,
-        timeout=POLL_READ_TIMEOUT_SECONDS,
-    )
-    if r.status_code >= 400:
-        raise ModelServerError(f"put_context failed: HTTP {r.status_code} {r.text[:400]}")
-    body = r.json()
-    return body if isinstance(body, dict) else {"ok": True}
+    """Mirror a backend context JSON to *every* GPU in the pool.
+
+    In a multi-GPU deployment any server may score a given tenant, so the
+    company context must exist on all of them. Succeeds if at least one
+    server accepts; raises only when every server fails.
+    """
+    path = f"/v1/contexts/{quote(company, safe='')}"
+    headers = {**_auth_headers(), "Content-Type": "application/json"}
+    result: dict[str, Any] = {"ok": True}
+    last_err: str | None = None
+    ok_any = False
+    for base in _server_urls():
+        try:
+            r = httpx.put(f"{base}{path}", headers=headers, json=payload,
+                          timeout=POLL_READ_TIMEOUT_SECONDS)
+        except httpx.RequestError as exc:
+            last_err = f"{base}: {exc}"
+            continue
+        if r.status_code >= 400:
+            last_err = f"{base}: HTTP {r.status_code} {r.text[:200]}"
+            continue
+        ok_any = True
+        body = r.json()
+        if isinstance(body, dict):
+            result = body
+    if not ok_any:
+        raise ModelServerError(f"put_context failed on all servers: {last_err}")
+    return result
 
 
 def poll(job_id: str) -> dict[str, Any]:
     """Return ``{status, progress_pct, error?, …}`` for *job_id*."""
-    url = f"{_base_url()}/v1/jobs/{job_id}"
+    base, jid = _split_handle(job_id)
+    url = f"{base}/v1/jobs/{jid}"
     last_err: Exception | None = None
     for attempt in range(1, MAX_RETRIES + 1):
         try:
@@ -243,7 +319,8 @@ def poll(job_id: str) -> dict[str, Any]:
 
 def fetch_result(job_id: str) -> dict[str, Any]:
     """Fetch the final QA report; raises if the job isn't done."""
-    url = f"{_base_url()}/v1/jobs/{job_id}/result"
+    base, jid = _split_handle(job_id)
+    url = f"{base}/v1/jobs/{jid}/result"
     last_err: Exception | None = None
     for attempt in range(1, MAX_RETRIES + 1):
         try:
