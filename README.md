@@ -56,42 +56,65 @@ The GPU tier is never exposed to the public internet; the backend reaches it onl
 
 ```
 CallTone/
-├── models/
+├── models/                               # AI inference pipeline (no training)
 │   ├── run_full_pipeline.py              # End-to-end: L1 -> L2 -> L3
-│   ├── LAYER_1/                          # Audio intelligence pipeline
+│   ├── download_models.py                # Downloads all model weights
+│   ├── LAYER_1/                          # Audio intelligence
+│   │   ├── pipeline.py
 │   │   ├── pipeline/transcribe_diarize.py
 │   │   ├── role_identification.py
 │   │   ├── emotion_integration.py
-│   │   └── models/                       # Downloaded model weights
+│   │   ├── resemble-enhance/             # SNR-gated denoiser
+│   │   ├── audio_emotion_detection_enhanced/   # Audio2Emotion backend
+│   │   ├── models/                       # Downloaded weights
+│   │   └── tests/
 │   ├── LAYER_2/                          # QA scoring engine
 │   │   ├── pipeline.py                   # Rating pipeline (7 dimensions)
 │   │   ├── company_context/              # Company policy storage
 │   │   ├── context_graph/                # Zettelkasten-style knowledge graph
 │   │   ├── consensus/                    # Deterministic scoring runner
-│   │   ├── security/                     # Prompt-injection scanner
-│   │   └── change_management/            # AI-gated policy change tickets
+│   │   ├── security/                     # injection_scanner.py, static_patterns.py, tests/
+│   │   └── change_management/            # change_tracker.py + AI-gated tickets/
 │   ├── LAYER_3/                          # Report generation
 │   │   ├── pipeline.py
-│   │   └── renderers/                    # LaTeX simple + narrative
-│   ├── model_server/                     # GPU model server (FastAPI, bearer-token auth)
-│   └── skill_implementation/             # LLM skills framework
-│       ├── skills/                       # prompt-only skill definitions
-│       ├── skill_runtime/                # loader, validator, runner
-│       └── runner/run_skill.py           # CLI interface
-├── backend/                              # FastAPI REST API (~30 endpoints)
+│   │   ├── renderers/                    # LaTeX simple + narrative
+│   │   └── templates/
+│   ├── skill_implementation/             # LLM skills framework
+│   │   ├── skills/                       # prompt-only skill definitions
+│   │   ├── skill_runtime/                # loader, validator, backends
+│   │   ├── runner/run_skill.py           # CLI interface
+│   │   └── tests/
+│   └── eval/                             # WER / evaluation harness + results
+├── model_server/                         # GPU model server (FastAPI, on the GPU host)
+│   ├── main.py  endpoints.py  jobs.py    # analyze + job-status endpoints
+│   ├── auth.py                           # shared bearer token + IP allow-list
+│   ├── pipeline_adapter.py               # invokes the models/ pipeline
+│   ├── setup_vast_instance.sh / setup_vast_container.sh
+│   └── tests/
+├── backend/                              # FastAPI app tier (~30 endpoints)
 │   ├── app/
-│   │   ├── main.py                       # auth, upload, queue, appeals, health
-│   │   ├── models.py                     # SQLAlchemy ORM (multi-tenant schema)
+│   │   ├── main.py                       # auth, upload, calls, queue, health
+│   │   ├── context_tickets.py            # AI-gated context change tickets
+│   │   ├── models.py  schemas.py         # SQLAlchemy ORM + Pydantic (multi-tenant)
 │   │   ├── model_client.py               # talks to the GPU model server
 │   │   ├── database.py                   # PostgreSQL config
-│   │   ├── security.py                   # JWT + bcrypt + capability RBAC
-│   │   └── seed_data.py                  # Sample data loader
+│   │   ├── security.py  security_headers.py  rate_limit.py
+│   │   ├── logging_config.py             # structured JSON logging
+│   │   ├── email/                        # transactional email
+│   │   └── seed_data.py
+│   ├── tests/  loadtest/  data/
 │   └── requirements.txt
 ├── calltone-UI/                          # React + Vite + TypeScript
-│   ├── src/{pages,components,services,contexts}
+│   ├── src/{pages,components,contexts,services,hooks,lib,data,test}
+│   ├── vitest.config.ts                  # frontend tests
 │   └── package.json
-├── config.py                             # Path resolution
-└── download_models.py                    # Downloads all model weights
+├── database/schema.sql                   # reference schema
+├── scripts/                              # deploy, gpu provisioning, tunnel watchdog, ci, stress, security
+├── .github/workflows/                    # ci.yml, deploy.yml, release.yml, security.yml
+├── docs/                                 # studies, plans, runbooks (SECURITY/DEPLOYMENT_*)
+├── docker-compose.yml / .prod.yml / .staging.yml + Dockerfile
+├── config.py                             # path resolution
+└── download_models.py                    # top-level weight downloader
 ```
 
 ## The 7 Rating Dimensions
