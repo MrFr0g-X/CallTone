@@ -51,12 +51,15 @@ def _prewarm_models() -> None:
         return
     # Real cache locations on Vast: faster-whisper + Audio2Emotion + pyannote
     # are HF Hub downloads; LLaMA + resemble-enhance live under /opt/calltone.
-    hf_hub = os.path.expanduser("~/.cache/huggingface/hub")
+    hf_home = os.getenv("HF_HOME") or os.path.expanduser("~/.cache/huggingface")
+    hf_hub = os.path.join(hf_home, "hub")
     targets = [
         os.path.join(hf_hub, "models--Systran--faster-whisper-large-v3"),
         os.path.join(hf_hub, "models--pyannote--segmentation-3.0"),
         os.path.join(hf_hub, "models--pyannote--wespeaker-voxceleb-resnet34-LM"),
         os.path.join(hf_hub, "models--nvidia--Audio2Emotion-v3.0"),
+        os.getenv("CALLTONE_SKILL_MODELS_DIR", "/app/models/skill_implementation/models"),
+        os.getenv("CALLTONE_LAYER1_MODELS_DIR", "/app/models/LAYER_1/models/resemble-enhance"),
         "/opt/calltone/models/skill_implementation/models",
         "/opt/calltone/models/LAYER_1/models/resemble-enhance",
     ]

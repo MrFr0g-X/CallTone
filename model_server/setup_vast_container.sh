@@ -28,13 +28,16 @@ log "installing system packages"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y --no-install-recommends \
-    python3.10 python3.10-venv python3-pip \
+    python3 python3-venv python3-pip \
     ffmpeg git ca-certificates curl build-essential openssl \
     >/dev/null
 
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3)}"
+log "using Python runtime: $(${PYTHON_BIN} --version)"
+
 if [[ ! -d "${VENV_DIR}" ]]; then
     log "creating venv at ${VENV_DIR}"
-    python3.10 -m venv "${VENV_DIR}"
+    "${PYTHON_BIN}" -m venv "${VENV_DIR}"
 fi
 # shellcheck disable=SC1091
 source "${VENV_DIR}/bin/activate"
@@ -102,11 +105,12 @@ pip install "transformers>=4.44.0,<4.50" "accelerate>=0.33.0" >/dev/null
 PYANNOTE_CFG="${REPO_DIR}/models/LAYER_1/models/pyannote/speaker-diarization-3.1/config.yaml"
 if [[ -f "${PYANNOTE_CFG}" ]]; then
     log "rewriting pyannote config.yaml for local Linux paths"
+    REPO_DIR_SED=$(printf '%s' "${REPO_DIR}" | sed 's/[&/\]/\\&/g')
     sed -i \
-        -e "s|D:/[^[:space:]]*/grad-project-main|/opt/calltone|g" \
-        -e "s|C:/[^[:space:]]*/grad-project-main|/opt/calltone|g" \
-        -e "s|\(embedding: /opt/calltone/models/LAYER_1/models/pyannote/wespeaker-voxceleb-resnet34-LM\)\$|\1/pytorch_model.bin|" \
-        -e "s|\(segmentation: /opt/calltone/models/LAYER_1/models/pyannote/segmentation-3.0\)\$|\1/pytorch_model.bin|" \
+        -e "s|D:/[^[:space:]]*/grad-project-main|${REPO_DIR_SED}|g" \
+        -e "s|C:/[^[:space:]]*/grad-project-main|${REPO_DIR_SED}|g" \
+        -e "s|\(embedding: ${REPO_DIR_SED}/models/LAYER_1/models/pyannote/wespeaker-voxceleb-resnet34-LM\)\$|\1/pytorch_model.bin|" \
+        -e "s|\(segmentation: ${REPO_DIR_SED}/models/LAYER_1/models/pyannote/segmentation-3.0\)\$|\1/pytorch_model.bin|" \
         "${PYANNOTE_CFG}"
 fi
 

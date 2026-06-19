@@ -7,10 +7,12 @@ process would require re-importing the entire module graph.
 """
 
 import logging
+from types import SimpleNamespace
 
 import pytest
 
 from app.main import _sanitize_filename
+from app.security_headers import _client_ip, _docs_allowed, _is_docs_path
 from app.rate_limit import login_limiter, invite_accept_limiter
 from app.database import SessionLocal
 from app.models import Client
@@ -61,6 +63,26 @@ def test_hsts_absent_in_debug(client):
     # conftest does not set DEBUG=false, so HSTS must not appear locally.
     r = client.get("/")
     assert "Strict-Transport-Security" not in r.headers
+
+
+def test_docs_paths_are_classified_for_production_lockdown():
+    assert _is_docs_path("/docs")
+    assert _is_docs_path("/docs/oauth2-redirect")
+    assert _is_docs_path("/redoc")
+    assert _is_docs_path("/openapi.json")
+    assert not _is_docs_path("/api/health")
+
+
+def test_docs_lock_uses_edge_real_ip_not_spoofed_forwarded_client(monkeypatch):
+    monkeypatch.setattr("app.security_headers.settings.DEBUG", False)
+    monkeypatch.setattr("app.security_headers.settings.DOCS_ALLOWED_IPS", "102.191.217.207")
+    request = SimpleNamespace(
+        headers={"x-real-ip": "117.18.102.40"},
+        # Simulates a spoofed/forwarded client value. The docs gate must ignore it.
+        client=SimpleNamespace(host="102.191.217.207"),
+    )
+    assert _client_ip(request) == "117.18.102.40"
+    assert _docs_allowed(request) is False
 
 
 # ── C-4: Filename sanitization ──────────────────────────────────────────────

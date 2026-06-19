@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     FRONTEND_URL: str = "http://localhost:8080"
     CORS_ORIGINS: str = ""  # comma-separated extra origins, e.g. "http://gpu-server:3000"
+    DOCS_ALLOWED_IPS: str = ""  # comma-separated trusted IPs/CIDRs allowed to view /docs, /redoc, /openapi.json
 
     # extra="ignore" lets us put non-Settings vars (MODEL_SERVER_URL, etc.,
     # consumed via os.getenv elsewhere) into the same .env without pydantic

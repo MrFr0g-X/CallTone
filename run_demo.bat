@@ -6,8 +6,9 @@ REM Prereqs (do these once, in order):
 REM   1. On Vast:   bash model_server/setup_vast_instance.sh
 REM                 → copy the MODEL_SERVER_TOKEN it prints.
 REM   2. Put the token into .env.demo  (see .env.demo.example).
-REM   3. Open an SSH tunnel in a SEPARATE terminal — keep it running:
-REM      ssh -L 8090:localhost:8080 -p 44049 root@185.65.93.114
+REM   3. Open an SSH tunnel in a SEPARATE terminal — keep it running.
+REM      Remote model server listens on :8081 (Jupyter occupies :8080 on Vast):
+REM      ssh -o ServerAliveInterval=30 -N -L 8090:localhost:8081 -p 44049 root@185.65.93.114
 REM
 REM Then run this script from the repo root:   run_demo.bat
 REM ============================================================================
@@ -52,7 +53,7 @@ python -c "import httpx,sys; r=httpx.get('%MODEL_SERVER_URL%/v1/health', timeout
 if errorlevel 1 (
     echo   ERROR: %MODEL_SERVER_URL%/v1/health did not respond.
     echo   Open the SSH tunnel in another terminal, then re-run:
-    echo     ssh -L 8090:localhost:8080 -p 44049 root@185.65.93.114
+    echo     ssh -o ServerAliveInterval=30 -N -L 8090:localhost:8081 -p 44049 root@185.65.93.114
     exit /b 1
 )
 echo   OK: model server reachable via tunnel
