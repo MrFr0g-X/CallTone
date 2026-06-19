@@ -131,6 +131,7 @@ build/
 .env.*
 !.env.example
 !.env.demo.example
+!.env.docker.example
 
 # IDE
 .vscode/
@@ -169,3 +170,10 @@ Test_audio/
 *.db
 *.db-shm
 *.db-wal
+scripts/staging_introspect.py
+scripts/staging_seed_calls.py
+
+# Keep thesis, defense guide, and all PDFs OFF GitHub (local-only) — 2026-06-17
+docs/final_thesis/
+docs/defense_guide/
+*.pdf
