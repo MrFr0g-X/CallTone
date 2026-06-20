@@ -315,9 +315,17 @@ const SampleReport = () => {
               <h2 className="mb-4 text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                 <PlayCircle className="w-4 h-4" /> Call Audio
               </h2>
-              <p className="text-sm text-muted-foreground">
-                Audio playback is available on real calls inside the workspace. This sample shows the
-                scoring output only.
+              <audio
+                controls
+                preload="none"
+                src="/sample-call.mp3"
+                className="w-full rounded-2xl border border-border/70 bg-background/40"
+              >
+                Your browser does not support the audio element.
+              </audio>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                A real customer-service recording, included here as a sample. On live calls the same
+                player streams the original audio alongside the scores below.
               </p>
               <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {Object.entries(r.dimensionScores).map(([key, value]) => (
