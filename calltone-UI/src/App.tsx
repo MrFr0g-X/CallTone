@@ -23,6 +23,7 @@ import NotAuthorized from "./pages/NotAuthorized";
 import AcceptInvite from "./pages/AcceptInvite";
 import UploadCall from "./pages/UploadCall";
 import CompanyContext from "./pages/CompanyContext";
+import SampleReport from "./pages/SampleReport";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,8 @@ const AnimatedRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/accept-invite" element={<AcceptInvite />} />
+        {/* Public, self-contained sample report — no auth, no API, no real data */}
+        <Route path="/sample" element={<SampleReport />} />
 
         {/* Role-neutral call detail (any role that can view a call; backend authorizes per call) */}
         <Route path="/call/:callId" element={

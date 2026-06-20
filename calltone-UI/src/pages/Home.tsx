@@ -1,6 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, ChevronRight, FileAudio, ShieldCheck, Sparkles, Workflow, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronRight, FileAudio, FileText, ShieldCheck, Sparkles, Workflow, Zap } from "lucide-react";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import PageTransition from "@/components/PageTransition";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -144,6 +144,13 @@ const Home = () => {
                     View Production Workflow
                     <ChevronRight className="h-4 w-4" />
                   </a>
+                  <Link
+                    to="/sample"
+                    className="glass flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 hover:bg-foreground/[0.06]"
+                  >
+                    View a Sample Report
+                    <FileText className="h-4 w-4" />
+                  </Link>
                 </motion.div>
               </div>
             </div>
