@@ -13,6 +13,6 @@ email-validator
 python-multipart
 
 # dev/test
-pytest>=7
+pytest>=9.0.3
 pytest-cov>=4
 httpx>=0.24
