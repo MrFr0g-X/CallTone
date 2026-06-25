@@ -20,7 +20,7 @@ RUN npm run build
 
 
 # ── Stage 2: Python + CUDA (devel for compiling llama-cpp-python) ───────────
-FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+FROM nvidia/cuda:13.2.1-cudnn-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
